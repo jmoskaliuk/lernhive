@@ -1,46 +1,66 @@
-# LernHive Repository Pack
+# LernHive
 
-Repo-ready working pack for the LernHive product and plugin ecosystem.
+LernHive is a Moodle-based product layer focused on better UX, faster adoption, and modular learning experiences.
 
-## Purpose
+It is built on top of Moodle without forking Moodle core. Functional extensions are implemented as plugins, while UX and visual design are handled separately through the theme and shared UX patterns.
 
-This repository bundles:
-- product strategy and target architecture
-- plugin map and DevFlow sets
-- language and string guidance
-- roadmap, backlog, open decisions
-- first UX mockups
+## Vision
 
-## Core product idea
+LernHive turns Moodle into a more intuitive, guided, and flexible learning platform.
 
-LernHive is a SaaS-first Moodle distribution with an experience layer on top of Moodle core.
-It improves UX, onboarding, course creation, discovery and flavour-based configuration without forking Moodle.
+Core goals:
 
-## Key principles
+- reduce complexity for teachers and learners
+- provide strong out-of-the-box defaults through Flavours
+- support both classic LMS use cases and an optional LXP Flavour
+- stay compatible with Moodle plugin conventions
+- keep function and design clearly separated
 
-- Moodle stays the core
-- no fork
-- function and design are clearly separated
-- English first on UX and language-file level
-- Moodle core strings are reused whenever they fit
-- Flavours are opinionated starting points, not hard product forks
-- LXP is an optional Flavour, not the default product model
+## Core principles
 
-## Main folders
+- **No Moodle fork**
+- **English first**
+- **Moodle first where sensible**
+- **Function and design are separate**
+- **Flavours are recommended starting points, not hardcoded products**
+- **LXP is optional, not mandatory**
+- **Simple UX first, advanced features later**
 
-- `product/` — cross-plugin product architecture and decisions
-- `plugins/` — DevFlow sets per plugin
-- `mockups/` — first screen concepts and simple HTML mockups
-- `assets/` — optional supporting material
+## Repository structure
 
-## Current status
+```text
+product/
+  00-strategy.md
+  01-architecture.md
+  02-plugin-map.md
+  03-roadmap.md
+  04-language-guide.md
+  05-string-inventory.md
+  06-core-string-reuse-map.md
+  07-next-steps.md
+  08-backlog.md
+  09-ux-navigation.md
 
-This repo is a planning and architecture baseline, not a code repository.
-It is intended to be pushed to GitHub and collaboratively refined.
+plugins/
+  local_lernhive/
+  local_lernhive_launcher/
+  local_lernhive_contenthub/
+  local_lernhive_copy/
+  local_lernhive_library/
+  local_lernhive_flavour/
+  local_lernhive_configuration/
+  local_lernhive_onboarding/
+  local_lernhive_contexthelper/
+  local_lernhive_discovery/
+  local_lernhive_audience/
+  local_lernhive_reporting/
+  local_lernhive_notifications/
+  theme_lernhive/
 
-## Suggested next use
-
-1. Review the product docs in `product/`
-2. Confirm plugin boundaries in `product/02-plugin-map.md`
-3. Start implementation tickets from `product/07-next-steps-and-decisions.md`
-4. Convert approved plugin DevFlows into code repos
+mockups/
+  explore-home.html
+  launcher.html
+  contenthub.html
+  reporting-dashboard.html
+  audience-editor.html
+  onboarding-levels.html
