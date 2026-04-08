@@ -17,7 +17,7 @@
 - minimal version visibility
 
 ### LXP
-- Explore replaces Dashboard in LXP
+- Explore replaces Dashboard only in the LXP Flavour
 - Feed with fixed blocks:
   - New in your community
   - New from content you follow
@@ -33,11 +33,18 @@
   - most popular courses
   - course completion
 
+### Release 1 guardrails
+- keep the UX simple and guided
+- keep LXP optional
+- reuse Moodle core strings and notification infrastructure where sensible
+- keep Audience rules explainable and Moodle-based
+- do not move advanced personalization or lifecycle workflows into Release 1
+
 ## Release 2 — Depth
 - stronger personalization
-- learning system / recommendation ideas
+- recommendation and learning system ideas
 - library update UX
-- improved Circle UX for audiences
+- refined Audience UX
 - content lifecycle and version update workflow
 - skills UX based on Moodle competencies and learning plans
 - richer reporting dashboard
@@ -45,6 +52,6 @@
 
 ## Release 3+
 - recommendation engine
-- adaptive discovery
+- adaptive Explore logic
 - deeper analytics
 - content lifecycle automation
