@@ -5,7 +5,7 @@
 
 ## Purpose
 
-Audience abstraction and dynamic rule engine on top of Moodle data.
+Audience abstraction and simple rule engine built on Moodle structures.
 
 ## Role in LernHive
 
@@ -17,13 +17,30 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 - must stay understandable for UX, docs, marketing and sales
 
 ## Main dependencies
-local_lernhive
+- `local_lernhive`
+- Moodle groups, cohorts, enrolments, profile fields, and activity data
 
 ## Main features
 - static audiences
 - dynamic audiences
-- IF/AND/OR rule builder
-- profile/activity/time conditions
+- simple rule logic with AND / OR
+- time-based, activity-based, and profile-based conditions
+
+## Release scope
+
+### Release 1
+- Audience builds on Moodle structures rather than replacing them
+- Audience UX stays simple and list-based
+- rule engine supports the initial rule types only:
+  - time-based
+  - activity-based
+  - profile-based
+- rules remain explainable and implementation-ready
+
+### Release 2
+- Circle UX refinement belongs to Release 2
+- richer visual rule composition belongs to Release 2
+- Release 2 work must not complicate the simple Release 1 baseline silently
 
 ## DevFlow files
 - 00-master.md
