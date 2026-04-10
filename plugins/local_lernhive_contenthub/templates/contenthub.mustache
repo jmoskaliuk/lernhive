@@ -1,0 +1,17 @@
+<section class="local-lernhive-contenthub">
+    <h1>{{#str}} pluginname, local_lernhive_contenthub {{/str}}</h1>
+
+    <div class="local-lernhive-contenthub__tiles">
+        {{#tiles}}
+            <article class="local-lernhive-contenthub__tile">
+                <p class="local-lernhive-contenthub__tag">{{tag}}</p>
+                <h2>{{title}}</h2>
+                <p>{{summary}}</p>
+                {{#note}}
+                    <p>{{note}}</p>
+                {{/note}}
+                <p><strong>{{primaryactionlabel}}</strong></p>
+            </article>
+        {{/tiles}}
+    </div>
+</section>
