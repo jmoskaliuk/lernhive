@@ -4,6 +4,32 @@
         <h1 id="lernhive-contenthub-title" class="lernhive-contenthub__title">{{#str}} contenthubtitle, theme_lernhive {{/str}}</h1>
         <p class="lernhive-contenthub__summary">{{#str}} contenthubsummary, theme_lernhive {{/str}}</p>
 
+        <div class="lernhive-contenthub__tools" aria-label="{{#str}} contenthubtools, theme_lernhive {{/str}}">
+            <button class="lernhive-contenthub__tool" type="button" aria-label="{{#str}} contenthubsearch, theme_lernhive {{/str}}" title="{{#str}} contenthubsearch, theme_lernhive {{/str}}">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </svg>
+            </button>
+            <button class="lernhive-contenthub__tool" type="button" aria-label="{{#str}} contenthubfilter, theme_lernhive {{/str}}" title="{{#str}} contenthubfilter, theme_lernhive {{/str}}">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <path d="M3 6h18"></path>
+                    <path d="M7 12h14"></path>
+                    <path d="M3 18h10"></path>
+                    <circle cx="14" cy="6" r="2"></circle>
+                    <circle cx="5" cy="12" r="2"></circle>
+                    <circle cx="17" cy="18" r="2"></circle>
+                </svg>
+            </button>
+            <button class="lernhive-contenthub__tool" type="button" aria-label="{{#str}} contenthubguide, theme_lernhive {{/str}}" title="{{#str}} contenthubguide, theme_lernhive {{/str}}">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <path d="M12 3v12"></path>
+                    <path d="m7 10 5 5 5-5"></path>
+                    <path d="M5 21h14"></path>
+                </svg>
+            </button>
+        </div>
+
         <div class="lernhive-contenthub__grid">
             {{#tiles}}
                 {{> theme_lernhive/contenthub_tile }}

@@ -2,7 +2,12 @@
     <details class="lernhive-launcher__panel {{#launcherisdock}}is-dock{{/launcherisdock}}" open>
         <summary class="lernhive-launcher__header">
             <span class="lernhive-launcher__trigger">
-                <span class="lernhive-launcher__trigger-icon" aria-hidden="true">+</span>
+                <span class="lernhive-launcher__trigger-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                </span>
                 <span class="lernhive-sr-only">{{#str}} launcher, theme_lernhive {{/str}}</span>
             </span>
             <span class="lernhive-launcher__copy">
@@ -13,21 +18,39 @@
 
         <div class="lernhive-launcher__flyout" role="navigation" aria-label="{{#str}} launcher, theme_lernhive {{/str}}">
             <a class="lernhive-launcher__action" href="#">
-                <span class="lernhive-launcher__action-icon" aria-hidden="true">B</span>
+                <span class="lernhive-launcher__action-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M12 7v14"></path>
+                        <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+                        <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+                    </svg>
+                </span>
                 <span class="lernhive-launcher__action-copy">
                     <strong>{{#str}} actioncreatecourse, theme_lernhive {{/str}}</strong>
                     <span>{{#str}} actioncreatecoursedesc, theme_lernhive {{/str}}</span>
                 </span>
             </a>
             <a class="lernhive-launcher__action" href="#">
-                <span class="lernhive-launcher__action-icon" aria-hidden="true">G</span>
+                <span class="lernhive-launcher__action-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <rect x="3" y="3" width="8" height="8" rx="2"></rect>
+                        <rect x="13" y="3" width="8" height="8" rx="2"></rect>
+                        <rect x="3" y="13" width="8" height="8" rx="2"></rect>
+                        <rect x="13" y="13" width="8" height="8" rx="2"></rect>
+                    </svg>
+                </span>
                 <span class="lernhive-launcher__action-copy">
                     <strong>{{#str}} actioncontenthub, theme_lernhive {{/str}}</strong>
                     <span>{{#str}} actioncontenthubdesc, theme_lernhive {{/str}}</span>
                 </span>
             </a>
             <a class="lernhive-launcher__action" href="#">
-                <span class="lernhive-launcher__action-icon" aria-hidden="true">S</span>
+                <span class="lernhive-launcher__action-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="m10 8 6 4-6 4Z"></path>
+                    </svg>
+                </span>
                 <span class="lernhive-launcher__action-copy">
                     <strong>{{#str}} actioncreatesnack, theme_lernhive {{/str}}</strong>
                     <span>{{#str}} actioncreatesnackdesc, theme_lernhive {{/str}}</span>
@@ -37,9 +60,30 @@
 
         {{#launcherisdock}}
             <div class="lernhive-launcher__dock" aria-label="{{#str}} launcherstyle, theme_lernhive {{/str}}">
-                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatecourse, theme_lernhive {{/str}}">B</a>
-                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncontenthub, theme_lernhive {{/str}}">G</a>
-                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatesnack, theme_lernhive {{/str}}">S</a>
+                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatecourse, theme_lernhive {{/str}}">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M12 7v14"></path>
+                        <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+                        <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+                    </svg>
+                    <span class="lernhive-sr-only">{{#str}} actioncreatecourse, theme_lernhive {{/str}}</span>
+                </a>
+                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncontenthub, theme_lernhive {{/str}}">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <rect x="3" y="3" width="8" height="8" rx="2"></rect>
+                        <rect x="13" y="3" width="8" height="8" rx="2"></rect>
+                        <rect x="3" y="13" width="8" height="8" rx="2"></rect>
+                        <rect x="13" y="13" width="8" height="8" rx="2"></rect>
+                    </svg>
+                    <span class="lernhive-sr-only">{{#str}} actioncontenthub, theme_lernhive {{/str}}</span>
+                </a>
+                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatesnack, theme_lernhive {{/str}}">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="m10 8 6 4-6 4Z"></path>
+                    </svg>
+                    <span class="lernhive-sr-only">{{#str}} actioncreatesnack, theme_lernhive {{/str}}</span>
+                </a>
             </div>
         {{/launcherisdock}}
     </details>

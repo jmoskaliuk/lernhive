@@ -280,6 +280,8 @@
 .lernhive-launcher__trigger:focus-visible,
 .lernhive-launcher__action:focus-visible,
 .lernhive-launcher__dock-item:focus-visible,
+.lernhive-contenthub__tool:focus-visible,
+.lernhive-hub-tile__cta:focus-visible,
 .lernhive-card__cta:focus-visible,
 .lernhive-card__icon:focus-visible {
   outline: 3px solid var(--lernhive-orange-soft);
@@ -287,8 +289,24 @@
 }
 
 .lernhive-launcher__trigger-icon {
-  font-size: 1.25rem;
-  font-weight: 700;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: grid;
+  place-items: center;
+}
+
+.lernhive-launcher__trigger-icon svg,
+.lernhive-launcher__action-icon svg,
+.lernhive-launcher__dock-item svg,
+.lernhive-contenthub__tool svg,
+.lernhive-hub-tile__cta-icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke: currentColor;
+  stroke-width: 2.05;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .lernhive-launcher__copy {
@@ -340,7 +358,6 @@
   border-radius: .875rem;
   background: var(--lernhive-white);
   color: var(--lernhive-orange);
-  font-weight: 700;
 }
 
 .lernhive-launcher__action-copy strong {
@@ -373,7 +390,6 @@
   border-radius: 1rem;
   background: var(--lernhive-white);
   color: var(--lernhive-orange);
-  font-weight: 700;
   text-decoration: none;
   box-shadow: 0 .75rem 1.5rem rgba(25, 72, 102, .16);
 }
@@ -424,6 +440,24 @@
   margin: 0;
   color: var(--lernhive-blue);
   line-height: 1.55;
+}
+
+.lernhive-contenthub__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+}
+
+.lernhive-contenthub__tool {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 999px;
+  background: var(--lernhive-white);
+  color: var(--lernhive-blue);
 }
 
 .lernhive-contenthub__grid {
@@ -491,6 +525,9 @@
 }
 
 .lernhive-hub-tile__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
   justify-self: start;
   margin-top: auto;
   padding: .675rem 1rem;
@@ -500,6 +537,13 @@
   color: var(--lernhive-blue);
   font-weight: 700;
   text-decoration: none;
+}
+
+.lernhive-hub-tile__cta-icon {
+  width: 1rem;
+  height: 1rem;
+  display: grid;
+  place-items: center;
 }
 
 .lernhive-contenthub__note {
