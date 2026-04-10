@@ -1,0 +1,271 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Tour management class for Lernpfad (Learning Path) feature.
+ *
+ * @package    local_lernhive_onboarding
+ * @copyright  2026 LernHive.de
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace local_lernhive_onboarding;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Manages tour categories and completion tracking for LernHive guided tours.
+ *
+ * This class provides methods to:
+ * - Retrieve tour categories for a given LernHive level
+ * - Get tours mapped to categories
+ * - Track completion status of tours and categories
+ * - Check if levels are complete
+ */
+class tour_manager {
+
+    /**
+     * Get all tour categories for a given level, ordered by sortorder.
+     *
+     * @param int $level The LernHive level (1-5)
+     * @return array Array of category records with id, shortname, name, description, icon, color, sortorder
+     */
+    public static function get_categories(int $level): array {
+        global $DB;
+
+        return $DB->get_records(
+            'local_lhonb_cats',
+            ['level' => $level],
+            'sortorder ASC'
+        );
+    }
+
+    /**
+     * Get all tours mapped to a specific category.
+     *
+     * @param int $categoryid The category ID from local_lhonb_cats
+     * @return array Array of tour mapping records with id, tourid, sortorder
+     */
+    public static function get_category_tours(int $categoryid): array {
+        global $DB;
+
+        return $DB->get_records(
+            'local_lhonb_map',
+            ['categoryid' => $categoryid],
+            'sortorder ASC'
+        );
+    }
+
+    /**
+     * Get completion status for a user's tours in a category.
+     *
+     * Checks Moodle's user_preferences table for tour completion records.
+     * The preference key format is: tool_usertours_{tourid}_completed
+     *
+     * @param int $categoryid The category ID from local_lhonb_cats
+     * @param int $userid The user ID
+     * @return array Array with keys:
+     *     - 'total' => total number of tours in category
+     *     - 'completed' => number of completed tours
+     *     - 'percent' => completion percentage (0-100)
+     *     - 'done' => boolean, true if all tours completed
+     *     - 'tours' => array of tour records with completion status
+     */
+    public static function get_category_progress(int $categoryid, int $userid): array {
+        global $DB;
+
+        $tours = self::get_category_tours($categoryid);
+        $total = count($tours);
+        $completed = 0;
+        $tourdata = [];
+
+        foreach ($tours as $tour) {
+            $iscompleted = self::is_tour_completed($tour->tourid, $userid);
+            if ($iscompleted) {
+                $completed++;
+            }
+
+            $tourdata[] = (object) [
+                'tourid' => $tour->tourid,
+                'sortorder' => $tour->sortorder,
+                'completed' => $iscompleted,
+            ];
+        }
+
+        $percent = ($total > 0) ? (int) round(($completed / $total) * 100) : 0;
+
+        return [
+            'total' => $total,
+            'completed' => $completed,
+            'percent' => $percent,
+            'done' => ($completed >= $total),
+            'tours' => $tourdata,
+        ];
+    }
+
+    /**
+     * Get overall progress for a level.
+     *
+     * Aggregates completion status for all categories in a level.
+     *
+     * @param int $level The LernHive level (1-5)
+     * @param int $userid The user ID
+     * @return array Array with keys:
+     *     - 'level' => the level number
+     *     - 'total_categories' => total number of categories
+     *     - 'completed_categories' => number of completed categories
+     *     - 'total_tours' => total number of tours in all categories
+     *     - 'completed_tours' => number of completed tours
+     *     - 'percent' => level completion percentage (0-100)
+     *     - 'done' => boolean, true if all tours in level completed
+     *     - 'categories' => array of category records with progress data
+     */
+    public static function get_level_progress(int $level, int $userid): array {
+        $categories = self::get_categories($level);
+        $totalcats = count($categories);
+        $completedcats = 0;
+        $totaltours = 0;
+        $completedtours = 0;
+        $catdata = [];
+
+        foreach ($categories as $cat) {
+            $progress = self::get_category_progress($cat->id, $userid);
+            $totaltours += $progress['total'];
+            $completedtours += $progress['completed'];
+
+            if ($progress['done']) {
+                $completedcats++;
+            }
+
+            // Add progress data to category record.
+            $cat->progress = $progress;
+            $catdata[] = $cat;
+        }
+
+        $percent = ($totaltours > 0) ? (int) round(($completedtours / $totaltours) * 100) : 0;
+
+        return [
+            'level' => $level,
+            'total_categories' => $totalcats,
+            'completed_categories' => $completedcats,
+            'total_tours' => $totaltours,
+            'completed_tours' => $completedtours,
+            'percent' => $percent,
+            'done' => ($totalcats > 0 && $completedcats >= $totalcats),
+            'categories' => $catdata,
+        ];
+    }
+
+    /**
+     * Check if a specific Moodle user tour is completed by a user.
+     *
+     * Moodle stores tour completion in user_preferences with key format:
+     * tool_usertours_{tourid}_completed
+     *
+     * @param int $tourid The tour ID from tool_usertours_tours
+     * @param int $userid The user ID
+     * @return bool True if the tour has been completed by the user
+     */
+    public static function is_tour_completed(int $tourid, int $userid): bool {
+        $prefname = 'tool_usertours_' . $tourid . '_completed';
+        $pref = get_user_preferences($prefname, null, $userid);
+        return !empty($pref);
+    }
+
+    /**
+     * Check if all tours in a level are completed (= level can be upgraded).
+     *
+     * A level is considered complete when all categories in that level
+     * have all their tours completed.
+     *
+     * @param int $level The LernHive level (1-5)
+     * @param int $userid The user ID
+     * @return bool True if all tours in the level are completed
+     */
+    public static function is_level_complete(int $level, int $userid): bool {
+        $progress = self::get_level_progress($level, $userid);
+        return $progress['done'];
+    }
+
+    /**
+     * Get a category by shortname.
+     *
+     * @param string $shortname The shortname identifier (e.g., 'create_users')
+     * @return \stdClass|false The category record, or false if not found
+     */
+    public static function get_category_by_shortname(string $shortname) {
+        global $DB;
+        return $DB->get_record('local_lhonb_cats', ['shortname' => $shortname]);
+    }
+
+    /**
+     * Add a tour to a category.
+     *
+     * Creates a mapping in local_lhonb_map between a tour and a category.
+     *
+     * @param int $categoryid The category ID
+     * @param int $tourid The Moodle tour ID
+     * @param int $sortorder The display order (optional, defaults to end)
+     * @return int The mapping record ID
+     */
+    public static function add_tour_to_category(int $categoryid, int $tourid, int $sortorder = 0): int {
+        global $DB;
+
+        // Check if mapping already exists.
+        $existing = $DB->get_record(
+            'local_lhonb_map',
+            ['categoryid' => $categoryid, 'tourid' => $tourid]
+        );
+
+        if ($existing) {
+            return $existing->id;
+        }
+
+        // If no sortorder specified, append to end.
+        if ($sortorder === 0) {
+            $maxorder = $DB->get_field(
+                'local_lhonb_map',
+                'MAX(sortorder)',
+                ['categoryid' => $categoryid]
+            );
+            $sortorder = (int) $maxorder + 1;
+        }
+
+        $record = (object) [
+            'categoryid' => $categoryid,
+            'tourid' => $tourid,
+            'sortorder' => $sortorder,
+            'timecreated' => time(),
+        ];
+
+        return $DB->insert_record('local_lhonb_map', $record);
+    }
+
+    /**
+     * Remove a tour from a category.
+     *
+     * @param int $categoryid The category ID
+     * @param int $tourid The Moodle tour ID
+     * @return bool True if a record was deleted
+     */
+    public static function remove_tour_from_category(int $categoryid, int $tourid): bool {
+        global $DB;
+        return $DB->delete_records(
+            'local_lhonb_map',
+            ['categoryid' => $categoryid, 'tourid' => $tourid]
+        );
+    }
+}

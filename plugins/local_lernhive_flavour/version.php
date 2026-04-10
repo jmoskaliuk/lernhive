@@ -15,17 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the LernHive theme.
+ * Flavour plugin version and dependencies.
  *
- * @package    theme_lernhive
+ * @package    local_lernhive_flavour
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_lernhive';
+$plugin->component = 'local_lernhive_flavour';
 $plugin->version = 2026041001;
-$plugin->requires = 2024100700;
+$plugin->requires = 2024100700; // Moodle 4.5+
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.0';
+$plugin->release = '0.1.0';
+$plugin->dependencies = [
+    'local_lernhive' => 2026040901,
+];

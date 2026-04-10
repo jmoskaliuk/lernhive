@@ -15,17 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the LernHive theme.
+ * Privacy provider for LernHive Flavour.
  *
- * @package    theme_lernhive
+ * @package    local_lernhive_flavour
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_lernhive_flavour\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_lernhive';
-$plugin->version = 2026041001;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.0';
+use core_privacy\local\metadata\null_provider;
+
+/**
+ * Class provider
+ * Privacy provider implementation for local_lernhive_flavour.
+ */
+class provider implements null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return string
+     */
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}

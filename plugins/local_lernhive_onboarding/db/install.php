@@ -15,17 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the LernHive theme.
+ * LernHive Onboarding plugin installation hook.
  *
- * @package    theme_lernhive
+ * @package    local_lernhive_onboarding
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_lernhive';
-$plugin->version = 2026041001;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.0';
+/**
+ * LernHive Onboarding plugin installation function.
+ *
+ * Seeds default tour categories and imports Level 1 tours.
+ */
+function xmldb_local_lernhive_onboarding_install() {
+    \local_lernhive_onboarding\tour_importer::seed_categories();
+    \local_lernhive_onboarding\tour_importer::import_level(1);
+}

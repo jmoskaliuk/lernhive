@@ -1,0 +1,226 @@
+// LernHive Theme – Login Page
+// ============================
+// Dramatic gradient background, centered card layout.
+// This is the first page users see — make it count.
+// Aggressively hides Moodle's default two-column marketing layout.
+
+body.pagelayout-login {
+    // Gradient background matching the mockup: primary → secondary blue.
+    background: linear-gradient(135deg, $lh-primary 0%, $lh-secondary 100%) !important;
+    min-height: 100vh;
+
+    // ── Hide everything we don't need ──
+
+    // Navbar — completely hidden on login.
+    .navbar {
+        display: none !important;
+    }
+
+    // Page header, primary nav, breadcrumbs — hidden.
+    #page-header,
+    .primary-navigation,
+    nav.moremenu,
+    .breadcrumb {
+        display: none !important;
+    }
+
+    // ── Page layout — centered ──
+
+    #page-wrapper { background: transparent !important; }
+
+    #page {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 100vh !important;
+        background: transparent !important;
+    }
+
+    #page-content { background: transparent !important; }
+    .main-inner { max-width: 420px !important; margin: 0 auto !important; padding: 0 !important; }
+
+    // ── Hide Moodle marketing / left column ──
+
+    .login-container {
+        .row {
+            justify-content: center !important;
+        }
+
+        // Hide left marketing column (the "Willkommen bei Moodle" area).
+        .row > div:not(:has(.login-form)):not(:has(.loginform)):not(:has(#login)) {
+            display: none !important;
+        }
+
+        // Make login column full-width, centered.
+        .row > div:has(.login-form),
+        .row > div:has(.loginform),
+        .row > div:has(#login) {
+            flex: 0 0 100% !important;
+            max-width: 420px !important;
+            margin: 0 auto !important;
+        }
+    }
+
+    // Hide Moodle default headings.
+    .login-heading,
+    .login-form-heading,
+    h2.login-heading,
+    .login-form h2,
+    #page-content > h2,
+    .login-wrapper > h2,
+    .main-inner > h2 {
+        display: none !important;
+    }
+
+    // Hide "Anmelden bei 'Demo Site'" subtitle.
+    .login-form-subtitle,
+    .login-form p.login-heading-desc,
+    .login-form-username ~ p {
+        display: none !important;
+    }
+
+    // Hide site info, identity providers, signup link on marketing side.
+    .login-site-info,
+    .login-identityproviders,
+    .login-identityproviders-label,
+    .login-divider,
+    .login-signup {
+        display: none !important;
+    }
+
+    // ── Login card styling ──
+
+    .login-wrapper,
+    .login-form-wrapper,
+    .loginform,
+    #login,
+    .login-form {
+        background: $lh-bg-white !important;
+        border-radius: $lh-radius-lg !important;
+        box-shadow: 0 10px 40px rgba(25, 72, 102, 0.15) !important;
+        padding: 40px 32px !important;
+        border: none !important;
+        position: relative;
+        overflow: hidden;
+        max-width: 420px !important;
+        margin: 0 auto !important;
+
+        // Orange accent line at top.
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, $lh-accent 0%, $lh-accent 50%, transparent 100%);
+        }
+    }
+
+    // ── Login heading (injected by JS) ──
+
+    .lh-login-logo {
+        text-align: center;
+        margin-bottom: $lh-spacing-sm;
+    }
+
+    // ── Form fields — pill-shaped ──
+
+    .login-form,
+    .loginform,
+    #login {
+        .form-control,
+        input[type="text"],
+        input[type="password"] {
+            border-radius: $lh-radius-pill !important;
+            padding: 12px 20px !important;
+            border: 1px solid $lh-border !important;
+            transition: $lh-transition;
+            font-size: $lh-font-size-base;
+            background: $lh-bg-white !important;
+
+            &:focus {
+                border-color: $lh-primary !important;
+                box-shadow: 0 0 0 3px rgba(25, 72, 102, 0.12) !important;
+                background: $lh-bg-white !important;
+            }
+        }
+
+        .form-label,
+        label {
+            font-weight: 500;
+            font-size: $lh-font-size-sm;
+            color: $lh-primary;
+            margin-bottom: $lh-spacing-xs;
+        }
+
+        // Login button — pill-shaped, full-width.
+        .btn-primary,
+        #loginbtn,
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px $lh-spacing-md !important;
+            font-weight: 600;
+            border-radius: $lh-radius-pill !important;
+            margin-top: $lh-spacing-md;
+            font-size: $lh-font-size-base;
+            background: $lh-primary !important;
+            border-color: $lh-primary !important;
+            transition: $lh-transition;
+
+            &:hover {
+                background: $lh-primary-dark !important;
+                border-color: $lh-primary-dark !important;
+            }
+        }
+    }
+
+    // "Forgot password" links.
+    .login-form-forgotpassword,
+    .login-form-signup,
+    .forgetpass {
+        text-align: center;
+        margin-top: $lh-spacing-md;
+
+        a {
+            font-size: $lh-font-size-sm;
+            color: $lh-text-secondary;
+            text-decoration: none;
+
+            &:hover {
+                color: $lh-primary;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // Language selector on login.
+    .langmenu,
+    .login-languagemenu {
+        text-align: center;
+        margin-top: $lh-spacing-md;
+
+        .dropdown-toggle {
+            font-size: $lh-font-size-sm;
+            color: $lh-text-secondary;
+            border: none !important;
+            background: transparent !important;
+        }
+    }
+
+    // Footer on login — transparent.
+    #page-footer {
+        background: transparent !important;
+        border: none !important;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: $lh-font-size-sm;
+        text-align: center;
+
+        a {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    }
+
+    // Hide any cookie/alert banners on login — cleaner look.
+    .alert-info { display: none; }
+}

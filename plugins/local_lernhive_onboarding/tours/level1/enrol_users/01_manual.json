@@ -1,0 +1,44 @@
+{
+    "name": "LernHive: Manuelle Einschreibung",
+    "description": "Lerne, wie du Nutzer/innen manuell in einen Kurs einschreibst.",
+    "pathmatch": "/enrol/manual/manage.php%",
+    "enabled": 1,
+    "sortorder": 0,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Willkommen zur manuellen Einschreibung",
+            "content": "<p>Hier kannst du einzelne Nutzer/innen direkt in deinen Kurs einschreiben und ihnen eine Rolle zuweisen.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Nutzer/in suchen",
+            "content": "<p>Nutze das Suchfeld, um die Nutzer/in zu finden, die du einschreiben möchtest. Tippe den Namen oder Benutzernamen ein.</p>",
+            "targettype": 2,
+            "targetvalue": "input[placeholder*=\"Nutzer\"]",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Rolle auswählen",
+            "content": "<p>Wähle die Rolle für die Nutzer/in: Trainer/in für Kursleiter/innen oder Teilnehmer/in für Schüler/innen.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_roleid",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Einschreiben",
+            "content": "<p>Klick auf 'Einschreiben', um die Nutzer/in in den Kurs aufzunehmen. Sie hat dann sofort Zugriff auf alle Kursmaterialien.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

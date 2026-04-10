@@ -15,17 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the LernHive theme.
+ * LernHive plugin installation hook.
  *
- * @package    theme_lernhive
+ * @package    local_lernhive
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_lernhive';
-$plugin->version = 2026041001;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.0';
+/**
+ * LernHive plugin installation function.
+ *
+ * Tour categories are now managed by local_lernhive_start.
+ * This install hook is intentionally empty — the DB tables
+ * (local_lernhive_levels, local_lernhive_teacher_cats) are
+ * created automatically from install.xml.
+ */
+function xmldb_local_lernhive_install() {
+    // Nothing to do — tables are created from install.xml,
+    // tour seeding happens in local_lernhive_start.
+}

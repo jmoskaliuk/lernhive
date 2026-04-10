@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the LernHive theme.
+ * Deutsche Sprachdatei für das LernHive-Theme.
  *
  * @package    theme_lernhive
  * @copyright  2026 LernHive.de
@@ -24,8 +24,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_lernhive';
-$plugin->version = 2026041001;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.0';
+// Plugin-Metadaten.
+$string['pluginname'] = 'LernHive';
+$string['choosereadme'] = 'LernHive ist ein modernes Moodle-Theme, aufgebaut als Boost Union Child-Theme. Es bietet eine vereinfachte, übersichtliche Oberfläche, die speziell für das LernHive-Plugin-Ökosystem entwickelt wurde.';
+
+// Einstellungen.
+$string['configtitle'] = 'LernHive-Einstellungen';
+$string['customcss'] = 'Eigenes CSS';
+$string['customcss_desc'] = 'Eigene CSS-Regeln, die nach allen anderen Styles angewendet werden. Nutze dies für schnelle Anpassungen.';
+
+// Layout-Optionen.
+$string['layoutoption_limitedwidth'] = 'Begrenzte Breite';
+
+// Datenschutz.
+$string['privacy:metadata'] = 'Das LernHive-Theme speichert keine persönlichen Daten.';

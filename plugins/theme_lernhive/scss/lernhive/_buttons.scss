@@ -1,0 +1,114 @@
+// LernHive Theme – Buttons (eLeDia CI)
+// ======================================
+// Loaded AFTER Boost — uses body prefix for specificity.
+
+// Primary buttons — eLeDia dark blue.
+body .btn-primary {
+    background-color: $lh-primary !important;
+    border-color: $lh-primary !important;
+    border-radius: $lh-radius-sm;
+    font-weight: 500;
+    padding: $lh-spacing-sm $lh-spacing-md;
+    transition: $lh-transition;
+
+    &:hover, &:focus, &:active {
+        background-color: $lh-primary-dark !important;
+        border-color: $lh-primary-dark !important;
+        box-shadow: 0 2px 8px rgba(25, 72, 102, 0.35) !important;
+    }
+}
+
+// Accent buttons — eLeDia orange for CTAs.
+body .btn-accent,
+body .btn-warning {
+    background-color: $lh-accent !important;
+    border-color: $lh-accent !important;
+    color: #fff !important;
+    border-radius: $lh-radius-sm;
+    font-weight: 500;
+    padding: $lh-spacing-sm $lh-spacing-md;
+    transition: $lh-transition;
+
+    &:hover, &:focus, &:active {
+        background-color: $lh-accent-dark !important;
+        border-color: $lh-accent-dark !important;
+        color: #fff !important;
+        box-shadow: 0 2px 8px rgba(249, 128, 18, 0.35) !important;
+    }
+}
+
+// Secondary / Outline buttons.
+body .btn-secondary {
+    border-radius: $lh-radius-sm;
+    font-weight: 500;
+    transition: $lh-transition;
+
+    &:hover {
+        box-shadow: $lh-shadow;
+    }
+}
+
+body .btn-outline-primary {
+    color: $lh-primary;
+    border-color: $lh-primary;
+    border-radius: $lh-radius-sm;
+    font-weight: 500;
+    transition: $lh-transition;
+
+    &:hover {
+        background-color: $lh-primary !important;
+        color: #fff !important;
+        box-shadow: 0 2px 8px rgba(25, 72, 102, 0.3);
+    }
+}
+
+body .btn-outline-accent {
+    color: $lh-accent;
+    border-color: $lh-accent;
+    border-radius: $lh-radius-sm;
+    font-weight: 500;
+    transition: $lh-transition;
+
+    &:hover {
+        background-color: $lh-accent !important;
+        color: #fff !important;
+        box-shadow: 0 2px 8px rgba(249, 128, 18, 0.3);
+    }
+}
+
+body .btn-outline-secondary {
+    border-radius: $lh-radius-sm;
+    font-weight: 500;
+    transition: $lh-transition;
+}
+
+// Small buttons.
+body .btn-sm {
+    padding: $lh-spacing-xs $lh-spacing-sm;
+    font-size: $lh-font-size-sm;
+    border-radius: 6px;
+}
+
+// Icon/action buttons (dropdowns, edit menus).
+body .btn-icon,
+body .action-menu .dropdown-toggle {
+    border-radius: $lh-radius-sm;
+    transition: $lh-transition;
+
+    &:hover {
+        background: $lh-primary-light;
+    }
+}
+
+// Edit mode toggle.
+body .editmode-switch-form {
+    .form-check-input:checked {
+        background-color: $lh-accent !important;
+        border-color: $lh-accent !important;
+    }
+}
+
+// Turn-editing-on button.
+body .btn-outline-info {
+    border-radius: $lh-radius-sm;
+}

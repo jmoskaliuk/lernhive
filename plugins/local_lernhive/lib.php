@@ -15,17 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the LernHive theme.
+ * LernHive library functions and callbacks.
  *
- * @package    theme_lernhive
+ * Note: The before_standard_top_of_body_html callback has been migrated
+ * to the new Moodle 5.x hook system. See:
+ * - classes/hook_callbacks.php (implementation)
+ * - db/hooks.php (registration)
+ *
+ * @package    local_lernhive
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_lernhive';
-$plugin->version = 2026041001;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.0';
+/**
+ * Add LernHive navigation nodes.
+ *
+ * @param global_navigation $navigation
+ */
+function local_lernhive_extend_navigation(global_navigation $navigation) {
+    // Nothing needed here for MVP.
+}
+
+/**
+ * Extend the settings navigation for the plugin.
+ *
+ * @param settings_navigation $settingsnav
+ * @param context $context
+ */
+function local_lernhive_extend_settings_navigation(settings_navigation $settingsnav, context $context) {
+    // Nothing needed here for MVP — settings.php handles admin menu.
+}

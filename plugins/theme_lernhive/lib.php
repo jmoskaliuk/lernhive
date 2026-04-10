@@ -10,60 +10,127 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Library functions for the LernHive theme.
+ *
+ * @package    theme_lernhive
+ * @copyright  2026 LernHive.de
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Returns the concatenated SCSS source for the theme.
+ * Get the pre-SCSS content.
  *
- * @param theme_config $theme
+ * @param theme_config $theme The theme config object.
  * @return string
  */
-function theme_lernhive_get_main_scss_content($theme): string {
+function theme_lernhive_get_pre_scss($theme) {
     global $CFG;
 
-    $parts = [];
-    $pre = $CFG->dirroot . '/theme/lernhive/scss/pre.scss';
-    $post = $CFG->dirroot . '/theme/lernhive/scss/post.scss';
+    $prescss = '';
 
-    if (is_readable($pre)) {
-        $parts[] = file_get_contents($pre);
-    }
-    if (is_readable($post)) {
-        $parts[] = file_get_contents($post);
+    $variablesfile = $CFG->dirroot . '/theme/lernhive/scss/lernhive/_variables.scss';
+    if (file_exists($variablesfile)) {
+        $prescss .= file_get_contents($variablesfile);
     }
 
-    return implode("\n\n", $parts);
+    $prefile = $CFG->dirroot . '/theme/lernhive/scss/pre.scss';
+    if (file_exists($prefile)) {
+        $prescss .= "\n" . file_get_contents($prefile);
+    }
+
+    return $prescss;
 }
 
 /**
- * Injects SCSS variables before the main stylesheet.
+ * Get the extra SCSS content.
  *
- * @param theme_config $theme
+ * @param theme_config $theme The theme config object.
  * @return string
  */
-function theme_lernhive_get_pre_scss($theme): string {
-    return <<<'SCSS'
-$lernhive-white: #ffffff;
-$lernhive-ink: #353535;
-$lernhive-orange: #f98012;
-$lernhive-blue: #194866;
-$lernhive-blue-light: #65a1b3;
-$lernhive-cool-gray: #f3f5f8;
-$lernhive-line: #e9e9e9;
-$lernhive-orange-soft: #ffecdb;
-$lernhive-blue-soft: #a9cbd5;
-SCSS;
-}
+function theme_lernhive_get_extra_scss($theme) {
+    global $CFG;
 
-/**
- * Injects theme utility SCSS after the main stylesheet.
- *
- * @param theme_config $theme
- * @return string
- */
-function theme_lernhive_get_extra_scss($theme): string {
-    return <<<'SCSS'
+    $extrascss = '';
+
+    $variablesfile = $CFG->dirroot . '/theme/lernhive/scss/lernhive/_variables.scss';
+    if (file_exists($variablesfile)) {
+        $vars = file_get_contents($variablesfile);
+        $vars = str_replace(' !default', '', $vars);
+        $extrascss .= "\n// --- Force-inject variables for extra SCSS ---\n";
+        $extrascss .= $vars . "\n";
+    }
+
+    $scssdir = $CFG->dirroot . '/theme/lernhive/scss/lernhive';
+    $partials = [
+        '_typography.scss',
+        '_colors.scss',
+        '_buttons.scss',
+        '_cards.scss',
+        '_navigation.scss',
+        '_course.scss',
+        '_dashboard.scss',
+        '_login.scss',
+        '_responsive.scss',
+    ];
+
+    foreach ($partials as $partial) {
+        $filepath = $scssdir . '/' . $partial;
+        if (file_exists($filepath)) {
+            $extrascss .= "\n// --- {$partial} ---\n";
+            $extrascss .= file_get_contents($filepath);
+        }
+    }
+
+    $postfile = $CFG->dirroot . '/theme/lernhive/scss/post.scss';
+    if (file_exists($postfile)) {
+        $extrascss .= "\n// --- post.scss ---\n";
+        $extrascss .= file_get_contents($postfile);
+    }
+
+    $extrascss .= <<<'CSSVARS'
+
+// --- Bootstrap 5 CSS Custom Properties override (LernHive / eLeDia CI) ---
+:root {
+    --bs-primary: #194866;
+    --bs-primary-rgb: 25, 72, 102;
+    --bs-secondary: #65a1b3;
+    --bs-secondary-rgb: 101, 161, 179;
+    --bs-success: #3aadaa;
+    --bs-success-rgb: 58, 173, 170;
+    --bs-warning: #f98012;
+    --bs-warning-rgb: 249, 128, 18;
+    --bs-danger: #ab1d79;
+    --bs-danger-rgb: 171, 29, 121;
+    --bs-info: #65a1b3;
+    --bs-info-rgb: 101, 161, 179;
+    --lh-accent: #f98012;
+    --lh-accent-rgb: 249, 128, 18;
+    --bs-body-bg: #ffffff;
+    --bs-body-bg-rgb: 255, 255, 255;
+    --bs-body-color: #353535;
+    --bs-body-color-rgb: 53, 53, 53;
+    --bs-body-font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+    --bs-body-font-size: 1rem;
+    --bs-link-color: #194866;
+    --bs-link-color-rgb: 25, 72, 102;
+    --bs-link-hover-color: #0f2d3f;
+    --bs-link-hover-color-rgb: 15, 45, 63;
+    --bs-border-radius: 8px;
+    --bs-border-radius-sm: 6px;
+    --bs-border-radius-lg: 12px;
+    --bs-border-color: #e9e9e9;
+}
+CSSVARS;
+
+    $extrascss .= <<<'SCSS'
+
 .theme-lernhive .lernhive-sr-only {
   position: absolute !important;
   width: 1px;
@@ -76,4 +143,31 @@ function theme_lernhive_get_extra_scss($theme): string {
   border: 0;
 }
 SCSS;
+
+    $customcss = get_config('theme_lernhive', 'customcss');
+    if (!empty($customcss)) {
+        $extrascss .= "\n" . $customcss;
+    }
+
+    return $extrascss;
+}
+
+/**
+ * Serve the theme's files.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The course module object.
+ * @param context $context The context.
+ * @param string $filearea The file area.
+ * @param array $args Extra arguments.
+ * @param bool $forcedownload Force download.
+ * @param array $options Additional options.
+ * @return bool
+ */
+function theme_lernhive_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+    if ($context->contextlevel == CONTEXT_SYSTEM) {
+        $theme = theme_config::load('lernhive');
+        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
+    }
+    send_file_not_found();
 }

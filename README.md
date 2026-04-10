@@ -140,3 +140,5 @@ mockups/
   reporting-dashboard.html
   audience-editor.html
   onboarding-levels.html
+# Fr 10 Apr 2026 23:04:13 CEST
+# Fr 10 Apr 2026 23:04:36 CEST

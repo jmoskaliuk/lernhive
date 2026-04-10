@@ -1,0 +1,723 @@
+// LernHive Theme – Course View
+// =============================
+// Course page, sections, activity items, activity view.
+// Uses body prefix for specificity over Boost.
+
+// --- Page Header ---
+body #page-header {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+body .page-header-headings {
+    text-align: left;
+}
+
+// --- Course Page Header with subtle gradient accent ---
+body.path-course-view #page-header {
+    background: linear-gradient(135deg, $lh-primary 0%, darken($lh-primary, 12%) 100%);
+    border-radius: 0;
+    padding: $lh-spacing-lg $lh-spacing-xl !important;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+
+    // Decorative circle (matches mockup).
+    &::after {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -5%;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+        pointer-events: none;
+    }
+
+    .page-header-headings h1,
+    .page-header-headings h2 {
+        color: #fff !important;
+        font-size: $lh-font-size-2xl !important;
+        font-weight: 700;
+        position: relative;
+    }
+
+    .page-context-header {
+        padding: $lh-spacing-sm 0;
+        position: relative;
+    }
+
+    // Course summary text below heading.
+    .course-description {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: $lh-font-size-sm;
+        max-width: 600px;
+    }
+
+    // Breadcrumb on course pages — white text on gradient.
+    .breadcrumb {
+        position: relative;
+
+        .breadcrumb-item {
+            color: rgba(255, 255, 255, 0.7);
+
+            a {
+                color: rgba(255, 255, 255, 0.85);
+
+                &:hover {
+                    color: #fff;
+                }
+            }
+
+            &.active {
+                color: #fff;
+            }
+
+            + .breadcrumb-item::before {
+                color: rgba(255, 255, 255, 0.5);
+            }
+        }
+    }
+}
+
+// Course secondary navigation — clean tab style.
+body.path-course-view .secondary-navigation {
+    border-bottom: 1px solid $lh-border !important;
+    background: $lh-bg-white !important;
+    padding: 0 $lh-spacing-xl;
+
+    .moremenu .nav-link,
+    .nav-link {
+        border: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        border-bottom: 2px solid transparent !important;
+        color: $lh-text-secondary !important;
+        font-size: $lh-font-size-sm !important;
+        font-weight: 500;
+        padding: 12px 16px !important;
+        transition: $lh-transition;
+        margin-bottom: -1px;
+
+        &:hover {
+            color: $lh-text !important;
+            border-bottom-color: $lh-border !important;
+        }
+
+        &.active {
+            color: $lh-primary !important;
+            font-weight: 600 !important;
+            border-bottom-color: $lh-primary !important;
+            background: transparent !important;
+        }
+    }
+}
+
+// --- Course Sections ---
+body .course-section {
+    margin-bottom: $lh-spacing-md;
+    background: $lh-bg-white;
+    border-radius: $lh-radius;
+    border: 1px solid $lh-border-light;
+    overflow: hidden;
+
+    .section-header .course-section-header {
+        padding: $lh-spacing-md;
+    }
+
+    h3.sectionname {
+        font-size: $lh-font-size-lg !important;
+        font-weight: 600;
+        color: $lh-text;
+    }
+}
+
+// --- Activity Items (card-style matching mockup) ---
+body .activity {
+    border-radius: $lh-radius-sm;
+    border: 1px solid $lh-border-light;
+    transition: $lh-transition;
+    margin-bottom: $lh-spacing-sm;
+    background: $lh-bg-white;
+
+    &:hover {
+        border-color: $lh-primary;
+        box-shadow: $lh-shadow;
+        background: lighten($lh-primary-light, 2%) !important;
+    }
+
+    .activity-item {
+        padding: 12px $lh-spacing-md;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .activityname .instancename {
+        font-weight: 500;
+        font-size: $lh-font-size-sm;
+        color: $lh-text;
+    }
+
+    // Coloured icon backgrounds per activity type (matching mockup).
+    .activityiconcontainer {
+        border-radius: $lh-radius-sm;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    // Activity type icon colours (accessible via Moodle's data-activityname).
+    &[data-activityname="assign"] .activityiconcontainer {
+        background: $lh-danger-light;
+    }
+    &[data-activityname="forum"] .activityiconcontainer {
+        background: $lh-primary-light;
+    }
+    &[data-activityname="quiz"] .activityiconcontainer {
+        background: #f3e8ff; // light purple
+    }
+    &[data-activityname="page"] .activityiconcontainer,
+    &[data-activityname="label"] .activityiconcontainer {
+        background: $lh-secondary-light;
+    }
+    &[data-activityname="url"] .activityiconcontainer {
+        background: #fed7aa; // light orange
+    }
+    &[data-activityname="resource"] .activityiconcontainer,
+    &[data-activityname="folder"] .activityiconcontainer {
+        background: #ccfbf1; // light teal
+    }
+
+    .activity-completion .btn {
+        border-radius: $lh-radius-sm;
+        transition: $lh-transition;
+    }
+}
+
+// --- Activity Header (activity view pages — file, assignment, etc.) ---
+body .activity-header {
+    background: $lh-bg-white;
+    border-radius: $lh-radius;
+    padding: $lh-spacing-lg $lh-spacing-xl;
+    margin-bottom: $lh-spacing-md;
+    box-shadow: $lh-shadow;
+
+    .page-header-headings {
+        text-align: left;
+
+        h2 {
+            font-size: $lh-font-size-2xl !important;
+            font-weight: 700;
+        }
+    }
+
+    .activity-description {
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+        margin-top: $lh-spacing-sm;
+        line-height: 1.6;
+    }
+}
+
+// Activity info card (details, dates, etc.).
+body .activity-information {
+    background: $lh-bg-white;
+    border-radius: $lh-radius;
+    padding: $lh-spacing-lg;
+    margin-bottom: $lh-spacing-md;
+    box-shadow: $lh-shadow;
+
+    .activity-dates,
+    .activity-mod-content {
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+
+        .description-inner {
+            line-height: 1.6;
+        }
+    }
+}
+
+// Submission/grading area — clean card.
+body .submissionstatustable,
+body .gradingmanager,
+body [data-region="grading-navigation"],
+body .submissionlinks {
+    background: $lh-bg-white;
+    border-radius: $lh-radius;
+    padding: $lh-spacing-md $lh-spacing-lg;
+    margin-bottom: $lh-spacing-md;
+    box-shadow: $lh-shadow;
+}
+
+// File resource — clean download card.
+body.path-mod-resource {
+    .resourcecontent,
+    .resourceworkaround {
+        background: $lh-bg-white;
+        border-radius: $lh-radius;
+        padding: $lh-spacing-xl;
+        text-align: center;
+        box-shadow: $lh-shadow;
+
+        .resourceimage {
+            border-radius: $lh-radius-sm;
+            max-width: 100%;
+        }
+    }
+}
+
+// --- Course Index (Sidebar) ---
+body .courseindex .courseindex-item {
+    border-radius: $lh-radius-sm;
+    transition: $lh-transition;
+
+    &:hover {
+        background: $lh-primary-light;
+    }
+
+    &.active {
+        background: $lh-primary-light;
+        font-weight: 600;
+    }
+}
+
+// --- Course Index Drawer Panel ---
+// Consistent styling for the drawer toggle button and the course index header.
+body .drawer-toggles .drawer-toggler {
+    .btn {
+        border: 1px solid $lh-border !important;
+        border-radius: $lh-radius-sm !important;
+        background: $lh-bg-white !important;
+        color: $lh-text-secondary !important;
+        width: 32px;
+        height: 32px;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: $lh-transition;
+
+        &:hover {
+            border-color: $lh-primary !important;
+            color: $lh-primary !important;
+            background: $lh-primary-light !important;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+    }
+}
+
+// --- Course Section Collapse Icons (consistent chevrons) ---
+body .course-content .course-section .course-section-header {
+    // The collapse toggle icon.
+    .icons-collapse-expand,
+    .collapseexpand,
+    [data-toggle="collapse"],
+    .courseindex-chevron,
+    a[aria-expanded] {
+        .icon,
+        i.fa,
+        i.icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px !important;
+            height: 28px !important;
+            border-radius: 6px;
+            background: $lh-bg;
+            color: $lh-text-secondary;
+            font-size: 14px !important;
+            transition: $lh-transition;
+            margin: 0;
+        }
+
+        &:hover .icon,
+        &:hover i.fa,
+        &:hover i.icon {
+            background: $lh-primary-light;
+            color: $lh-primary;
+        }
+    }
+}
+
+// Drawer courseindex header — consistent toggle button.
+body .courseindex-header {
+    .btn,
+    button {
+        border: 1px solid $lh-border !important;
+        border-radius: 6px !important;
+        background: $lh-bg-white !important;
+        color: $lh-text-secondary !important;
+        padding: 4px !important;
+        transition: $lh-transition;
+
+        &:hover {
+            border-color: $lh-primary !important;
+            color: $lh-primary !important;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+    }
+}
+
+// Section collapse/expand chevron on course-view (Moodle 5.x).
+body.path-course-view {
+    // Collapse toggle icons for sections.
+    .section-chevron,
+    .courseindex-chevron,
+    .course-section-header [data-toggle="collapse"],
+    .section_action_menu ~ .sectiontoggle,
+    .course-section-header .collapsed-icon,
+    .course-section-header .expanded-icon {
+        .t-expanded,
+        .t-collapsed,
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px !important;
+            height: 28px !important;
+            min-width: 28px;
+            border-radius: 6px;
+            background: $lh-bg;
+            color: $lh-text-secondary !important;
+            transition: $lh-transition;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 14px;
+        }
+
+        &:hover .t-expanded,
+        &:hover .t-collapsed,
+        &:hover .icon {
+            background: $lh-primary-light;
+            color: $lh-primary !important;
+        }
+    }
+
+    // Course index drawer toggle (panel button in the top area).
+    .drawertoggle,
+    button[data-toggler="drawers"],
+    [data-action="closecourseindex"],
+    [data-action="opencourseindex"] {
+        border: 1px solid $lh-border !important;
+        border-radius: 6px !important;
+        background: $lh-bg-white !important;
+        color: $lh-text-secondary !important;
+        padding: 4px 6px !important;
+        transition: $lh-transition;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            border-color: $lh-primary !important;
+            color: $lh-primary !important;
+            background: $lh-primary-light !important;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            margin: 0 !important;
+        }
+    }
+}
+
+// --- Activity Chooser Modal ---
+body .modchooser,
+body .modal[data-region="activity-chooser-container"],
+body .modal:has(.modchoosercontainer) {
+    .modal-content {
+        border-radius: $lh-radius-lg !important;
+        overflow: hidden;
+        box-shadow: $lh-shadow-hover;
+    }
+
+    .modal-header {
+        background: $lh-bg !important;
+        border-bottom: 1px solid $lh-border-light;
+        padding: $lh-spacing-sm $lh-spacing-md;
+
+        .modal-title {
+            font-size: $lh-font-size-base;
+            font-weight: 600;
+            color: $lh-text;
+        }
+    }
+
+    .modal-body {
+        padding: $lh-spacing-sm;
+    }
+
+    // Activity item rows — clean hover, rounded icon, consistent spacing.
+    .optioninfo,
+    .option[data-internal],
+    [role="option"],
+    .chooser-option-container {
+        display: flex;
+        align-items: center;
+        padding: $lh-spacing-sm $lh-spacing-md;
+        border-radius: $lh-radius-sm;
+        transition: $lh-transition;
+        gap: $lh-spacing-sm;
+        cursor: pointer;
+
+        &:hover {
+            background: $lh-primary-light;
+        }
+
+        // Activity icon — rounded square with colour tint.
+        .activityiconcontainer,
+        .icon-container,
+        [data-region="icon-container"] {
+            width: 36px;
+            height: 36px;
+            border-radius: $lh-radius-sm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: $lh-primary-light;
+
+            img {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        // Activity name.
+        .optionname,
+        .option-name,
+        .activity-name-container {
+            font-size: $lh-font-size-sm;
+            font-weight: 500;
+            color: $lh-text;
+        }
+
+        // Info (i) button.
+        .option-actions,
+        .activity-actions {
+            margin-left: auto;
+
+            .btn {
+                color: $lh-text-light;
+                border: none;
+                padding: 4px;
+
+                &:hover {
+                    color: $lh-primary;
+                }
+            }
+        }
+    }
+
+    // Info / detail view (shown when clicking the i button).
+    .carousel-item,
+    .chooser-option-summary,
+    [data-region="chooser-option-summary"] {
+        padding: $lh-spacing-md;
+
+        .option-header,
+        .chooser-option-summary-header {
+            display: flex;
+            align-items: center;
+            gap: $lh-spacing-sm;
+            padding: $lh-spacing-sm $lh-spacing-md;
+            border: 2px solid $lh-primary;
+            border-radius: $lh-radius-sm;
+            margin-bottom: $lh-spacing-md;
+
+            .optionname,
+            .option-name {
+                font-size: $lh-font-size-lg;
+                font-weight: 600;
+            }
+        }
+
+        .option-description,
+        .chooser-option-summary-description {
+            font-size: $lh-font-size-sm;
+            color: $lh-text-secondary;
+            line-height: 1.5;
+            margin-bottom: $lh-spacing-md;
+        }
+
+        h5, .summary-section-header {
+            font-size: $lh-font-size-sm;
+            font-weight: 700;
+            margin-bottom: $lh-spacing-xs;
+        }
+
+        ul {
+            font-size: $lh-font-size-sm;
+            color: $lh-text-secondary;
+            padding-left: $lh-spacing-md;
+            line-height: 1.6;
+        }
+
+        a[href*="docs.moodle"],
+        a[href*="lernhive.de/help"] {
+            font-size: $lh-font-size-sm;
+            color: $lh-primary;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // Footer with Back / Add buttons.
+    .modal-footer,
+    .chooser-option-summary-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: $lh-spacing-sm $lh-spacing-md;
+        border-top: 1px solid $lh-border-light;
+
+        .btn-secondary,
+        .btn[data-action="close-chooser-option-summary"] {
+            border: 1px solid $lh-border;
+            border-radius: $lh-radius-sm;
+            background: $lh-bg-white;
+            color: $lh-text;
+            font-size: $lh-font-size-sm;
+        }
+
+        .btn-primary,
+        .btn[data-action="add-chooser-option"] {
+            background: $lh-primary;
+            border: none;
+            border-radius: $lh-radius-sm;
+            color: #fff;
+            font-size: $lh-font-size-sm;
+
+            &:hover {
+                background: $lh-primary-dark;
+            }
+        }
+    }
+}
+
+// --- Form pages (Course settings, Activity edit) ---
+body .mform {
+    fieldset .fheader {
+        font-weight: 600;
+        font-size: $lh-font-size-lg;
+        color: $lh-text;
+        padding-bottom: $lh-spacing-sm;
+        border-bottom: 1px solid $lh-border-light;
+        margin-bottom: $lh-spacing-md;
+    }
+
+    .fitem {
+        margin-bottom: $lh-spacing-md;
+
+        .form-control,
+        .custom-select {
+            border-radius: $lh-radius-sm !important;
+            border: 1px solid $lh-border;
+            transition: $lh-transition;
+
+            &:focus {
+                border-color: $lh-primary !important;
+                box-shadow: 0 0 0 3px rgba(25, 72, 102, 0.15) !important;
+            }
+        }
+    }
+}
+
+// --- LernHive Level Bar (injected by plugin in course context) ---
+.lernhive-level-bar {
+    display: flex;
+    align-items: center;
+    gap: $lh-spacing-md;
+    padding: $lh-spacing-sm $lh-spacing-md;
+    font-size: $lh-font-size-sm;
+    border-radius: 0;
+    background: $lh-primary-light;
+    color: $lh-primary-dark;
+    border-bottom: 1px solid rgba(25, 72, 102, 0.15);
+
+    .lernhive-level-info {
+        font-weight: 500;
+    }
+
+    .lernhive-next {
+        color: $lh-text-secondary;
+        font-size: $lh-font-size-xs;
+    }
+
+    .lernhive-lernpfad-link {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: $lh-font-size-xs;
+        font-weight: 600;
+        color: $lh-primary;
+        background: rgba(25, 72, 102, 0.08);
+        padding: 3px 10px;
+        border-radius: $lh-radius-pill;
+        text-decoration: none;
+        transition: $lh-transition;
+
+        &:hover {
+            background: $lh-primary;
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+}
+
+// --- Tables (Participants, Enrolment, Grades) ---
+body .generaltable,
+body .userlist table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+
+    th {
+        background: $lh-bg !important;
+        font-weight: 600;
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+        border-bottom: 2px solid $lh-border;
+        padding: $lh-spacing-sm $lh-spacing-md;
+    }
+
+    td {
+        padding: $lh-spacing-sm $lh-spacing-md;
+        border-bottom: 1px solid $lh-border-light;
+        font-size: $lh-font-size-sm;
+        vertical-align: middle;
+    }
+
+    tr:hover td {
+        background: rgba(25, 72, 102, 0.02);
+    }
+}
+
+// --- Grade table ---
+body .gradereport-grader-table th,
+body .gradereport-grader-table td,
+body .user-grade th,
+body .user-grade td {
+    font-size: $lh-font-size-sm;
+}

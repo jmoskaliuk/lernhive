@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the LernHive theme.
+ * Hook callbacks registration for theme_lernhive.
  *
  * @package    theme_lernhive
  * @copyright  2026 LernHive.de
@@ -24,8 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'theme_lernhive';
-$plugin->version = 2026041001;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.0';
+$callbacks = [
+    [
+        'hook' => core\hook\output\before_standard_head_html_generation::class,
+        'callback' => \theme_lernhive\hook_callbacks::class . '::before_standard_head_html',
+        'priority' => 500,
+    ],
+];

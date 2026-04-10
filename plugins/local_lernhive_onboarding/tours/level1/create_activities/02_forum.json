@@ -1,0 +1,44 @@
+{
+    "name": "LernHive: Forum erstellen",
+    "description": "Lerne, wie du ein Forum in deinem Kurs anlegst und konfigurierst.",
+    "pathmatch": "/course/modedit.php%",
+    "enabled": 1,
+    "sortorder": 1,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Willkommen zur Forumerstellung",
+            "content": "<p>Foren fördern Diskussionen und Austausch zwischen deinen Nutzer/innen. Sie sind ein wichtiges Werkzeug für Zusammenarbeit.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Forumname eingeben",
+            "content": "<p>Gib einen aussagekräftigen Namen ein, der beschreibt, worum es im Forum geht. Dies hilft Nutzer/innen, die richtige Diskussion zu finden.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_name",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Forumtyp auswählen",
+            "content": "<p>Wähle zwischen 'Standard', 'Frage und Antwort' oder 'Einfaches Diskussionsforum'. Der Typ bestimmt, wie Diskussionen strukturiert sind.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_type",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Forum speichern",
+            "content": "<p>Klick auf 'Speichern und anzeigen'. Dein Forum ist jetzt einsatzbereit und Nutzer/innen können diskutieren.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

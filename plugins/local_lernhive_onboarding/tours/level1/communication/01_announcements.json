@@ -1,0 +1,44 @@
+{
+    "name": "LernHive: Ankündigungen",
+    "description": "Lerne, wie du Ankündigungen in deinem Kurs postest, um wichtige Informationen zu teilen.",
+    "pathmatch": "/mod/forum/post.php%",
+    "enabled": 1,
+    "sortorder": 0,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Willkommen zu Ankündigungen",
+            "content": "<p>Das Ankündigungsforum ist die beste Möglichkeit, alle Nutzer/innen deines Kurses schnell zu informieren. Nutzer/innen werden per E-Mail benachrichtigt.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Betreffzeile eingeben",
+            "content": "<p>Schreibe eine aussagekräftige Betreffzeile. Sie wird in der Ankündigungsliste angezeigt und sollte kurz und klar sein.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_subject",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Ankündigungstext verfassen",
+            "content": "<p>Schreibe deine Ankündigung. Halte sie prägnant und präzise, damit Nutzer/innen die wichtigsten Informationen schnell erfassen können.</p>",
+            "targettype": 2,
+            "targetvalue": "[data-fieldtype=\"editor\"]",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Ankündigung posten",
+            "content": "<p>Klick auf 'Beitrag veröffentlichen'. Alle eingeschriebenen Nutzer/innen erhalten sofort eine Benachrichtigung über die Ankündigung.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}
