@@ -15,18 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive Launcher plugin version metadata.
+ * Renderer for LernHive Discovery.
  *
- * @package    local_lernhive_launcher
+ * @package    local_lernhive_discovery
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_launcher';
-$plugin->version   = 2026041002;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = ['local_lernhive' => 2026040901];
+/**
+ * Plugin renderer.
+ */
+class local_lernhive_discovery_renderer extends plugin_renderer_base {
+    /**
+     * Render the Explore page.
+     *
+     * @param \local_lernhive_discovery\output\explore $explore
+     * @return string
+     */
+    public function render_explore(\local_lernhive_discovery\output\explore $explore): string {
+        $context = $explore->export_for_template($this);
+
+        if (theme_config::load('lernhive')->name === 'lernhive') {
+            return $this->render_from_template('theme_lernhive/explore_shell', $context);
+        }
+
+        return $this->render_from_template('local_lernhive_discovery/explore', $context);
+    }
+}
+

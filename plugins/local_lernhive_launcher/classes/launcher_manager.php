@@ -15,18 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive Launcher plugin version metadata.
+ * Launcher context helper for theme and page integrations.
  *
  * @package    local_lernhive_launcher
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_lernhive_launcher;
+
+use local_lernhive_launcher\output\launcher;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_launcher';
-$plugin->version   = 2026041002;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = ['local_lernhive' => 2026040901];
+/**
+ * Helper for building launcher template context outside the plugin page.
+ */
+class launcher_manager {
+    /**
+     * Build launcher context for a hosting theme shell.
+     *
+     * @param bool $isdock
+     * @return array<string, mixed>
+     */
+    public static function get_theme_context(bool $isdock = false): array {
+        global $PAGE;
+
+        $renderable = new launcher(action_provider::get_visible_actions());
+        $renderer = $PAGE->get_renderer('local_lernhive_launcher');
+        $context = $renderable->export_for_template($renderer);
+        $context['launcherisbase'] = !$isdock;
+        $context['launcherisdock'] = $isdock;
+
+        return $context;
+    }
+}

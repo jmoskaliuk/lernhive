@@ -15,18 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive Launcher plugin version metadata.
+ * Privacy provider for LernHive Discovery.
  *
- * @package    local_lernhive_launcher
+ * @package    local_lernhive_discovery
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_lernhive_discovery\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_launcher';
-$plugin->version   = 2026041002;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = ['local_lernhive' => 2026040901];
+/**
+ * Null provider for the plugin.
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Explain why no personal data is stored.
+     *
+     * @return string
+     */
+    public static function get_reason(): string {
+        return 'privacy:null_reason';
+    }
+}
+

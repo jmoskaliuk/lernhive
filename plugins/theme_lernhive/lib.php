@@ -178,7 +178,7 @@ function theme_lernhive_pluginfile($course, $cm, $context, $filearea, $args, $fo
  * @return array<string, mixed>
  */
 function theme_lernhive_get_launcher_context(): array {
-    $context = [
+    $fallbackcontext = [
         'title' => get_string('launcher', 'theme_lernhive'),
         'description' => get_string('launcherdesc', 'theme_lernhive'),
         'empty' => true,
@@ -186,31 +186,13 @@ function theme_lernhive_get_launcher_context(): array {
         'actions' => [],
     ];
 
-    if (!class_exists(\local_lernhive_launcher\action_provider::class)) {
-        return $context;
+    if (!class_exists(\local_lernhive_launcher\launcher_manager::class)) {
+        return $fallbackcontext;
     }
 
-    $actions = [];
-    foreach (\local_lernhive_launcher\action_provider::get_visible_actions() as $action) {
-        $actions[] = [
-            'id' => $action->id,
-            'label' => $action->label,
-            'description' => $action->description,
-            'url' => $action->url->out(false),
-            'iscreatecourse' => $action->icon === 'book-open',
-            'iscontenthub' => $action->icon === 'layout-grid',
-            'iscreatesnack' => $action->icon === 'circle-play',
-            'iscreatecommunity' => $action->icon === 'users',
-        ];
+    try {
+        return \local_lernhive_launcher\launcher_manager::get_theme_context();
+    } catch (\Throwable $e) {
+        return $fallbackcontext;
     }
-
-    if (!empty($actions)) {
-        $context['title'] = get_string('launchertitle', 'local_lernhive_launcher');
-        $context['description'] = get_string('launcherintro', 'local_lernhive_launcher');
-        $context['empty'] = false;
-        $context['emptytext'] = get_string('noactionsavailable', 'local_lernhive_launcher');
-        $context['actions'] = $actions;
-    }
-
-    return $context;
 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive Launcher plugin version metadata.
+ * Hook callbacks for local_lernhive_launcher.
  *
  * @package    local_lernhive_launcher
  * @copyright  2026 LernHive.de
@@ -24,9 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_launcher';
-$plugin->version   = 2026041002;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = ['local_lernhive' => 2026040901];
+$callbacks = [
+    [
+        'hook' => core\hook\output\before_standard_top_of_body_html_generation::class,
+        'callback' => \local_lernhive_launcher\hook_callbacks::class . '::before_standard_top_of_body_html',
+        'priority' => 600,
+    ],
+];

@@ -15,18 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive Launcher plugin version metadata.
+ * Minimal Create Snack entry page.
  *
- * @package    local_lernhive_launcher
+ * @package    local_lernhive_discovery
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../config.php');
 
-$plugin->component = 'local_lernhive_launcher';
-$plugin->version   = 2026041002;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = ['local_lernhive' => 2026040901];
+require_login();
+
+$systemcontext = context_system::instance();
+$PAGE->set_context($systemcontext);
+$PAGE->set_url(new moodle_url('/local/lernhive_discovery/createsnack.php'));
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('createsnacktitle', 'local_lernhive_discovery'));
+$PAGE->set_heading(get_string('createsnacktitle', 'local_lernhive_discovery'));
+
+echo $OUTPUT->header();
+echo html_writer::tag('div',
+    html_writer::tag('p', get_string('createsnacksummary', 'local_lernhive_discovery')) .
+    html_writer::tag('p', get_string('createsnacknote', 'local_lernhive_discovery')),
+    ['class' => 'alert alert-info']
+);
+echo $OUTPUT->footer();
+

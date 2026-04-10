@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive Launcher plugin version metadata.
+ * LernHive Discovery plugin version metadata.
  *
- * @package    local_lernhive_launcher
+ * @package    local_lernhive_discovery
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_launcher';
-$plugin->version   = 2026041002;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = ['local_lernhive' => 2026040901];
+$plugin->component = 'local_lernhive_discovery';
+$plugin->version = 2026041101;
+$plugin->requires = 2024100700;
+$plugin->maturity = MATURITY_ALPHA;
+$plugin->release = '0.1.0';
+
