@@ -77,3 +77,14 @@ Reference family:
   - `circle-play`
   - `pen-line`
   - `flag`
+- `mockups/explore.html` uses:
+  - `compass`
+  - `book-open`
+  - `users`
+  - `layers`
+  - `chart-column`
+  - `search`
+  - `circle-play`
+  - `star`
+  - `bookmark`
+  - `arrow-right`

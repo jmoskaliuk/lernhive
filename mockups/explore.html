@@ -61,6 +61,10 @@ body{
   gap:10px;
 }
 .navitem{
+  display:grid;
+  grid-template-columns:38px 1fr;
+  gap:10px;
+  align-items:center;
   padding:12px 14px;
   border-radius:16px;
   background:transparent;
@@ -75,12 +79,48 @@ body{
   margin-bottom:2px;
   font-size:15px;
 }
+.navicon{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:rgba(255,255,255,.12);
+}
+.navicon svg,
+.launchicon svg,
+.type svg,
+.icon svg,
+.ghost svg,
+.pill svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 .launchcard{
   margin-top:auto;
   background:rgba(255,247,235,.1);
   border:1px solid rgba(255,255,255,.12);
   border-radius:20px;
   padding:16px;
+}
+.launchrow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.launchicon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:#fff;
+  color:var(--accent);
 }
 .launchcard h2{
   margin:0 0 10px;
@@ -253,7 +293,6 @@ body{
   border:1px solid var(--line);
   background:#fff;
   color:var(--nav);
-  font-weight:700;
 }
 .star{
   color:var(--accent);
@@ -328,6 +367,56 @@ body{
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-plus" viewBox="0 0 24 24">
+    <path d="M12 5v14"></path>
+    <path d="M5 12h14"></path>
+  </symbol>
+  <symbol id="icon-compass" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="m15.5 8.5-2.7 7-7 2.7 2.7-7z"></path>
+  </symbol>
+  <symbol id="icon-book-open" viewBox="0 0 24 24">
+    <path d="M12 7v14"></path>
+    <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+    <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+  </symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+    <circle cx="9" cy="7" r="4"></circle>
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+  </symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24">
+    <path d="m12 3-9 4.5L12 12l9-4.5z"></path>
+    <path d="m3 12 9 4.5 9-4.5"></path>
+    <path d="m3 16.5 9 4.5 9-4.5"></path>
+  </symbol>
+  <symbol id="icon-chart-column" viewBox="0 0 24 24">
+    <path d="M3 3v18h18"></path>
+    <path d="M7 16v-5"></path>
+    <path d="M12 16V8"></path>
+    <path d="M17 16v-9"></path>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="m21 21-4.3-4.3"></path>
+  </symbol>
+  <symbol id="icon-circle-play" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="m10 8 6 4-6 4Z"></path>
+  </symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24">
+    <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"></path>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+  </symbol>
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M5 12h14"></path>
+    <path d="m12 5 7 7-7 7"></path>
+  </symbol>
+</svg>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
@@ -337,16 +426,21 @@ body{
     </div>
 
     <nav class="nav">
-      <div class="navitem active"><strong>Explore</strong><span>LXP home</span></div>
-      <div class="navitem"><strong>My Learning</strong><span>Courses and progress</span></div>
-      <div class="navitem"><strong>Communities</strong><span>Audience-relevant spaces</span></div>
-      <div class="navitem"><strong>Topics</strong><span>Optional orientation layer</span></div>
-      <div class="navitem"><strong>Reports</strong><span>Simple learning visibility</span></div>
+      <div class="navitem active"><div class="navicon"><svg aria-hidden="true"><use href="#icon-compass"></use></svg></div><div><strong>Explore</strong><span>LXP home</span></div></div>
+      <div class="navitem"><div class="navicon"><svg aria-hidden="true"><use href="#icon-book-open"></use></svg></div><div><strong>My Learning</strong><span>Courses and progress</span></div></div>
+      <div class="navitem"><div class="navicon"><svg aria-hidden="true"><use href="#icon-users"></use></svg></div><div><strong>Communities</strong><span>Audience-relevant spaces</span></div></div>
+      <div class="navitem"><div class="navicon"><svg aria-hidden="true"><use href="#icon-layers"></use></svg></div><div><strong>Topics</strong><span>Optional orientation layer</span></div></div>
+      <div class="navitem"><div class="navicon"><svg aria-hidden="true"><use href="#icon-chart-column"></use></svg></div><div><strong>Reports</strong><span>Simple learning visibility</span></div></div>
     </nav>
 
     <div class="launchcard">
-      <h2>Launcher</h2>
-      <div class="hint">Action-oriented surface for creating and managing content. It is not full navigation.</div>
+      <div class="launchrow">
+        <div class="launchicon"><svg aria-hidden="true"><use href="#icon-plus"></use></svg></div>
+        <div>
+          <h2>Launcher</h2>
+          <div class="hint">Action-oriented surface for creating and managing content. It is not full navigation.</div>
+        </div>
+      </div>
       <div class="launchbtn">Open launcher</div>
     </div>
   </aside>
@@ -358,8 +452,8 @@ body{
         <p>A calm, guided LXP home focused on recent relevance. Ranking stays explainable: community and Audience context first, snacks preferred, last 7 days matter, no likes.</p>
       </div>
       <div class="utility">
-        <div class="pill">Notifications</div>
-        <div class="pill">Profile</div>
+        <div class="pill"><svg aria-hidden="true"><use href="#icon-layers"></use></svg>Topics</div>
+        <div class="pill"><svg aria-hidden="true"><use href="#icon-users"></use></svg>Profile</div>
       </div>
     </div>
 
@@ -367,7 +461,7 @@ body{
       <div class="eyebrow">Optional LXP Flavour</div>
       <div class="herohead">
         <div>
-          <div class="search">Search courses, snacks, communities, and topics</div>
+          <div class="search"><svg aria-hidden="true" style="vertical-align:-3px;margin-right:8px"><use href="#icon-search"></use></svg>Search courses, snacks, communities, and topics</div>
           <div class="chips">
             <div class="chip">Leadership</div>
             <div class="chip">Teaching</div>
@@ -390,10 +484,10 @@ body{
       <div class="grid">
         <article class="card">
           <div class="cardtop">
-            <div class="type">Snack</div>
+            <div class="type"><svg aria-hidden="true"><use href="#icon-circle-play"></use></svg>Snack</div>
             <div class="actions">
-              <div class="icon star">★</div>
-              <div class="icon">⌁</div>
+              <div class="icon star"><svg aria-hidden="true"><use href="#icon-star"></use></svg></div>
+              <div class="icon"><svg aria-hidden="true"><use href="#icon-bookmark"></use></svg></div>
             </div>
           </div>
           <h4>Feedback in teams</h4>
@@ -405,16 +499,16 @@ body{
           </div>
           <div class="reason">Shown because this is new in your community and still within the recent 7-day relevance window.</div>
           <div class="cardcta">
-            <div class="ghost">Open snack</div>
+            <div class="ghost"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg>Open snack</div>
             <div class="micro">10–30 min format</div>
           </div>
         </article>
 
         <article class="card">
           <div class="cardtop">
-            <div class="type">Community</div>
+            <div class="type"><svg aria-hidden="true"><use href="#icon-users"></use></svg>Community</div>
             <div class="actions">
-              <div class="icon">⌁</div>
+              <div class="icon"><svg aria-hidden="true"><use href="#icon-bookmark"></use></svg></div>
             </div>
           </div>
           <h4>Design Circle</h4>
@@ -425,7 +519,7 @@ body{
           </div>
           <div class="reason">Shown because you belong to this community and there is a relevant community update.</div>
           <div class="cardcta">
-            <div class="ghost">Open community</div>
+            <div class="ghost"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg>Open community</div>
             <div class="micro">Digest by default</div>
           </div>
         </article>
@@ -440,10 +534,10 @@ body{
       <div class="grid">
         <article class="card">
           <div class="cardtop">
-            <div class="type">Course</div>
+            <div class="type"><svg aria-hidden="true"><use href="#icon-book-open"></use></svg>Course</div>
             <div class="actions">
-              <div class="icon star">★</div>
-              <div class="icon">⌁</div>
+              <div class="icon star"><svg aria-hidden="true"><use href="#icon-star"></use></svg></div>
+              <div class="icon"><svg aria-hidden="true"><use href="#icon-bookmark"></use></svg></div>
             </div>
           </div>
           <h4>Onboarding Essentials</h4>
@@ -454,16 +548,16 @@ body{
           </div>
           <div class="reason">Shown because you follow this course. Bookmark alone would not create this relevance signal.</div>
           <div class="cardcta">
-            <div class="ghost">Open course</div>
+            <div class="ghost"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg>Open course</div>
             <div class="micro">Follow-driven signal</div>
           </div>
         </article>
 
         <article class="card">
           <div class="cardtop">
-            <div class="type">Snack</div>
+            <div class="type"><svg aria-hidden="true"><use href="#icon-circle-play"></use></svg>Snack</div>
             <div class="actions">
-              <div class="icon">⌁</div>
+              <div class="icon"><svg aria-hidden="true"><use href="#icon-bookmark"></use></svg></div>
             </div>
           </div>
           <h4>Quick retrospective template</h4>
@@ -474,7 +568,7 @@ body{
           </div>
           <div class="reason">Shown because it is recent, lightweight, and relevant to content you already follow.</div>
           <div class="cardcta">
-            <div class="ghost">Open snack</div>
+            <div class="ghost"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg>Open snack</div>
             <div class="micro">Recent relevance</div>
           </div>
         </article>
@@ -489,10 +583,10 @@ body{
       <div class="grid">
         <article class="card">
           <div class="cardtop">
-            <div class="type">Snack</div>
+            <div class="type"><svg aria-hidden="true"><use href="#icon-circle-play"></use></svg>Snack</div>
             <div class="actions">
-              <div class="icon star">★</div>
-              <div class="icon">⌁</div>
+              <div class="icon star"><svg aria-hidden="true"><use href="#icon-star"></use></svg></div>
+              <div class="icon"><svg aria-hidden="true"><use href="#icon-bookmark"></use></svg></div>
             </div>
           </div>
           <h4>Better stand-ups</h4>
@@ -503,7 +597,7 @@ body{
           </div>
           <div class="reason">Shown because snacks are preferred when the content is recent and broadly relevant.</div>
           <div class="cardcta">
-            <div class="ghost">Start snack</div>
+            <div class="ghost"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg>Start snack</div>
             <div class="micro">Lightweight learning</div>
           </div>
         </article>
@@ -518,9 +612,9 @@ body{
       <div class="grid">
         <article class="card">
           <div class="cardtop">
-            <div class="type">Course</div>
+            <div class="type"><svg aria-hidden="true"><use href="#icon-book-open"></use></svg>Course</div>
             <div class="actions">
-              <div class="icon">⌁</div>
+              <div class="icon"><svg aria-hidden="true"><use href="#icon-bookmark"></use></svg></div>
             </div>
           </div>
           <h4>Leading hybrid classrooms</h4>
@@ -531,7 +625,7 @@ body{
           </div>
           <div class="reason">Shown because it matches your current topics and recent audience context.</div>
           <div class="cardcta">
-            <div class="ghost">Open course</div>
+            <div class="ghost"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg>Open course</div>
             <div class="micro">Broader Explore</div>
           </div>
         </article>
