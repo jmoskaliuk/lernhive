@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LernHive Dashboard Concept A</title>
+<style>
+:root{
+  --bg:#f3f5f8;
+  --panel:#ffffff;
+  --panel-soft:#f3f5f8;
+  --ink:#353535;
+  --muted:#194866;
+  --line:#e9e9e9;
+  --nav:#194866;
+  --nav-soft:#65a1b3;
+  --accent:#f98012;
+  --accent-soft:#ffecdb;
+  --warn:#ffe39e;
+  --danger:#f6c4bb;
+  --mint:#a9cbd5;
+  --radius-xl:30px;
+  --radius-lg:24px;
+  --radius-md:18px;
+  --shadow:0 18px 40px rgba(25,72,102,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;
+  background:
+    radial-gradient(circle at top left,#ffecdb 0,transparent 26rem),
+    linear-gradient(180deg,#ffffff 0,var(--bg) 100%);
+  color:var(--ink);
+}
+.app{min-height:100vh;display:grid;grid-template-columns:280px 1fr}
+.sidebar{
+  display:flex;flex-direction:column;gap:26px;padding:28px 22px;
+  color:#f8f1e8;background:linear-gradient(180deg,var(--nav) 0,var(--nav-soft) 100%);
+}
+.brand{padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.14)}
+.brand h1{margin:0 0 6px;font-size:32px}
+.brand p,.navitem span,.launchmeta,.priority p{margin:0;color:rgba(248,241,232,.78);line-height:1.45}
+.nav{display:grid;gap:10px}
+.navitem{padding:12px 14px;border-radius:16px;border:1px solid transparent}
+.navitem.active{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
+.navitem strong{display:block;margin-bottom:2px;font-size:15px}
+.launchcard{border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:16px;background:rgba(255,255,255,.1)}
+.launchmeta strong,.priority strong{display:block;color:#fff}
+.priority{margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)}
+.main{padding:28px}
+.topbar{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;
+  padding:24px;border:1px solid var(--line);border-radius:var(--radius-xl);
+  background:linear-gradient(135deg,#ffffff 0,#f3f5f8 100%);box-shadow:var(--shadow);
+}
+.eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:12px;font-weight:700}
+.topbar h2{margin:8px 0 10px;font-size:42px}
+.topbar p{margin:0;max-width:720px;color:var(--muted);line-height:1.55}
+.utility{display:flex;gap:10px;flex-wrap:wrap}
+.pill{padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--nav);font-weight:700}
+.layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:18px;margin-top:20px;align-items:start}
+.stack{display:grid;gap:16px}
+.panel{
+  padding:18px;border:1px solid var(--line);border-radius:24px;
+  background:rgba(255,255,255,.96);box-shadow:0 12px 24px rgba(25,72,102,.08);
+}
+.panel h3{margin:0 0 10px;font-size:20px;color:var(--nav)}
+.panel p{margin:0;color:var(--muted);line-height:1.45}
+.metricgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.metric{padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.metric strong{display:block;font-size:28px;color:var(--nav)}
+.metric span{color:var(--muted);font-size:14px}
+.queue{display:grid;gap:12px;margin-top:14px}
+.queueitem{padding:14px;border-radius:18px;border:1px solid var(--line);background:#fff}
+.queueitem.warn{background:#fff7df}
+.queueitem.danger{background:#fff0ec}
+.queueitem strong{display:block;margin-bottom:4px;color:var(--nav)}
+.queueitem span{color:var(--muted);font-size:14px;line-height:1.4}
+.cta{display:inline-flex;align-items:center;justify-content:center;margin-top:10px;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel-soft);color:var(--nav);font-weight:700}
+.content{display:grid;gap:16px}
+.section{
+  padding:18px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.96);
+  box-shadow:0 12px 24px rgba(25,72,102,.08);
+}
+.sectionhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sectionhead h3{margin:0;color:var(--nav);font-size:24px}
+.sectionhead span{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{padding:16px;border:1px solid var(--line);border-radius:22px;background:#fff}
+.tag{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.card h4{margin:12px 0 8px;font-size:22px;color:var(--nav)}
+.card p{margin:0;color:var(--muted);line-height:1.45}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;color:var(--muted);font-size:13px}
+.ctarow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.ghost{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--nav);font-weight:700}
+.micro{color:var(--accent);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+@media (max-width: 1180px){
+  .layout{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
+}
+@media (max-width: 900px){
+  .app{grid-template-columns:1fr}
+  .topbar{display:block}
+  .utility{margin-top:16px}
+  .metricgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>LernHive</h1>
+      <p>Daily dashboard with strong operational priority and calm visual hierarchy.</p>
+    </div>
+    <nav class="nav">
+      <div class="navitem active"><strong>Home</strong><span>Daily learning surface</span></div>
+      <div class="navitem"><strong>My Learning</strong><span>Courses and Snacks</span></div>
+      <div class="navitem"><strong>ContentHub</strong><span>Copy, Template, Library</span></div>
+      <div class="navitem"><strong>Reports</strong><span>Simple overview</span></div>
+    </nav>
+    <section class="launchcard">
+      <div class="launchmeta">
+        <strong>Launcher</strong>
+        <p>Action surface for quick create and management tasks.</p>
+      </div>
+    </section>
+    <section class="priority">
+      <strong>Direction A</strong>
+      <p>Daily first. Strong fit for School and role-based work where due, continue, and next action matter more than broad discovery.</p>
+    </section>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Dashboard concept A</div>
+        <h2>What needs attention today?</h2>
+        <p>This dashboard reduces scanning cost by separating urgency from continuation and discovery. It is designed as a handlungsoberflaeche, not as a content wall.</p>
+      </div>
+      <div class="utility">
+        <div class="pill">School flavour</div>
+        <div class="pill">Teacher</div>
+        <div class="pill">24 learners active</div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="stack">
+        <section class="panel">
+          <h3>Immediate attention</h3>
+          <p>Only the most important due and overdue items appear here.</p>
+          <div class="queue">
+            <div class="queueitem danger">
+              <strong>New hire orientation</strong>
+              <span>Past due for 5 learners. Action recommended today.</span>
+              <div class="cta">Review now</div>
+            </div>
+            <div class="queueitem warn">
+              <strong>Security awareness essentials</strong>
+              <span>Due soon for your current cohort.</span>
+              <div class="cta">Open course</div>
+            </div>
+            <div class="queueitem">
+              <strong>Feedback in teams</strong>
+              <span>Recently updated Snack with strong current relevance.</span>
+              <div class="cta">Open snack</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Quick status</h3>
+          <p>Compact metrics, not a heavy analytics dashboard.</p>
+          <div class="metricgrid">
+            <div class="metric"><strong>3</strong><span>past due</span></div>
+            <div class="metric"><strong>5</strong><span>due soon</span></div>
+            <div class="metric"><strong>18</strong><span>in progress</span></div>
+          </div>
+        </section>
+      </aside>
+
+      <div class="content">
+        <section class="section">
+          <div class="sectionhead">
+            <h3>Continue learning</h3>
+            <span>Resume what is already active</span>
+          </div>
+          <div class="cards">
+            <article class="card">
+              <div class="tag">Course</div>
+              <h4>Introduction to Hybrid Teaching</h4>
+              <p>Continue where you left off. One section remains open for this week.</p>
+              <div class="meta"><span>In progress</span><span>24 learners</span></div>
+              <div class="ctarow"><div class="ghost">Resume</div><div class="micro">Continue</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">Snack</div>
+              <h4>Better stand-ups</h4>
+              <p>Short item already started and still relevant this week.</p>
+              <div class="meta"><span>15 minutes</span><span>Recent</span></div>
+              <div class="ctarow"><div class="ghost">Resume</div><div class="micro">Short form</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">Community</div>
+              <h4>Design Circle</h4>
+              <p>Relevant discussion activity continues in your current audience context.</p>
+              <div class="meta"><span>Community</span><span>Digest default</span></div>
+              <div class="ctarow"><div class="ghost">Open</div><div class="micro">Nearby</div></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="sectionhead">
+            <h3>Next useful actions</h3>
+            <span>Clear paths, not too many options</span>
+          </div>
+          <div class="cards">
+            <article class="card">
+              <div class="tag">Launcher</div>
+              <h4>Create a new course</h4>
+              <p>Start a structured learning space with the main guided creation flow.</p>
+              <div class="ctarow"><div class="ghost">Open launcher</div><div class="micro">Core action</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">ContentHub</div>
+              <h4>Reuse existing content</h4>
+              <p>Go to Copy, Template, or Library without mixing their responsibilities.</p>
+              <div class="ctarow"><div class="ghost">Open ContentHub</div><div class="micro">Reuse</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">Report</div>
+              <h4>Check completion</h4>
+              <p>Open a small reporting drilldown instead of a large analytics cockpit.</p>
+              <div class="ctarow"><div class="ghost">Open report</div><div class="micro">Operate</div></div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
