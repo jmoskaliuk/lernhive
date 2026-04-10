@@ -473,18 +473,36 @@ fi
 if [[ -n "$LERNHIVE_DOMAIN" ]]; then
   step "Patching Moodle config.php for https://$LERNHIVE_DOMAIN"
 
-  # Rewrite wwwroot. Moodle writes it as:
-  #   $CFG->wwwroot   = 'http://localhost:8000';
-  # We replace the single-quoted URL with our public HTTPS URL.
-  docker exec -w / "$CONTAINER_NAME" sh -c "
-    set -e
-    f=$CONFIG_PHP_PATH
-    # wwwroot:
-    sed -i \"s|\\\$CFG->wwwroot\\s*=\\s*'[^']*';|\\\$CFG->wwwroot   = 'https://$LERNHIVE_DOMAIN';|\" \"\$f\"
-    # sslproxy: insert right after wwwroot if not already present.
-    grep -q 'sslproxy' \"\$f\" || \
-      sed -i \"/\\\$CFG->wwwroot/a \\\\\$CFG->sslproxy  = true;\" \"\$f\"
-  " && ok "config.php rewritten (wwwroot + sslproxy)"
+  # Patch config.php via a PHP script copied into the container.
+  # Using PHP avoids multi-layer bash→sh→sed escaping of $CFG variables.
+  _patch=$(mktemp /tmp/lernhive_patch.XXXXXX.php)
+  cat > "$_patch" << 'ENDPHP'
+<?php
+[, $file, $domain] = $argv;
+$c = file_get_contents($file);
+if ($c === false) { fwrite(STDERR, "Cannot read $file\n"); exit(1); }
+$c = preg_replace(
+    '/\$CFG->wwwroot\s*=\s*\'[^\']*\';/',
+    "\$CFG->wwwroot   = 'https://{$domain}';",
+    $c
+);
+if (strpos($c, 'sslproxy') === false) {
+    $c = preg_replace(
+        '/(\$CFG->wwwroot\s*=[^\n]+\n)/',
+        "$1\$CFG->sslproxy  = true;\n",
+        $c
+    );
+}
+file_put_contents($file, $c);
+echo "OK\n";
+ENDPHP
+  docker cp "$_patch" "${CONTAINER_NAME}:/tmp/patch_config.php"
+  rm -f "$_patch"
+  docker exec -w / "$CONTAINER_NAME" \
+    php /tmp/patch_config.php "$CONFIG_PHP_PATH" "$LERNHIVE_DOMAIN" \
+    && ok "config.php rewritten (wwwroot + sslproxy)" \
+    || die "config.php patch failed — check /tmp/patch_config.php in the container"
+  docker exec -w / "$CONTAINER_NAME" rm -f /tmp/patch_config.php
 fi
 
 # ---------------------------------------------------------------------------
