@@ -15,7 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Flavour plugin version and dependencies.
+ * Post-install hook for local_lernhive_flavour.
+ *
+ * Sets 'school' as the initial active flavour so that freshly installed
+ * LernHive sites have a sane default and the flavour_manager never
+ * has to fall back on a hardcoded string.
  *
  * @package    local_lernhive_flavour
  * @copyright  2026 LernHive.de
@@ -24,11 +28,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_flavour';
-$plugin->version = 2026041002;
-$plugin->requires = 2024100700; // Moodle 4.5+
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.2.0';
-$plugin->dependencies = [
-    'local_lernhive' => 2026040901,
-];
+/**
+ * Install hook.
+ */
+function xmldb_local_lernhive_flavour_install() {
+    // Store the initial default flavour. We do NOT auto-apply its settings
+    // here because local_lernhive may not have installed its settings yet
+    // when this install hook runs. The admin is routed to the flavour
+    // picker via local_lernhive_flavour_setup on first login.
+    if (!get_config('local_lernhive_flavour', 'active_flavour')) {
+        set_config('active_flavour', 'school', 'local_lernhive_flavour');
+    }
+}

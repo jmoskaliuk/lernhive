@@ -1,0 +1,82 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_lernhive_flavour/flavour_picker
+
+    Flavour setup picker: one card per registered flavour profile.
+
+    Context:
+    {
+        "heading": "Flavour Setup",
+        "intro": "Choose a flavour to apply its defaults.",
+        "activelabel": "School",
+        "activekey": "school",
+        "cards": [
+            {
+                "key": "school",
+                "label": "School",
+                "description": "Traditional LMS for schools.",
+                "icon": "🏫",
+                "isactive": true,
+                "experimental": false,
+                "overrides": false,
+                "sesskey": "abcd1234"
+            }
+        ]
+    }
+}}
+<div class="lh-flavour-container">
+    <div class="lh-flavour-intro">
+        <h2>{{heading}}</h2>
+        <p>{{intro}}</p>
+    </div>
+
+    <div class="lh-flavour-cards" role="list">
+        {{#cards}}
+            <div class="lh-flavour-card{{#isactive}} lh-flavour-card--active{{/isactive}}{{#experimental}} lh-flavour-card--experimental{{/experimental}}" role="listitem">
+                {{#isactive}}
+                    <span class="lh-flavour-badge lh-flavour-badge--active">{{#str}}badge_active, local_lernhive_flavour{{/str}}</span>
+                {{/isactive}}
+                {{#experimental}}
+                    <span class="lh-flavour-badge lh-flavour-badge--experimental">{{#str}}badge_experimental, local_lernhive_flavour{{/str}}</span>
+                {{/experimental}}
+
+                <div class="lh-flavour-icon" aria-hidden="true">{{{icon}}}</div>
+                <h3 class="lh-flavour-title">{{label}}</h3>
+                <p class="lh-flavour-desc">{{description}}</p>
+
+                <form method="post" action="admin_flavour.php" class="lh-flavour-form">
+                    <input type="hidden" name="action" value="{{#overrides}}confirm{{/overrides}}{{^overrides}}apply{{/overrides}}">
+                    <input type="hidden" name="flavour" value="{{key}}">
+                    <input type="hidden" name="sesskey" value="{{sesskey}}">
+                    <button
+                        type="submit"
+                        class="btn {{#isactive}}btn-secondary disabled{{/isactive}}{{^isactive}}btn-primary{{/isactive}}"
+                        {{#isactive}}disabled aria-disabled="true"{{/isactive}}
+                    >
+                        {{#isactive}}{{#str}}btn_current, local_lernhive_flavour{{/str}}{{/isactive}}
+                        {{^isactive}}{{#str}}btn_apply, local_lernhive_flavour{{/str}}{{/isactive}}
+                    </button>
+                </form>
+            </div>
+        {{/cards}}
+    </div>
+
+    <div class="lh-flavour-current">
+        {{#str}}current_flavour, local_lernhive_flavour, {{activelabel}}{{/str}}
+    </div>
+</div>
