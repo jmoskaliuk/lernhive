@@ -93,6 +93,7 @@ body{
   font-size:15px;
 }
 .navicon,
+.launchcardicon,
 .searchicon,
 .queueicon,
 .tagicon,
@@ -106,6 +107,7 @@ body{
   background:rgba(255,255,255,.08);
 }
 .navicon svg,
+.launchcardicon svg,
 .searchicon svg,
 .queueicon svg,
 .tagicon svg,
@@ -119,9 +121,17 @@ body{
   stroke-linejoin:round;
 }
 .launchcard{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
   padding:16px;
   border:1px solid rgba(255,255,255,.12);
   background:rgba(255,255,255,.06);
+}
+.launchcardicon{
+  width:34px;
+  height:34px;
+  background:rgba(255,255,255,.1);
 }
 .launchcard strong,.meta strong{
   display:block;
@@ -423,6 +433,10 @@ body{
     <rect x="3" y="13" width="8" height="8" rx="2"></rect>
     <rect x="13" y="13" width="8" height="8" rx="2"></rect>
   </symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24">
+    <path d="M12 5v14"></path>
+    <path d="M5 12h14"></path>
+  </symbol>
   <symbol id="icon-arrow-right" viewBox="0 0 24 24">
     <path d="M5 12h14"></path>
     <path d="m12 5 7 7-7 7"></path>
@@ -443,8 +457,11 @@ body{
     </nav>
 
     <section class="launchcard">
-      <strong>Launcher</strong>
-      <p>Action-oriented surface with a more architectural visual language.</p>
+      <div class="launchcardicon"><svg aria-hidden="true"><use href="#icon-plus"></use></svg></div>
+      <div>
+        <strong>Launcher</strong>
+        <p>Action-oriented surface with a more architectural visual language.</p>
+      </div>
     </section>
 
     <section class="meta">

@@ -36,6 +36,33 @@ body{
   padding:28px;
   box-shadow:0 18px 36px rgba(22,48,56,.08);
 }
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+.tool{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--nav);
+  font-weight:700;
+}
+.tool svg,
+.cta svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 .eyebrow{
   color:var(--accent);
   text-transform:uppercase;
@@ -93,6 +120,7 @@ h1{
   margin-top:auto;
   display:inline-flex;
   align-items:center;
+  gap:8px;
   justify-content:center;
   padding:10px 14px;
   border-radius:999px;
@@ -115,32 +143,71 @@ h1{
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="m21 21-4.3-4.3"></path>
+  </symbol>
+  <symbol id="icon-sliders-horizontal" viewBox="0 0 24 24">
+    <path d="M3 6h18"></path>
+    <path d="M7 12h14"></path>
+    <path d="M3 18h10"></path>
+    <circle cx="14" cy="6" r="2"></circle>
+    <circle cx="5" cy="12" r="2"></circle>
+    <circle cx="17" cy="18" r="2"></circle>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12"></path>
+    <path d="m7 10 5 5 5-5"></path>
+    <path d="M5 21h14"></path>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </symbol>
+  <symbol id="icon-file-stack" viewBox="0 0 24 24">
+    <path d="M7 18a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l4 4v10a2 2 0 0 1-2 2z"></path>
+    <path d="M15 2v4h4"></path>
+    <path d="M5 22h12"></path>
+  </symbol>
+  <symbol id="icon-archive" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="4" rx="1"></rect>
+    <path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"></path>
+    <path d="M10 12h4"></path>
+  </symbol>
+</svg>
 <div class="wrap">
   <section class="hero">
     <div class="eyebrow">Orchestration Layer</div>
     <h1>ContentHub</h1>
     <p class="intro">ContentHub is the UI layer that helps users choose how to start. It does not own Copy or Library logic. Template stays conceptually separate from managed Library content.</p>
 
+    <div class="toolbar">
+      <div class="tool"><svg aria-hidden="true"><use href="#icon-search"></use></svg>Search content paths</div>
+      <div class="tool"><svg aria-hidden="true"><use href="#icon-sliders-horizontal"></use></svg>Filter entries</div>
+      <div class="tool"><svg aria-hidden="true"><use href="#icon-download"></use></svg>Library import guide</div>
+    </div>
+
     <div class="grid">
       <article class="card">
         <h2>Copy</h2>
         <p>Reuse an existing course from the current Moodle system with a simple guided flow.</p>
         <div class="tag copy">Separate responsibility</div>
-        <div class="cta">Open copy flow</div>
+        <div class="cta"><svg aria-hidden="true"><use href="#icon-copy"></use></svg>Open copy flow</div>
       </article>
 
       <article class="card">
         <h2>Template</h2>
         <p>Start from a predefined structure. Templates are conceptually different from managed Library content.</p>
         <div class="tag template">Separate concept</div>
-        <div class="cta">Choose template</div>
+        <div class="cta"><svg aria-hidden="true"><use href="#icon-file-stack"></use></svg>Choose template</div>
       </article>
 
       <article class="card">
         <h2>Library</h2>
         <p>Import managed `.mbz` content. Release 1 does not require a complex end-user library management interface.</p>
         <div class="tag library">Managed import</div>
-        <div class="cta">Import from library</div>
+        <div class="cta"><svg aria-hidden="true"><use href="#icon-archive"></use></svg>Import from library</div>
       </article>
     </div>
 
