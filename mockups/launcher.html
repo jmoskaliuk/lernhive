@@ -6,14 +6,14 @@
 <title>LernHive Launcher Mockup</title>
 <style>
 :root{
-  --bg:#f3ede5;
-  --panel:#fffdf9;
-  --ink:#183038;
-  --muted:#66777b;
-  --line:#d9d0c2;
-  --nav:#17343d;
-  --accent:#c96d3d;
-  --accent-soft:#fff1e3;
+  --bg:#f3f5f8;
+  --panel:#ffffff;
+  --ink:#353535;
+  --muted:#194866;
+  --line:#e9e9e9;
+  --nav:#194866;
+  --accent:#f98012;
+  --accent-soft:#ffecdb;
 }
 *{box-sizing:border-box}
 body{
@@ -22,8 +22,8 @@ body{
   display:grid;
   place-items:center;
   padding:32px;
-  font-family:"Avenir Next","Trebuchet MS",sans-serif;
-  background:radial-gradient(circle at top,#fff8ef 0,transparent 24rem),var(--bg);
+  font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;
+  background:radial-gradient(circle at top,#ffecdb 0,transparent 24rem),var(--bg);
   color:var(--ink);
 }
 .shell{
@@ -37,14 +37,13 @@ body{
   overflow:hidden;
 }
 .sidebar{
-  background:linear-gradient(180deg,var(--nav) 0,#264853 100%);
+  background:linear-gradient(180deg,var(--nav) 0,#65a1b3 100%);
   color:#f8f1e8;
   padding:24px;
 }
 .sidebar h1{
   margin:0 0 8px;
-  font-family:Georgia,serif;
-  font-weight:600;
+  font-weight:700;
 }
 .sidebar p{color:rgba(248,241,232,.72);line-height:1.45}
 .panel{
@@ -62,9 +61,8 @@ body{
 }
 .panel h2{
   margin:10px 0 8px;
-  font-family:Georgia,serif;
   font-size:38px;
-  font-weight:600;
+  font-weight:700;
 }
 .intro{
   color:var(--muted);
@@ -86,8 +84,7 @@ body{
 .item h3{
   margin:0 0 8px;
   font-size:22px;
-  font-family:Georgia,serif;
-  font-weight:600;
+  font-weight:700;
 }
 .item p{
   margin:0;
@@ -100,7 +97,7 @@ body{
   padding:8px 12px;
   border-radius:999px;
   background:var(--accent-soft);
-  color:#7f4727;
+  color:var(--accent);
   font-weight:700;
   font-size:12px;
   letter-spacing:.04em;
@@ -111,8 +108,8 @@ body{
   padding:14px 16px;
   border-left:4px solid var(--accent);
   border-radius:0 16px 16px 0;
-  background:#fff4ea;
-  color:#71472f;
+  background:#ffecdb;
+  color:var(--ink);
 }
 @media (max-width: 900px){
   .shell{grid-template-columns:1fr}

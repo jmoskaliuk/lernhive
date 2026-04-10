@@ -6,22 +6,22 @@
 <title>LernHive ContentHub Mockup</title>
 <style>
 :root{
-  --bg:#f4eee6;
-  --panel:#fffdf8;
-  --ink:#163038;
-  --muted:#64777a;
-  --line:#d8cfc1;
-  --accent:#c96d3d;
-  --accent-soft:#fff0e0;
-  --mint:#e2eee6;
+  --bg:#f3f5f8;
+  --panel:#ffffff;
+  --ink:#353535;
+  --muted:#194866;
+  --line:#e9e9e9;
+  --accent:#f98012;
+  --accent-soft:#ffecdb;
+  --mint:#a9cbd5;
 }
 *{box-sizing:border-box}
 body{
   margin:0;
   padding:34px;
-  font-family:"Avenir Next","Trebuchet MS",sans-serif;
+  font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;
   color:var(--ink);
-  background:linear-gradient(180deg,#faf4ec 0,var(--bg) 100%);
+  background:linear-gradient(180deg,#ffffff 0,var(--bg) 100%);
 }
 .wrap{
   max-width:1120px;
@@ -43,9 +43,8 @@ body{
 }
 h1{
   margin:10px 0 10px;
-  font-family:Georgia,serif;
   font-size:42px;
-  font-weight:600;
+  font-weight:700;
 }
 .intro{
   max-width:720px;
@@ -66,9 +65,8 @@ h1{
 }
 .card h2{
   margin:0 0 8px;
-  font-family:Georgia,serif;
   font-size:28px;
-  font-weight:600;
+  font-weight:700;
 }
 .card p{
   margin:0 0 14px;
@@ -84,16 +82,16 @@ h1{
   letter-spacing:.04em;
   text-transform:uppercase;
 }
-.copy{background:#eef1f3;color:#294149}
-.template{background:var(--accent-soft);color:#7d4829}
-.library{background:var(--mint);color:#295244}
+.copy{background:#f3f5f8;color:var(--nav)}
+.template{background:var(--accent-soft);color:var(--accent)}
+.library{background:var(--mint);color:var(--nav)}
 .note{
   margin-top:22px;
   padding:14px 16px;
   border-left:4px solid var(--accent);
   border-radius:0 16px 16px 0;
-  background:#fff5eb;
-  color:#734b33;
+  background:#ffecdb;
+  color:var(--ink);
 }
 @media (max-width: 900px){
   .grid{grid-template-columns:1fr}
