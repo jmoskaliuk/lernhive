@@ -25,3 +25,4 @@
 - verify sidebar navigation remains readable when Moodle flat navigation output changes
 - verify course pages keep content central and helper content secondary
 - verify Snack-oriented constraints are not contradicted by the course page shell
+- verify Snack header and step-flow components keep short-form learning visually distinct from full course presentation

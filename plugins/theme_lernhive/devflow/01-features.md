@@ -12,6 +12,7 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
 - reusable Explore shell pieces for the optional LXP Flavour, without moving discovery logic into the theme
 - reusable ContentHub shell pieces that keep Copy, Template, and Library visually aligned but conceptually separate
 - a dedicated course page shell that keeps the main learning content central and treats helper content as secondary
+- reusable short-form components for Snack-oriented headers and compact step flows without turning Snacks into full course pages
 
 ## Theme rules
 - the theme does not contain business logic

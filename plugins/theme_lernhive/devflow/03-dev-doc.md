@@ -30,6 +30,7 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - Explore shell components in the theme should remain generic enough for `local_lernhive_discovery` to supply the actual block content
 - ContentHub shell components in the theme should support orchestration UI only and avoid absorbing Copy or Library logic
 - course and incourse layouts should use a dedicated shell so the course page can be tuned separately from generic Moodle pages
+- short-form Snack presentation should be prepared through reusable header and step-flow partials, not by hardcoding business rules into the course layout
 
 ## Current dependencies
 - Moodle theme APIs
@@ -52,3 +53,4 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - treat Explore as a themed page pattern with hero, feed sections, and card presentation; ranking and block assembly remain plugin responsibilities
 - treat ContentHub as a themed decision surface that routes into distinct plugin flows for Copy, Template, and Library
 - treat course pages as content-first surfaces; Context Helper and block output may appear in a secondary helper area instead of becoming primary navigation
+- treat Snack-oriented surfaces as short-form presentation variants with visible duration, compact actions, and linear step treatment; actual Snack detection remains outside the theme

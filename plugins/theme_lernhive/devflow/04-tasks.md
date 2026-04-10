@@ -18,6 +18,7 @@
 - connect the new Explore shell components to real `local_lernhive_discovery` output without hardcoding feed data in the theme
 - connect a real ContentHub screen to the new orchestration shell without re-merging Copy, Template, and Library responsibilities
 - validate the new course layout against standard Moodle course pages and later against Snack-specific constraints
+- validate new Snack header and step-flow partials against real short-form plugin output when available
 
 ## Open questions
 - exact Moodle theme extension points for the left navigation treatment

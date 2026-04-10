@@ -1,0 +1,19 @@
+<section class="lernhive-snack-flow" aria-labelledby="{{ sectionid }}">
+    <div class="lernhive-snack-flow__head">
+        <div>
+            <h2 id="{{ sectionid }}" class="lernhive-snack-flow__title">{{ title }}</h2>
+            {{#summary}}
+                <p class="lernhive-snack-flow__summary">{{ summary }}</p>
+            {{/summary}}
+        </div>
+        {{#note}}
+            <p class="lernhive-snack-flow__note">{{ note }}</p>
+        {{/note}}
+    </div>
+
+    <div class="lernhive-snack-flow__steps">
+        {{#steps}}
+            {{> theme_lernhive/snack_step }}
+        {{/steps}}
+    </div>
+</section>
