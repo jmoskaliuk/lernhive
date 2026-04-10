@@ -17,6 +17,10 @@
   --accent:#f98012;
   --accent-soft:#ffecdb;
   --mint:#a9cbd5;
+  --soft:#f3f5f8;
+  --radius-lg:28px;
+  --radius-md:22px;
+  --radius-sm:16px;
   --shadow:0 18px 40px rgba(25,72,102,.12);
 }
 *{box-sizing:border-box}
@@ -90,6 +94,7 @@ body{
   background:#ffffff;
   color:var(--accent);
   font-weight:700;
+  border:1px solid rgba(255,255,255,.35);
 }
 .main{
   padding:28px;
@@ -120,14 +125,14 @@ body{
   padding:10px 14px;
   border-radius:999px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.72);
-  color:var(--ink);
+  background:rgba(255,255,255,.88);
+  color:var(--nav);
   font-weight:600;
 }
 .hero{
   background:linear-gradient(135deg,#ffffff 0,#f3f5f8 56%,#ffecdb 100%);
   border:1px solid var(--line);
-  border-radius:28px;
+  border-radius:var(--radius-lg);
   padding:22px;
   box-shadow:var(--shadow);
   margin-bottom:24px;
@@ -152,6 +157,7 @@ body{
   background:var(--panel);
   border:1px solid var(--line);
   color:var(--muted);
+  font-weight:600;
 }
 .chips{
   display:flex;
@@ -170,7 +176,7 @@ body{
 .heroaside{
   min-width:240px;
   padding:16px;
-  border-radius:18px;
+  border-radius:var(--radius-sm);
   background:var(--panel-strong);
   border:1px solid #f4d1af;
 }
@@ -211,7 +217,7 @@ body{
 .card{
   background:rgba(255,255,255,.96);
   border:1px solid var(--line);
-  border-radius:22px;
+  border-radius:var(--radius-md);
   padding:18px;
   box-shadow:0 10px 24px rgba(25,72,102,.08);
 }
@@ -246,7 +252,7 @@ body{
   border-radius:999px;
   border:1px solid var(--line);
   background:#fff;
-  color:var(--ink);
+  color:var(--nav);
   font-weight:700;
 }
 .star{
@@ -263,6 +269,31 @@ body{
   margin:0 0 10px;
   color:var(--muted);
   line-height:1.45;
+}
+.cardcta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-top:16px;
+}
+.ghost{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--nav);
+  font-weight:700;
+}
+.micro{
+  font-size:12px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:700;
 }
 .meta{
   display:flex;
@@ -373,6 +404,10 @@ body{
             <small>Updated today</small>
           </div>
           <div class="reason">Shown because this is new in your community and still within the recent 7-day relevance window.</div>
+          <div class="cardcta">
+            <div class="ghost">Open snack</div>
+            <div class="micro">10–30 min format</div>
+          </div>
         </article>
 
         <article class="card">
@@ -389,6 +424,10 @@ body{
             <small>Digest default</small>
           </div>
           <div class="reason">Shown because you belong to this community and there is a relevant community update.</div>
+          <div class="cardcta">
+            <div class="ghost">Open community</div>
+            <div class="micro">Digest by default</div>
+          </div>
         </article>
       </div>
     </section>
@@ -414,6 +453,10 @@ body{
             <small>Discussion update</small>
           </div>
           <div class="reason">Shown because you follow this course. Bookmark alone would not create this relevance signal.</div>
+          <div class="cardcta">
+            <div class="ghost">Open course</div>
+            <div class="micro">Follow-driven signal</div>
+          </div>
         </article>
 
         <article class="card">
@@ -430,6 +473,10 @@ body{
             <small>Recent and lightweight</small>
           </div>
           <div class="reason">Shown because it is recent, lightweight, and relevant to content you already follow.</div>
+          <div class="cardcta">
+            <div class="ghost">Open snack</div>
+            <div class="micro">Recent relevance</div>
+          </div>
         </article>
       </div>
     </section>
@@ -455,6 +502,10 @@ body{
             <small>Snack-friendly ranking</small>
           </div>
           <div class="reason">Shown because snacks are preferred when the content is recent and broadly relevant.</div>
+          <div class="cardcta">
+            <div class="ghost">Start snack</div>
+            <div class="micro">Lightweight learning</div>
+          </div>
         </article>
       </div>
     </section>
@@ -479,6 +530,10 @@ body{
             <small>Explainable ranking</small>
           </div>
           <div class="reason">Shown because it matches your current topics and recent audience context.</div>
+          <div class="cardcta">
+            <div class="ghost">Open course</div>
+            <div class="micro">Broader Explore</div>
+          </div>
         </article>
       </div>
     </section>

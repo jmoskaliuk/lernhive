@@ -12,8 +12,10 @@
   --muted:#194866;
   --line:#e9e9e9;
   --nav:#194866;
+  --nav-soft:#65a1b3;
   --accent:#f98012;
   --accent-soft:#ffecdb;
+  --soft:#f3f5f8;
 }
 *{box-sizing:border-box}
 body{
@@ -37,7 +39,7 @@ body{
   overflow:hidden;
 }
 .sidebar{
-  background:linear-gradient(180deg,var(--nav) 0,#65a1b3 100%);
+  background:linear-gradient(180deg,var(--nav) 0,var(--nav-soft) 100%);
   color:#f8f1e8;
   padding:24px;
 }
@@ -80,6 +82,9 @@ body{
   border-radius:22px;
   border:1px solid var(--line);
   background:#fff;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 .item h3{
   margin:0 0 8px;
@@ -102,6 +107,18 @@ body{
   font-size:12px;
   letter-spacing:.04em;
   text-transform:uppercase;
+}
+.cta{
+  margin-top:auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--soft);
+  color:var(--nav);
+  font-weight:700;
 }
 .note{
   margin-top:22px;
@@ -134,36 +151,42 @@ body{
         <h3>Create course</h3>
         <p>Start a new course flow without leaving the current context.</p>
         <div class="tag">Primary action</div>
+        <div class="cta">Start</div>
       </article>
 
       <article class="item">
         <h3>Open ContentHub</h3>
         <p>Enter the orchestration layer for Copy, Template, and Library entry points.</p>
         <div class="tag">Content actions</div>
+        <div class="cta">Open</div>
       </article>
 
       <article class="item">
         <h3>Create snack</h3>
         <p>Start a lightweight 10–30 minute learning item with a simple guided flow.</p>
         <div class="tag">LXP action</div>
+        <div class="cta">Start</div>
       </article>
 
       <article class="item">
         <h3>Create community</h3>
         <p>Open the setup flow for a Community without turning the Launcher into navigation.</p>
         <div class="tag">LXP action</div>
+        <div class="cta">Open</div>
       </article>
 
       <article class="item">
         <h3>Library import</h3>
         <p>Jump directly into managed content import when the Library path is relevant.</p>
         <div class="tag">Managed content</div>
+        <div class="cta">Import</div>
       </article>
 
       <article class="item">
         <h3>Add users</h3>
         <p>Open a common admin action without exposing too many decisions at once.</p>
         <div class="tag">Admin action</div>
+        <div class="cta">Open</div>
       </article>
     </section>
 
