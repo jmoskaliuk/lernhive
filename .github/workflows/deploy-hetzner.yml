@@ -1,0 +1,155 @@
+name: Deploy to Hetzner
+
+# Triggers:
+#   A) Auto-deploy on push to main when plugin code or deploy logic changes.
+#   C) Manual trigger via workflow_dispatch with optional plugin filter
+#      and skip flags — the "I know what I'm doing" button.
+#
+# Both triggers invoke `lernhive-deploy` via SSH on the Hetzner server.
+# That wrapper runs `git fetch && git reset --hard origin/main` and then
+# hands off to playbooks/deploy.sh --target=hetzner.
+#
+# Required GitHub repository secrets (Settings → Secrets and variables → Actions):
+#   HETZNER_HOST         Server hostname or IP (e.g. 178.104.117.88 or lernhive.de)
+#   HETZNER_USER         SSH login user (e.g. "deploy")
+#   HETZNER_SSH_KEY      Private SSH key (ed25519 recommended), matching a pubkey
+#                        in the server's /home/deploy/.ssh/authorized_keys
+#   HETZNER_KNOWN_HOSTS  Output of `ssh-keyscan -t ed25519 <host>` — pins the
+#                        server's host key to prevent MITM on first connect.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/**'
+      - 'playbooks/deploy.sh'
+      - 'playbooks/deploy.hetzner.env'
+      - 'playbooks/server-deploy.sh'
+      - '.github/workflows/deploy-hetzner.yml'
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: 'Deploy only this plugin (leave empty to deploy all). Example: local_lernhive_onboarding'
+        required: false
+        type: string
+        default: ''
+      skip_upgrade:
+        description: 'Skip admin/cli/upgrade.php'
+        required: false
+        type: boolean
+        default: false
+      skip_purge:
+        description: 'Skip admin/cli/purge_caches.php'
+        required: false
+        type: boolean
+        default: false
+
+# Never run two deploys at the same time. Queue instead of cancel, so an
+# in-flight deploy isn't interrupted mid-rsync.
+concurrency:
+  group: deploy-hetzner
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Show trigger context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          PLUGIN: ${{ inputs.plugin }}
+          SKIP_UPGRADE: ${{ inputs.skip_upgrade }}
+          SKIP_PURGE: ${{ inputs.skip_purge }}
+        run: |
+          echo "Event:   $EVENT_NAME"
+          echo "Ref:     $REF"
+          echo "SHA:     $SHA"
+          echo "Actor:   $ACTOR"
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "Plugin:       '${PLUGIN:-<all>}'"
+            echo "Skip upgrade: ${SKIP_UPGRADE:-false}"
+            echo "Skip purge:   ${SKIP_PURGE:-false}"
+          fi
+
+      - name: Load SSH private key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.HETZNER_SSH_KEY }}
+
+      - name: Pin known_hosts
+        env:
+          KNOWN_HOSTS: ${{ secrets.HETZNER_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Build deploy command and run over SSH
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_USER: ${{ secrets.HETZNER_USER }}
+          EVENT_NAME: ${{ github.event_name }}
+          PLUGIN: ${{ inputs.plugin }}
+          SKIP_UPGRADE: ${{ inputs.skip_upgrade }}
+          SKIP_PURGE: ${{ inputs.skip_purge }}
+        run: |
+          set -euo pipefail
+
+          CMD="lernhive-deploy"
+
+          # Only apply workflow_dispatch inputs if this is a manual trigger.
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            if [[ -n "${PLUGIN:-}" ]]; then
+              # Validate plugin name: frankenstyle = [a-z][a-z0-9_]*
+              # This also prevents any shell injection via the input field.
+              if [[ ! "$PLUGIN" =~ ^[a-z][a-z0-9_]*$ ]]; then
+                echo "::error::Invalid plugin name: '$PLUGIN' (must match ^[a-z][a-z0-9_]*$)"
+                exit 1
+              fi
+              CMD="$CMD --plugin=$PLUGIN"
+            fi
+            if [[ "${SKIP_UPGRADE:-false}" == "true" ]]; then
+              CMD="$CMD --no-upgrade"
+            fi
+            if [[ "${SKIP_PURGE:-false}" == "true" ]]; then
+              CMD="$CMD --no-purge"
+            fi
+          fi
+
+          echo "::group::Deploy command"
+          echo "$CMD"
+          echo "::endgroup::"
+
+          # StrictHostKeyChecking=yes + pinned known_hosts = safe.
+          ssh \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 \
+            -o ServerAliveInterval=30 \
+            "$HETZNER_USER@$HETZNER_HOST" \
+            "$CMD"
+
+      - name: Failure hints
+        if: failure()
+        run: |
+          cat <<'EOF'
+          ::error::Deploy failed. Common causes:
+          -------------------------------------------------------------------
+          1. SSH auth — verify HETZNER_SSH_KEY matches a pubkey in the
+             deploy user's authorized_keys on the server.
+          2. Host key changed — if you reinstalled the server, refresh the
+             HETZNER_KNOWN_HOSTS secret:
+               ssh-keyscan -t ed25519 <host> | grep -v '^#'
+          3. lernhive-deploy missing — run playbooks/provision.sh on the
+             server to (re)install /usr/local/bin/lernhive-deploy.
+          4. deploy.hetzner.env values — CONTAINER / MOODLE_ROOT /
+             MOODLE_CLI_ROOT may not match the actual container layout.
+             SSH in and run: docker exec -it <container> ls /var/www
+          5. Docker permission — deploy user must be in the "docker" group.
+          -------------------------------------------------------------------
+          EOF
