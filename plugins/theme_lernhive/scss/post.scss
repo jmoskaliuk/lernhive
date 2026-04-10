@@ -153,6 +153,24 @@
   gap: .75rem;
 }
 
+.lernhive-course-header__utilities {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.lernhive-course-header__tool {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .92);
+  color: var(--lernhive-blue);
+}
+
 .lernhive-page-content {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -281,6 +299,9 @@
 .lernhive-launcher__action:focus-visible,
 .lernhive-launcher__dock-item:focus-visible,
 .lernhive-contenthub__tool:focus-visible,
+.lernhive-explore-hero__tool:focus-visible,
+.lernhive-course-header__tool:focus-visible,
+.lernhive-card-section__tool:focus-visible,
 .lernhive-hub-tile__cta:focus-visible,
 .lernhive-card__cta:focus-visible,
 .lernhive-card__icon:focus-visible {
@@ -299,7 +320,14 @@
 .lernhive-launcher__action-icon svg,
 .lernhive-launcher__dock-item svg,
 .lernhive-contenthub__tool svg,
-.lernhive-hub-tile__cta-icon svg {
+.lernhive-hub-tile__cta-icon svg,
+.lernhive-explore-hero__search-icon svg,
+.lernhive-explore-hero__tool svg,
+.lernhive-course-header__tool svg,
+.lernhive-card__type-icon svg,
+.lernhive-card-section__tool svg,
+.lernhive-card__cta-icon svg,
+.lernhive-card__icon svg {
   width: 1.125rem;
   height: 1.125rem;
   stroke: currentColor;
@@ -611,6 +639,44 @@
   line-height: 1.55;
 }
 
+.lernhive-explore-hero__search {
+  display: inline-flex;
+  align-items: center;
+  gap: .625rem;
+  margin-top: 1rem;
+  padding: .875rem 1rem;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 1.125rem;
+  background: rgba(255, 255, 255, .92);
+  color: var(--lernhive-blue);
+  font-weight: 600;
+}
+
+.lernhive-explore-hero__search-icon {
+  width: 1rem;
+  height: 1rem;
+  display: grid;
+  place-items: center;
+}
+
+.lernhive-explore-hero__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+}
+
+.lernhive-explore-hero__tool {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .92);
+  color: var(--lernhive-blue);
+}
+
 .lernhive-explore-hero__note {
   width: min(18rem, 100%);
   padding: 1rem;
@@ -655,6 +721,12 @@
   gap: 1rem;
 }
 
+.lernhive-card-section__head-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
 .lernhive-card-section__title {
   margin: 0;
   color: var(--lernhive-blue);
@@ -670,6 +742,18 @@
   color: var(--lernhive-orange);
   font-weight: 700;
   text-decoration: none;
+}
+
+.lernhive-card-section__tool {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 999px;
+  background: var(--lernhive-white);
+  color: var(--lernhive-blue);
 }
 
 .lernhive-card-section__grid {
@@ -706,6 +790,7 @@
 .lernhive-card__type {
   display: inline-flex;
   align-items: center;
+  gap: .5rem;
   min-height: 2rem;
   padding: .375rem .75rem;
   border-radius: 999px;
@@ -715,6 +800,14 @@
   font-weight: 700;
   letter-spacing: .04em;
   text-transform: uppercase;
+}
+
+.lernhive-card__type-icon,
+.lernhive-card__cta-icon {
+  width: 1rem;
+  height: 1rem;
+  display: grid;
+  place-items: center;
 }
 
 .lernhive-card__actions {
@@ -759,6 +852,9 @@
 }
 
 .lernhive-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
   justify-self: start;
   padding: .625rem .95rem;
   border-radius: 999px;

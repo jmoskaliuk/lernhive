@@ -5,15 +5,31 @@
 
     <div class="lernhive-card__top">
         {{#type}}
-            <span class="lernhive-card__type">{{ type }}</span>
+            <span class="lernhive-card__type">
+                <span class="lernhive-card__type-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="m10 8 6 4-6 4Z"></path>
+                    </svg>
+                </span>
+                <span>{{ type }}</span>
+            </span>
         {{/type}}
 
         <div class="lernhive-card__actions">
             {{#follow}}
-                <button class="lernhive-card__icon is-following" type="button" aria-label="{{#str}} follow, theme_lernhive {{/str}}">★</button>
+                <button class="lernhive-card__icon is-following" type="button" aria-label="{{#str}} follow, theme_lernhive {{/str}}">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"></path>
+                    </svg>
+                </button>
             {{/follow}}
             {{#bookmark}}
-                <button class="lernhive-card__icon" type="button" aria-label="{{#str}} bookmark, theme_lernhive {{/str}}">⌑</button>
+                <button class="lernhive-card__icon" type="button" aria-label="{{#str}} bookmark, theme_lernhive {{/str}}">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
             {{/bookmark}}
         </div>
     </div>
@@ -29,6 +45,14 @@
     {{/meta}}
 
     {{#primaryactionlabel}}
-        <a class="lernhive-card__cta" href="{{ primaryactionurl }}">{{ primaryactionlabel }}</a>
+        <a class="lernhive-card__cta" href="{{ primaryactionurl }}">
+            <span class="lernhive-card__cta-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                </svg>
+            </span>
+            <span>{{ primaryactionlabel }}</span>
+        </a>
     {{/primaryactionlabel}}
 </article>

@@ -9,6 +9,16 @@
             {{#summary}}
                 <p class="lernhive-explore-hero__summary">{{ summary }}</p>
             {{/summary}}
+
+            <div class="lernhive-explore-hero__search" role="search">
+                <span class="lernhive-explore-hero__search-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </span>
+                <span>{{#str}} exploresearch, theme_lernhive {{/str}}</span>
+            </div>
         </div>
 
         {{#note}}
@@ -17,6 +27,23 @@
                 <p class="lernhive-explore-hero__note-copy">{{ note }}</p>
             </aside>
         {{/note}}
+    </div>
+
+    <div class="lernhive-explore-hero__tools" aria-label="{{#str}} exploretools, theme_lernhive {{/str}}">
+        <button class="lernhive-explore-hero__tool" type="button" aria-label="{{#str}} exploredownload, theme_lernhive {{/str}}" title="{{#str}} exploredownload, theme_lernhive {{/str}}">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 21h14"></path>
+            </svg>
+        </button>
+        <button class="lernhive-explore-hero__tool" type="button" aria-label="{{#str}} exploremore, theme_lernhive {{/str}}" title="{{#str}} exploremore, theme_lernhive {{/str}}">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <circle cx="5" cy="12" r="1.7"></circle>
+                <circle cx="12" cy="12" r="1.7"></circle>
+                <circle cx="19" cy="12" r="1.7"></circle>
+            </svg>
+        </button>
     </div>
 
     {{#chips.0}}

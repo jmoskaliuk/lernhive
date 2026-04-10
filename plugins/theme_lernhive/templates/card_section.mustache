@@ -6,9 +6,25 @@
                 <p class="lernhive-card-section__description">{{ description }}</p>
             {{/description}}
         </div>
-        {{#linklabel}}
-            <a class="lernhive-card-section__link" href="{{ linkurl }}">{{ linklabel }}</a>
-        {{/linklabel}}
+        <div class="lernhive-card-section__head-actions">
+            <button class="lernhive-card-section__tool" type="button" aria-label="{{#str}} sectiondownload, theme_lernhive {{/str}}" title="{{#str}} sectiondownload, theme_lernhive {{/str}}">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <path d="M12 3v12"></path>
+                    <path d="m7 10 5 5 5-5"></path>
+                    <path d="M5 21h14"></path>
+                </svg>
+            </button>
+            <button class="lernhive-card-section__tool" type="button" aria-label="{{#str}} sectionmore, theme_lernhive {{/str}}" title="{{#str}} sectionmore, theme_lernhive {{/str}}">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <circle cx="5" cy="12" r="1.7"></circle>
+                    <circle cx="12" cy="12" r="1.7"></circle>
+                    <circle cx="19" cy="12" r="1.7"></circle>
+                </svg>
+            </button>
+            {{#linklabel}}
+                <a class="lernhive-card-section__link" href="{{ linkurl }}">{{ linklabel }}</a>
+            {{/linklabel}}
+        </div>
     </div>
 
     <div class="lernhive-card-section__grid">
