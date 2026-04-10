@@ -36,6 +36,13 @@ LernHive should feel calmer, clearer, and more guided than standard Moodle witho
 - Context Helper for the next useful action in the current place
 - card actions for content relationships like Follow and Bookmark
 
+### Launcher pattern
+- Launcher should start as a single icon in the left navigation
+- clicking the icon should open a small flyout with the most important actions
+- for frequent tasks, the launcher may also expose a compact dock-like row of icons
+- the launcher must remain action-oriented and must not become a second site navigation
+- if too many actions are needed, route the user into a dedicated surface such as ContentHub
+
 ## Component system
 
 ### Page shell
@@ -55,6 +62,7 @@ LernHive should feel calmer, clearer, and more guided than standard Moodle witho
 - primary actions should be visually distinct and used sparingly
 - secondary actions should stay calm
 - utility pills should not compete with core actions
+- icon-first actions should still remain understandable and accessible
 
 ### Status and emphasis
 - orange for primary emphasis and important action cues

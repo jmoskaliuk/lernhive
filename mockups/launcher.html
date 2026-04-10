@@ -16,43 +16,171 @@
   --accent:#f98012;
   --accent-soft:#ffecdb;
   --soft:#f3f5f8;
+  --shadow:0 22px 40px rgba(25,72,102,.16);
 }
 *{box-sizing:border-box}
 body{
   margin:0;
   min-height:100vh;
-  display:grid;
-  place-items:center;
   padding:32px;
   font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;
-  background:radial-gradient(circle at top,#ffecdb 0,transparent 24rem),var(--bg);
+  background:
+    radial-gradient(circle at top left,#ffecdb 0,transparent 26rem),
+    linear-gradient(180deg,#ffffff 0,var(--bg) 100%);
   color:var(--ink);
 }
 .shell{
-  width:min(1120px,100%);
+  width:min(1220px,100%);
+  margin:0 auto;
   display:grid;
-  grid-template-columns:260px 1fr;
-  gap:20px;
-}
-.sidebar,.panel{
-  border-radius:28px;
-  overflow:hidden;
+  grid-template-columns:280px 1fr;
+  gap:24px;
 }
 .sidebar{
   background:linear-gradient(180deg,var(--nav) 0,var(--nav-soft) 100%);
   color:#f8f1e8;
-  padding:24px;
+  border-radius:28px;
+  padding:24px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
 }
-.sidebar h1{
-  margin:0 0 8px;
+.brand{
+  padding:4px 10px 14px;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+.brand h1{
+  margin:0 0 6px;
+  font-size:30px;
   font-weight:700;
 }
-.sidebar p{color:rgba(248,241,232,.72);line-height:1.45}
-.panel{
+.brand p{
+  margin:0;
+  color:rgba(248,241,232,.76);
+  line-height:1.45;
+}
+.nav{
+  display:grid;
+  gap:10px;
+}
+.navitem{
+  display:grid;
+  grid-template-columns:40px 1fr;
+  gap:12px;
+  align-items:center;
+  padding:12px 12px;
+  border-radius:18px;
+  color:#fff;
+}
+.navitem.active{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.14);
+}
+.navicon{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  font-weight:700;
+}
+.navcopy strong{
+  display:block;
+  margin-bottom:2px;
+}
+.navcopy span{
+  color:rgba(248,241,232,.72);
+  font-size:13px;
+}
+.navlauncher{
+  margin-top:8px;
+  position:relative;
+  padding:14px;
+  border-radius:22px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.14);
+}
+.navlauncher .label{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#fff;
+  font-weight:700;
+}
+.navlauncher .label .navicon{
+  background:#ffffff;
+  color:var(--accent);
+}
+.flyout{
+  margin-top:14px;
+  background:#ffffff;
+  color:var(--ink);
+  border-radius:24px;
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+.flyout h2{
+  margin:0 0 8px;
+  font-size:16px;
+  font-weight:700;
+  color:var(--nav);
+}
+.flyout p{
+  margin:0 0 14px;
+  color:var(--muted);
+  line-height:1.45;
+  font-size:14px;
+}
+.quicklist{
+  display:grid;
+  gap:10px;
+}
+.quickitem{
+  display:grid;
+  grid-template-columns:38px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--soft);
+}
+.quickitem .miniicon{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#ffffff;
+  color:var(--accent);
+  font-weight:700;
+}
+.quickitem strong{
+  display:block;
+  font-size:14px;
+}
+.quickitem span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+.badge{
+  padding:6px 9px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.main{
   background:var(--panel);
   border:1px solid var(--line);
-  box-shadow:0 20px 40px rgba(24,48,56,.1);
+  border-radius:30px;
   padding:28px;
+  box-shadow:var(--shadow);
 }
 .eyebrow{
   color:var(--accent);
@@ -61,136 +189,202 @@ body{
   font-size:12px;
   font-weight:700;
 }
-.panel h2{
-  margin:10px 0 8px;
-  font-size:38px;
+.main h2{
+  margin:10px 0 10px;
+  font-size:40px;
   font-weight:700;
 }
 .intro{
+  max-width:760px;
   color:var(--muted);
-  max-width:740px;
   line-height:1.55;
 }
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;
-  margin-top:24px;
+.dock{
+  margin-top:26px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  padding:14px;
+  border-radius:24px;
+  background:linear-gradient(180deg,#ffffff 0,#f8fafc 100%);
+  border:1px solid var(--line);
 }
-.item{
+.dockitem{
+  width:108px;
+  min-height:104px;
+  padding:14px 10px 12px;
+  border-radius:20px;
+  background:#ffffff;
+  border:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  text-align:center;
+}
+.dockicon{
+  width:52px;
+  height:52px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:22px;
+  font-weight:700;
+}
+.dockitem strong{
+  font-size:13px;
+  line-height:1.25;
+}
+.principles{
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.principle{
   padding:18px;
   border-radius:22px;
   border:1px solid var(--line);
   background:#fff;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
 }
-.item h3{
+.principle h3{
   margin:0 0 8px;
-  font-size:22px;
-  font-weight:700;
+  font-size:19px;
+  color:var(--nav);
 }
-.item p{
+.principle p{
   margin:0;
   color:var(--muted);
   line-height:1.45;
-}
-.tag{
-  display:inline-block;
-  margin-top:14px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:var(--accent-soft);
-  color:var(--accent);
-  font-weight:700;
-  font-size:12px;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-.cta{
-  margin-top:auto;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:10px 14px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:var(--soft);
-  color:var(--nav);
-  font-weight:700;
 }
 .note{
   margin-top:22px;
   padding:14px 16px;
   border-left:4px solid var(--accent);
   border-radius:0 16px 16px 0;
-  background:#ffecdb;
+  background:var(--accent-soft);
   color:var(--ink);
 }
-@media (max-width: 900px){
+@media (max-width: 980px){
   .shell{grid-template-columns:1fr}
-  .grid{grid-template-columns:1fr}
+  .principles{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <div class="shell">
   <aside class="sidebar">
-    <h1>LernHive</h1>
-    <p>The Launcher is a quick action surface. It helps users start tasks without becoming a second full navigation system.</p>
+    <div class="brand">
+      <h1>LernHive</h1>
+      <p>Launcher as a navigation icon with a compact flyout. Fast actions should feel immediate, not like a second navigation tree.</p>
+    </div>
+
+    <nav class="nav">
+      <div class="navitem active">
+        <div class="navicon">Ex</div>
+        <div class="navcopy"><strong>Explore</strong><span>Optional LXP home</span></div>
+      </div>
+      <div class="navitem">
+        <div class="navicon">ML</div>
+        <div class="navcopy"><strong>My Learning</strong><span>Courses and progress</span></div>
+      </div>
+      <div class="navitem">
+        <div class="navicon">Co</div>
+        <div class="navcopy"><strong>Communities</strong><span>Learning spaces</span></div>
+      </div>
+    </nav>
+
+    <section class="navlauncher">
+      <div class="label">
+        <div class="navicon">+</div>
+        <div>Launcher</div>
+      </div>
+
+      <div class="flyout">
+        <h2>Quick actions</h2>
+        <p>A compact menu from the navigation. Good for the 4–6 actions people need most often.</p>
+
+        <div class="quicklist">
+          <div class="quickitem">
+            <div class="miniicon">C</div>
+            <div><strong>Create course</strong><span>Start a standard course flow</span></div>
+            <div class="badge">Core</div>
+          </div>
+          <div class="quickitem">
+            <div class="miniicon">H</div>
+            <div><strong>Open ContentHub</strong><span>Copy, Template, Library</span></div>
+            <div class="badge">Content</div>
+          </div>
+          <div class="quickitem">
+            <div class="miniicon">S</div>
+            <div><strong>Create snack</strong><span>Lightweight 10–30 minute item</span></div>
+            <div class="badge">LXP</div>
+          </div>
+          <div class="quickitem">
+            <div class="miniicon">U</div>
+            <div><strong>Add users</strong><span>Fast admin action</span></div>
+            <div class="badge">Admin</div>
+          </div>
+        </div>
+      </div>
+    </section>
   </aside>
 
-  <main class="panel">
-    <div class="eyebrow">Action Surface</div>
-    <h2>Launcher</h2>
-    <p class="intro">This mockup keeps the Launcher focused on creation and management actions. Navigation remains left-oriented elsewhere in the theme.</p>
+  <main class="main">
+    <div class="eyebrow">Launcher Direction</div>
+    <h2>Icon-first launcher</h2>
+    <p class="intro">The launcher should start from a single icon in the left navigation. After click, it opens a small, focused action menu. For frequent actions, it can also behave like a dock row with recognizable icons, similar to a lightweight app launcher.</p>
 
-    <section class="grid">
-      <article class="item">
-        <h3>Create course</h3>
-        <p>Start a new course flow without leaving the current context.</p>
-        <div class="tag">Primary action</div>
-        <div class="cta">Start</div>
+    <section class="dock">
+      <article class="dockitem">
+        <div class="dockicon">C</div>
+        <strong>Create course</strong>
       </article>
-
-      <article class="item">
-        <h3>Open ContentHub</h3>
-        <p>Enter the orchestration layer for Copy, Template, and Library entry points.</p>
-        <div class="tag">Content actions</div>
-        <div class="cta">Open</div>
+      <article class="dockitem">
+        <div class="dockicon">H</div>
+        <strong>ContentHub</strong>
       </article>
-
-      <article class="item">
-        <h3>Create snack</h3>
-        <p>Start a lightweight 10–30 minute learning item with a simple guided flow.</p>
-        <div class="tag">LXP action</div>
-        <div class="cta">Start</div>
+      <article class="dockitem">
+        <div class="dockicon">T</div>
+        <strong>Template</strong>
       </article>
-
-      <article class="item">
-        <h3>Create community</h3>
-        <p>Open the setup flow for a Community without turning the Launcher into navigation.</p>
-        <div class="tag">LXP action</div>
-        <div class="cta">Open</div>
+      <article class="dockitem">
+        <div class="dockicon">L</div>
+        <strong>Library</strong>
       </article>
-
-      <article class="item">
-        <h3>Library import</h3>
-        <p>Jump directly into managed content import when the Library path is relevant.</p>
-        <div class="tag">Managed content</div>
-        <div class="cta">Import</div>
+      <article class="dockitem">
+        <div class="dockicon">S</div>
+        <strong>Create snack</strong>
       </article>
-
-      <article class="item">
-        <h3>Add users</h3>
-        <p>Open a common admin action without exposing too many decisions at once.</p>
-        <div class="tag">Admin action</div>
-        <div class="cta">Open</div>
+      <article class="dockitem">
+        <div class="dockicon">Cm</div>
+        <strong>Create community</strong>
+      </article>
+      <article class="dockitem">
+        <div class="dockicon">U</div>
+        <strong>Add users</strong>
       </article>
     </section>
 
-    <div class="note">Mockup note: Template and Library stay conceptually separate. They may both be launched from this surface, but they should not merge into one option.</div>
+    <section class="principles">
+      <article class="principle">
+        <h3>Compact first</h3>
+        <p>The default interaction should stay small and fast. The launcher is for starting actions, not for browsing areas.</p>
+      </article>
+      <article class="principle">
+        <h3>Icon recognition</h3>
+        <p>Frequently used actions may be represented as a small icon row so repeat users build muscle memory.</p>
+      </article>
+      <article class="principle">
+        <h3>Clear limits</h3>
+        <p>Only the most important actions belong here. If the launcher gets too long, the interface should route people into ContentHub or dedicated pages instead.</p>
+      </article>
+    </section>
+
+    <div class="note">Mockup note: preferred long-term pattern is a single launcher icon in the navigation plus a compact flyout. The dock-like icon row is a secondary refinement for high-frequency actions, not a replacement for navigation.</div>
   </main>
 </div>
 </body>
