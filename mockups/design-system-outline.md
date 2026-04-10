@@ -175,6 +175,36 @@ Every important component should have defined states:
 - define a stable software-style action icon set for common actions such as save, download, search, filter, edit, delete, open, close, and settings
 - do not vary standard action icons casually between plugins or screens
 - if an action icon appears without text, the context and accessible name must still make the action obvious
+- allow `icon-only` for stable software actions in clear contexts such as toolbars, card utility menus, inline actions, and top-level controls
+- treat `Create` and `Open` as part of the stable action system when their meaning is obvious from context
+- keep `icon + text` for larger product CTAs, ambiguous actions, and first-run guidance
+
+## Tag system
+
+- allow more than one tag when each tag communicates a different layer of meaning
+- keep tag layers distinct instead of mixing unrelated meanings into one badge row
+
+### Tag layers
+
+- `Type`
+  - what the item is, for example `Course`, `Snack`, or `Community`
+  - usually `icon + text`
+- `State`
+  - current progress or status, for example `In progress` or `Completed`
+  - usually text-first
+- `Signal`
+  - relevance or urgency, for example `Due soon`, `Required`, or `Updated`
+  - use sparingly
+- `Meta`
+  - quiet facts such as `24 learners` or `15 minutes`
+  - often better as inline metadata than as colored tags
+
+### Tag rules
+
+- tags should not look like buttons
+- type tags may use icons to support quick scanning
+- status and signal tags should not rely on color alone
+- tags can be lightly rounded, but should stay less button-like than real actions
 
 ## Dashboard directions to explore
 

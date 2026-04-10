@@ -45,13 +45,15 @@ body{
 .tool{
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  padding:10px 14px;
+  justify-content:center;
+  width:44px;
+  height:44px;
   border-radius:999px;
   border:1px solid var(--line);
   background:#fff;
   color:var(--nav);
   font-weight:700;
+  cursor:pointer;
 }
 .tool svg,
 .cta svg{
@@ -183,9 +185,9 @@ h1{
     <p class="intro">ContentHub is the UI layer that helps users choose how to start. It does not own Copy or Library logic. Template stays conceptually separate from managed Library content.</p>
 
     <div class="toolbar">
-      <div class="tool"><svg aria-hidden="true"><use href="#icon-search"></use></svg>Search content paths</div>
-      <div class="tool"><svg aria-hidden="true"><use href="#icon-sliders-horizontal"></use></svg>Filter entries</div>
-      <div class="tool"><svg aria-hidden="true"><use href="#icon-download"></use></svg>Library import guide</div>
+      <div class="tool" role="button" aria-label="Search content paths" title="Search content paths"><svg aria-hidden="true"><use href="#icon-search"></use></svg></div>
+      <div class="tool" role="button" aria-label="Filter entries" title="Filter entries"><svg aria-hidden="true"><use href="#icon-sliders-horizontal"></use></svg></div>
+      <div class="tool" role="button" aria-label="Download library import guide" title="Download library import guide"><svg aria-hidden="true"><use href="#icon-download"></use></svg></div>
     </div>
 
     <div class="grid">

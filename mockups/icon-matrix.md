@@ -79,6 +79,9 @@ Reference family:
 - standard actions should use the same icon everywhere in the product
 - action icons should behave like software controls, not like decorative illustration
 - the label remains mandatory where meaning may be unclear
+- `icon-only` is preferred for stable software actions in clear contexts such as toolbars, utility bars, inline controls, and repeated list actions
+- `Create` and `Open` can use the shared standard icons when the surrounding context makes the target obvious
+- larger product CTAs may still use `icon + text` even when the icon itself is standardized
 - avoid using different icons for the same action in different plugins
 - if Moodle core already establishes a strong action icon pattern, LernHive should stay close to it unless clarity improves clearly
 - destructive actions such as delete should be visually distinguished by color or context, not by a different icon family
