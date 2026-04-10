@@ -10,6 +10,7 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
 - touch-friendly UI with simple actions and readable spacing
 - distinct treatment for action surfaces such as Launcher and Context Helper
 - reusable Explore shell pieces for the optional LXP Flavour, without moving discovery logic into the theme
+- reusable ContentHub shell pieces that keep Copy, Template, and Library visually aligned but conceptually separate
 
 ## Theme rules
 - the theme does not contain business logic
@@ -25,6 +26,7 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
 - mobile behavior stays responsive and touch-friendly
 - visual hierarchy should reduce Moodle complexity rather than add more options
 - Explore presentation should support the fixed Release 1 feed blocks and explainable ranking hints
+- ContentHub presentation should keep orchestration separate from Copy and Library implementation details
 
 ## Mockup targets
 - global shell for desktop and mobile

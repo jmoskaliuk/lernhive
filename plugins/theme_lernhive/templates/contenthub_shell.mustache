@@ -1,0 +1,18 @@
+<div class="lernhive-contenthub">
+    <section class="lernhive-contenthub__hero" aria-labelledby="lernhive-contenthub-title">
+        <p class="lernhive-contenthub__eyebrow">{{#str}} contenthubeyebrow, theme_lernhive {{/str}}</p>
+        <h1 id="lernhive-contenthub-title" class="lernhive-contenthub__title">{{#str}} contenthubtitle, theme_lernhive {{/str}}</h1>
+        <p class="lernhive-contenthub__summary">{{#str}} contenthubsummary, theme_lernhive {{/str}}</p>
+
+        <div class="lernhive-contenthub__grid">
+            {{#tiles}}
+                {{> theme_lernhive/contenthub_tile }}
+            {{/tiles}}
+        </div>
+
+        <aside class="lernhive-contenthub__note">
+            <h2 class="lernhive-contenthub__note-title">{{#str}} contenthubnotetitle, theme_lernhive {{/str}}</h2>
+            <p class="lernhive-contenthub__note-copy">{{#str}} contenthubnote, theme_lernhive {{/str}}</p>
+        </aside>
+    </section>
+</div>

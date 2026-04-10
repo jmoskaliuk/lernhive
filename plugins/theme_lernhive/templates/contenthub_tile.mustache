@@ -1,0 +1,19 @@
+<article class="lernhive-hub-tile">
+    {{#tag}}
+        <p class="lernhive-hub-tile__tag {{ tagclass }}">{{ tag }}</p>
+    {{/tag}}
+
+    <h2 class="lernhive-hub-tile__title">{{ title }}</h2>
+
+    {{#summary}}
+        <p class="lernhive-hub-tile__summary">{{ summary }}</p>
+    {{/summary}}
+
+    {{#note}}
+        <p class="lernhive-hub-tile__note">{{ note }}</p>
+    {{/note}}
+
+    {{#primaryactionlabel}}
+        <a class="lernhive-hub-tile__cta" href="{{ primaryactionurl }}">{{ primaryactionlabel }}</a>
+    {{/primaryactionlabel}}
+</article>
