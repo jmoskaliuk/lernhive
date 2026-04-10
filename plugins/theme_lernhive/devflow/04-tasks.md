@@ -15,6 +15,7 @@
 - stabilize reusable Mustache partials for sidebar, launcher, and cards
 - decide where Lucide-compatible icon rendering should be introduced in the real implementation
 - test compact flyout and optional dock launcher patterns against Moodle navigation output
+- connect the new Explore shell components to real `local_lernhive_discovery` output without hardcoding feed data in the theme
 
 ## Open questions
 - exact Moodle theme extension points for the left navigation treatment

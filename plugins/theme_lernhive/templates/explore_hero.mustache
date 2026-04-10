@@ -1,0 +1,29 @@
+<section class="lernhive-explore-hero" aria-labelledby="lernhive-explore-hero-title">
+    {{#eyebrow}}
+        <p class="lernhive-explore-hero__eyebrow">{{ eyebrow }}</p>
+    {{/eyebrow}}
+
+    <div class="lernhive-explore-hero__head">
+        <div class="lernhive-explore-hero__copy">
+            <h1 id="lernhive-explore-hero-title" class="lernhive-explore-hero__title">{{ title }}</h1>
+            {{#summary}}
+                <p class="lernhive-explore-hero__summary">{{ summary }}</p>
+            {{/summary}}
+        </div>
+
+        {{#note}}
+            <aside class="lernhive-explore-hero__note">
+                <h2 class="lernhive-explore-hero__note-title">{{ notetitle }}</h2>
+                <p class="lernhive-explore-hero__note-copy">{{ note }}</p>
+            </aside>
+        {{/note}}
+    </div>
+
+    {{#chips.0}}
+        <div class="lernhive-explore-hero__chips" aria-label="{{#str}} exploreranking, theme_lernhive {{/str}}">
+            {{#chips}}
+                <span class="lernhive-explore-hero__chip">{{ . }}</span>
+            {{/chips}}
+        </div>
+    {{/chips.0}}
+</section>

@@ -285,6 +285,93 @@
   gap: 1rem;
 }
 
+.lernhive-explore {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.lernhive-explore__sections {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.lernhive-explore-hero {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 1.75rem;
+  background: linear-gradient(135deg, var(--lernhive-white) 0, var(--lernhive-cool-gray) 56%, var(--lernhive-orange-soft) 100%);
+  box-shadow: 0 1rem 2rem rgba(25, 72, 102, .08);
+}
+
+.lernhive-explore-hero__eyebrow {
+  margin: 0;
+  color: var(--lernhive-orange);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.lernhive-explore-hero__head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lernhive-explore-hero__title {
+  margin: 0;
+  color: var(--lernhive-blue);
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  line-height: 1.1;
+}
+
+.lernhive-explore-hero__summary {
+  max-width: 48rem;
+  margin: .75rem 0 0;
+  color: var(--lernhive-blue);
+  line-height: 1.55;
+}
+
+.lernhive-explore-hero__note {
+  width: min(18rem, 100%);
+  padding: 1rem;
+  border: 1px solid #f4d1af;
+  border-radius: 1.25rem;
+  background: rgba(255, 236, 219, .86);
+}
+
+.lernhive-explore-hero__note-title {
+  margin: 0 0 .5rem;
+  color: var(--lernhive-blue);
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.lernhive-explore-hero__note-copy {
+  margin: 0;
+  color: var(--lernhive-blue);
+  line-height: 1.45;
+  font-size: .9rem;
+}
+
+.lernhive-explore-hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+}
+
+.lernhive-explore-hero__chip {
+  padding: .5rem .8rem;
+  border-radius: 999px;
+  background: var(--lernhive-orange-soft);
+  color: var(--lernhive-orange);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
 .lernhive-card-section__head {
   display: flex;
   align-items: baseline;
@@ -459,5 +546,14 @@
 
   .lernhive-card-section__head {
     display: block;
+  }
+
+  .lernhive-explore-hero__head {
+    display: block;
+  }
+
+  .lernhive-explore-hero__note {
+    width: 100%;
+    margin-top: 1rem;
   }
 }
