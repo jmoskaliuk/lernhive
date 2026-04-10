@@ -60,7 +60,11 @@ MOODLE_DOCKER_REPO="${MOODLE_DOCKER_REPO:-https://github.com/moodlehq/moodle-doc
 MOODLE_DOCKER_BRANCH="${MOODLE_DOCKER_BRANCH:-main}"
 MOODLE_REPO="${MOODLE_REPO:-https://github.com/moodle/moodle.git}"
 MOODLE_BRANCH="${MOODLE_BRANCH:-MOODLE_501_STABLE}"
+# MOODLE_DOCROOT is the web server's DocumentRoot (the public/ subdir in 5.x).
+# MOODLE_ROOT  is the Moodle installation root where config.php and admin/
+#              live. In Moodle 5.x the two differ; in 4.x they are the same.
 MOODLE_DOCROOT="${MOODLE_DOCROOT:-/var/www/html/public}"
+MOODLE_ROOT="${MOODLE_ROOT:-/var/www/html}"
 
 MOODLE_COMPOSE_SERVICE="${MOODLE_COMPOSE_SERVICE:-webserver}"
 WWW_DATA_UID="${WWW_DATA_UID:-33}"
@@ -333,8 +337,9 @@ step "Initial Moodle install (first run only)"
 # The in-container path to config.php depends on Moodle version:
 #   Moodle 4.x: /var/www/html/config.php
 #   Moodle 5.x: /var/www/html/public/config.php
-CONFIG_PHP_PATH="$MOODLE_DOCROOT/config.php"
-CLI_INSTALL_PATH="$MOODLE_DOCROOT/admin/cli/install.php"
+# config.php and admin/cli/ live in the Moodle root, not the web docroot.
+CONFIG_PHP_PATH="$MOODLE_ROOT/config.php"
+CLI_INSTALL_PATH="$MOODLE_ROOT/admin/cli/install.php"
 
 # Initial wwwroot is deliberately localhost — we'll rewrite it to the public
 # FQDN in the Caddy/TLS step below. Using hostname -f would bake an invalid
@@ -527,8 +532,8 @@ cat <<EOF
 
   Next steps:
     1. Change the admin password RIGHT NOW:
-         docker exec -u www-data $CONTAINER_NAME \\
-           php $MOODLE_DOCROOT/admin/cli/reset_password.php \\
+         docker exec -w / -u www-data $CONTAINER_NAME \\
+           php $MOODLE_ROOT/admin/cli/reset_password.php \\
            --username=admin --password='<something-long-and-random>'
 
     2. Deploy the LernHive plugins (as $DEPLOY_USER):
