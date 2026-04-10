@@ -380,6 +380,17 @@
   box-shadow: 0 1.25rem 2.5rem rgba(25, 72, 102, .16);
 }
 
+.lernhive-launcher__empty {
+  margin: 0;
+  padding: .875rem 1rem;
+  border: 1px dashed var(--lernhive-line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, .88);
+  color: var(--lernhive-blue);
+  font-size: .875rem;
+  line-height: 1.45;
+}
+
 .lernhive-launcher__action {
   appearance: none;
   display: grid;

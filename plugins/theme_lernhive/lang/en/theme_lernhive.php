@@ -41,6 +41,7 @@ $string['launcherstyle'] = 'Launcher style';
 $string['launcherstyledesc'] = 'Choose the base launcher style. The compact flyout is the default LernHive direction.';
 $string['launcherstylebase'] = 'Compact flyout';
 $string['launcherstyledock'] = 'Dock-like enhancement';
+$string['launchernoactions'] = 'No launcher actions are currently available in this context.';
 $string['launcherpending'] = 'Launcher routes will become interactive when the owning plugin actions are wired.';
 
 $string['exploreoptional'] = 'Explore replaces Dashboard only in the optional LXP Flavour.';

@@ -171,3 +171,46 @@ function theme_lernhive_pluginfile($course, $cm, $context, $filearea, $args, $fo
     }
     send_file_not_found();
 }
+
+/**
+ * Build launcher context for the theme shell.
+ *
+ * @return array<string, mixed>
+ */
+function theme_lernhive_get_launcher_context(): array {
+    $context = [
+        'title' => get_string('launcher', 'theme_lernhive'),
+        'description' => get_string('launcherdesc', 'theme_lernhive'),
+        'empty' => true,
+        'emptytext' => get_string('launchernoactions', 'theme_lernhive'),
+        'actions' => [],
+    ];
+
+    if (!class_exists(\local_lernhive_launcher\action_provider::class)) {
+        return $context;
+    }
+
+    $actions = [];
+    foreach (\local_lernhive_launcher\action_provider::get_visible_actions() as $action) {
+        $actions[] = [
+            'id' => $action->id,
+            'label' => $action->label,
+            'description' => $action->description,
+            'url' => $action->url->out(false),
+            'iscreatecourse' => $action->icon === 'book-open',
+            'iscontenthub' => $action->icon === 'layout-grid',
+            'iscreatesnack' => $action->icon === 'circle-play',
+            'iscreatecommunity' => $action->icon === 'users',
+        ];
+    }
+
+    if (!empty($actions)) {
+        $context['title'] = get_string('launchertitle', 'local_lernhive_launcher');
+        $context['description'] = get_string('launcherintro', 'local_lernhive_launcher');
+        $context['empty'] = false;
+        $context['emptytext'] = get_string('noactionsavailable', 'local_lernhive_launcher');
+        $context['actions'] = $actions;
+    }
+
+    return $context;
+}

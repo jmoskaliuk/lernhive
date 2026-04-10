@@ -1,0 +1,56 @@
+<section class="local-lernhive-launcher" aria-labelledby="local-lernhive-launcher-title">
+    <details class="local-lernhive-launcher__panel" open>
+        <summary class="local-lernhive-launcher__summary">
+            <span id="local-lernhive-launcher-title" class="local-lernhive-launcher__title">{{title}}</span>
+            <span class="local-lernhive-launcher__description">{{description}}</span>
+        </summary>
+
+        {{#empty}}
+            <p class="local-lernhive-launcher__empty">{{emptytext}}</p>
+        {{/empty}}
+
+        {{^empty}}
+            <nav class="local-lernhive-launcher__actions" aria-label="{{title}}">
+                {{#actions}}
+                    <a class="local-lernhive-launcher__action" href="{{url}}" data-actionid="{{id}}">
+                        <span class="local-lernhive-launcher__icon" aria-hidden="true">
+                            {{#iscreatecourse}}
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M12 7v14"></path>
+                                    <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+                                    <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+                                </svg>
+                            {{/iscreatecourse}}
+                            {{#iscontenthub}}
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <rect x="3" y="3" width="8" height="8" rx="2"></rect>
+                                    <rect x="13" y="3" width="8" height="8" rx="2"></rect>
+                                    <rect x="3" y="13" width="8" height="8" rx="2"></rect>
+                                    <rect x="13" y="13" width="8" height="8" rx="2"></rect>
+                                </svg>
+                            {{/iscontenthub}}
+                            {{#iscreatesnack}}
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <circle cx="12" cy="12" r="9"></circle>
+                                    <path d="m10 8 6 4-6 4Z"></path>
+                                </svg>
+                            {{/iscreatesnack}}
+                            {{#iscreatecommunity}}
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            {{/iscreatecommunity}}
+                        </span>
+                        <span class="local-lernhive-launcher__copy">
+                            <strong>{{label}}</strong>
+                            <span>{{description}}</span>
+                        </span>
+                    </a>
+                {{/actions}}
+            </nav>
+        {{/empty}}
+    </details>
+</section>

@@ -20,6 +20,10 @@ $regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
 $hasregionmainsettingsmenu = !empty($regionmainsettingsmenu);
 $launcherstyle = get_config('theme_lernhive', 'launcherstyle') ?: 'base';
 
+$launchercontext = theme_lernhive_get_launcher_context();
+$launchercontext['launcherisbase'] = $launcherstyle === 'base';
+$launchercontext['launcherisdock'] = $launcherstyle === 'dock';
+
 $templatecontext = [
     'sitename' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output' => $OUTPUT,
@@ -30,6 +34,7 @@ $templatecontext = [
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'launcherisbase' => $launcherstyle === 'base',
     'launcherisdock' => $launcherstyle === 'dock',
+    'launcher' => $launchercontext,
 ];
 
 echo $OUTPUT->render_from_template('theme_lernhive/drawers', $templatecontext);

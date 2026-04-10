@@ -47,6 +47,7 @@ $string['launcherstyle'] = 'Launcher-Stil';
 $string['launcherstyledesc'] = 'Wähle den Grundstil des Launchers. Das kompakte Flyout ist die bevorzugte LernHive-Richtung.';
 $string['launcherstylebase'] = 'Kompaktes Flyout';
 $string['launcherstyledock'] = 'Dock-ähnliche Erweiterung';
+$string['launchernoactions'] = 'In diesem Kontext sind derzeit keine Launcher-Aktionen verfügbar.';
 $string['launcherpending'] = 'Launcher-Ziele werden interaktiv, sobald die zugehörigen Plugin-Aktionen angebunden sind.';
 
 // Explore.
