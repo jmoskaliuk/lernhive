@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+}}
+{{> theme_boost/head }}
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="theme-lernhive-shell">
+    {{{ output.standard_top_of_body_html }}}
+    <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
+
+    <div class="lernhive-app-shell">
+        <aside class="lernhive-sidebar">
+            <div class="lernhive-brand">
+                <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link">{{ sitename }}</a>
+                <p class="lernhive-brand__meta">{{#str}} exploreoptional, theme_lernhive {{/str}}</p>
+            </div>
+            {{> theme_lernhive/launcher }}
+            {{{ output.flat_navigation }}}
+        </aside>
+
+        <div id="page" class="lernhive-page">
+            <header id="page-header" class="lernhive-page-header">
+                <div class="lernhive-page-header__main">
+                    {{{ output.full_header }}}
+                </div>
+                <div class="lernhive-page-header__actions">
+                    {{{ output.navbar_plugin_output }}}
+                    {{{ output.user_menu }}}
+                </div>
+            </header>
+
+            <div id="page-content" class="lernhive-page-content">
+                {{#hasregionmainsettingsmenu}}
+                    <div class="lernhive-settings-menu">
+                        {{{ regionmainsettingsmenu }}}
+                    </div>
+                {{/hasregionmainsettingsmenu}}
+
+                <main id="region-main-box" class="lernhive-main">
+                    <section id="region-main" aria-label="content">
+                        {{{ output.course_content_header }}}
+                        {{{ output.main_content }}}
+                        {{{ output.course_content_footer }}}
+                    </section>
+                </main>
+
+                {{#hassidepre}}
+                    <aside class="lernhive-blocks" aria-label="Blocks">
+                        {{{ sidepreblocks }}}
+                    </aside>
+                {{/hassidepre}}
+            </div>
+        </div>
+    </div>
+
+    {{{ output.standard_after_main_region_html }}}
+    {{{ output.standard_end_of_body_html }}}
+</div>
+</body>
+</html>
