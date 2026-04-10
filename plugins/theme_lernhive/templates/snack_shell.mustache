@@ -1,0 +1,50 @@
+<div class="lernhive-snack-shell">
+    {{> theme_lernhive/snack_header }}
+
+    <div class="lernhive-snack-shell__layout">
+        <div class="lernhive-snack-shell__main">
+            {{#promiseitems.0}}
+                <section class="lernhive-snack-promise" aria-label="{{#str}} snackpromise, theme_lernhive {{/str}}">
+                    {{#promiseitems}}
+                        <article class="lernhive-snack-promise__item">
+                            <h2 class="lernhive-snack-promise__title">{{ title }}</h2>
+                            <p class="lernhive-snack-promise__copy">{{ summary }}</p>
+                        </article>
+                    {{/promiseitems}}
+                </section>
+            {{/promiseitems.0}}
+
+            {{> theme_lernhive/snack_flow }}
+
+            {{#releasenote}}
+                <section class="lernhive-snack-shell__note">
+                    <h2 class="lernhive-snack-shell__note-title">{{#str}} snackreleasenote, theme_lernhive {{/str}}</h2>
+                    <p class="lernhive-snack-shell__note-copy">{{ releasenote }}</p>
+                </section>
+            {{/releasenote}}
+        </div>
+
+        {{#asidepanels.0}}
+            <aside class="lernhive-snack-shell__aside" aria-label="{{#str}} snackhelperarea, theme_lernhive {{/str}}">
+                {{#asidepanels}}
+                    <section class="lernhive-snack-shell__panel">
+                        <h2 class="lernhive-snack-shell__panel-title">{{ title }}</h2>
+                        {{#summary}}
+                            <p class="lernhive-snack-shell__panel-copy">{{ summary }}</p>
+                        {{/summary}}
+                        {{#items.0}}
+                            <div class="lernhive-snack-shell__stack">
+                                {{#items}}
+                                    <div class="lernhive-snack-shell__mini">
+                                        <strong>{{ title }}</strong>
+                                        <span>{{ summary }}</span>
+                                    </div>
+                                {{/items}}
+                            </div>
+                        {{/items.0}}
+                    </section>
+                {{/asidepanels}}
+            </aside>
+        {{/asidepanels.0}}
+    </div>
+</div>
