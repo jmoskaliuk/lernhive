@@ -218,8 +218,9 @@ clone_or_update() {
   # on repos owned by the deploy user (or uid 33 for the Moodle tree)
   # without needing to edit global gitconfig.
   if [[ -d "$dir/.git" ]]; then
-    skip "repo $dir already present (git fetch --quiet)"
     git -c safe.directory="$dir" -C "$dir" fetch --quiet origin
+    git -c safe.directory="$dir" -C "$dir" reset --hard "origin/$branch"
+    ok "updated $dir to origin/$branch"
   else
     git clone --quiet --branch "$branch" "$url" "$dir"
     ok "cloned $url → $dir ($branch)"
@@ -265,8 +266,10 @@ fi
 # inherit the group — otherwise deploy.sh's tar-extract would write root-owned
 # files and leave $MOODLE_DIR in a mixed-ownership state.
 chown -R "$WWW_DATA_UID:$WWW_DATA_UID" "$MOODLE_DIR"
-find "$MOODLE_DIR" -type d -exec chmod 2775 {} \;
-find "$MOODLE_DIR" -type f -exec chmod g+rw {} \;
+# Use `{} +` (batch) instead of `{} \;` (per-file) — Moodle has ~50k files
+# and spawning a chmod process per file takes several minutes.
+find "$MOODLE_DIR" -type d -exec chmod 2775 {} +
+find "$MOODLE_DIR" -type f -exec chmod g+rw {} +
 ok "$MOODLE_DIR chowned to uid $WWW_DATA_UID, setgid dirs, group-writable"
 
 # ---------------------------------------------------------------------------
@@ -293,7 +296,6 @@ fi
 # ---------------------------------------------------------------------------
 step "Starting docker-compose stack"
 
-cd "$MOODLE_DOCKER_DIR"
 # moodle-docker ships bin/moodle-docker-compose which sources .env.local.
 # shellcheck disable=SC1091
 set -a; source "$ENV_FILE"; set +a
@@ -301,7 +303,11 @@ set -a; source "$ENV_FILE"; set +a
 if docker ps --format '{{.Names}}' | grep -q '^lernhive-'; then
   skip "lernhive-* containers already running"
 else
-  bin/moodle-docker-compose up -d
+  # Use a subshell for cd so the main script's CWD stays at /
+  # — bare `cd` here would cause Docker 29+ to reject docker exec calls
+  # later because the CWD would be a bind-mounted dir outside the
+  # container's mount namespace root.
+  (cd "$MOODLE_DOCKER_DIR" && bin/moodle-docker-compose up -d)
   ok "docker-compose stack started"
 fi
 
