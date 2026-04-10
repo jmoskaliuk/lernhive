@@ -53,6 +53,7 @@ LernHive should feel calmer, clearer, and more guided than standard Moodle witho
 - reserve orange emphasis for active, primary, or highlighted action states
 - activity icons should be type-based and stable across screens, for example reading/page, schedule, task, forum, input, and wrap-up
 - icon choice should help scanning, but the label remains the primary meaning
+- maintain one shared icon mapping reference for mockups and theme implementation instead of deciding icon semantics screen by screen
 
 ## Component system
 
