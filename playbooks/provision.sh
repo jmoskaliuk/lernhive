@@ -341,7 +341,7 @@ CLI_INSTALL_PATH="$MOODLE_DOCROOT/admin/cli/install.php"
 # hostname (e.g. ubuntu-8gb-nbg1-1) into config.php.
 INITIAL_WWWROOT="http://localhost:8000"
 
-if (cd / && docker exec -u www-data "$CONTAINER_NAME" test -f "$CONFIG_PHP_PATH" 2>/dev/null); then
+if docker exec -w / -u www-data "$CONTAINER_NAME" test -f "$CONFIG_PHP_PATH" 2>/dev/null; then
   skip "Moodle already installed ($CONFIG_PHP_PATH present)"
 else
   # moodle-docker provides a helper for first-time install.
@@ -351,9 +351,10 @@ else
 
   # Run install.php in non-interactive mode. Failure here is fatal — a
   # half-installed Moodle is worse than a clean error.
-  # Note: `cd /` before docker exec avoids "CWD outside container mount
-  # namespace root" on Docker 29+ when called from a bind-mounted directory.
-  if ! (cd / && docker exec -u www-data "$CONTAINER_NAME" php "$CLI_INSTALL_PATH" \
+  # `-w /` sets the working directory inside the container to /; without it
+  # Docker 29+ rejects exec because the container's default CWD (typically
+  # /var/www/html, which is a bind-mount) fails the mount-namespace check.
+  if ! docker exec -w / -u www-data "$CONTAINER_NAME" php "$CLI_INSTALL_PATH" \
       --non-interactive \
       --agree-license \
       --wwwroot="$INITIAL_WWWROOT" \
@@ -367,7 +368,7 @@ else
       --shortname="lernhive" \
       --adminuser=admin \
       --adminpass="ChangeMe!1" \
-      --adminemail=admin@lernhive.de); then
+      --adminemail=admin@lernhive.de; then
     die "install.php failed. Inspect the output above, then re-run provision.sh."
   fi
   ok "Moodle installed at $CONFIG_PHP_PATH"
@@ -468,7 +469,7 @@ if [[ -n "$LERNHIVE_DOMAIN" ]]; then
   # Rewrite wwwroot. Moodle writes it as:
   #   $CFG->wwwroot   = 'http://localhost:8000';
   # We replace the single-quoted URL with our public HTTPS URL.
-  (cd / && docker exec "$CONTAINER_NAME" sh -c "
+  docker exec -w / "$CONTAINER_NAME" sh -c "
     set -e
     f=$CONFIG_PHP_PATH
     # wwwroot:
@@ -476,7 +477,7 @@ if [[ -n "$LERNHIVE_DOMAIN" ]]; then
     # sslproxy: insert right after wwwroot if not already present.
     grep -q 'sslproxy' \"\$f\" || \
       sed -i \"/\\\$CFG->wwwroot/a \\\\\$CFG->sslproxy  = true;\" \"\$f\"
-  ") && ok "config.php rewritten (wwwroot + sslproxy)"
+  " && ok "config.php rewritten (wwwroot + sslproxy)"
 fi
 
 # ---------------------------------------------------------------------------
