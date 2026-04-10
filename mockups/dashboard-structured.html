@@ -11,24 +11,25 @@
   --panel-soft:#f3f5f8;
   --ink:#353535;
   --muted:#194866;
-  --line:#dce3e8;
+  --line:#d5dde3;
+  --line-strong:#b8c6cf;
   --nav:#194866;
   --nav-soft:#65a1b3;
   --accent:#f98012;
   --accent-soft:#ffecdb;
   --mint:#a9cbd5;
   --warn:#ffe39e;
-  --shadow:0 14px 34px rgba(25,72,102,.08);
-  --radius-shell:22px;
-  --radius-panel:14px;
-  --radius-card:10px;
+  --shadow:0 10px 24px rgba(25,72,102,.06);
+  --radius-shell:16px;
+  --radius-panel:8px;
+  --radius-card:4px;
 }
 *{box-sizing:border-box}
 body{
   margin:0;
   font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;
   background:
-    linear-gradient(180deg,#ffffff 0,#f3f5f8 100%);
+    linear-gradient(180deg,#ffffff 0,#eef3f6 100%);
   color:var(--ink);
 }
 .app{
@@ -43,7 +44,7 @@ body{
   padding:24px 20px;
   color:#f4f8fa;
   background:
-    linear-gradient(180deg,var(--nav) 0,#255776 100%);
+    linear-gradient(180deg,var(--nav) 0,#234f6d 100%);
 }
 .brand{
   padding-bottom:16px;
@@ -61,16 +62,22 @@ body{
 }
 .nav{
   display:grid;
-  gap:8px;
+  gap:0;
+  border-top:1px solid rgba(255,255,255,.1);
+  border-bottom:1px solid rgba(255,255,255,.1);
 }
 .navitem{
-  padding:12px 14px;
-  border-left:3px solid transparent;
+  padding:14px 14px;
+  border-left:4px solid transparent;
+  border-bottom:1px solid rgba(255,255,255,.08);
   background:transparent;
+}
+.navitem:last-child{
+  border-bottom:0;
 }
 .navitem.active{
   border-left-color:var(--accent);
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.06);
 }
 .navitem strong{
   display:block;
@@ -80,7 +87,7 @@ body{
 .launchcard{
   padding:16px;
   border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.06);
 }
 .launchcard strong,.meta strong{
   display:block;
@@ -100,7 +107,7 @@ body{
   grid-template-columns:1.15fr .85fr;
   gap:18px;
   padding:24px;
-  border:1px solid var(--line);
+  border:1px solid var(--line-strong);
   border-radius:var(--radius-shell);
   background:var(--panel);
   box-shadow:var(--shadow);
@@ -124,7 +131,7 @@ body{
 .search{
   margin-top:18px;
   padding:14px 16px;
-  border:1px solid var(--line);
+  border:1px solid var(--line-strong);
   background:var(--panel-soft);
   color:var(--muted);
   font-weight:600;
@@ -136,7 +143,8 @@ body{
 .heroasidebox{
   padding:16px;
   border:1px solid var(--line);
-  background:linear-gradient(180deg,#ffffff 0,#f7fafc 100%);
+  border-left:4px solid var(--nav-soft);
+  background:linear-gradient(180deg,#ffffff 0,#f8fbfd 100%);
 }
 .heroasidebox strong{
   display:block;
@@ -150,7 +158,7 @@ body{
 }
 .layout{
   display:grid;
-  grid-template-columns:320px minmax(0,1fr);
+  grid-template-columns:300px minmax(0,1fr);
   gap:18px;
   margin-top:18px;
   align-items:start;
@@ -161,7 +169,7 @@ body{
 }
 .panel{
   padding:18px;
-  border:1px solid var(--line);
+  border:1px solid var(--line-strong);
   border-radius:var(--radius-panel);
   background:var(--panel);
   box-shadow:var(--shadow);
@@ -184,10 +192,14 @@ body{
 .queueitem{
   padding:14px;
   border:1px solid var(--line);
+  border-left:3px solid transparent;
   background:#fff;
 }
 .queueitem.warn{
-  border-left:4px solid #ebb44c;
+  border-left-color:#ebb44c;
+}
+.queueitem.accent{
+  border-left-color:var(--accent);
 }
 .queueitem strong{
   display:block;
@@ -200,7 +212,7 @@ body{
 }
 .section{
   padding:18px;
-  border:1px solid var(--line);
+  border:1px solid var(--line-strong);
   border-radius:var(--radius-panel);
   background:var(--panel);
   box-shadow:var(--shadow);
@@ -229,6 +241,9 @@ body{
   gap:12px;
 }
 .card{
+  display:grid;
+  grid-template-rows:auto auto 1fr auto auto;
+  min-height:230px;
   padding:16px;
   border:1px solid var(--line);
   border-radius:var(--radius-card);
@@ -237,6 +252,7 @@ body{
 .tag{
   display:inline-block;
   padding:5px 9px;
+  border:1px solid var(--line);
   background:var(--panel-soft);
   color:var(--nav);
   font-size:12px;
@@ -252,6 +268,7 @@ body{
   margin:12px 0 8px;
   color:var(--nav);
   font-size:21px;
+  line-height:1.15;
 }
 .card p{
   margin:0;
@@ -265,6 +282,8 @@ body{
   margin-top:12px;
   color:var(--muted);
   font-size:13px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
 }
 .ctarow{
   display:flex;
@@ -278,7 +297,7 @@ body{
   align-items:center;
   justify-content:center;
   padding:10px 14px;
-  border:1px solid var(--line);
+  border:1px solid var(--line-strong);
   background:var(--panel-soft);
   color:var(--nav);
   font-weight:700;
@@ -355,7 +374,7 @@ body{
               <strong>Security awareness essentials</strong>
               <span>Due soon for the current onboarding cohort.</span>
             </div>
-            <div class="queueitem">
+            <div class="queueitem accent">
               <strong>Feedback in teams</strong>
               <span>Short Snack updated this week and relevant now.</span>
             </div>
