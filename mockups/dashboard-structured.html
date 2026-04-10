@@ -18,6 +18,10 @@
   --accent:#f98012;
   --accent-soft:#ffecdb;
   --mint:#a9cbd5;
+  --course:#e8f0f4;
+  --snack:#ffecdb;
+  --community:#e6f1ee;
+  --report:#edf0f6;
   --warn:#ffe39e;
   --shadow:0 10px 24px rgba(25,72,102,.06);
   --radius-shell:16px;
@@ -67,6 +71,10 @@ body{
   border-bottom:1px solid rgba(255,255,255,.1);
 }
 .navitem{
+  display:grid;
+  grid-template-columns:34px 1fr;
+  gap:10px;
+  align-items:center;
   padding:14px 14px;
   border-left:4px solid transparent;
   border-bottom:1px solid rgba(255,255,255,.08);
@@ -83,6 +91,32 @@ body{
   display:block;
   margin-bottom:2px;
   font-size:15px;
+}
+.navicon,
+.searchicon,
+.queueicon,
+.tagicon,
+.ghosticon{
+  display:grid;
+  place-items:center;
+}
+.navicon{
+  width:34px;
+  height:34px;
+  background:rgba(255,255,255,.08);
+}
+.navicon svg,
+.searchicon svg,
+.queueicon svg,
+.tagicon svg,
+.ghosticon svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 .launchcard{
   padding:16px;
@@ -129,6 +163,9 @@ body{
   line-height:1.55;
 }
 .search{
+  display:flex;
+  align-items:center;
+  gap:10px;
   margin-top:18px;
   padding:14px 16px;
   border:1px solid var(--line-strong);
@@ -190,6 +227,10 @@ body{
   margin-top:14px;
 }
 .queueitem{
+  display:grid;
+  grid-template-columns:28px 1fr;
+  gap:12px;
+  align-items:start;
   padding:14px;
   border:1px solid var(--line);
   border-left:3px solid transparent;
@@ -250,7 +291,9 @@ body{
   background:#fff;
 }
 .tag{
-  display:inline-block;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
   padding:5px 9px;
   border:1px solid var(--line);
   background:var(--panel-soft);
@@ -263,6 +306,20 @@ body{
 .tag.accent{
   background:var(--accent-soft);
   color:var(--accent);
+}
+.tag.course{
+  background:var(--course);
+}
+.tag.snack{
+  background:var(--snack);
+  color:var(--accent);
+}
+.tag.community{
+  background:var(--community);
+  color:#2f6b58;
+}
+.tag.report{
+  background:var(--report);
 }
 .card h4{
   margin:12px 0 8px;
@@ -295,6 +352,7 @@ body{
 .ghost{
   display:inline-flex;
   align-items:center;
+  gap:8px;
   justify-content:center;
   padding:10px 14px;
   border:1px solid var(--line-strong);
@@ -319,6 +377,56 @@ body{
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-home" viewBox="0 0 24 24">
+    <path d="M3 10.5 12 3l9 7.5"></path>
+    <path d="M5 9.5V21h14V9.5"></path>
+  </symbol>
+  <symbol id="icon-book-open" viewBox="0 0 24 24">
+    <path d="M12 7v14"></path>
+    <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+    <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+  </symbol>
+  <symbol id="icon-compass" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="m15.5 8.5-2.7 7-7 2.7 2.7-7z"></path>
+  </symbol>
+  <symbol id="icon-chart-column" viewBox="0 0 24 24">
+    <path d="M3 3v18h18"></path>
+    <path d="M7 16v-5"></path>
+    <path d="M12 16V8"></path>
+    <path d="M17 16v-9"></path>
+  </symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24">
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="m21 21-4.3-4.3"></path>
+  </symbol>
+  <symbol id="icon-alert-triangle" viewBox="0 0 24 24">
+    <path d="m10.3 3.9-8.2 14.2A2 2 0 0 0 3.8 21h16.4a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
+    <path d="M12 9v4"></path>
+    <path d="M12 17h.01"></path>
+  </symbol>
+  <symbol id="icon-circle-play" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="m10 8 6 4-6 4Z"></path>
+  </symbol>
+  <symbol id="icon-users" viewBox="0 0 24 24">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+    <circle cx="9" cy="7" r="4"></circle>
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+  </symbol>
+  <symbol id="icon-layout-grid" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="8" height="8" rx="2"></rect>
+    <rect x="13" y="3" width="8" height="8" rx="2"></rect>
+    <rect x="3" y="13" width="8" height="8" rx="2"></rect>
+    <rect x="13" y="13" width="8" height="8" rx="2"></rect>
+  </symbol>
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M5 12h14"></path>
+    <path d="m12 5 7 7-7 7"></path>
+  </symbol>
+</svg>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
@@ -327,10 +435,10 @@ body{
     </div>
 
     <nav class="nav">
-      <div class="navitem active"><strong>Home</strong><span>Structured daily overview</span></div>
-      <div class="navitem"><strong>My Learning</strong><span>Current work and progress</span></div>
-      <div class="navitem"><strong>Explore</strong><span>Optional LXP discovery</span></div>
-      <div class="navitem"><strong>Reports</strong><span>Simple drilldown visibility</span></div>
+      <div class="navitem active"><div class="navicon"><svg aria-hidden="true"><use href="#icon-home"></use></svg></div><div><strong>Home</strong><span>Structured daily overview</span></div></div>
+      <div class="navitem"><div class="navicon"><svg aria-hidden="true"><use href="#icon-book-open"></use></svg></div><div><strong>My Learning</strong><span>Current work and progress</span></div></div>
+      <div class="navitem"><div class="navicon"><svg aria-hidden="true"><use href="#icon-compass"></use></svg></div><div><strong>Explore</strong><span>Optional LXP discovery</span></div></div>
+      <div class="navitem"><div class="navicon"><svg aria-hidden="true"><use href="#icon-chart-column"></use></svg></div><div><strong>Reports</strong><span>Simple drilldown visibility</span></div></div>
     </nav>
 
     <section class="launchcard">
@@ -350,7 +458,7 @@ body{
         <div class="eyebrow">Dashboard concept C</div>
         <h2>Clear priorities for today</h2>
         <p>This version keeps the LernHive hierarchy, but reduces the rounded softness. It feels more precise, operational, and structured while still staying lighter than a classic enterprise cockpit.</p>
-        <div class="search">Search courses, snacks, communities, and reports</div>
+        <div class="search"><div class="searchicon"><svg aria-hidden="true"><use href="#icon-search"></use></svg></div><span>Search courses, snacks, communities, and reports</span></div>
       </div>
       <div class="heroaside">
         <div class="heroasidebox">
@@ -371,12 +479,14 @@ body{
           <p>Urgency is separated cleanly from broader learning activity.</p>
           <div class="queue">
             <div class="queueitem warn">
-              <strong>Security awareness essentials</strong>
-              <span>Due soon for the current onboarding cohort.</span>
+              <div class="queueicon"><svg aria-hidden="true"><use href="#icon-alert-triangle"></use></svg></div>
+              <div><strong>Security awareness essentials</strong>
+              <span>Due soon for the current onboarding cohort.</span></div>
             </div>
             <div class="queueitem accent">
-              <strong>Feedback in teams</strong>
-              <span>Short Snack updated this week and relevant now.</span>
+              <div class="queueicon"><svg aria-hidden="true"><use href="#icon-circle-play"></use></svg></div>
+              <div><strong>Feedback in teams</strong>
+              <span>Short Snack updated this week and relevant now.</span></div>
             </div>
           </div>
         </section>
@@ -400,25 +510,25 @@ body{
           </div>
           <div class="grid">
             <article class="card">
-              <div class="tag accent">Course</div>
+              <div class="tag accent course"><div class="tagicon"><svg aria-hidden="true"><use href="#icon-book-open"></use></svg></div>Course</div>
               <h4>Introduction to Hybrid Teaching</h4>
               <p>Continue the current weekly section with minimal re-entry friction.</p>
               <div class="stats"><span>In progress</span><span>24 learners</span></div>
-              <div class="ctarow"><div class="ghost">Resume</div><div class="micro">Continue</div></div>
+              <div class="ctarow"><div class="ghost"><div class="ghosticon"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>Resume</div><div class="micro">Continue</div></div>
             </article>
             <article class="card">
-              <div class="tag">Snack</div>
+              <div class="tag snack"><div class="tagicon"><svg aria-hidden="true"><use href="#icon-circle-play"></use></svg></div>Snack</div>
               <h4>Better stand-ups</h4>
               <p>Short item still relevant in the current 7-day window.</p>
               <div class="stats"><span>15 minutes</span><span>Recent</span></div>
-              <div class="ctarow"><div class="ghost">Resume</div><div class="micro">Short form</div></div>
+              <div class="ctarow"><div class="ghost"><div class="ghosticon"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>Resume</div><div class="micro">Short form</div></div>
             </article>
             <article class="card">
-              <div class="tag">Community</div>
+              <div class="tag community"><div class="tagicon"><svg aria-hidden="true"><use href="#icon-users"></use></svg></div>Community</div>
               <h4>Design Circle</h4>
               <p>Relevant discussion context remains visible, but not dominant.</p>
               <div class="stats"><span>Digest default</span><span>Nearby</span></div>
-              <div class="ctarow"><div class="ghost">Open</div><div class="micro">Community</div></div>
+              <div class="ctarow"><div class="ghost"><div class="ghosticon"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>Open</div><div class="micro">Community</div></div>
             </article>
           </div>
         </section>
@@ -430,22 +540,22 @@ body{
           </div>
           <div class="grid">
             <article class="card">
-              <div class="tag accent">Launcher</div>
+              <div class="tag accent"><div class="tagicon"><svg aria-hidden="true"><use href="#icon-layout-grid"></use></svg></div>Launcher</div>
               <h4>Create a new course</h4>
               <p>Primary creation action stays visible, but does not dominate the page.</p>
-              <div class="ctarow"><div class="ghost">Open launcher</div><div class="micro">Core action</div></div>
+              <div class="ctarow"><div class="ghost"><div class="ghosticon"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>Open launcher</div><div class="micro">Core action</div></div>
             </article>
             <article class="card">
-              <div class="tag">ContentHub</div>
+              <div class="tag report"><div class="tagicon"><svg aria-hidden="true"><use href="#icon-layout-grid"></use></svg></div>ContentHub</div>
               <h4>Reuse existing content</h4>
               <p>Copy, Template, and Library remain separate behind one clean entry point.</p>
-              <div class="ctarow"><div class="ghost">Open ContentHub</div><div class="micro">Reuse</div></div>
+              <div class="ctarow"><div class="ghost"><div class="ghosticon"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>Open ContentHub</div><div class="micro">Reuse</div></div>
             </article>
             <article class="card">
-              <div class="tag">Report</div>
+              <div class="tag report"><div class="tagicon"><svg aria-hidden="true"><use href="#icon-chart-column"></use></svg></div>Report</div>
               <h4>Check completion</h4>
               <p>Operational reporting stays visible without turning into a KPI wall.</p>
-              <div class="ctarow"><div class="ghost">Open report</div><div class="micro">Operate</div></div>
+              <div class="ctarow"><div class="ghost"><div class="ghosticon"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>Open report</div><div class="micro">Operate</div></div>
             </article>
           </div>
         </section>
