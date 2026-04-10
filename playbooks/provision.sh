@@ -13,8 +13,9 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/jmoskaliuk/lernhive/main/playbooks/provision.sh | bash
 #
-#   # …or with overrides:
-#   MOODLE_BRANCH=MOODLE_405_STABLE \
+#   # …or with overrides for a TLS-enabled staging box:
+#   LERNHIVE_DOMAIN=dev.lernhive.de \
+#   LETSENCRYPT_EMAIL=admin@lernhive.de \
 #   DEPLOY_SSH_PUBKEY="ssh-ed25519 AAAA… github-actions@lernhive" \
 #   bash provision.sh
 #
@@ -28,12 +29,21 @@
 #
 #   MOODLE_DOCKER_REPO     default: https://github.com/moodlehq/moodle-docker.git
 #   MOODLE_DOCKER_BRANCH   default: main
-#   MOODLE_REPO            default: https://git.moodle.org/moodle.git
-#   MOODLE_BRANCH          default: MOODLE_405_STABLE
-#                          (for 5.2 beta use: MOODLE_502_STABLE)
+#   MOODLE_REPO            default: https://github.com/moodle/moodle.git
+#   MOODLE_BRANCH          default: MOODLE_501_STABLE
+#                          (for LTS use: MOODLE_405_STABLE; for bleeding edge: main)
+#   MOODLE_DOCROOT         in-container path to Moodle's web docroot.
+#                          default: /var/www/html/public   (Moodle 5.x layout)
+#                          set to   /var/www/html            for Moodle 4.x
 #
 #   MOODLE_COMPOSE_SERVICE default: webserver
 #                          (becomes CONTAINER suffix, e.g. <stack>-webserver-1)
+#   WWW_DATA_UID           default: 33   (uid of www-data inside the container)
+#
+#   LERNHIVE_DOMAIN        optional; if set, installs Caddy reverse proxy with
+#                          Let's Encrypt TLS for this FQDN and rewrites the
+#                          Moodle wwwroot to https://$LERNHIVE_DOMAIN.
+#   LETSENCRYPT_EMAIL      required iff LERNHIVE_DOMAIN is set.
 #
 set -euo pipefail
 
@@ -48,14 +58,20 @@ DEPLOY_SSH_PUBKEY="${DEPLOY_SSH_PUBKEY:-}"
 
 MOODLE_DOCKER_REPO="${MOODLE_DOCKER_REPO:-https://github.com/moodlehq/moodle-docker.git}"
 MOODLE_DOCKER_BRANCH="${MOODLE_DOCKER_BRANCH:-main}"
-MOODLE_REPO="${MOODLE_REPO:-https://git.moodle.org/moodle.git}"
-MOODLE_BRANCH="${MOODLE_BRANCH:-MOODLE_405_STABLE}"
+MOODLE_REPO="${MOODLE_REPO:-https://github.com/moodle/moodle.git}"
+MOODLE_BRANCH="${MOODLE_BRANCH:-MOODLE_501_STABLE}"
+MOODLE_DOCROOT="${MOODLE_DOCROOT:-/var/www/html/public}"
 
 MOODLE_COMPOSE_SERVICE="${MOODLE_COMPOSE_SERVICE:-webserver}"
+WWW_DATA_UID="${WWW_DATA_UID:-33}"
+
+LERNHIVE_DOMAIN="${LERNHIVE_DOMAIN:-}"
+LETSENCRYPT_EMAIL="${LETSENCRYPT_EMAIL:-}"
 
 LERNHIVE_DIR="$INSTALL_DIR/lernhive"
 MOODLE_DOCKER_DIR="$INSTALL_DIR/moodle-docker"
 MOODLE_DIR="$INSTALL_DIR/moodle"
+CADDY_DIR="$INSTALL_DIR/caddy"
 
 # ---------------------------------------------------------------------------
 # Output helpers.
@@ -91,6 +107,19 @@ esac
 
 ARCH="$(dpkg --print-architecture 2>/dev/null || echo unknown)"
 [[ "$ARCH" == "amd64" ]] || warn "Tested on amd64 only; detected: $ARCH"
+
+# Caddy requires both a domain and an e-mail or none at all.
+if [[ -n "$LERNHIVE_DOMAIN" && -z "$LETSENCRYPT_EMAIL" ]]; then
+  die "LERNHIVE_DOMAIN is set but LETSENCRYPT_EMAIL is empty. Provide both or neither."
+fi
+if [[ -z "$LERNHIVE_DOMAIN" && -n "$LETSENCRYPT_EMAIL" ]]; then
+  die "LETSENCRYPT_EMAIL is set but LERNHIVE_DOMAIN is empty. Provide both or neither."
+fi
+if [[ -n "$LERNHIVE_DOMAIN" ]]; then
+  ok "Caddy/TLS enabled for $LERNHIVE_DOMAIN (LE contact: $LETSENCRYPT_EMAIL)"
+else
+  warn "No LERNHIVE_DOMAIN set — Moodle will be HTTP-only on localhost:8000."
+fi
 
 # ---------------------------------------------------------------------------
 # 1. Base packages.
@@ -202,6 +231,42 @@ clone_or_update "$MOODLE_REPO"         "$MOODLE_DIR"        "$MOODLE_BRANCH"
 chown -R "$DEPLOY_USER:$DEPLOY_USER" "$LERNHIVE_DIR"
 
 # ---------------------------------------------------------------------------
+# 4b. Permission wiring for the Moodle bind-mount.
+# ---------------------------------------------------------------------------
+# moodle-docker bind-mounts $MOODLE_DIR into the webserver container at
+# /var/www/html. Inside the container, php-fpm / apache runs as www-data
+# (uid 33 by default). For install.php to be able to create config.php and
+# for deploy.sh to tar plugin files into the Moodle tree, uid 33 must own
+# (or at least be able to write to) $MOODLE_DIR on the host.
+#
+# We also create a matching www-data group on the host (if missing) and add
+# the deploy user to it, so plugin deploys run by the deploy user can still
+# modify files that end up owned by uid 33.
+step "Wiring host permissions for Moodle bind-mount"
+
+if ! getent group "$WWW_DATA_UID" >/dev/null; then
+  groupadd -g "$WWW_DATA_UID" www-data
+  ok "created host group www-data (gid $WWW_DATA_UID)"
+else
+  skip "host group $(getent group "$WWW_DATA_UID" | cut -d: -f1) (gid $WWW_DATA_UID) already exists"
+fi
+
+if ! id -nG "$DEPLOY_USER" | tr ' ' '\n' | grep -qx "$(getent group "$WWW_DATA_UID" | cut -d: -f1)"; then
+  usermod -aG "$WWW_DATA_UID" "$DEPLOY_USER"
+  ok "$DEPLOY_USER added to host group gid $WWW_DATA_UID"
+else
+  skip "$DEPLOY_USER already in gid $WWW_DATA_UID group"
+fi
+
+# Give uid 33 ownership of the Moodle tree and flip on setgid so new files
+# inherit the group — otherwise deploy.sh's tar-extract would write root-owned
+# files and leave $MOODLE_DIR in a mixed-ownership state.
+chown -R "$WWW_DATA_UID:$WWW_DATA_UID" "$MOODLE_DIR"
+find "$MOODLE_DIR" -type d -exec chmod 2775 {} \;
+find "$MOODLE_DIR" -type f -exec chmod g+rw {} \;
+ok "$MOODLE_DIR chowned to uid $WWW_DATA_UID, setgid dirs, group-writable"
+
+# ---------------------------------------------------------------------------
 # 5. moodle-docker environment config.
 # ---------------------------------------------------------------------------
 step "Configuring moodle-docker env"
@@ -256,31 +321,45 @@ fi
 # ---------------------------------------------------------------------------
 step "Initial Moodle install (first run only)"
 
-if docker exec -u www-data "$CONTAINER_NAME" test -f /var/www/html/config.php 2>/dev/null; then
-  skip "Moodle already installed (config.php present)"
+# The in-container path to config.php depends on Moodle version:
+#   Moodle 4.x: /var/www/html/config.php
+#   Moodle 5.x: /var/www/html/public/config.php
+CONFIG_PHP_PATH="$MOODLE_DOCROOT/config.php"
+CLI_INSTALL_PATH="$MOODLE_DOCROOT/admin/cli/install.php"
+
+# Initial wwwroot is deliberately localhost — we'll rewrite it to the public
+# FQDN in the Caddy/TLS step below. Using hostname -f would bake an invalid
+# hostname (e.g. ubuntu-8gb-nbg1-1) into config.php.
+INITIAL_WWWROOT="http://localhost:8000"
+
+if docker exec -u www-data "$CONTAINER_NAME" test -f "$CONFIG_PHP_PATH" 2>/dev/null; then
+  skip "Moodle already installed ($CONFIG_PHP_PATH present)"
 else
   # moodle-docker provides a helper for first-time install.
   if [[ -x "$MOODLE_DOCKER_DIR/bin/moodle-docker-wait-for-db" ]]; then
     "$MOODLE_DOCKER_DIR/bin/moodle-docker-wait-for-db"
   fi
-  # Run install.php in non-interactive mode.
-  docker exec -u www-data "$CONTAINER_NAME" php /var/www/html/admin/cli/install.php \
-    --non-interactive \
-    --agree-license \
-    --wwwroot="https://$(hostname -f 2>/dev/null || echo localhost)" \
-    --dataroot=/var/www/moodledata \
-    --dbtype=pgsql \
-    --dbhost=db \
-    --dbname=moodle \
-    --dbuser=moodle \
-    --dbpass=m@0dl3ing \
-    --fullname="LernHive" \
-    --shortname="lernhive" \
-    --adminuser=admin \
-    --adminpass="ChangeMe!1" \
-    --adminemail=admin@lernhive.de \
-  || warn "install.php failed — may need manual attention"
-  ok "Moodle install attempted"
+
+  # Run install.php in non-interactive mode. Failure here is fatal — a
+  # half-installed Moodle is worse than a clean error.
+  if ! docker exec -u www-data "$CONTAINER_NAME" php "$CLI_INSTALL_PATH" \
+      --non-interactive \
+      --agree-license \
+      --wwwroot="$INITIAL_WWWROOT" \
+      --dataroot=/var/www/moodledata \
+      --dbtype=pgsql \
+      --dbhost=db \
+      --dbname=moodle \
+      --dbuser=moodle \
+      --dbpass=m@0dl3ing \
+      --fullname="LernHive" \
+      --shortname="lernhive" \
+      --adminuser=admin \
+      --adminpass="ChangeMe!1" \
+      --adminemail=admin@lernhive.de; then
+    die "install.php failed. Inspect the output above, then re-run provision.sh."
+  fi
+  ok "Moodle installed at $CONFIG_PHP_PATH"
 fi
 
 # ---------------------------------------------------------------------------
@@ -302,6 +381,91 @@ fi
 # Also ensure deploy.sh is executable.
 if [[ -f "$LERNHIVE_DIR/playbooks/deploy.sh" ]]; then
   chmod +x "$LERNHIVE_DIR/playbooks/deploy.sh"
+fi
+
+# ---------------------------------------------------------------------------
+# 8b. Caddy reverse proxy (only if LERNHIVE_DOMAIN is set).
+# ---------------------------------------------------------------------------
+# We install Caddy as its own docker-compose stack in $CADDY_DIR that
+# attaches to the moodle-docker network. This keeps TLS termination out of
+# the moodle-docker stack and means re-running `moodle-docker-compose up`
+# won't wipe our Caddy config.
+if [[ -n "$LERNHIVE_DOMAIN" ]]; then
+  step "Installing Caddy reverse proxy ($LERNHIVE_DOMAIN)"
+
+  CADDY_SRC="$LERNHIVE_DIR/playbooks/caddy"
+  if [[ ! -f "$CADDY_SRC/docker-compose.yml" || ! -f "$CADDY_SRC/Caddyfile" ]]; then
+    die "Caddy template files missing in $CADDY_SRC — pull latest main?"
+  fi
+
+  install -d -m 0755 "$CADDY_DIR"
+  install -m 0644 "$CADDY_SRC/docker-compose.yml" "$CADDY_DIR/docker-compose.yml"
+  install -m 0644 "$CADDY_SRC/Caddyfile"          "$CADDY_DIR/Caddyfile"
+  ok "Caddy template files copied to $CADDY_DIR"
+
+  # Discover the moodle-docker network name (e.g. "lernhive_default").
+  MOODLE_NETWORK="$(docker network ls --format '{{.Name}}' \
+                     | grep -E "^${COMPOSE_PROJECT_NAME:-lernhive}_" \
+                     | head -1 || true)"
+  if [[ -z "$MOODLE_NETWORK" ]]; then
+    # Fallback: inspect the running webserver container directly.
+    MOODLE_NETWORK="$(docker inspect -f \
+      '{{range $k, $_ := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}' \
+      "$CONTAINER_NAME" 2>/dev/null | head -1 || true)"
+  fi
+  [[ -n "$MOODLE_NETWORK" ]] || die "Could not detect moodle-docker Docker network."
+  ok "moodle-docker network: $MOODLE_NETWORK"
+
+  # Webserver listens on port 8000 inside the container (moodle-docker default).
+  MOODLE_UPSTREAM="${MOODLE_COMPOSE_SERVICE}:8000"
+
+  cat > "$CADDY_DIR/.env" <<EOF
+# Generated by provision.sh on $(date -Iseconds). Do not commit.
+LERNHIVE_DOMAIN=$LERNHIVE_DOMAIN
+LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
+MOODLE_NETWORK=$MOODLE_NETWORK
+MOODLE_UPSTREAM=$MOODLE_UPSTREAM
+EOF
+  chmod 0600 "$CADDY_DIR/.env"
+  ok "$CADDY_DIR/.env rendered"
+
+  # Stop any host service occupying port 80 (the Hetzner Ubuntu image ships
+  # with nothing on 80 by default, but we double-check with lsof).
+  if command -v lsof >/dev/null && lsof -iTCP:80 -sTCP:LISTEN -P -n 2>/dev/null \
+      | grep -qv '^COMMAND'; then
+    warn "Something is already listening on :80. Caddy may fail to start."
+  fi
+
+  # Bring Caddy up (idempotent).
+  if docker ps --format '{{.Names}}' | grep -qx "lernhive-caddy"; then
+    (cd "$CADDY_DIR" && docker compose up -d)
+    skip "lernhive-caddy already running — reloaded config"
+  else
+    (cd "$CADDY_DIR" && docker compose up -d)
+    ok "Caddy stack started"
+  fi
+else
+  step "Skipping Caddy install (no LERNHIVE_DOMAIN)"
+fi
+
+# ---------------------------------------------------------------------------
+# 8c. Patch Moodle config.php for the public FQDN + SSL proxy.
+# ---------------------------------------------------------------------------
+if [[ -n "$LERNHIVE_DOMAIN" ]]; then
+  step "Patching Moodle config.php for https://$LERNHIVE_DOMAIN"
+
+  # Rewrite wwwroot. Moodle writes it as:
+  #   $CFG->wwwroot   = 'http://localhost:8000';
+  # We replace the single-quoted URL with our public HTTPS URL.
+  docker exec "$CONTAINER_NAME" sh -c "
+    set -e
+    f=$CONFIG_PHP_PATH
+    # wwwroot:
+    sed -i \"s|\\\$CFG->wwwroot\\s*=\\s*'[^']*';|\\\$CFG->wwwroot   = 'https://$LERNHIVE_DOMAIN';|\" \"\$f\"
+    # sslproxy: insert right after wwwroot if not already present.
+    grep -q 'sslproxy' \"\$f\" || \
+      sed -i \"/\\\$CFG->wwwroot/a \\\\\$CFG->sslproxy  = true;\" \"\$f\"
+  " && ok "config.php rewritten (wwwroot + sslproxy)"
 fi
 
 # ---------------------------------------------------------------------------
@@ -327,33 +491,46 @@ fi
 # ---------------------------------------------------------------------------
 step "Provisioning complete"
 
+if [[ -n "$LERNHIVE_DOMAIN" ]]; then
+  PUBLIC_URL="https://$LERNHIVE_DOMAIN"
+  TLS_LINE="Caddy              : lernhive-caddy (Let's Encrypt for $LERNHIVE_DOMAIN)"
+else
+  PUBLIC_URL="http://localhost:8000 (via SSH tunnel only)"
+  TLS_LINE="Caddy              : not installed (no LERNHIVE_DOMAIN)"
+fi
+
 cat <<EOF
 
   LernHive workspace : $LERNHIVE_DIR
   Moodle source      : $MOODLE_DIR ($MOODLE_BRANCH)
+  Moodle docroot     : $MOODLE_DOCROOT
   moodle-docker      : $MOODLE_DOCKER_DIR
   Docker stack       : lernhive-*
   Webserver container: $CONTAINER_NAME
   Deploy user        : $DEPLOY_USER
   Deploy command     : $TARGET_LINK
+  $TLS_LINE
+  Public URL         : $PUBLIC_URL
   UFW                : $(ufw status | head -1)
 
   Next steps:
-    1. Verify playbooks/deploy.hetzner.env matches actual paths:
-         docker exec -it $CONTAINER_NAME ls /var/www
-       Adjust MOODLE_ROOT / MOODLE_CLI_ROOT if needed.
+    1. Change the admin password RIGHT NOW:
+         docker exec -u www-data $CONTAINER_NAME \\
+           php $MOODLE_DOCROOT/admin/cli/reset_password.php \\
+           --username=admin --password='<something-long-and-random>'
 
-    2. Run a first deploy manually (as $DEPLOY_USER):
+    2. Deploy the LernHive plugins (as $DEPLOY_USER):
          sudo -u $DEPLOY_USER lernhive-deploy
 
-    3. Configure reverse proxy + HTTPS (Caddy/Nginx) — separate step,
-       not handled by this script.
+    3. Smoke-test SSH from your workstation:
+         ssh -i ~/.ssh/lernhive-deploy $DEPLOY_USER@<server-ip> \\
+             'whoami && which lernhive-deploy'
 
-    4. Add the GitHub Actions deploy key to $DEPLOY_USER's authorized_keys:
-         # on the server:
-         echo 'ssh-ed25519 AAAA…' >> /home/$DEPLOY_USER/.ssh/authorized_keys
+    4. Configure the four GitHub Actions secrets and push to main to
+       trigger the CI/CD loop. See playbooks/README.md for the full list.
 
   Admin user created (if Moodle install ran): admin / ChangeMe!1
-  CHANGE THE ADMIN PASSWORD immediately.
+  CHANGE THE ADMIN PASSWORD immediately — this default is baked into
+  the provisioning script and known to anyone reading it.
 
 EOF

@@ -1,0 +1,49 @@
+# -----------------------------------------------------------------------------
+# LernHive Caddyfile
+# -----------------------------------------------------------------------------
+# Minimal TLS-terminating reverse proxy for the Moodle stack.
+#
+# Environment variables expanded at container startup:
+#   {$LERNHIVE_DOMAIN}     public FQDN (e.g. dev.lernhive.de)
+#   {$LETSENCRYPT_EMAIL}   contact address for the Let's Encrypt account
+#   {$MOODLE_UPSTREAM}     upstream service:port (e.g. webserver:8000)
+#
+# Caddy handles certificate issuance, renewal, HTTP -> HTTPS redirect,
+# HSTS and HTTP/3 automatically.
+# -----------------------------------------------------------------------------
+
+{
+	email {$LETSENCRYPT_EMAIL}
+	# Uncomment the next line when iterating on Caddy config to hit LE staging
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+	servers {
+		protocols h1 h2 h3
+	}
+}
+
+{$LERNHIVE_DOMAIN} {
+	encode zstd gzip
+
+	# Forward real client IP + scheme so Moodle sees https:// in wwwroot.
+	reverse_proxy {$MOODLE_UPSTREAM} {
+		header_up X-Forwarded-Proto https
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Real-IP {remote_host}
+		header_up Host {host}
+	}
+
+	header {
+		# HSTS: 180 days. Bump to 2 years (63072000) once you're sure.
+		Strict-Transport-Security "max-age=15552000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Moodle needs its own frame-ancestors policy; leave X-Frame-Options off.
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+		level INFO
+	}
+}

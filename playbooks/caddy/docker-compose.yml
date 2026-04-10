@@ -1,0 +1,57 @@
+---
+# -----------------------------------------------------------------------------
+# LernHive Caddy Reverse Proxy
+# -----------------------------------------------------------------------------
+# Terminates TLS for LERNHIVE_DOMAIN via Let's Encrypt and proxies to the
+# Moodle webserver container on its internal port.
+#
+# The moodle-docker stack publishes its webserver on an internal network
+# named "moodle_default" (or similar, depending on stack name). We attach
+# Caddy as an *external* network participant so it can reach the webserver
+# by its service DNS name "webserver" without needing the host port
+# mapping.
+#
+# Required environment variables (rendered by provision.sh into .env):
+#   LERNHIVE_DOMAIN       e.g. dev.lernhive.de
+#   LETSENCRYPT_EMAIL     e.g. admin@example.com
+#   MOODLE_NETWORK        name of the existing moodle-docker bridge network
+#                         (e.g. lernhive_default, moodle_default)
+#   MOODLE_UPSTREAM       service name + port, e.g. webserver:8000
+# -----------------------------------------------------------------------------
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: lernhive-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    environment:
+      LERNHIVE_DOMAIN: ${LERNHIVE_DOMAIN:?LERNHIVE_DOMAIN is required}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:?LETSENCRYPT_EMAIL is required}
+      MOODLE_UPSTREAM: ${MOODLE_UPSTREAM:?MOODLE_UPSTREAM is required}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - caddy_net
+      - moodle_net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  caddy_net:
+    driver: bridge
+  moodle_net:
+    external: true
+    name: ${MOODLE_NETWORK:?MOODLE_NETWORK is required}
+
+volumes:
+  caddy_data:
+  caddy_config:
