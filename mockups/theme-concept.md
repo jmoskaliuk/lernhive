@@ -39,9 +39,11 @@ LernHive should feel calmer, clearer, and more guided than standard Moodle witho
 ### Launcher pattern
 - Launcher should start as a single icon in the left navigation
 - clicking the icon should open a small flyout with the most important actions
-- for frequent tasks, the launcher may also expose a compact dock-like row of icons
+- the compact flyout is the default base pattern
+- for frequent tasks, the launcher may optionally expose a compact dock-like row of icons
 - the launcher must remain action-oriented and must not become a second site navigation
 - if too many actions are needed, route the user into a dedicated surface such as ContentHub
+- the dock-like variant is an enhancement, not the default LernHive launcher
 
 ### Icon system
 - use a consistent line-icon family such as Lucide
