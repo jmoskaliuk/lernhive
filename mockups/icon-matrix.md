@@ -48,6 +48,42 @@ Reference family:
 | Reporting | overview / metrics | `chart-column` |
 | Notifications / digest | summary updates | `inbox` or `bell` |
 
+## Standard action icons
+
+| Action | Meaning | Suggested Lucide name |
+| --- | --- | --- |
+| Save | confirm and persist changes | `save` |
+| Save as draft | persist without publishing or finishing | `file-clock` or `save` with label |
+| Publish | make visible / activate | `send` or `badge-check` |
+| Download | get a file or export locally | `download` |
+| Upload | add file or import content | `upload` |
+| Search | find content, users, or settings | `search` |
+| Filter | narrow visible results | `sliders-horizontal` or `filter` |
+| Sort | change order of results | `arrow-down-wide-narrow` |
+| Edit | change an existing item | `pencil` or `pen-line` |
+| Delete | remove an item | `trash-2` |
+| Duplicate / copy | create a reusable copy | `copy` |
+| Add new | create new item from current context | `plus` |
+| Open | go to detail or open a surface | `arrow-right` |
+| Back | go one level back | `arrow-left` |
+| Close | dismiss panel, modal, or message | `x` |
+| Settings | open configuration | `settings` |
+| More actions | open contextual action menu | `ellipsis` or `more-horizontal` |
+| Notifications | show updates and inbox-like signals | `bell` or `inbox` |
+| Help | open help or explanation | `circle-help` |
+| Bookmark | save for later | `bookmark` |
+| Follow | subscribe to meaningful updates | `star` |
+
+## Action icon rules
+
+- standard actions should use the same icon everywhere in the product
+- action icons should behave like software controls, not like decorative illustration
+- the label remains mandatory where meaning may be unclear
+- avoid using different icons for the same action in different plugins
+- if Moodle core already establishes a strong action icon pattern, LernHive should stay close to it unless clarity improves clearly
+- destructive actions such as delete should be visually distinguished by color or context, not by a different icon family
+- do not rely on icon-only controls when accessibility or comprehension would suffer
+
 ## Moodle implementation note
 
 - the real theme should not hardcode final SVG choices too early

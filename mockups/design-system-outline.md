@@ -172,6 +172,9 @@ Every important component should have defined states:
 - keep icon meanings consistent across screens
 - product icons and activity icons should come from the same family
 - maintain the mapping centrally in `mockups/icon-matrix.md`
+- define a stable software-style action icon set for common actions such as save, download, search, filter, edit, delete, open, close, and settings
+- do not vary standard action icons casually between plugins or screens
+- if an action icon appears without text, the context and accessible name must still make the action obvious
 
 ## Dashboard directions to explore
 
