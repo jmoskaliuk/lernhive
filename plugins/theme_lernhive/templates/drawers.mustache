@@ -14,14 +14,7 @@
     <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
 
     <div class="lernhive-app-shell">
-        <aside class="lernhive-sidebar">
-            <div class="lernhive-brand">
-                <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link">{{ sitename }}</a>
-                <p class="lernhive-brand__meta">{{#str}} exploreoptional, theme_lernhive {{/str}}</p>
-            </div>
-            {{> theme_lernhive/launcher }}
-            {{{ output.flat_navigation }}}
-        </aside>
+        {{> theme_lernhive/sidebar }}
 
         <div id="page" class="lernhive-page">
             <header id="page-header" class="lernhive-page-header">

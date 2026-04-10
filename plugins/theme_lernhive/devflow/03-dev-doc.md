@@ -26,6 +26,7 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - card and panel system for LernHive-specific surfaces
 - responsive behavior for desktop and mobile
 - flavour-aware styling differences only where the product docs explicitly require them
+- Launcher base pattern implemented in the theme as a compact flyout with an optional dock-style enhancement
 
 ## Current dependencies
 - Moodle theme APIs
@@ -42,3 +43,6 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - prefer Moodle region and renderer extension points over custom structural hacks
 - keep component names and tokens consistent so mockups can be translated into SCSS/templates later
 - avoid theme features that would force custom plugin behavior just to render correctly
+- use Mustache partials for reusable shell pieces such as sidebar, launcher, and cards
+- keep Launcher interaction simple and accessible; use lightweight native patterns before adding JS
+- prepare generic card partials that plugins can reuse for Explore, reporting tiles, and content surfaces without moving plugin logic into the theme

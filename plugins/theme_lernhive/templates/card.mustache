@@ -1,0 +1,34 @@
+<article class="lernhive-card">
+    {{#eyebrow}}
+        <p class="lernhive-card__eyebrow">{{ eyebrow }}</p>
+    {{/eyebrow}}
+
+    <div class="lernhive-card__top">
+        {{#type}}
+            <span class="lernhive-card__type">{{ type }}</span>
+        {{/type}}
+
+        <div class="lernhive-card__actions">
+            {{#follow}}
+                <button class="lernhive-card__icon is-following" type="button" aria-label="{{#str}} follow, theme_lernhive {{/str}}">★</button>
+            {{/follow}}
+            {{#bookmark}}
+                <button class="lernhive-card__icon" type="button" aria-label="{{#str}} bookmark, theme_lernhive {{/str}}">⌑</button>
+            {{/bookmark}}
+        </div>
+    </div>
+
+    <h3 class="lernhive-card__title">{{ title }}</h3>
+
+    {{#summary}}
+        <p class="lernhive-card__summary">{{ summary }}</p>
+    {{/summary}}
+
+    {{#meta}}
+        <p class="lernhive-card__meta">{{ meta }}</p>
+    {{/meta}}
+
+    {{#primaryactionlabel}}
+        <a class="lernhive-card__cta" href="{{ primaryactionurl }}">{{ primaryactionlabel }}</a>
+    {{/primaryactionlabel}}
+</article>

@@ -1,0 +1,19 @@
+<section class="lernhive-card-section" aria-labelledby="{{ sectionid }}">
+    <div class="lernhive-card-section__head">
+        <div>
+            <h2 id="{{ sectionid }}" class="lernhive-card-section__title">{{ title }}</h2>
+            {{#description}}
+                <p class="lernhive-card-section__description">{{ description }}</p>
+            {{/description}}
+        </div>
+        {{#linklabel}}
+            <a class="lernhive-card-section__link" href="{{ linkurl }}">{{ linklabel }}</a>
+        {{/linklabel}}
+    </div>
+
+    <div class="lernhive-card-section__grid">
+        {{#cards}}
+            {{> theme_lernhive/card }}
+        {{/cards}}
+    </div>
+</section>

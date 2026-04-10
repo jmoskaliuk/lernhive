@@ -12,11 +12,15 @@
 - map approved mockup decisions to Moodle theme structure
 - define template, SCSS, and renderer responsibilities
 - prepare implementation tickets for the final `theme_lernhive` plugin
+- stabilize reusable Mustache partials for sidebar, launcher, and cards
+- decide where Lucide-compatible icon rendering should be introduced in the real implementation
+- test compact flyout and optional dock launcher patterns against Moodle navigation output
 
 ## Open questions
 - exact Moodle theme extension points for the left navigation treatment
 - which page shells need custom treatment first
 - how much flavour-specific visual variation is useful without creating drift
+- whether icon rendering should stay text-placeholder-based in the first technical iteration or move to a proper pix/icon mapping next
 
 ## Next step
-Turn the mockup phase into a concrete visual system and then translate it into implementation-ready Moodle theme tickets.
+Turn the scaffold into a reusable component system and then connect those components to real Moodle and LernHive screen outputs.

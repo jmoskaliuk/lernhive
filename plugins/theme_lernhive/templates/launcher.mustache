@@ -1,44 +1,46 @@
 <section class="lernhive-launcher" aria-labelledby="lernhive-launcher-title">
-    <div class="lernhive-launcher__header">
-        <button class="lernhive-launcher__trigger" type="button" aria-expanded="true" aria-controls="lernhive-launcher-flyout">
-            <span class="lernhive-launcher__trigger-icon" aria-hidden="true">+</span>
-            <span class="lernhive-sr-only">{{#str}} launcher, theme_lernhive {{/str}}</span>
-        </button>
-        <div class="lernhive-launcher__copy">
-            <h2 id="lernhive-launcher-title" class="lernhive-launcher__title">{{#str}} launcher, theme_lernhive {{/str}}</h2>
-            <p class="lernhive-launcher__description">{{#str}} launcherdesc, theme_lernhive {{/str}}</p>
-        </div>
-    </div>
+    <details class="lernhive-launcher__panel {{#launcherisdock}}is-dock{{/launcherisdock}}" open>
+        <summary class="lernhive-launcher__header">
+            <span class="lernhive-launcher__trigger">
+                <span class="lernhive-launcher__trigger-icon" aria-hidden="true">+</span>
+                <span class="lernhive-sr-only">{{#str}} launcher, theme_lernhive {{/str}}</span>
+            </span>
+            <span class="lernhive-launcher__copy">
+                <span id="lernhive-launcher-title" class="lernhive-launcher__title">{{#str}} launcher, theme_lernhive {{/str}}</span>
+                <span class="lernhive-launcher__description">{{#str}} launcherdesc, theme_lernhive {{/str}}</span>
+            </span>
+        </summary>
 
-    <div id="lernhive-launcher-flyout" class="lernhive-launcher__flyout" role="navigation" aria-label="{{#str}} launcher, theme_lernhive {{/str}}">
-        <a class="lernhive-launcher__action" href="#">
-            <span class="lernhive-launcher__action-icon" aria-hidden="true">B</span>
-            <span class="lernhive-launcher__action-copy">
-                <strong>{{#str}} actioncreatecourse, theme_lernhive {{/str}}</strong>
-                <span>{{#str}} actioncreatecoursedesc, theme_lernhive {{/str}}</span>
-            </span>
-        </a>
-        <a class="lernhive-launcher__action" href="#">
-            <span class="lernhive-launcher__action-icon" aria-hidden="true">G</span>
-            <span class="lernhive-launcher__action-copy">
-                <strong>{{#str}} actioncontenthub, theme_lernhive {{/str}}</strong>
-                <span>{{#str}} actioncontenthubdesc, theme_lernhive {{/str}}</span>
-            </span>
-        </a>
-        <a class="lernhive-launcher__action" href="#">
-            <span class="lernhive-launcher__action-icon" aria-hidden="true">S</span>
-            <span class="lernhive-launcher__action-copy">
-                <strong>{{#str}} actioncreatesnack, theme_lernhive {{/str}}</strong>
-                <span>{{#str}} actioncreatesnackdesc, theme_lernhive {{/str}}</span>
-            </span>
-        </a>
-    </div>
-
-    {{#launcherisdock}}
-        <div class="lernhive-launcher__dock" aria-label="{{#str}} launcherstyle, theme_lernhive {{/str}}">
-            <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatecourse, theme_lernhive {{/str}}">B</a>
-            <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncontenthub, theme_lernhive {{/str}}">G</a>
-            <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatesnack, theme_lernhive {{/str}}">S</a>
+        <div class="lernhive-launcher__flyout" role="navigation" aria-label="{{#str}} launcher, theme_lernhive {{/str}}">
+            <a class="lernhive-launcher__action" href="#">
+                <span class="lernhive-launcher__action-icon" aria-hidden="true">B</span>
+                <span class="lernhive-launcher__action-copy">
+                    <strong>{{#str}} actioncreatecourse, theme_lernhive {{/str}}</strong>
+                    <span>{{#str}} actioncreatecoursedesc, theme_lernhive {{/str}}</span>
+                </span>
+            </a>
+            <a class="lernhive-launcher__action" href="#">
+                <span class="lernhive-launcher__action-icon" aria-hidden="true">G</span>
+                <span class="lernhive-launcher__action-copy">
+                    <strong>{{#str}} actioncontenthub, theme_lernhive {{/str}}</strong>
+                    <span>{{#str}} actioncontenthubdesc, theme_lernhive {{/str}}</span>
+                </span>
+            </a>
+            <a class="lernhive-launcher__action" href="#">
+                <span class="lernhive-launcher__action-icon" aria-hidden="true">S</span>
+                <span class="lernhive-launcher__action-copy">
+                    <strong>{{#str}} actioncreatesnack, theme_lernhive {{/str}}</strong>
+                    <span>{{#str}} actioncreatesnackdesc, theme_lernhive {{/str}}</span>
+                </span>
+            </a>
         </div>
-    {{/launcherisdock}}
+
+        {{#launcherisdock}}
+            <div class="lernhive-launcher__dock" aria-label="{{#str}} launcherstyle, theme_lernhive {{/str}}">
+                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatecourse, theme_lernhive {{/str}}">B</a>
+                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncontenthub, theme_lernhive {{/str}}">G</a>
+                <a class="lernhive-launcher__dock-item" href="#" aria-label="{{#str}} actioncreatesnack, theme_lernhive {{/str}}">S</a>
+            </div>
+        {{/launcherisdock}}
+    </details>
 </section>

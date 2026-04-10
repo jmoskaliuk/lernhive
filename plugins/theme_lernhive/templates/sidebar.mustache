@@ -1,0 +1,17 @@
+<aside class="lernhive-sidebar">
+    <div class="lernhive-brand">
+        <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link">{{ sitename }}</a>
+        <p class="lernhive-brand__meta">{{#str}} exploreoptional, theme_lernhive {{/str}}</p>
+    </div>
+
+    {{> theme_lernhive/launcher }}
+
+    <nav class="lernhive-nav" aria-label="{{#str}} primarynavigation, theme_lernhive {{/str}}">
+        {{{ output.flat_navigation }}}
+    </nav>
+
+    <div class="lernhive-sidebar__notes">
+        <p class="lernhive-sidebar__note"><strong>{{#str}} flavourpriority, theme_lernhive {{/str}}</strong></p>
+        <p class="lernhive-sidebar__note">{{#str}} flavourprioritydesc, theme_lernhive {{/str}}</p>
+    </div>
+</aside>

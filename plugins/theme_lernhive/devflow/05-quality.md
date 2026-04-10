@@ -20,3 +20,6 @@
 - verify Launcher is action-oriented rather than full navigation
 - verify School and optional LXP views remain visually coherent
 - verify mockup decisions can be mapped to Moodle theme implementation without hidden business logic
+- verify Launcher works with keyboard and visible focus states
+- verify card patterns support separate Follow and Bookmark actions without relying on color alone
+- verify sidebar navigation remains readable when Moodle flat navigation output changes
