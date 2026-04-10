@@ -381,9 +381,11 @@
 }
 
 .lernhive-launcher__action {
+  appearance: none;
   display: grid;
   grid-template-columns: 2.5rem 1fr;
   gap: .75rem;
+  width: 100%;
   align-items: center;
   padding: .75rem;
   border: 1px solid var(--lernhive-line);
@@ -426,15 +428,28 @@
 }
 
 .lernhive-launcher__dock-item {
+  appearance: none;
   width: 3rem;
   height: 3rem;
   display: grid;
   place-items: center;
+  padding: 0;
+  border: 0;
   border-radius: 1rem;
   background: var(--lernhive-white);
   color: var(--lernhive-orange);
   text-decoration: none;
   box-shadow: 0 .75rem 1.5rem rgba(25, 72, 102, .16);
+}
+
+.lernhive-launcher__action.is-placeholder,
+.lernhive-launcher__dock-item.is-placeholder {
+  cursor: default;
+}
+
+.lernhive-launcher__action.is-placeholder:disabled,
+.lernhive-launcher__dock-item.is-placeholder:disabled {
+  opacity: .72;
 }
 
 .lernhive-card-section {

@@ -30,20 +30,16 @@ defined('MOODLE_INTERNAL') || die();
 class hook_callbacks {
 
     /**
- * Inject Open Sans via HTML <link> tags into the page head.
+     * Keep the hook registration in place without adding external font requests.
      *
-     * Replaces the legacy theme_lernhive_before_standard_html_head() callback
-     * with the Moodle 5.x hook system.
+     * The theme uses a local-first font stack and should not depend on Google Fonts
+     * or other third-party providers at runtime.
      *
      * @param before_standard_head_html_generation $hook
      */
     public static function before_standard_head_html(
         before_standard_head_html_generation $hook
     ): void {
-        $html = '<link rel="preconnect" href="https://fonts.googleapis.com">'
-              . '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-              . '<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">';
-
-        $hook->add_html($html);
+        unset($hook);
     }
 }
