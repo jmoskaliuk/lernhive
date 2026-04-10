@@ -1,11 +1,11 @@
 .theme-lernhive {
-  --lernhive-white: #{$lernhive-white};
-  --lernhive-ink: #{$lernhive-ink};
-  --lernhive-orange: #{$lernhive-orange};
-  --lernhive-blue: #{$lernhive-blue};
-  --lernhive-blue-light: #{$lernhive-blue-light};
-  --lernhive-cool-gray: #{$lernhive-cool-gray};
-  --lernhive-line: #{$lernhive-line};
-  --lernhive-orange-soft: #{$lernhive-orange-soft};
-  --lernhive-blue-soft: #{$lernhive-blue-soft};
+  --lernhive-white: #{$lh-bg-white};
+  --lernhive-ink: #{$lh-text};
+  --lernhive-orange: #{$lh-accent};
+  --lernhive-blue: #{$lh-primary};
+  --lernhive-blue-light: #{$lh-secondary};
+  --lernhive-cool-gray: #{$lh-bg};
+  --lernhive-line: #{$lh-border};
+  --lernhive-orange-soft: #{$lh-accent-light};
+  --lernhive-blue-soft: #{$lh-secondary-light};
 }
