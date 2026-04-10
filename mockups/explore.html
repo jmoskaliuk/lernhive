@@ -1,42 +1,494 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LernHive Explore Mockup</title>
 <style>
-body{font-family:Arial,sans-serif;background:#f5f7fa;margin:0}
-.sidebar{width:220px;background:#173b53;color:#fff;position:fixed;top:0;bottom:0;padding:20px}
-.main{margin-left:240px;padding:24px}
-.card{background:#fff;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.badge{display:inline-block;background:#eef5fb;padding:6px 10px;border-radius:999px;margin-right:8px}
-.star{float:right;color:#f5b301;font-weight:bold}
-.blocktitle{font-size:20px;margin-top:24px}
-.search{background:#fff;border-radius:14px;padding:14px}
+:root{
+  --bg:#f6f1e8;
+  --panel:#fffdf8;
+  --panel-strong:#fff7eb;
+  --ink:#163038;
+  --muted:#5f7378;
+  --line:#d9d1c4;
+  --nav:#17343d;
+  --nav-soft:#254954;
+  --accent:#c96d3d;
+  --accent-soft:#f4d7c3;
+  --mint:#dbe9de;
+  --shadow:0 18px 40px rgba(22,48,56,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Avenir Next","Trebuchet MS",sans-serif;
+  background:
+    radial-gradient(circle at top left,#fff8ef 0,transparent 28rem),
+    linear-gradient(180deg,#f9f4ec 0,#f3ede4 100%);
+  color:var(--ink);
+}
+.app{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:280px 1fr;
+}
+.sidebar{
+  background:linear-gradient(180deg,var(--nav) 0,var(--nav-soft) 100%);
+  color:#f5efe6;
+  padding:28px 22px;
+  display:flex;
+  flex-direction:column;
+  gap:28px;
+}
+.brand{
+  padding-bottom:18px;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+.brand small,.hint,.navitem span,.note,.eyebrow,.meta,.card small{color:rgba(245,239,230,.72)}
+.brand h1{
+  margin:0 0 6px;
+  font-family:Georgia,serif;
+  font-size:32px;
+  font-weight:600;
+  letter-spacing:.02em;
+}
+.nav{
+  display:grid;
+  gap:10px;
+}
+.navitem{
+  padding:12px 14px;
+  border-radius:16px;
+  background:transparent;
+  border:1px solid transparent;
+}
+.navitem.active{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.16);
+}
+.navitem strong{
+  display:block;
+  margin-bottom:2px;
+  font-size:15px;
+}
+.launchcard{
+  margin-top:auto;
+  background:rgba(255,247,235,.1);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  padding:16px;
+}
+.launchcard h2{
+  margin:0 0 10px;
+  font-size:16px;
+}
+.launchbtn{
+  display:inline-block;
+  margin-top:10px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:#f7eee2;
+  color:var(--nav);
+  font-weight:700;
+}
+.main{
+  padding:28px;
+}
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:22px;
+}
+.headline h2{
+  margin:0 0 8px;
+  font-family:Georgia,serif;
+  font-size:42px;
+  font-weight:600;
+}
+.headline p{
+  margin:0;
+  max-width:720px;
+  color:var(--muted);
+  line-height:1.5;
+}
+.utility{
+  display:flex;
+  gap:10px;
+}
+.utility .pill{
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.72);
+  color:var(--ink);
+  font-weight:600;
+}
+.hero{
+  background:linear-gradient(135deg,#fff8ef 0,#ffffff 56%,#f4eadb 100%);
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  margin-bottom:24px;
+}
+.hero .eyebrow{
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  font-size:12px;
+}
+.herohead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+}
+.search{
+  margin-top:14px;
+  padding:15px 18px;
+  border-radius:18px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  color:var(--muted);
+}
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:14px;
+}
+.chip{
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:#7c4426;
+  font-weight:700;
+  font-size:13px;
+}
+.heroaside{
+  min-width:240px;
+  padding:16px;
+  border-radius:18px;
+  background:var(--panel-strong);
+  border:1px solid #ecd8c7;
+}
+.heroaside h3{
+  margin:0 0 8px;
+  font-size:15px;
+}
+.heroaside p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+  font-size:14px;
+}
+.section{
+  margin-top:22px;
+}
+.sectionhead{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:12px;
+}
+.sectionhead h3{
+  margin:0;
+  font-size:24px;
+  font-family:Georgia,serif;
+  font-weight:600;
+}
+.sectionhead p{
+  margin:0;
+  color:var(--muted);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.card{
+  background:rgba(255,253,248,.92);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 10px 24px rgba(22,48,56,.08);
+}
+.cardtop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+.type{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:var(--mint);
+  color:#295243;
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.actions{
+  display:flex;
+  gap:8px;
+}
+.icon{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  font-weight:700;
+}
+.star{
+  color:var(--accent);
+  border-color:#e7c0a7;
+  background:#fff5ec;
+}
+.card h4{
+  margin:14px 0 8px;
+  font-size:24px;
+  font-family:Georgia,serif;
+  font-weight:600;
+}
+.card p{
+  margin:0 0 10px;
+  color:var(--muted);
+  line-height:1.45;
+}
+.meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  color:var(--muted);
+  font-size:13px;
+}
+.reason{
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:#f2eee7;
+  color:#4b5c61;
+  font-size:14px;
+}
+.footnote{
+  margin-top:24px;
+  padding:14px 16px;
+  border-left:4px solid var(--accent);
+  background:#fff4ea;
+  border-radius:0 16px 16px 0;
+  color:#6a452f;
+}
+@media (max-width: 980px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:static}
+  .herohead,.topbar,.sectionhead{display:block}
+  .heroaside,.utility{margin-top:14px}
+  .grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<div class="sidebar">
-  <h2>LernHive</h2>
-  <p>Explore</p>
-  <p>My Learning</p>
-  <p>Communities</p>
-  <p>Topics</p>
-  <p>Reports</p>
-</div>
-<div class="main">
-  <div class="search">What interests you right now?</div>
-  <p><span class="badge">Leadership</span><span class="badge">AI</span><span class="badge">Teaching</span></p>
-  <div class="blocktitle">New in your community</div>
-  <div class="row">
-    <div class="card"><span class="star">★</span><strong>Snack</strong><br>Feedback in teams<br><small>New in your community</small></div>
-    <div class="card"><strong>Community</strong><br>New members joined Design Circle<br><small>Digest-relevant social update</small></div>
-  </div>
-  <div class="blocktitle">New from content you follow</div>
-  <div class="row">
-    <div class="card"><span class="star">★</span><strong>Course</strong><br>Onboarding Essentials<br><small>New discussion in followed content</small></div>
-    <div class="card"><strong>Snack</strong><br>Quick retrospective template<br><small>Updated this week</small></div>
-  </div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <small>LernHive Theme Mockup</small>
+      <h1>LernHive</h1>
+      <div class="hint">Left navigation is primary. Explore replaces Dashboard only in the LXP Flavour.</div>
+    </div>
+
+    <nav class="nav">
+      <div class="navitem active"><strong>Explore</strong><span>LXP home</span></div>
+      <div class="navitem"><strong>My Learning</strong><span>Courses and progress</span></div>
+      <div class="navitem"><strong>Communities</strong><span>Audience-relevant spaces</span></div>
+      <div class="navitem"><strong>Topics</strong><span>Optional orientation layer</span></div>
+      <div class="navitem"><strong>Reports</strong><span>Simple learning visibility</span></div>
+    </nav>
+
+    <div class="launchcard">
+      <h2>Launcher</h2>
+      <div class="hint">Action-oriented surface for creating and managing content. It is not full navigation.</div>
+      <div class="launchbtn">Open launcher</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="headline">
+        <h2>Explore</h2>
+        <p>A calm, guided LXP home focused on recent relevance. Ranking stays explainable: community and Audience context first, snacks preferred, last 7 days matter, no likes.</p>
+      </div>
+      <div class="utility">
+        <div class="pill">Notifications</div>
+        <div class="pill">Profile</div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Optional LXP Flavour</div>
+      <div class="herohead">
+        <div>
+          <div class="search">Search courses, snacks, communities, and topics</div>
+          <div class="chips">
+            <div class="chip">Leadership</div>
+            <div class="chip">Teaching</div>
+            <div class="chip">AI literacy</div>
+            <div class="chip">Feedback</div>
+          </div>
+        </div>
+        <aside class="heroaside">
+          <h3>Why this feels calm</h3>
+          <p>Only four feed blocks are shown. Follow uses a star on cards. Bookmark remains explicit and separate. No likes and no noisy micro-events drive the page.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead">
+        <h3>New in your community</h3>
+        <p>Digest-relevant updates from nearby learning context.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="cardtop">
+            <div class="type">Snack</div>
+            <div class="actions">
+              <div class="icon star">★</div>
+              <div class="icon">⌁</div>
+            </div>
+          </div>
+          <h4>Feedback in teams</h4>
+          <p>A lightweight 10–30 minute learning item for managers who want a quick practice format.</p>
+          <div class="meta">
+            <small>12 minutes</small>
+            <small>Community relevance first</small>
+            <small>Updated today</small>
+          </div>
+          <div class="reason">Shown because this is new in your community and still within the recent 7-day relevance window.</div>
+        </article>
+
+        <article class="card">
+          <div class="cardtop">
+            <div class="type">Community</div>
+            <div class="actions">
+              <div class="icon">⌁</div>
+            </div>
+          </div>
+          <h4>Design Circle</h4>
+          <p>New members joined and shared relevant discussion updates for your current audience context.</p>
+          <div class="meta">
+            <small>Community update</small>
+            <small>Digest default</small>
+          </div>
+          <div class="reason">Shown because you belong to this community and there is a relevant community update.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead">
+        <h3>New in content you follow</h3>
+        <p>Follow and Bookmark remain separate relationships.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="cardtop">
+            <div class="type">Course</div>
+            <div class="actions">
+              <div class="icon star">★</div>
+              <div class="icon">⌁</div>
+            </div>
+          </div>
+          <h4>Onboarding Essentials</h4>
+          <p>A discussion update was marked as relevant in content you follow.</p>
+          <div class="meta">
+            <small>Followed content</small>
+            <small>Discussion update</small>
+          </div>
+          <div class="reason">Shown because you follow this course. Bookmark alone would not create this relevance signal.</div>
+        </article>
+
+        <article class="card">
+          <div class="cardtop">
+            <div class="type">Snack</div>
+            <div class="actions">
+              <div class="icon">⌁</div>
+            </div>
+          </div>
+          <h4>Quick retrospective template</h4>
+          <p>A snack can still appear because snacks are preferred when relevance is otherwise similar.</p>
+          <div class="meta">
+            <small>18 minutes</small>
+            <small>Recent and lightweight</small>
+          </div>
+          <div class="reason">Shown because it is recent, lightweight, and relevant to content you already follow.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead">
+        <h3>Popular snacks</h3>
+        <p>Lightweight learning items that remain easy to start.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="cardtop">
+            <div class="type">Snack</div>
+            <div class="actions">
+              <div class="icon star">★</div>
+              <div class="icon">⌁</div>
+            </div>
+          </div>
+          <h4>Better stand-ups</h4>
+          <p>A 15-minute snack with quick activities and no heavy course structure.</p>
+          <div class="meta">
+            <small>15 minutes</small>
+            <small>Snack-friendly ranking</small>
+          </div>
+          <div class="reason">Shown because snacks are preferred when the content is recent and broadly relevant.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sectionhead">
+        <h3>Explore</h3>
+        <p>Broader discovery beyond your immediate feed signals.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="cardtop">
+            <div class="type">Course</div>
+            <div class="actions">
+              <div class="icon">⌁</div>
+            </div>
+          </div>
+          <h4>Leading hybrid classrooms</h4>
+          <p>A broader Explore item surfaced without relying on likes or social noise.</p>
+          <div class="meta">
+            <small>Broader topic relevance</small>
+            <small>Explainable ranking</small>
+          </div>
+          <div class="reason">Shown because it matches your current topics and recent audience context.</div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footnote">Mockup note: this screen represents the LXP home only. In School or other non-LXP Flavours, the classic Moodle dashboard remains in place.</div>
+  </main>
 </div>
 </body>
 </html>

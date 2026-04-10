@@ -1,16 +1,177 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Launcher Mockup</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LernHive Launcher Mockup</title>
 <style>
-body{font-family:Arial,sans-serif;background:#eef2f7;padding:40px}
-.panel{width:360px;background:#fff;border-radius:18px;padding:18px;box-shadow:0 4px 18px rgba(0,0,0,.12)}
-.item{padding:12px 14px;border:1px solid #e6e9ef;border-radius:12px;margin:10px 0;background:#fafbfd}
-</style></head><body>
-<div class="panel">
-<h2>Launcher</h2>
-<div class="item">Create course</div>
-<div class="item">Open ContentHub</div>
-<div class="item">Create snack</div>
-<div class="item">Create community</div>
-<div class="item">Add users</div>
+:root{
+  --bg:#f3ede5;
+  --panel:#fffdf9;
+  --ink:#183038;
+  --muted:#66777b;
+  --line:#d9d0c2;
+  --nav:#17343d;
+  --accent:#c96d3d;
+  --accent-soft:#fff1e3;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:32px;
+  font-family:"Avenir Next","Trebuchet MS",sans-serif;
+  background:radial-gradient(circle at top,#fff8ef 0,transparent 24rem),var(--bg);
+  color:var(--ink);
+}
+.shell{
+  width:min(1120px,100%);
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:20px;
+}
+.sidebar,.panel{
+  border-radius:28px;
+  overflow:hidden;
+}
+.sidebar{
+  background:linear-gradient(180deg,var(--nav) 0,#264853 100%);
+  color:#f8f1e8;
+  padding:24px;
+}
+.sidebar h1{
+  margin:0 0 8px;
+  font-family:Georgia,serif;
+  font-weight:600;
+}
+.sidebar p{color:rgba(248,241,232,.72);line-height:1.45}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  box-shadow:0 20px 40px rgba(24,48,56,.1);
+  padding:28px;
+}
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:12px;
+  font-weight:700;
+}
+.panel h2{
+  margin:10px 0 8px;
+  font-family:Georgia,serif;
+  font-size:38px;
+  font-weight:600;
+}
+.intro{
+  color:var(--muted);
+  max-width:740px;
+  line-height:1.55;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  margin-top:24px;
+}
+.item{
+  padding:18px;
+  border-radius:22px;
+  border:1px solid var(--line);
+  background:#fff;
+}
+.item h3{
+  margin:0 0 8px;
+  font-size:22px;
+  font-family:Georgia,serif;
+  font-weight:600;
+}
+.item p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+.tag{
+  display:inline-block;
+  margin-top:14px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:#7f4727;
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.note{
+  margin-top:22px;
+  padding:14px 16px;
+  border-left:4px solid var(--accent);
+  border-radius:0 16px 16px 0;
+  background:#fff4ea;
+  color:#71472f;
+}
+@media (max-width: 900px){
+  .shell{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <h1>LernHive</h1>
+    <p>The Launcher is a quick action surface. It helps users start tasks without becoming a second full navigation system.</p>
+  </aside>
+
+  <main class="panel">
+    <div class="eyebrow">Action Surface</div>
+    <h2>Launcher</h2>
+    <p class="intro">This mockup keeps the Launcher focused on creation and management actions. Navigation remains left-oriented elsewhere in the theme.</p>
+
+    <section class="grid">
+      <article class="item">
+        <h3>Create course</h3>
+        <p>Start a new course flow without leaving the current context.</p>
+        <div class="tag">Primary action</div>
+      </article>
+
+      <article class="item">
+        <h3>Open ContentHub</h3>
+        <p>Enter the orchestration layer for Copy, Template, and Library entry points.</p>
+        <div class="tag">Content actions</div>
+      </article>
+
+      <article class="item">
+        <h3>Create snack</h3>
+        <p>Start a lightweight 10–30 minute learning item with a simple guided flow.</p>
+        <div class="tag">LXP action</div>
+      </article>
+
+      <article class="item">
+        <h3>Create community</h3>
+        <p>Open the setup flow for a Community without turning the Launcher into navigation.</p>
+        <div class="tag">LXP action</div>
+      </article>
+
+      <article class="item">
+        <h3>Library import</h3>
+        <p>Jump directly into managed content import when the Library path is relevant.</p>
+        <div class="tag">Managed content</div>
+      </article>
+
+      <article class="item">
+        <h3>Add users</h3>
+        <p>Open a common admin action without exposing too many decisions at once.</p>
+        <div class="tag">Admin action</div>
+      </article>
+    </section>
+
+    <div class="note">Mockup note: Template and Library stay conceptually separate. They may both be launched from this surface, but they should not merge into one option.</div>
+  </main>
 </div>
-</body></html>
+</body>
+</html>

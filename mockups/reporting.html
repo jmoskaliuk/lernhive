@@ -1,15 +1,121 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>Reporting Mockup</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LernHive Reporting Mockup</title>
 <style>
-body{font-family:Arial,sans-serif;background:#f5f7fa;padding:40px}
-.grid{display:grid;grid-template-columns:repeat(3,260px);gap:18px}
-.tile{background:#fff;border-radius:16px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
-.num{font-size:36px;font-weight:bold}
-</style></head><body>
-<h1>Reports</h1>
-<div class="grid">
-  <div class="tile"><div class="num">124</div><div>Users in my course</div></div>
-  <div class="tile"><div class="num">7</div><div>Most popular courses</div></div>
-  <div class="tile"><div class="num">62%</div><div>Course completion</div></div>
+:root{
+  --bg:#f4eee6;
+  --panel:#fffdf9;
+  --ink:#173038;
+  --muted:#66777b;
+  --line:#d8cfc1;
+  --accent:#c96d3d;
+  --tile:#fff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:34px;
+  font-family:"Avenir Next","Trebuchet MS",sans-serif;
+  background:linear-gradient(180deg,#faf4ed 0,var(--bg) 100%);
+  color:var(--ink);
+}
+.wrap{
+  max-width:1120px;
+  margin:0 auto;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:28px;
+  box-shadow:0 18px 36px rgba(23,48,56,.08);
+}
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:12px;
+  font-weight:700;
+}
+h1{
+  margin:10px 0 10px;
+  font-size:42px;
+  font-family:Georgia,serif;
+  font-weight:600;
+}
+.intro{
+  color:var(--muted);
+  max-width:700px;
+  line-height:1.55;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+  margin-top:24px;
+}
+.tile{
+  background:var(--tile);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:22px;
+}
+.num{
+  font-family:Georgia,serif;
+  font-size:48px;
+  line-height:1;
+  margin-bottom:10px;
+}
+.tile h2{
+  margin:0 0 8px;
+  font-size:20px;
+}
+.tile p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+.note{
+  margin-top:20px;
+  color:var(--muted);
+}
+@media (max-width: 900px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="panel">
+    <div class="eyebrow">Release 1 Reporting</div>
+    <h1>Reports</h1>
+    <p class="intro">Reporting stays simple in Release 1: a calm tile-based overview built on Moodle reporting and analytics rather than a fully custom analytics system.</p>
+
+    <div class="grid">
+      <article class="tile">
+        <div class="num">124</div>
+        <h2>Users in my course</h2>
+        <p>Quick visibility for the most immediate course question.</p>
+      </article>
+
+      <article class="tile">
+        <div class="num">7</div>
+        <h2>Most popular courses</h2>
+        <p>A small surface for high-value reporting without overload.</p>
+      </article>
+
+      <article class="tile">
+        <div class="num">62%</div>
+        <h2>Course completion</h2>
+        <p>Simple completion visibility with drilldown available later.</p>
+      </article>
+    </div>
+
+    <div class="note">Mockup note: richer reporting and trend views belong later. Release 1 keeps the dashboard light and readable.</div>
+  </section>
 </div>
-</body></html>
+</body>
+</html>

@@ -1,16 +1,134 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>ContentHub Mockup</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LernHive ContentHub Mockup</title>
 <style>
-body{font-family:Arial,sans-serif;background:#f5f7fa;padding:40px}
-.grid{display:grid;grid-template-columns:repeat(2,240px);gap:18px}
-.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
-</style></head><body>
-<h1>ContentHub</h1>
-<p>How would you like to start?</p>
-<div class="grid">
-  <div class="card"><h3>Copy</h3><p>Reuse an existing course from your system.</p></div>
-  <div class="card"><h3>Template</h3><p>Start from a predefined structure.</p></div>
-  <div class="card"><h3>Library</h3><p>Import a ready-to-use course from eLeDia.</p></div>
-  <div class="card"><h3>AI</h3><p>Generate a first draft with AI.</p></div>
+:root{
+  --bg:#f4eee6;
+  --panel:#fffdf8;
+  --ink:#163038;
+  --muted:#64777a;
+  --line:#d8cfc1;
+  --accent:#c96d3d;
+  --accent-soft:#fff0e0;
+  --mint:#e2eee6;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:34px;
+  font-family:"Avenir Next","Trebuchet MS",sans-serif;
+  color:var(--ink);
+  background:linear-gradient(180deg,#faf4ec 0,var(--bg) 100%);
+}
+.wrap{
+  max-width:1120px;
+  margin:0 auto;
+}
+.hero{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:28px;
+  box-shadow:0 18px 36px rgba(22,48,56,.08);
+}
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:12px;
+  font-weight:700;
+}
+h1{
+  margin:10px 0 10px;
+  font-family:Georgia,serif;
+  font-size:42px;
+  font-weight:600;
+}
+.intro{
+  max-width:720px;
+  color:var(--muted);
+  line-height:1.55;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+  margin-top:24px;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:22px;
+}
+.card h2{
+  margin:0 0 8px;
+  font-family:Georgia,serif;
+  font-size:28px;
+  font-weight:600;
+}
+.card p{
+  margin:0 0 14px;
+  color:var(--muted);
+  line-height:1.5;
+}
+.tag{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.copy{background:#eef1f3;color:#294149}
+.template{background:var(--accent-soft);color:#7d4829}
+.library{background:var(--mint);color:#295244}
+.note{
+  margin-top:22px;
+  padding:14px 16px;
+  border-left:4px solid var(--accent);
+  border-radius:0 16px 16px 0;
+  background:#fff5eb;
+  color:#734b33;
+}
+@media (max-width: 900px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Orchestration Layer</div>
+    <h1>ContentHub</h1>
+    <p class="intro">ContentHub is the UI layer that helps users choose how to start. It does not own Copy or Library logic. Template stays conceptually separate from managed Library content.</p>
+
+    <div class="grid">
+      <article class="card">
+        <h2>Copy</h2>
+        <p>Reuse an existing course from the current Moodle system with a simple guided flow.</p>
+        <div class="tag copy">Separate responsibility</div>
+      </article>
+
+      <article class="card">
+        <h2>Template</h2>
+        <p>Start from a predefined structure. Templates are conceptually different from managed Library content.</p>
+        <div class="tag template">Separate concept</div>
+      </article>
+
+      <article class="card">
+        <h2>Library</h2>
+        <p>Import managed `.mbz` content. Release 1 does not require a complex end-user library management interface.</p>
+        <div class="tag library">Managed import</div>
+      </article>
+    </div>
+
+    <div class="note">Mockup note: Template and Library should also remain separate in Launcher UX. Version visibility matters, but Release 1 keeps it limited and practical.</div>
+  </section>
 </div>
-</body></html>
+</body>
+</html>
