@@ -40,6 +40,22 @@ Global action launcher for create, manage, and configure actions that complement
 - Moodle core strings should be reused where they fit semantically
 - LernHive-specific labels should remain limited to established product terms such as `Launcher`, `ContentHub`, `Snack`, and `Community`
 
+## Baseline Release 1 action inventory
+
+### Always-priority actions
+- `ContentHub`
+- `Create course`
+
+### Conditional Release 1 shortcuts
+- `Create snack`
+- `Create community`
+
+### Release 1 routing rule
+- `ContentHub` is the default orchestration entry for content-related creation paths
+- direct launcher shortcuts should be limited to a very small number of repeated high-value actions
+- `Template`, `Library`, and similar sub-paths should stay behind `ContentHub` in the baseline Release 1 launcher
+- configuration and reporting destinations may be added later only if they remain action-oriented and do not turn the launcher into a second navigation menu
+
 ## Release 1 guardrails
 - launcher is for actions, not for browsing content areas
 - launcher must not duplicate business logic from `local_lernhive_contenthub` or other plugins

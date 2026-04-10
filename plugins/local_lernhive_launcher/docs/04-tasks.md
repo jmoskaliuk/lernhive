@@ -8,6 +8,27 @@
 - mark which actions route to Moodle core, `ContentHub`, or optional LXP flows
 - outcome: approved Release 1 action inventory with owner plugin for each action
 
+#### Current proposed Release 1 inventory
+
+| Action label | Type | Visible for | Owner / destination | Release 1 decision |
+|---|---|---|---|---|
+| `ContentHub` | global | users with relevant content creation access | `local_lernhive_contenthub` | core launcher action |
+| `Create course` | global | teachers, course creators, admins with course creation rights | Moodle core or shared LernHive course creation entry | core launcher action |
+| `Create snack` | conditional | users with LXP creation rights and required plugin availability | LXP flow owned outside the launcher | optional direct shortcut |
+| `Create community` | conditional | users with community creation rights and required plugin availability | LXP flow owned outside the launcher | optional direct shortcut |
+
+#### Decisions for Release 1
+- keep the baseline launcher to two always-priority actions: `ContentHub` and `Create course`
+- allow `Create snack` and `Create community` only as conditional shortcuts in LXP-capable contexts
+- keep `Template`, `Library`, and similar content sub-paths behind `ContentHub` instead of exposing them all in the launcher baseline
+- do not add reports, navigation destinations, or broad admin menus to the initial launcher inventory
+
+#### Rationale
+- `ContentHub` already owns orchestration for copy, template, and library paths
+- `Create course` is a frequent high-value action and is already present in the launcher mockup direction
+- direct `Snack` and `Community` shortcuts support the documented LXP model without making LXP the default for every installation
+- a shorter launcher list reduces overload and stays aligned with the action-surface principle
+
 ### LH-LAUNCHER-02 — Define visibility and permission rules
 - map each launcher action to the required Moodle capability or plugin availability check
 - confirm which actions are hidden when the target plugin is unavailable
@@ -51,7 +72,7 @@
 - outcome: Release 1 QA checklist for launcher rollout
 
 ## Open questions
-- should `Snack` and `Community` creation appear directly in the launcher in Release 1, or only via `ContentHub` when both paths exist
+- should `Snack` and `Community` creation appear directly in the launcher by default in LXP contexts, or stay hidden behind `ContentHub` until usage proves they are frequent enough
 - how strongly should level-based simplification reduce visible actions for beginner users in Release 1
 - which create/configure destinations already have stable Moodle or LernHive target URLs versus placeholder future flows
 - whether a short descriptive subtitle under each action is needed for Release 1 or can wait
