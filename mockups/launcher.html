@@ -150,6 +150,17 @@ h1{
   border-radius:12px;
   background:rgba(255,255,255,.12);
 }
+.navicon svg,
+.lucidebox svg,
+.dockicon svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 .navlabel strong{
   display:block;
   font-size:14px;
@@ -240,11 +251,6 @@ h1{
   border-radius:12px;
   background:#fff;
   color:var(--accent);
-}
-.lucide{
-  width:18px;
-  height:18px;
-  display:block;
 }
 .quickitem strong{
   display:block;
@@ -355,6 +361,51 @@ h1{
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-plus" viewBox="0 0 24 24">
+    <path d="M12 5v14"></path>
+    <path d="M5 12h14"></path>
+  </symbol>
+  <symbol id="icon-compass" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="m15.5 8.5-2.7 7-7 2.7 2.7-7z"></path>
+  </symbol>
+  <symbol id="icon-book-open" viewBox="0 0 24 24">
+    <path d="M12 7v14"></path>
+    <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+    <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+  </symbol>
+  <symbol id="icon-layout-grid" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="8" height="8" rx="2"></rect>
+    <rect x="13" y="3" width="8" height="8" rx="2"></rect>
+    <rect x="3" y="13" width="8" height="8" rx="2"></rect>
+    <rect x="13" y="13" width="8" height="8" rx="2"></rect>
+  </symbol>
+  <symbol id="icon-archive" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="4" rx="1"></rect>
+    <path d="M5 8v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"></path>
+    <path d="M10 12h4"></path>
+  </symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24">
+    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+  </symbol>
+  <symbol id="icon-file-stack" viewBox="0 0 24 24">
+    <path d="M7 18a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l4 4v10a2 2 0 0 1-2 2z"></path>
+    <path d="M15 2v4h4"></path>
+    <path d="M5 22h12"></path>
+  </symbol>
+  <symbol id="icon-circle-play" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"></circle>
+    <path d="m10 8 6 4-6 4Z"></path>
+  </symbol>
+  <symbol id="icon-users-plus" viewBox="0 0 24 24">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+    <circle cx="9" cy="7" r="4"></circle>
+    <path d="M19 8v6"></path>
+    <path d="M22 11h-6"></path>
+  </symbol>
+</svg>
 <div class="wrap">
   <section class="hero">
     <div class="eyebrow">Launcher Exploration</div>
@@ -380,11 +431,11 @@ h1{
 
             <nav class="nav">
               <div class="navitem active">
-                <div class="navicon">Ex</div>
+                <div class="navicon"><svg aria-hidden="true"><use href="#icon-compass"></use></svg></div>
                 <div class="navlabel"><strong>Explore</strong><span>LXP home</span></div>
               </div>
               <div class="navitem">
-                <div class="navicon">ML</div>
+                <div class="navicon"><svg aria-hidden="true"><use href="#icon-book-open"></use></svg></div>
                 <div class="navlabel"><strong>My Learning</strong><span>Courses and progress</span></div>
               </div>
             </nav>
@@ -392,9 +443,7 @@ h1{
             <div class="launchertrigger">
               <div class="triggerrow">
                 <div class="navicon">
-                  <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 5v14"></path><path d="M5 12h14"></path>
-                  </svg>
+                  <svg aria-hidden="true"><use href="#icon-plus"></use></svg>
                 </div>
                 <div>Launcher</div>
               </div>
@@ -412,45 +461,35 @@ h1{
               <div class="quicklist">
                 <div class="quickitem">
                   <div class="lucidebox">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M4 19.5V8a2 2 0 0 1 2-2h8l6 6v7.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M14 6v6h6"></path>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-book-open"></use></svg>
                   </div>
                   <div><strong>Create course</strong><span>Primary course action</span></div>
                   <div class="microtag">Core</div>
                 </div>
                 <div class="quickitem">
                   <div class="lucidebox">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-layout-grid"></use></svg>
                   </div>
                   <div><strong>ContentHub</strong><span>Copy, Template, Library</span></div>
                   <div class="microtag">Content</div>
                 </div>
                 <div class="quickitem">
                   <div class="lucidebox">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="4" y="4" width="7" height="16" rx="1.5"></rect><rect x="13" y="4" width="7" height="16" rx="1.5"></rect>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-file-stack"></use></svg>
                   </div>
                   <div><strong>Template</strong><span>Structured starting point</span></div>
                   <div class="microtag">Path</div>
                 </div>
                 <div class="quickitem">
                   <div class="lucidebox">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 7.5 12 4l9 3.5"></path><path d="M5 9.5V18l7 3 7-3V9.5"></path><path d="M12 13v8"></path>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-archive"></use></svg>
                   </div>
                   <div><strong>Library</strong><span>Managed `.mbz` import</span></div>
                   <div class="microtag">Managed</div>
                 </div>
                 <div class="quickitem">
                   <div class="lucidebox">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="9"></circle><path d="m10 8 6 4-6 4Z"></path>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-circle-play"></use></svg>
                   </div>
                   <div><strong>Create snack</strong><span>10–30 minute item</span></div>
                   <div class="microtag">LXP</div>
@@ -479,11 +518,11 @@ h1{
 
             <nav class="nav">
               <div class="navitem active">
-                <div class="navicon">Ex</div>
+                <div class="navicon"><svg aria-hidden="true"><use href="#icon-compass"></use></svg></div>
                 <div class="navlabel"><strong>Explore</strong><span>LXP home</span></div>
               </div>
               <div class="navitem">
-                <div class="navicon">ML</div>
+                <div class="navicon"><svg aria-hidden="true"><use href="#icon-book-open"></use></svg></div>
                 <div class="navlabel"><strong>My Learning</strong><span>Courses and progress</span></div>
               </div>
             </nav>
@@ -491,9 +530,7 @@ h1{
             <div class="launchertrigger">
               <div class="triggerrow">
                 <div class="navicon">
-                  <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 5v14"></path><path d="M5 12h14"></path>
-                  </svg>
+                  <svg aria-hidden="true"><use href="#icon-plus"></use></svg>
                 </div>
                 <div>Launcher</div>
               </div>
@@ -508,49 +545,37 @@ h1{
               <div class="dock">
                 <div class="dockitem">
                   <div class="dockicon">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M4 19.5V8a2 2 0 0 1 2-2h8l6 6v7.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M14 6v6h6"></path>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-book-open"></use></svg>
                   </div>
                   <span>Course</span>
                 </div>
                 <div class="dockitem">
                   <div class="dockicon">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-layout-grid"></use></svg>
                   </div>
                   <span>Hub</span>
                 </div>
                 <div class="dockitem">
                   <div class="dockicon">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="4" y="4" width="7" height="16" rx="1.5"></rect><rect x="13" y="4" width="7" height="16" rx="1.5"></rect>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-file-stack"></use></svg>
                   </div>
                   <span>Template</span>
                 </div>
                 <div class="dockitem center">
                   <div class="dockicon">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="9"></circle><path d="m10 8 6 4-6 4Z"></path>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-circle-play"></use></svg>
                   </div>
                   <span>Snack</span>
                 </div>
                 <div class="dockitem">
                   <div class="dockicon">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 7.5 12 4l9 3.5"></path><path d="M5 9.5V18l7 3 7-3V9.5"></path><path d="M12 13v8"></path>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-archive"></use></svg>
                   </div>
                   <span>Library</span>
                 </div>
                 <div class="dockitem">
                   <div class="dockicon">
-                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path>
-                    </svg>
+                    <svg aria-hidden="true"><use href="#icon-users-plus"></use></svg>
                   </div>
                   <span>Users</span>
                 </div>

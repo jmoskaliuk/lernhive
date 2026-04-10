@@ -57,6 +57,16 @@ Reference family:
 
 ## Current mockup use
 
+- `mockups/launcher.html` uses:
+  - `plus`
+  - `compass`
+  - `book-open`
+  - `layout-grid`
+  - `file-stack`
+  - `archive`
+  - `copy`
+  - `circle-play`
+  - `users-plus`
 - `mockups/course-page.html` uses:
   - `book-open`
   - `calendar`
