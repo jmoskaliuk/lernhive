@@ -41,13 +41,13 @@ $THEME->layouts = [
         'defaultregion' => 'side-pre',
     ],
     'course' => [
-        'file' => 'drawers.php',
+        'file' => 'course.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
         'options' => ['langmenu' => true],
     ],
     'incourse' => [
-        'file' => 'drawers.php',
+        'file' => 'course.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
     ],

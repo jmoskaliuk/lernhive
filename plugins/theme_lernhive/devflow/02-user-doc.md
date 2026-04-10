@@ -17,6 +17,7 @@ The theme makes LernHive feel calmer, clearer, and easier to navigate without ch
 - cards, lists, and forms feel calmer and easier to scan than standard Moodle
 - the same visual language works across School and the optional LXP Flavour
 - Follow can appear on cards as a star action, while Bookmark remains separate and explicit
+- course pages keep the learning content central and place helper surfaces in a quieter secondary area
 
 ## Main user journeys
 - open a page and understand the main structure immediately
@@ -25,6 +26,7 @@ The theme makes LernHive feel calmer, clearer, and easier to navigate without ch
 - read cards, tiles, and helper surfaces without visual overload
 - use the same interface comfortably on desktop and smaller screens
 - understand common action patterns consistently across Explore, ContentHub, and reporting surfaces
+- stay oriented on course pages without a visually dominant secondary navigation pattern
 
 ## Mockup goal
 - the mockup should already show how Moodle pages, LernHive cards, and action surfaces fit into one coherent theme system

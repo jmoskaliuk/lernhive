@@ -17,6 +17,7 @@
 - test compact flyout and optional dock launcher patterns against Moodle navigation output
 - connect the new Explore shell components to real `local_lernhive_discovery` output without hardcoding feed data in the theme
 - connect a real ContentHub screen to the new orchestration shell without re-merging Copy, Template, and Library responsibilities
+- validate the new course layout against standard Moodle course pages and later against Snack-specific constraints
 
 ## Open questions
 - exact Moodle theme extension points for the left navigation treatment

@@ -23,3 +23,5 @@
 - verify Launcher works with keyboard and visible focus states
 - verify card patterns support separate Follow and Bookmark actions without relying on color alone
 - verify sidebar navigation remains readable when Moodle flat navigation output changes
+- verify course pages keep content central and helper content secondary
+- verify Snack-oriented constraints are not contradicted by the course page shell
