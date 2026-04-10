@@ -7,7 +7,8 @@
 }
 
 .theme-lernhive-shell,
-.theme-lernhive-login {
+.theme-lernhive-login,
+.theme-lernhive-admin-shell {
   min-height: 100vh;
 }
 
@@ -176,6 +177,57 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.lernhive-admin-layout {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.lernhive-admin-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, .95);
+  box-shadow: 0 .75rem 1.5rem rgba(25, 72, 102, .06);
+}
+
+.lernhive-admin-header__main,
+.lernhive-admin-main {
+  min-width: 0;
+}
+
+.lernhive-admin-header__actions {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.lernhive-admin-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.lernhive-admin-surface {
+  padding: 1.5rem;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 .75rem 1.5rem rgba(25, 72, 102, .06);
+}
+
+.lernhive-admin-aside {
+  padding: 1rem;
+  border: 1px solid var(--lernhive-line);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, .96);
 }
 
 .lernhive-course-layout {
@@ -1268,6 +1320,12 @@
   border-bottom: 1px solid var(--lernhive-line);
 }
 
+@media (min-width: 992px) {
+  .lernhive-admin-content {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+}
+
 @media (max-width: 991px) {
   .lernhive-app-shell {
     grid-template-columns: 1fr;
@@ -1277,11 +1335,19 @@
     display: block;
   }
 
+  .lernhive-admin-header {
+    display: block;
+  }
+
   .lernhive-course-header {
     display: block;
   }
 
   .lernhive-course-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lernhive-admin-content {
     grid-template-columns: 1fr;
   }
 
@@ -1333,5 +1399,9 @@
     grid-column: 2;
     justify-self: start;
     margin-top: .5rem;
+  }
+
+  .lernhive-admin-layout {
+    padding: 1rem;
   }
 }
