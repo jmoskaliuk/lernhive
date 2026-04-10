@@ -258,7 +258,16 @@ body{
   border-radius:16px;
   background:var(--mint);
   color:var(--nav);
-  font-weight:700;
+  border:1px solid rgba(25,72,102,.08);
+}
+.itemicon svg{
+  width:24px;
+  height:24px;
+  stroke:currentColor;
+  stroke-width:1.9;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 .item strong{
   display:block;
@@ -269,6 +278,23 @@ body{
   color:var(--muted);
   line-height:1.4;
   font-size:14px;
+}
+.itemmeta{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+.itemmeta .typepill{
+  padding:4px 8px;
+  border-radius:999px;
+  background:var(--panel-soft);
+  border:1px solid var(--line);
+  color:var(--nav);
+  font-weight:700;
+  font-size:12px;
 }
 .itemcta{
   padding:10px 14px;
@@ -351,6 +377,35 @@ body{
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-book-open" viewBox="0 0 24 24">
+    <path d="M12 7v14"></path>
+    <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+    <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+  </symbol>
+  <symbol id="icon-calendar" viewBox="0 0 24 24">
+    <path d="M8 2v4"></path>
+    <path d="M16 2v4"></path>
+    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+    <path d="M3 10h18"></path>
+  </symbol>
+  <symbol id="icon-file-text" viewBox="0 0 24 24">
+    <path d="M14 2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8z"></path>
+    <path d="M14 2v6h6"></path>
+    <path d="M10 13h8"></path>
+    <path d="M10 17h8"></path>
+    <path d="M10 9h1"></path>
+  </symbol>
+  <symbol id="icon-check-square" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+    <path d="m9 12 2 2 4-4"></path>
+  </symbol>
+  <symbol id="icon-messages-square" viewBox="0 0 24 24">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    <path d="M8 9h8"></path>
+    <path d="M8 13h5"></path>
+  </symbol>
+</svg>
 <div class="app">
   <aside class="sidebar">
     <div class="brand">
@@ -418,18 +473,30 @@ body{
             </div>
             <div class="list">
               <article class="item">
-                <div class="itemicon">1</div>
+                <div class="itemicon">
+                  <svg aria-hidden="true"><use href="#icon-book-open"></use></svg>
+                </div>
                 <div>
                   <strong>Welcome and course overview</strong>
                   <p>Short orientation block with expectations, workload, and the first thing learners should do.</p>
+                  <div class="itemmeta">
+                    <span class="typepill">Page</span>
+                    <span>Orientation content</span>
+                  </div>
                 </div>
                 <div class="itemcta">Open</div>
               </article>
               <article class="item">
-                <div class="itemicon">2</div>
+                <div class="itemicon">
+                  <svg aria-hidden="true"><use href="#icon-calendar"></use></svg>
+                </div>
                 <div>
                   <strong>Teaching format and schedule</strong>
                   <p>Clear explanation of hybrid flow, key dates, and where live sessions fit in.</p>
+                  <div class="itemmeta">
+                    <span class="typepill">Schedule</span>
+                    <span>Dates and format</span>
+                  </div>
                 </div>
                 <div class="itemcta">Open</div>
               </article>
@@ -443,26 +510,44 @@ body{
             </div>
             <div class="list">
               <article class="item">
-                <div class="itemicon">A</div>
+                <div class="itemicon">
+                  <svg aria-hidden="true"><use href="#icon-file-text"></use></svg>
+                </div>
                 <div>
                   <strong>Short input: Why hybrid teaching needs structure</strong>
                   <p>Readable course item with a simple entry into the main topic.</p>
+                  <div class="itemmeta">
+                    <span class="typepill">Resource</span>
+                    <span>Reading or short input</span>
+                  </div>
                 </div>
                 <div class="itemcta">Open</div>
               </article>
               <article class="item">
-                <div class="itemicon">B</div>
+                <div class="itemicon">
+                  <svg aria-hidden="true"><use href="#icon-check-square"></use></svg>
+                </div>
                 <div>
                   <strong>Reflection task</strong>
                   <p>One clear activity instead of a noisy stack of parallel options.</p>
+                  <div class="itemmeta">
+                    <span class="typepill">Activity</span>
+                    <span>Short task</span>
+                  </div>
                 </div>
                 <div class="itemcta">Open</div>
               </article>
               <article class="item">
-                <div class="itemicon">C</div>
+                <div class="itemicon">
+                  <svg aria-hidden="true"><use href="#icon-messages-square"></use></svg>
+                </div>
                 <div>
                   <strong>Discussion prompt</strong>
                   <p>Course interaction stays part of the content flow and does not dominate the page chrome.</p>
+                  <div class="itemmeta">
+                    <span class="typepill">Forum</span>
+                    <span>Guided exchange</span>
+                  </div>
                 </div>
                 <div class="itemcta">Open</div>
               </article>

@@ -51,6 +51,8 @@ LernHive should feel calmer, clearer, and more guided than standard Moodle witho
 - prefer recognizable utility icons over decorative illustration
 - use labels or tooltips alongside icons where understanding might otherwise suffer
 - reserve orange emphasis for active, primary, or highlighted action states
+- activity icons should be type-based and stable across screens, for example reading/page, schedule, task, forum, input, and wrap-up
+- icon choice should help scanning, but the label remains the primary meaning
 
 ## Component system
 
