@@ -214,9 +214,12 @@ install -d -m 0755 "$INSTALL_DIR"
 
 clone_or_update() {
   local url="$1" dir="$2" branch="$3"
+  # Run git with a per-command safe.directory override so root can fetch
+  # on repos owned by the deploy user (or uid 33 for the Moodle tree)
+  # without needing to edit global gitconfig.
   if [[ -d "$dir/.git" ]]; then
     skip "repo $dir already present (git fetch --quiet)"
-    git -C "$dir" fetch --quiet origin
+    git -c safe.directory="$dir" -C "$dir" fetch --quiet origin
   else
     git clone --quiet --branch "$branch" "$url" "$dir"
     ok "cloned $url → $dir ($branch)"
