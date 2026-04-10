@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LernHive Dashboard Concept C</title>
+<style>
+:root{
+  --bg:#f3f5f8;
+  --panel:#ffffff;
+  --panel-soft:#f3f5f8;
+  --ink:#353535;
+  --muted:#194866;
+  --line:#dce3e8;
+  --nav:#194866;
+  --nav-soft:#65a1b3;
+  --accent:#f98012;
+  --accent-soft:#ffecdb;
+  --mint:#a9cbd5;
+  --warn:#ffe39e;
+  --shadow:0 14px 34px rgba(25,72,102,.08);
+  --radius-shell:22px;
+  --radius-panel:14px;
+  --radius-card:10px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;
+  background:
+    linear-gradient(180deg,#ffffff 0,#f3f5f8 100%);
+  color:var(--ink);
+}
+.app{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:260px 1fr;
+}
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+  padding:24px 20px;
+  color:#f4f8fa;
+  background:
+    linear-gradient(180deg,var(--nav) 0,#255776 100%);
+}
+.brand{
+  padding-bottom:16px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+.brand h1{
+  margin:0 0 6px;
+  font-size:30px;
+  letter-spacing:.01em;
+}
+.brand p,.navitem span,.launchcard p,.meta p{
+  margin:0;
+  color:rgba(244,248,250,.76);
+  line-height:1.45;
+}
+.nav{
+  display:grid;
+  gap:8px;
+}
+.navitem{
+  padding:12px 14px;
+  border-left:3px solid transparent;
+  background:transparent;
+}
+.navitem.active{
+  border-left-color:var(--accent);
+  background:rgba(255,255,255,.08);
+}
+.navitem strong{
+  display:block;
+  margin-bottom:2px;
+  font-size:15px;
+}
+.launchcard{
+  padding:16px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.08);
+}
+.launchcard strong,.meta strong{
+  display:block;
+  margin-bottom:6px;
+  color:#fff;
+}
+.meta{
+  margin-top:auto;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.12);
+}
+.main{
+  padding:24px;
+}
+.hero{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:18px;
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-shell);
+  background:var(--panel);
+  box-shadow:var(--shadow);
+}
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:12px;
+  font-weight:700;
+}
+.hero h2{
+  margin:8px 0 10px;
+  font-size:42px;
+}
+.hero p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.55;
+}
+.search{
+  margin-top:18px;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  background:var(--panel-soft);
+  color:var(--muted);
+  font-weight:600;
+}
+.heroaside{
+  display:grid;
+  gap:12px;
+}
+.heroasidebox{
+  padding:16px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#ffffff 0,#f7fafc 100%);
+}
+.heroasidebox strong{
+  display:block;
+  margin-bottom:6px;
+  color:var(--nav);
+}
+.heroasidebox span{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.45;
+}
+.layout{
+  display:grid;
+  grid-template-columns:320px minmax(0,1fr);
+  gap:18px;
+  margin-top:18px;
+  align-items:start;
+}
+.rail{
+  display:grid;
+  gap:14px;
+}
+.panel{
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-panel);
+  background:var(--panel);
+  box-shadow:var(--shadow);
+}
+.panel h3{
+  margin:0 0 10px;
+  color:var(--nav);
+  font-size:20px;
+}
+.panel p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+.queue{
+  display:grid;
+  gap:10px;
+  margin-top:14px;
+}
+.queueitem{
+  padding:14px;
+  border:1px solid var(--line);
+  background:#fff;
+}
+.queueitem.warn{
+  border-left:4px solid #ebb44c;
+}
+.queueitem strong{
+  display:block;
+  margin-bottom:4px;
+  color:var(--nav);
+}
+.queueitem span{
+  color:var(--muted);
+  font-size:14px;
+}
+.section{
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-panel);
+  background:var(--panel);
+  box-shadow:var(--shadow);
+}
+.section + .section{
+  margin-top:14px;
+}
+.sectionhead{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.sectionhead h3{
+  margin:0;
+  color:var(--nav);
+  font-size:24px;
+}
+.sectionhead span{
+  color:var(--muted);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.card{
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-card);
+  background:#fff;
+}
+.tag{
+  display:inline-block;
+  padding:5px 9px;
+  background:var(--panel-soft);
+  color:var(--nav);
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.tag.accent{
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.card h4{
+  margin:12px 0 8px;
+  color:var(--nav);
+  font-size:21px;
+}
+.card p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+.stats{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:12px;
+  color:var(--muted);
+  font-size:13px;
+}
+.ctarow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:16px;
+}
+.ghost{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  border:1px solid var(--line);
+  background:var(--panel-soft);
+  color:var(--nav);
+  font-weight:700;
+}
+.micro{
+  color:var(--accent);
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+@media (max-width:1180px){
+  .hero,.layout{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>LernHive</h1>
+      <p>Structured dashboard with sharper geometry and less soft card language.</p>
+    </div>
+
+    <nav class="nav">
+      <div class="navitem active"><strong>Home</strong><span>Structured daily overview</span></div>
+      <div class="navitem"><strong>My Learning</strong><span>Current work and progress</span></div>
+      <div class="navitem"><strong>Explore</strong><span>Optional LXP discovery</span></div>
+      <div class="navitem"><strong>Reports</strong><span>Simple drilldown visibility</span></div>
+    </nav>
+
+    <section class="launchcard">
+      <strong>Launcher</strong>
+      <p>Action-oriented surface with a more architectural visual language.</p>
+    </section>
+
+    <section class="meta">
+      <strong>Direction C</strong>
+      <p>Same calm LernHive logic, but with more structure, straighter edges, and less “soft app” feeling.</p>
+    </section>
+  </aside>
+
+  <main class="main">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Dashboard concept C</div>
+        <h2>Clear priorities for today</h2>
+        <p>This version keeps the LernHive hierarchy, but reduces the rounded softness. It feels more precise, operational, and structured while still staying lighter than a classic enterprise cockpit.</p>
+        <div class="search">Search courses, snacks, communities, and reports</div>
+      </div>
+      <div class="heroaside">
+        <div class="heroasidebox">
+          <strong>Best fit</strong>
+          <span>Useful if you want LernHive to feel more precise and professional, and a bit less editorial or lifestyle-like.</span>
+        </div>
+        <div class="heroasidebox">
+          <strong>Main difference</strong>
+          <span>Sharper geometry, stronger grid logic, and more disciplined panel rhythm instead of pronounced rounded card softness.</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="rail">
+        <section class="panel">
+          <h3>Immediate attention</h3>
+          <p>Urgency is separated cleanly from broader learning activity.</p>
+          <div class="queue">
+            <div class="queueitem warn">
+              <strong>Security awareness essentials</strong>
+              <span>Due soon for the current onboarding cohort.</span>
+            </div>
+            <div class="queueitem">
+              <strong>Feedback in teams</strong>
+              <span>Short Snack updated this week and relevant now.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Quick numbers</h3>
+          <p>Compact status instead of an overloaded management dashboard.</p>
+          <div class="queue">
+            <div class="queueitem"><strong>3 past due</strong><span>Needs review</span></div>
+            <div class="queueitem"><strong>5 due soon</strong><span>Upcoming actions</span></div>
+            <div class="queueitem"><strong>18 active</strong><span>Currently in progress</span></div>
+          </div>
+        </section>
+      </aside>
+
+      <div>
+        <section class="section">
+          <div class="sectionhead">
+            <h3>Continue</h3>
+            <span>Resume active work</span>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <div class="tag accent">Course</div>
+              <h4>Introduction to Hybrid Teaching</h4>
+              <p>Continue the current weekly section with minimal re-entry friction.</p>
+              <div class="stats"><span>In progress</span><span>24 learners</span></div>
+              <div class="ctarow"><div class="ghost">Resume</div><div class="micro">Continue</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">Snack</div>
+              <h4>Better stand-ups</h4>
+              <p>Short item still relevant in the current 7-day window.</p>
+              <div class="stats"><span>15 minutes</span><span>Recent</span></div>
+              <div class="ctarow"><div class="ghost">Resume</div><div class="micro">Short form</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">Community</div>
+              <h4>Design Circle</h4>
+              <p>Relevant discussion context remains visible, but not dominant.</p>
+              <div class="stats"><span>Digest default</span><span>Nearby</span></div>
+              <div class="ctarow"><div class="ghost">Open</div><div class="micro">Community</div></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="sectionhead">
+            <h3>Next useful actions</h3>
+            <span>Low-noise entry points</span>
+          </div>
+          <div class="grid">
+            <article class="card">
+              <div class="tag accent">Launcher</div>
+              <h4>Create a new course</h4>
+              <p>Primary creation action stays visible, but does not dominate the page.</p>
+              <div class="ctarow"><div class="ghost">Open launcher</div><div class="micro">Core action</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">ContentHub</div>
+              <h4>Reuse existing content</h4>
+              <p>Copy, Template, and Library remain separate behind one clean entry point.</p>
+              <div class="ctarow"><div class="ghost">Open ContentHub</div><div class="micro">Reuse</div></div>
+            </article>
+            <article class="card">
+              <div class="tag">Report</div>
+              <h4>Check completion</h4>
+              <p>Operational reporting stays visible without turning into a KPI wall.</p>
+              <div class="ctarow"><div class="ghost">Open report</div><div class="micro">Operate</div></div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
