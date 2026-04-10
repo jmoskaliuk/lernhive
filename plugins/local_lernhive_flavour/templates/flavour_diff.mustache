@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_lernhive_flavour/flavour_diff
+
+    Confirm-before-apply dialog showing the diff between current settings
+    and the target flavour's defaults. Only shown when the admin picks a
+    flavour whose apply would overwrite already-customised settings.
+
+    Context:
+    {
+        "heading": "Confirm flavour change",
+        "intro": "Applying LXP will change the following settings:",
+        "targetkey": "lxp",
+        "targetlabel": "LXP",
+        "sesskey": "abcd1234",
+        "cancelurl": "/local/lernhive_flavour/admin_flavour.php",
+        "hasrows": true,
+        "rows": [
+            {
+                "component": "local_lernhive",
+                "name": "show_levelbar",
+                "current": "1",
+                "target": "0",
+                "changes": true
+            }
+        ]
+    }
+}}
+<div class="lh-flavour-container">
+    <div class="lh-flavour-intro">
+        <h2>{{heading}}</h2>
+        <p>{{intro}}</p>
+    </div>
+
+    {{#hasrows}}
+        <table class="generaltable lh-flavour-diff">
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}diff_col_component, local_lernhive_flavour{{/str}}</th>
+                    <th scope="col">{{#str}}diff_col_setting, local_lernhive_flavour{{/str}}</th>
+                    <th scope="col">{{#str}}diff_col_current, local_lernhive_flavour{{/str}}</th>
+                    <th scope="col">{{#str}}diff_col_target, local_lernhive_flavour{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#rows}}
+                    <tr class="{{#changes}}lh-flavour-diff-row--changed{{/changes}}">
+                        <td><code>{{component}}</code></td>
+                        <td><code>{{name}}</code></td>
+                        <td>{{current}}</td>
+                        <td><strong>{{target}}</strong></td>
+                    </tr>
+                {{/rows}}
+            </tbody>
+        </table>
+    {{/hasrows}}
+
+    <form method="post" action="admin_flavour.php" class="lh-flavour-confirm-form">
+        <input type="hidden" name="action" value="apply">
+        <input type="hidden" name="flavour" value="{{targetkey}}">
+        <input type="hidden" name="confirmed" value="1">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+
+        <button type="submit" class="btn btn-primary">
+            {{#str}}btn_confirm_apply, local_lernhive_flavour, {{targetlabel}}{{/str}}
+        </button>
+        <a href="{{cancelurl}}" class="btn btn-secondary">
+            {{#str}}btn_cancel, local_lernhive_flavour{{/str}}
+        </a>
+    </form>
+</div>

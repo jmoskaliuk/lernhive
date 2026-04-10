@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/lernhive_flavour/db" VERSION="2026041002" COMMENT="LernHive Flavour plugin tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_lernhive_flavour_apps" COMMENT="Audit trail of flavour applications. Every time an admin applies a flavour, a row is written here capturing what changed. Used by local_lernhive_configuration in R2 to build a full configuration history.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="flavour" TYPE="char" LENGTH="32" NOTNULL="true" COMMENT="Flavour key that was applied, e.g. school, lxp, highered, corporate"/>
+        <FIELD NAME="previous_flavour" TYPE="char" LENGTH="32" NOTNULL="false" COMMENT="Flavour key that was active before this apply, NULL on first ever apply"/>
+        <FIELD NAME="applied_by" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="User ID of the admin who triggered the apply"/>
+        <FIELD NAME="timeapplied" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp of the apply"/>
+        <FIELD NAME="settings_before" TYPE="text" NOTNULL="false" COMMENT="JSON: snapshot of the config keys the flavour would touch, as they were before the apply"/>
+        <FIELD NAME="settings_after" TYPE="text" NOTNULL="false" COMMENT="JSON: snapshot of the config keys after the apply"/>
+        <FIELD NAME="overrides_detected" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="1 if at least one existing non-default value was overwritten, 0 otherwise"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_applied_by" TYPE="foreign" FIELDS="applied_by" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_flavour_time" UNIQUE="false" FIELDS="flavour, timeapplied"/>
+        <INDEX NAME="ix_timeapplied" UNIQUE="false" FIELDS="timeapplied"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

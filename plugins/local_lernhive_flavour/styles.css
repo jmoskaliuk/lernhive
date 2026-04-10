@@ -1,0 +1,155 @@
+/*
+ * This file is part of Moodle - http://moodle.org/
+ *
+ * Moodle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moodle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * LernHive Flavour — picker page styles.
+ * Only affects the admin flavour picker/diff pages. Intentionally
+ * does NOT style anything outside the .lh-flavour-container wrapper
+ * so that site themes retain full control everywhere else.
+ */
+
+.lh-flavour-container {
+    max-width: 1100px;
+    margin: 40px auto;
+}
+
+.lh-flavour-intro {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.lh-flavour-intro h2 {
+    margin-bottom: 16px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.lh-flavour-intro p {
+    margin: 0 auto;
+    max-width: 720px;
+    font-size: 16px;
+    color: #666;
+}
+
+.lh-flavour-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.lh-flavour-card {
+    position: relative;
+    padding: 28px;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lh-flavour-card:hover {
+    border-color: #0066cc;
+    box-shadow: 0 4px 16px rgba(0, 102, 204, 0.15);
+}
+
+.lh-flavour-card--active {
+    border-color: #0066cc;
+    background: #f4f8ff;
+    box-shadow: 0 4px 16px rgba(0, 102, 204, 0.15);
+}
+
+.lh-flavour-card--experimental {
+    border-style: dashed;
+}
+
+.lh-flavour-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 999px;
+}
+
+.lh-flavour-badge--active {
+    background: #0066cc;
+    color: #fff;
+}
+
+.lh-flavour-badge--experimental {
+    background: #f0ad4e;
+    color: #fff;
+}
+
+.lh-flavour-icon {
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.lh-flavour-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 8px;
+}
+
+.lh-flavour-desc {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    min-height: 4.5em;
+}
+
+.lh-flavour-form {
+    margin: 0;
+}
+
+.lh-flavour-current {
+    padding: 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Diff confirm dialog */
+
+.lh-flavour-diff {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.lh-flavour-diff code {
+    font-size: 13px;
+    color: #333;
+}
+
+.lh-flavour-diff-row--changed {
+    background: #fff8e1;
+}
+
+.lh-flavour-confirm-form {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}

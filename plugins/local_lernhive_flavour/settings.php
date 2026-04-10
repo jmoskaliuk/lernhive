@@ -15,7 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Admin settings for LernHive Flavour.
+ * Admin settings for local_lernhive_flavour.
+ *
+ * The flavour picker itself lives at admin_flavour.php — we only
+ * register it here as an external admin page. We intentionally do NOT
+ * expose a plain "active_flavour" configselect here because switching
+ * flavours requires the diff confirm flow, which the picker implements.
  *
  * @package    local_lernhive_flavour
  * @copyright  2026 LernHive.de
@@ -25,40 +30,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    // Create admin category.
-    $category = new admin_category(
+
+    $ADMIN->add('localplugins', new admin_category(
         'local_lernhive_flavour_category',
         get_string('pluginname', 'local_lernhive_flavour')
-    );
-    $ADMIN->add('localplugins', $category);
+    ));
 
-    // Add external page for flavour setup.
-    $page = new admin_externalpage(
+    $ADMIN->add('local_lernhive_flavour_category', new admin_externalpage(
         'local_lernhive_flavour_setup',
         get_string('page_title', 'local_lernhive_flavour'),
         new moodle_url('/local/lernhive_flavour/admin_flavour.php'),
         'local/lernhive_flavour:manage'
-    );
-    $ADMIN->add('local_lernhive_flavour_category', $page);
-
-    // Settings page for active flavour selection.
-    $settings = new admin_settingpage(
-        'local_lernhive_flavour_settings',
-        get_string('pluginname', 'local_lernhive_flavour')
-    );
-
-    $options = [
-        'school' => get_string('flavour_school', 'local_lernhive_flavour'),
-        'lxp' => get_string('flavour_lxp', 'local_lernhive_flavour'),
-    ];
-
-    $settings->add(new admin_setting_configselect(
-        'local_lernhive_flavour/active_flavour',
-        get_string('setting_active_flavour', 'local_lernhive_flavour'),
-        get_string('setting_active_flavour_desc', 'local_lernhive_flavour'),
-        'school',
-        $options
     ));
-
-    $ADMIN->add('local_lernhive_flavour_category', $settings);
 }

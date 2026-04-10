@@ -15,7 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Flavour manager for LernHive Flavour plugin.
+ * Flavour manager — orchestrates apply, diff and lookup of flavour profiles.
+ *
+ * Responsibilities:
+ * - expose the currently active flavour
+ * - compute a diff between a target flavour and the current site config
+ * - apply a flavour (writes config + audit trail + triggers event)
+ *
+ * Intentionally stateless: every method is static, no mutable fields.
  *
  * @package    local_lernhive_flavour
  * @copyright  2026 LernHive.de
@@ -27,90 +34,227 @@ namespace local_lernhive_flavour;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class flavour_manager
- * Manages flavour selection and default configuration.
+ * Flavour manager façade.
  */
 class flavour_manager {
 
-    /**
-     * List of available flavours.
-     */
-    const FLAVOURS = ['school', 'lxp'];
+    /** Config component where we persist the active flavour key. */
+    const COMPONENT = 'local_lernhive_flavour';
+
+    /** Config key for the active flavour. */
+    const CONFIG_ACTIVE = 'active_flavour';
 
     /**
-     * Get the currently active flavour.
+     * Get the currently active flavour key.
      *
-     * @return string The active flavour key (defaults to 'school').
-     */
-    public static function get_active_flavour(): string {
-        return get_config('local_lernhive_flavour', 'active_flavour') ?: 'school';
-    }
-
-    /**
-     * Set the active flavour and apply its defaults.
+     * Falls back to the registry default when no flavour has been stored
+     * yet (fresh install, or tests with cleared config).
      *
-     * @param string $flavour The flavour key to set.
-     * @throws \invalid_parameter_exception If the flavour is invalid.
+     * @return string
      */
-    public static function set_flavour(string $flavour): void {
-        if (!self::is_valid_flavour($flavour)) {
-            throw new \invalid_parameter_exception("Invalid flavour: $flavour");
+    public static function get_active(): string {
+        $stored = get_config(self::COMPONENT, self::CONFIG_ACTIVE);
+        if (is_string($stored) && $stored !== '' && flavour_registry::exists($stored)) {
+            return $stored;
         }
-        set_config('active_flavour', $flavour, 'local_lernhive_flavour');
-        self::apply_flavour_defaults($flavour);
+        return flavour_registry::DEFAULT_FLAVOUR;
     }
 
     /**
-     * Apply default configuration for a given flavour.
+     * Apply a flavour.
      *
-     * @param string $flavour The flavour key.
+     * Writes all managed config keys, records an audit row and triggers
+     * the flavour_applied event. The admin is free to subsequently
+     * override any key — the audit trail captures the diff so that
+     * local_lernhive_configuration (R2) can surface it.
+     *
+     * @param string $key Flavour key.
+     * @param int|null $appliedby User ID of the admin performing the apply.
+     *                            Defaults to the current $USER->id.
+     * @return \stdClass Result object with fields:
+     *                   - flavour (string)
+     *                   - previous (string|null)
+     *                   - before (array)
+     *                   - after (array)
+     *                   - overrides_detected (bool)
+     *                   - audit_id (int)
+     * @throws \invalid_parameter_exception If the flavour key is unknown.
      */
-    public static function apply_flavour_defaults(string $flavour): void {
-        // Common defaults for all flavours.
-        set_config('show_levelbar', 1, 'local_lernhive');
+    public static function apply(string $key, ?int $appliedby = null): \stdClass {
+        global $USER;
 
-        if ($flavour === 'school') {
-            set_config('default_level', 1, 'local_lernhive');
-            set_config('allow_course_creation', 1, 'local_lernhive');
-            set_config('allow_user_creation', 1, 'local_lernhive');
-        } else if ($flavour === 'lxp') {
-            set_config('default_level', 1, 'local_lernhive');
-            set_config('allow_course_creation', 0, 'local_lernhive');
-            set_config('allow_user_creation', 0, 'local_lernhive');
+        $profile = flavour_registry::get($key);
+        if ($profile === null) {
+            throw new \invalid_parameter_exception("Unknown flavour key: {$key}");
         }
-    }
 
-    /**
-     * Get the definition of a flavour (metadata, icon, label, description).
-     *
-     * @param string $flavour The flavour key.
-     * @return array The flavour definition.
-     */
-    public static function get_flavour_definition(string $flavour): array {
-        $definitions = [
-            'school' => [
-                'key'   => 'school',
-                'icon'  => '🏫',
-                'label' => get_string('flavour_school', 'local_lernhive_flavour'),
-                'desc'  => get_string('flavour_school_desc', 'local_lernhive_flavour'),
+        $previous = self::get_active();
+
+        // Capture the "before" snapshot from exactly the keys this profile manages.
+        $before = self::snapshot_keys($profile);
+
+        // Apply every managed (component, name) => value tuple.
+        foreach ($profile->get_defaults() as $component => $settings) {
+            foreach ($settings as $name => $value) {
+                set_config($name, $value, $component);
+            }
+        }
+
+        // Persist the active flavour key itself.
+        set_config(self::CONFIG_ACTIVE, $key, self::COMPONENT);
+
+        // Capture the "after" snapshot so auditors can diff without rerunning.
+        $after = self::snapshot_keys($profile);
+
+        $overrides = self::detect_overrides($before, $after);
+
+        $auditid = flavour_audit::record(
+            $key,
+            $previous !== $key ? $previous : $previous,
+            $appliedby ?? (int) ($USER->id ?? 0),
+            $before,
+            $after,
+            $overrides
+        );
+
+        // Fire the event so other plugins (esp. local_lernhive_configuration
+        // in R2) can react to flavour changes.
+        $event = \local_lernhive_flavour\event\flavour_applied::create([
+            'context' => \core\context\system::instance(),
+            'objectid' => $auditid,
+            'other' => [
+                'flavour'  => $key,
+                'previous' => $previous,
+                'overrides_detected' => $overrides,
             ],
-            'lxp' => [
-                'key'   => 'lxp',
-                'icon'  => '🚀',
-                'label' => get_string('flavour_lxp', 'local_lernhive_flavour'),
-                'desc'  => get_string('flavour_lxp_desc', 'local_lernhive_flavour'),
-            ],
+        ]);
+        $event->trigger();
+
+        return (object) [
+            'flavour'            => $key,
+            'previous'           => $previous,
+            'before'             => $before,
+            'after'              => $after,
+            'overrides_detected' => $overrides,
+            'audit_id'           => $auditid,
         ];
-        return $definitions[$flavour] ?? [];
     }
 
     /**
-     * Check if a flavour is valid.
+     * Compute the diff between the target flavour's defaults and the
+     * current live site config.
      *
-     * @param string $flavour The flavour key to validate.
-     * @return bool True if valid, false otherwise.
+     * Used by the admin picker to show a confirm dialog before applying.
+     *
+     * @param string $key Flavour key to simulate.
+     * @return array List of diff entries:
+     *               [
+     *                 [
+     *                   'component' => 'local_lernhive',
+     *                   'name'      => 'show_levelbar',
+     *                   'current'   => '1',
+     *                   'target'    => '0',
+     *                   'changes'   => true,
+     *                 ], ...
+     *               ]
+     * @throws \invalid_parameter_exception If the flavour key is unknown.
      */
-    public static function is_valid_flavour(string $flavour): bool {
-        return in_array($flavour, self::FLAVOURS, true);
+    public static function diff(string $key): array {
+        $profile = flavour_registry::get($key);
+        if ($profile === null) {
+            throw new \invalid_parameter_exception("Unknown flavour key: {$key}");
+        }
+
+        $diff = [];
+        foreach ($profile->get_defaults() as $component => $settings) {
+            foreach ($settings as $name => $targetvalue) {
+                $current = self::get_config_raw($component, $name);
+                $diff[] = [
+                    'component' => $component,
+                    'name'      => $name,
+                    'current'   => $current,
+                    'target'    => (string) $targetvalue,
+                    'changes'   => (string) $current !== (string) $targetvalue,
+                ];
+            }
+        }
+        return $diff;
+    }
+
+    /**
+     * Does applying this flavour overwrite at least one existing setting?
+     *
+     * @param string $key
+     * @return bool
+     * @throws \invalid_parameter_exception
+     */
+    public static function has_pending_overrides(string $key): bool {
+        foreach (self::diff($key) as $entry) {
+            if ($entry['changes']) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Build a snapshot of the current values of all keys this profile manages.
+     *
+     * @param flavour_definition $profile
+     * @return array Nested [component][name] => stringvalue, or null if unset.
+     */
+    private static function snapshot_keys(flavour_definition $profile): array {
+        $snapshot = [];
+        foreach ($profile->get_defaults() as $component => $settings) {
+            $snapshot[$component] = [];
+            foreach (array_keys($settings) as $name) {
+                $snapshot[$component][$name] = self::get_config_raw($component, $name);
+            }
+        }
+        return $snapshot;
+    }
+
+    /**
+     * Read a single config value as a string, or null if not set.
+     *
+     * Wraps get_config() because the global call returns `false` for
+     * missing keys — we'd rather distinguish "not set" (null) from
+     * "set to false/empty string" (''), and consistently type as string.
+     *
+     * @param string $component
+     * @param string $name
+     * @return string|null
+     */
+    private static function get_config_raw(string $component, string $name): ?string {
+        $value = get_config($component, $name);
+        if ($value === false) {
+            return null;
+        }
+        return (string) $value;
+    }
+
+    /**
+     * Compare a before/after snapshot and return whether any value actually
+     * changed AND the before value was non-null (i.e. an admin had already
+     * set something that we then overwrote).
+     *
+     * A first-ever apply on a fresh site will return false because every
+     * `before` value is null — that's the desired behaviour: the confirm
+     * dialog should only fire if we are stomping on real prior state.
+     *
+     * @param array $before
+     * @param array $after
+     * @return bool
+     */
+    private static function detect_overrides(array $before, array $after): bool {
+        foreach ($before as $component => $keys) {
+            foreach ($keys as $name => $oldvalue) {
+                $newvalue = $after[$component][$name] ?? null;
+                if ($oldvalue !== null && $oldvalue !== $newvalue) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
