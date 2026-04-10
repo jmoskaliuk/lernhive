@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LernHive Course Page Mockup</title>
+<style>
+:root{
+  --bg:#f3f5f8;
+  --panel:#ffffff;
+  --panel-soft:#f3f5f8;
+  --ink:#353535;
+  --muted:#194866;
+  --line:#e9e9e9;
+  --nav:#194866;
+  --nav-soft:#65a1b3;
+  --accent:#f98012;
+  --accent-soft:#ffecdb;
+  --mint:#a9cbd5;
+  --radius-xl:30px;
+  --radius-lg:24px;
+  --radius-md:18px;
+  --shadow:0 18px 40px rgba(25,72,102,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at top left,#ffecdb 0,transparent 26rem),
+    linear-gradient(180deg,#ffffff 0,var(--bg) 100%);
+}
+.app{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:280px 1fr;
+}
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:26px;
+  padding:28px 22px;
+  color:#f8f1e8;
+  background:linear-gradient(180deg,var(--nav) 0,var(--nav-soft) 100%);
+}
+.brand{
+  padding-bottom:18px;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+.brand h1{
+  margin:0 0 6px;
+  font-size:32px;
+}
+.brand p,.navitem span,.launchmeta,.priority p{
+  margin:0;
+  color:rgba(248,241,232,.78);
+  line-height:1.45;
+}
+.nav{
+  display:grid;
+  gap:10px;
+}
+.navitem{
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid transparent;
+}
+.navitem.active{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.18);
+}
+.navitem strong{
+  display:block;
+  margin-bottom:2px;
+  font-size:15px;
+}
+.launchcard{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:20px;
+  padding:16px;
+  background:rgba(255,255,255,.1);
+}
+.launchrow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.launchicon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:#fff;
+  color:var(--accent);
+  font-weight:700;
+  font-size:22px;
+}
+.launchmeta strong{
+  display:block;
+  color:#fff;
+}
+.priority{
+  margin-top:auto;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.14);
+}
+.priority strong{
+  display:block;
+  margin-bottom:6px;
+}
+.main{
+  padding:28px;
+}
+.coursehead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-xl);
+  background:linear-gradient(135deg,#ffffff 0,#f3f5f8 100%);
+  box-shadow:var(--shadow);
+}
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:12px;
+  font-weight:700;
+}
+.coursehead h2{
+  margin:8px 0 10px;
+  font-size:42px;
+  font-weight:700;
+}
+.coursehead p{
+  margin:0;
+  max-width:720px;
+  color:var(--muted);
+  line-height:1.55;
+}
+.utility{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pill{
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.9);
+  color:var(--nav);
+  font-weight:700;
+}
+.layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 320px;
+  gap:18px;
+  margin-top:20px;
+  align-items:start;
+}
+.contentpanel{
+  display:grid;
+  gap:18px;
+}
+.note{
+  padding:16px 18px;
+  border-radius:18px;
+  background:var(--panel-soft);
+  border:1px solid var(--line);
+  color:var(--muted);
+  line-height:1.5;
+}
+.note strong{
+  display:block;
+  margin-bottom:4px;
+  color:var(--nav);
+}
+.surface{
+  border:1px solid var(--line);
+  border-radius:var(--radius-xl);
+  background:rgba(255,255,255,.96);
+  box-shadow:0 12px 24px rgba(25,72,102,.08);
+  overflow:hidden;
+}
+.surfacehead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:22px 22px 18px;
+  border-bottom:1px solid var(--line);
+}
+.surfacehead h3{
+  margin:0 0 6px;
+  font-size:26px;
+}
+.surfacehead p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+.badge{
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-weight:700;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.section{
+  padding:20px 22px;
+  border-top:1px solid var(--line);
+}
+.section:first-of-type{
+  border-top:0;
+}
+.sectionlabel{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.sectionlabel h4{
+  margin:0;
+  font-size:20px;
+  color:var(--nav);
+}
+.sectionlabel span{
+  color:var(--muted);
+  font-size:14px;
+}
+.list{
+  display:grid;
+  gap:12px;
+}
+.item{
+  display:grid;
+  grid-template-columns:52px 1fr auto;
+  gap:14px;
+  align-items:center;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+}
+.itemicon{
+  width:52px;
+  height:52px;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  background:var(--mint);
+  color:var(--nav);
+  font-weight:700;
+}
+.item strong{
+  display:block;
+  margin-bottom:4px;
+}
+.item p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.4;
+  font-size:14px;
+}
+.itemcta{
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--panel-soft);
+  color:var(--nav);
+  font-weight:700;
+  white-space:nowrap;
+}
+.aside{
+  display:grid;
+  gap:16px;
+}
+.helperpanel,.blockpanel{
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:rgba(255,255,255,.94);
+}
+.helperpanel h3,.blockpanel h3{
+  margin:0 0 8px;
+  font-size:19px;
+  color:var(--nav);
+}
+.helperpanel p,.blockpanel p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.5;
+}
+.helperactions{
+  display:grid;
+  gap:10px;
+  margin-top:14px;
+}
+.helperaction{
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--panel-soft);
+}
+.helperaction strong{
+  display:block;
+  margin-bottom:3px;
+  color:var(--nav);
+}
+.helperaction span{
+  color:var(--muted);
+  font-size:14px;
+}
+.blockstack{
+  display:grid;
+  gap:12px;
+  margin-top:14px;
+}
+.block{
+  padding:14px;
+  border-radius:18px;
+  background:#fff;
+  border:1px solid var(--line);
+}
+.block strong{
+  display:block;
+  margin-bottom:5px;
+  color:var(--nav);
+}
+.block span{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.4;
+}
+@media (max-width: 1080px){
+  .layout{grid-template-columns:1fr}
+}
+@media (max-width: 900px){
+  .app{grid-template-columns:1fr}
+  .coursehead{display:block}
+  .utility{margin-top:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>LernHive</h1>
+      <p>Calm, guided Moodle experience with a left-oriented shell.</p>
+    </div>
+
+    <nav class="nav">
+      <div class="navitem"><strong>Home</strong><span>School dashboard</span></div>
+      <div class="navitem active"><strong>Courses</strong><span>Current learning spaces</span></div>
+      <div class="navitem"><strong>ContentHub</strong><span>Copy, Template, Library</span></div>
+      <div class="navitem"><strong>Reports</strong><span>Simple Release 1 visibility</span></div>
+    </nav>
+
+    <section class="launchcard">
+      <div class="launchrow">
+        <div class="launchicon">+</div>
+        <div class="launchmeta">
+          <strong>Launcher</strong>
+          <span>Action-oriented, not full navigation</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="priority">
+      <strong>Current flavour focus</strong>
+      <p>School is the base here. Optional LXP patterns should stay connected, not feel like a different product.</p>
+    </section>
+  </aside>
+
+  <main class="main">
+    <header class="coursehead">
+      <div>
+        <div class="eyebrow">Course page</div>
+        <h2>Introduction to Hybrid Teaching</h2>
+        <p>The course page keeps learning content central and readable. Helper surfaces stay visible, but secondary, so the page does not collapse into navigation noise.</p>
+      </div>
+      <div class="utility">
+        <div class="pill">Teacher</div>
+        <div class="pill">24 participants</div>
+        <div class="pill">School flavour</div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="contentpanel">
+        <section class="note">
+          <strong>Calm course structure</strong>
+          Standard courses can still use Moodle course structure, but the page should feel guided. Snacks remain lighter and should not drift into full course complexity.
+        </section>
+
+        <section class="surface">
+          <div class="surfacehead">
+            <div>
+              <h3>Course content</h3>
+              <p>Main learning content stays in the primary reading flow.</p>
+            </div>
+            <div class="badge">Content first</div>
+          </div>
+
+          <section class="section">
+            <div class="sectionlabel">
+              <h4>Start here</h4>
+              <span>Orientation and first task</span>
+            </div>
+            <div class="list">
+              <article class="item">
+                <div class="itemicon">1</div>
+                <div>
+                  <strong>Welcome and course overview</strong>
+                  <p>Short orientation block with expectations, workload, and the first thing learners should do.</p>
+                </div>
+                <div class="itemcta">Open</div>
+              </article>
+              <article class="item">
+                <div class="itemicon">2</div>
+                <div>
+                  <strong>Teaching format and schedule</strong>
+                  <p>Clear explanation of hybrid flow, key dates, and where live sessions fit in.</p>
+                </div>
+                <div class="itemcta">Open</div>
+              </article>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="sectionlabel">
+              <h4>Module 1</h4>
+              <span>Focused learning sequence</span>
+            </div>
+            <div class="list">
+              <article class="item">
+                <div class="itemicon">A</div>
+                <div>
+                  <strong>Short input: Why hybrid teaching needs structure</strong>
+                  <p>Readable course item with a simple entry into the main topic.</p>
+                </div>
+                <div class="itemcta">Open</div>
+              </article>
+              <article class="item">
+                <div class="itemicon">B</div>
+                <div>
+                  <strong>Reflection task</strong>
+                  <p>One clear activity instead of a noisy stack of parallel options.</p>
+                </div>
+                <div class="itemcta">Open</div>
+              </article>
+              <article class="item">
+                <div class="itemicon">C</div>
+                <div>
+                  <strong>Discussion prompt</strong>
+                  <p>Course interaction stays part of the content flow and does not dominate the page chrome.</p>
+                </div>
+                <div class="itemcta">Open</div>
+              </article>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <aside class="aside">
+        <section class="helperpanel">
+          <h3>Helper area</h3>
+          <p>This is where Context Helper and other course-related guidance can appear. Helpful, but not louder than the content itself.</p>
+          <div class="helperactions">
+            <div class="helperaction">
+              <strong>Next useful action</strong>
+              <span>Review the start section and publish the weekly announcement.</span>
+            </div>
+            <div class="helperaction">
+              <strong>Teaching shortcut</strong>
+              <span>Open the copy flow to reuse a module from another course.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="blockpanel">
+          <h3>Secondary blocks</h3>
+          <p>Blocks can stay available, but in a quiet secondary column instead of becoming the main orientation system.</p>
+          <div class="blockstack">
+            <div class="block">
+              <strong>Participants</strong>
+              <span>24 enrolled users, 3 new this week.</span>
+            </div>
+            <div class="block">
+              <strong>Completion</strong>
+              <span>62% have finished the first required activity.</span>
+            </div>
+            <div class="block">
+              <strong>Recent update</strong>
+              <span>One new forum post in the discussion activity.</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+</body>
+</html>
