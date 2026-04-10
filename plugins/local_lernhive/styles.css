@@ -1,0 +1,112 @@
+/**
+ * LernHive plugin styles.
+ *
+ * @package    local_lernhive
+ * @copyright  2026 LernHive.de
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Level bar shown to teachers on course pages */
+.lernhive-level-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-bottom: 2px solid;
+    margin-bottom: 4px;
+}
+
+.lernhive-level-1 { background: #e8f5e9; border-color: #66bb6a; color: #2e7d32; }
+.lernhive-level-2 { background: #e3f2fd; border-color: #42a5f5; color: #1565c0; }
+.lernhive-level-3 { background: #fff3e0; border-color: #ffa726; color: #e65100; }
+.lernhive-level-4 { background: #f3e5f5; border-color: #ab47bc; color: #6a1b9a; }
+.lernhive-level-5 { background: #fff8e1; border-color: #ffd54f; color: #f57f17; }
+
+.lernhive-level-info {
+    font-weight: 500;
+}
+
+.lernhive-next {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    font-style: italic;
+}
+
+/* Admin dashboard stats grid */
+.lernhive-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.lernhive-stat-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    transition: box-shadow 0.2s;
+}
+
+.lernhive-stat-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lernhive-stat-total {
+    border-left: 4px solid #495057;
+}
+
+.lernhive-stat-level-1 { border-left: 4px solid #66bb6a; }
+.lernhive-stat-level-2 { border-left: 4px solid #42a5f5; }
+.lernhive-stat-level-3 { border-left: 4px solid #ffa726; }
+.lernhive-stat-level-4 { border-left: 4px solid #ab47bc; }
+.lernhive-stat-level-5 { border-left: 4px solid #ffd54f; }
+
+.lernhive-stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.lernhive-stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+/* Level badges */
+.lernhive-badge-level-1 { background: #e8f5e9; color: #2e7d32; }
+.lernhive-badge-level-2 { background: #e3f2fd; color: #1565c0; }
+.lernhive-badge-level-3 { background: #fff3e0; color: #e65100; }
+.lernhive-badge-level-4 { background: #f3e5f5; color: #6a1b9a; }
+.lernhive-badge-level-5 { background: #fff8e1; color: #f57f17; }
+
+[class^="lernhive-badge-level-"] {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Dashboard table */
+.lernhive-dashboard-table td {
+    vertical-align: middle;
+}
+
+.lernhive-level-form {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.lernhive-level-form .custom-select-sm {
+    min-width: 180px;
+}
+
+/* Search form */
+.lernhive-search-form .input-group {
+    max-width: 500px;
+}

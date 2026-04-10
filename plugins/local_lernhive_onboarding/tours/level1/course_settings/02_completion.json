@@ -1,0 +1,36 @@
+{
+    "name": "LernHive: Abschlussverfolgung",
+    "description": "Lerne, wie du Abschlussverfolgung in deinem Kurs aktivierst und nutzt.",
+    "pathmatch": "/course/edit.php%",
+    "enabled": 1,
+    "sortorder": 1,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Willkommen zur Abschlussverfolgung",
+            "content": "<p>Mit Abschlussverfolgung kannst du verfolgen, welche Nutzer/innen Aufgaben abgeschlossen haben und Fortschritte sichtbar machen.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Abschlussverfolgung aktivieren",
+            "content": "<p>Unter 'Abschluss aktivieren' wählst du, wie der Kursabschluss gemessen wird. Dies kann manuell, nach Aktivitäten oder nach Zeitraum sein.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_enablecompletion",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Änderungen speichern",
+            "content": "<p>Klick auf 'Speichern'. Deine Nutzer/innen können jetzt ihren Fortschritt durch den Kurs sehen und du kannst Abschlüsse verfolgen.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

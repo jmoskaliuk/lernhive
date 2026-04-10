@@ -1,0 +1,18 @@
+// LernHive Theme – Main SCSS Entry Point
+// ========================================
+// NOTE: This file is NOT used at runtime. The partials below are loaded
+// individually via get_extra_scss() in lib.php because extrascsscallback
+// doesn't support @import path resolution.
+//
+// This file exists as documentation of the intended import order.
+
+// Component styles (order matters: base → specific).
+@import 'lernhive/typography';
+@import 'lernhive/colors';
+@import 'lernhive/buttons';
+@import 'lernhive/cards';
+@import 'lernhive/navigation';
+@import 'lernhive/course';
+@import 'lernhive/dashboard';
+@import 'lernhive/login';
+@import 'lernhive/responsive';

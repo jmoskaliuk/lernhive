@@ -1,0 +1,95 @@
+// LernHive Theme – Cards
+// =======================
+// Course cards, info cards, generic card styling.
+// Uses body prefix for specificity over Boost.
+
+// All cards — rounded corners, subtle shadow, no visible border.
+body .card {
+    border-radius: $lh-radius !important;
+    border: none !important;
+    box-shadow: $lh-shadow;
+    transition: $lh-transition;
+    overflow: hidden;
+
+    .card-header {
+        background: $lh-bg-white !important;
+        border-bottom: 1px solid $lh-border-light;
+        font-weight: 600;
+        padding: $lh-spacing-md $lh-spacing-lg;
+    }
+
+    .card-body {
+        padding: $lh-spacing-md $lh-spacing-lg;
+    }
+}
+
+// Hover lift effect for interactive cards.
+body .lh-card-hover,
+body .card.lh-card-hover {
+    &:hover {
+        box-shadow: $lh-shadow-hover !important;
+        transform: translateY(-2px);
+    }
+}
+
+// Course cards (category listing).
+body .coursebox {
+    border-radius: $lh-radius !important;
+    border: none;
+    box-shadow: $lh-shadow;
+    margin-bottom: $lh-spacing-md;
+    transition: $lh-transition;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: $lh-shadow-hover;
+        transform: translateY(-1px);
+    }
+
+    .info {
+        padding: $lh-spacing-md;
+
+        .coursename {
+            font-weight: 600;
+            font-size: $lh-font-size-base;
+
+            a {
+                color: $lh-text;
+
+                &:hover {
+                    color: $lh-primary;
+                }
+            }
+        }
+    }
+}
+
+// Alerts — borderless, rounded.
+body .alert {
+    border-radius: $lh-radius-sm !important;
+    border: none !important;
+    font-size: $lh-font-size-sm;
+}
+
+// Dropdown menus — consistent with card styling.
+body .dropdown-menu {
+    border-radius: $lh-radius !important;
+    box-shadow: $lh-shadow-md !important;
+    border: 1px solid $lh-border-light !important;
+    padding: $lh-spacing-xs 0;
+
+    .dropdown-item {
+        padding: $lh-spacing-sm $lh-spacing-md;
+        font-size: $lh-font-size-sm;
+        transition: $lh-transition;
+
+        &:hover, &:focus {
+            background: $lh-secondary-light !important;
+            color: $lh-primary;
+        }
+    }
+
+    .dropdown-divider {
+        border-color: $lh-border-light;
+    }
+}

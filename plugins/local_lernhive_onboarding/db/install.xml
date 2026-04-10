@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/lernhive_onboarding/db" VERSION="2026040301" COMMENT="LernHive Onboarding plugin tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_lhonb_cats" COMMENT="Tour categories for LernHive Onboarding levels">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Unique identifier like 'create_users'"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Display name like 'Nutzer anlegen'"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" COMMENT="Longer description of this category"/>
+        <FIELD NAME="icon" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Lucide icon name like 'user-plus'"/>
+        <FIELD NAME="color" TYPE="char" LENGTH="7" NOTNULL="true" DEFAULT="#2563eb" COMMENT="Hex color for icon background"/>
+        <FIELD NAME="level" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" COMMENT="LernHive level this category belongs to"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" COMMENT="Display order"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_level" UNIQUE="false" FIELDS="level"/>
+        <INDEX NAME="ix_shortname" UNIQUE="false" FIELDS="shortname"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_lhonb_map" COMMENT="Maps Moodle user tours to LernHive Onboarding categories">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to local_lhonb_cats.id"/>
+        <FIELD NAME="tourid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="FK to tool_usertours_tours.id"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" COMMENT="Display order within category"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="local_lhonb_cats" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_tourid" UNIQUE="false" FIELDS="tourid"/>
+        <INDEX NAME="uix_cat_tour" UNIQUE="true" FIELDS="categoryid,tourid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,68 @@
+// LernHive Theme – Typography
+// ===========================
+// Loaded AFTER Boost via extrascsscallback.
+// Uses body prefix for specificity where needed.
+
+// Atkinson Hyperlegible Next is loaded via <link> tag in hook_callbacks.php.
+// Do NOT use @import url() here — Moodle's server-side SCSS compiler caches it unreliably.
+
+// Force Atkinson Hyperlegible Next on all elements — Boost compiles font-family
+// from variables, but some elements inherit from browser defaults or Boost hardcodes.
+body {
+    font-family: $lh-font-family !important;
+    font-size: $lh-font-size-base;
+    line-height: 1.5;
+    color: $lh-text;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: $lh-bg;
+}
+
+// Ensure everything inherits Atkinson Hyperlegible Next.
+body * {
+    font-family: inherit;
+}
+
+// Headings — tighter, bolder.
+body h1, body .h1 {
+    font-size: $lh-font-size-3xl;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: $lh-text;
+}
+
+body h2, body .h2 {
+    font-size: $lh-font-size-2xl;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+body h3, body .h3 {
+    font-size: $lh-font-size-xl;
+    font-weight: 600;
+}
+
+body h4, body .h4 {
+    font-size: $lh-font-size-lg;
+    font-weight: 600;
+}
+
+body h5, body .h5,
+body h6, body .h6 {
+    font-size: $lh-font-size-base;
+    font-weight: 600;
+}
+
+// Moodle page headings.
+body .page-header-headings h1,
+body #page-header h1 {
+    font-size: $lh-font-size-2xl !important;
+    font-weight: 700 !important;
+    margin-bottom: $lh-spacing-sm;
+}
+
+// Small text helpers.
+.lh-text-sm { font-size: $lh-font-size-sm; }
+.lh-text-xs { font-size: $lh-font-size-xs; }
+.lh-text-secondary { color: $lh-text-secondary; }
+.lh-text-light { color: $lh-text-light; }

@@ -1,0 +1,235 @@
+{{!
+    @template  local_lernhive_onboarding/tour_overview
+
+    LernHive Lernpfad (Learning Path) — Tour overview page.
+    Displays tour categories as cards with progress tracking.
+
+    Context variables required for this template:
+    * level (int) - The user's current LernHive level
+    * levelname (string) - Display name of the level
+    * level_badge (string) - "Level X: Name"
+    * intro (string) - Intro paragraph
+    * overall_label (string) - "Overall progress"
+    * overall_percent (int) - 0-100
+    * overall_text (string) - "X of Y tours"
+    * categories (array) - Tour categories
+    * has_categories (bool)
+    * all_done (bool)
+    * can_unlock (bool)
+    * unlock_text (string)
+    * unlock_btn (string)
+
+    Example context (json):
+    {
+        "level": 1, "levelname": "Explorer",
+        "level_badge": "Level 1: Explorer",
+        "intro": "Step by step through Moodle.",
+        "overall_label": "Overall progress", "overall_percent": 42,
+        "overall_text": "5 of 12 tours",
+        "has_categories": true, "categories": [],
+        "all_done": false, "can_unlock": false,
+        "unlock_text": "", "unlock_btn": ""
+    }
+}}
+
+<div class="lh-tours-container">
+    {{! Header }}
+    <div class="lh-tours-header mb-4">
+        <h2 class="lh-tours-title">{{tours_heading}}</h2>
+        <p class="lh-tours-intro text-muted">{{{intro}}}</p>
+        <span class="lh-tours-level-badge badge">
+            <i class="fa fa-layer-group fa-fw"></i> {{level_badge}}
+        </span>
+    </div>
+
+    {{! Overall progress bar }}
+    <div class="lh-tours-overall card mb-4">
+        <div class="card-body d-flex align-items-center gap-3">
+            <span class="lh-tours-overall-label text-muted small fw-semibold">{{overall_label}}</span>
+            <div class="lh-tours-overall-bar flex-grow-1">
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar lh-tours-progress-fill" role="progressbar"
+                         style="width: {{overall_percent}}%"
+                         aria-valuenow="{{overall_percent}}" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+            </div>
+            <span class="lh-tours-overall-pct fw-bold text-primary">{{overall_percent}}%</span>
+            <span class="lh-tours-overall-text text-muted small">{{overall_text}}</span>
+        </div>
+    </div>
+
+    {{! Category cards grid }}
+    {{#has_categories}}
+    <div class="lh-tours-grid">
+        {{#categories}}
+        <div class="lh-tours-card card lh-tours-card--{{status}}" data-catid="{{id}}">
+            <div class="card-body">
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="lh-tours-card-icon lh-tours-icon--{{color}}">
+                        <i class="fa fa-{{icon}} fa-fw"></i>
+                        {{#done}}
+                        <span class="lh-tours-check-overlay">
+                            <i class="fa fa-check"></i>
+                        </span>
+                        {{/done}}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="lh-tours-card-title mb-1">{{name}}</h5>
+                        <p class="lh-tours-card-desc text-muted small mb-0">{{description}}</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="flex-grow-1">
+                        <div class="progress mb-1" style="height: 6px;">
+                            <div class="progress-bar {{#done}}bg-success{{/done}}" role="progressbar"
+                                 style="width: {{percent}}%"
+                                 aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <span class="lh-tours-card-progress-text text-muted" style="font-size: 0.72rem;">
+                            {{progress_str}}
+                        </span>
+                    </div>
+                    <span class="badge lh-tours-status-badge lh-tours-status--{{status}}">
+                        {{status_str}}
+                    </span>
+                </div>
+            </div>
+
+            {{! Expandable tour list }}
+            {{#has_tours}}
+            <div class="lh-tours-detail" id="lh-detail-{{id}}" style="display:none;">
+                <div class="px-3 pb-3">
+                    {{#tours}}
+                    <div class="lh-tours-item d-flex align-items-center gap-3 p-2 rounded mb-1
+                        {{#completed}}lh-tours-item--done{{/completed}}">
+                        <span class="lh-tours-item-num {{#completed}}lh-tours-num--done{{/completed}}{{^completed}}lh-tours-num--pending{{/completed}}">
+                            {{#completed}}<i class="fa fa-check"></i>{{/completed}}
+                            {{^completed}}{{num}}{{/completed}}
+                        </span>
+                        <div class="flex-grow-1 small">Tour {{num}}</div>
+                        <a href="{{start_url}}" class="btn btn-sm
+                            {{#completed}}btn-outline-secondary{{/completed}}
+                            {{^completed}}btn-primary{{/completed}}">
+                            {{#completed}}{{#str}}tours_restart, local_lernhive_onboarding{{/str}}{{/completed}}
+                            {{^completed}}{{#str}}tours_start, local_lernhive_onboarding{{/str}}{{/completed}}
+                        </a>
+                    </div>
+                    {{/tours}}
+                </div>
+            </div>
+            {{/has_tours}}
+        </div>
+        {{/categories}}
+    </div>
+    {{/has_categories}}
+
+    {{! Level unlock section }}
+    <div class="lh-tours-unlock card mt-4 text-center">
+        <div class="card-body py-4">
+            <h5 class="fw-semibold mb-2">{{#str}}tours_unlock_title, local_lernhive_onboarding{{/str}}</h5>
+            {{#all_done}}
+                <p class="text-success mb-3">{{#str}}tours_all_done, local_lernhive_onboarding{{/str}}</p>
+            {{/all_done}}
+            {{^all_done}}
+                <p class="text-muted mb-3">{{unlock_text}}</p>
+            {{/all_done}}
+            {{#can_unlock}}
+                <button class="btn btn-primary rounded-pill px-4" id="lh-unlock-btn">
+                    <i class="fa fa-lock-open fa-fw"></i> {{unlock_btn}}
+                </button>
+            {{/can_unlock}}
+            {{^can_unlock}}
+                {{^at_max_level}}
+                <button class="btn btn-secondary rounded-pill px-4" disabled>
+                    <i class="fa fa-lock fa-fw"></i> {{unlock_btn}}
+                </button>
+                {{/at_max_level}}
+            {{/can_unlock}}
+        </div>
+    </div>
+</div>
+
+{{! Inline styles matching the mockup design }}
+<style>
+.lh-tours-container { max-width: 960px; margin: 0 auto; }
+
+.lh-tours-level-badge {
+    background: #e8f0fe; color: #1a73e8;
+    font-size: 0.78rem; font-weight: 600; padding: 4px 12px; border-radius: 16px;
+}
+
+.lh-tours-progress-fill {
+    background: linear-gradient(90deg, #1a73e8, #6c63ff); border-radius: 5px;
+}
+
+.lh-tours-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+}
+
+.lh-tours-card {
+    cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease; border-radius: 12px;
+}
+.lh-tours-card:hover { box-shadow: 0 4px 16px rgba(60,64,67,0.18); transform: translateY(-2px); }
+.lh-tours-card--in_progress { border-color: #1a73e8; }
+.lh-tours-card--completed { border-color: #34a853; }
+
+.lh-tours-card-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 1.2rem; position: relative;
+}
+.lh-tours-icon--blue { background: #e8f0fe; color: #1a73e8; }
+.lh-tours-icon--green { background: #e6f4ea; color: #34a853; }
+.lh-tours-icon--purple { background: #f3e5f5; color: #7b1fa2; }
+.lh-tours-icon--orange { background: #fef7e0; color: #f9ab00; }
+.lh-tours-icon--teal { background: #e0f2f1; color: #00695c; }
+.lh-tours-icon--red { background: #fce8e6; color: #ea4335; }
+
+.lh-tours-check-overlay {
+    position: absolute; bottom: -4px; right: -4px;
+    width: 20px; height: 20px; background: #34a853; color: #fff;
+    border-radius: 50%; border: 2px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.55rem;
+}
+
+.lh-tours-card-title { font-size: 0.95rem; font-weight: 600; }
+.lh-tours-card-desc { font-size: 0.78rem; line-height: 1.4; }
+
+.lh-tours-status-badge { font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; }
+.lh-tours-status--not_started { background: #f5f6f8; color: #80868b; }
+.lh-tours-status--in_progress { background: #e8f0fe; color: #1a73e8; }
+.lh-tours-status--completed { background: #e6f4ea; color: #137333; }
+
+.lh-tours-detail { border-top: 1px solid #e0e0e0; }
+
+.lh-tours-item { transition: background 0.15s; }
+.lh-tours-item:hover { background: #f5f6f8; }
+
+.lh-tours-item-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 600; flex-shrink: 0;
+}
+.lh-tours-num--done { background: #34a853; color: #fff; }
+.lh-tours-num--pending { background: #f0f0f0; color: #80868b; }
+
+.lh-tours-unlock { border-radius: 12px; }
+</style>
+
+{{! Toggle card expansion on click }}
+{{#js}}
+document.querySelectorAll('.lh-tours-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+        // Don't toggle if clicking a button/link.
+        if (e.target.closest('a, button')) return;
+        var catid = card.getAttribute('data-catid');
+        var detail = document.getElementById('lh-detail-' + catid);
+        if (detail) {
+            detail.style.display = (detail.style.display === 'none') ? 'block' : 'none';
+        }
+    });
+});
+{{/js}}

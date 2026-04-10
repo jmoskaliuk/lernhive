@@ -1,0 +1,60 @@
+{
+    "name": "LernHive: Nutzer/in anlegen",
+    "description": "Lerne, wie du eine einzelne Nutzer/in manuell in LernHive anlegst.",
+    "pathmatch": "/user/editadvanced.php%",
+    "enabled": 1,
+    "sortorder": 0,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Willkommen zur Nutzerverwaltung",
+            "content": "<p>In diesem Schritt zeigen wir dir, wie du eine neue Nutzer/in in LernHive anlegst. Du brauchst dazu nur wenige Angaben.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Benutzername eingeben",
+            "content": "<p>Der Benutzername ist eindeutig und wird zum Anmelden verwendet. Wähle einen aussagekräftigen Namen ohne Sonderzeichen.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_username",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Vor- und Nachname",
+            "content": "<p>Gib den Vor- und Nachnamen der Nutzer/in ein. Diese Informationen werden in Kurslisten und Grading angezeigt.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_firstname",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "E-Mail-Adresse",
+            "content": "<p>Die E-Mail-Adresse ist wichtig für Benachrichtigungen und Passwort-Zurücksetzen. Stelle sicher, dass die Adresse korrekt ist.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_email",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Passwort setzen",
+            "content": "<p>Du kannst ein temporäres Passwort setzen oder LernHive automatisch eines generieren lassen. Die Nutzer/in kann es später ändern.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_newpassword",
+            "sortorder": 4,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Nutzer/in erstellen",
+            "content": "<p>Klick auf 'Nutzer/in erstellen', um die Nutzer/in zu speichern. Sie ist dann sofort in deinem LernHive-System verfügbar.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 5,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}
