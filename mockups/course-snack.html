@@ -94,8 +94,15 @@ body{
   border-radius:14px;
   background:#fff;
   color:var(--accent);
-  font-weight:700;
-  font-size:22px;
+}
+.launchicon svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 .launchmeta strong{
   display:block;
@@ -146,8 +153,12 @@ body{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+  align-items:center;
 }
 .pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
   padding:10px 14px;
   border-radius:999px;
   border:1px solid var(--line);
@@ -155,9 +166,33 @@ body{
   color:var(--nav);
   font-weight:700;
 }
+.pill svg{
+  width:16px;
+  height:16px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 .star{
   color:var(--accent);
   border-color:#f2d0af;
+}
+.utilityiconbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.utilityiconbtn{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.92);
+  color:var(--nav);
 }
 .layout{
   display:grid;
@@ -351,6 +386,10 @@ body{
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-plus" viewBox="0 0 24 24">
+    <path d="M12 5v14"></path>
+    <path d="M5 12h14"></path>
+  </symbol>
   <symbol id="icon-circle-play" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="9"></circle>
     <path d="m10 9 5 3-5 3z"></path>
@@ -362,6 +401,27 @@ body{
   <symbol id="icon-flag" viewBox="0 0 24 24">
     <path d="M4 22V4"></path>
     <path d="M4 4h11l-1.5 3L15 10H4"></path>
+  </symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24">
+    <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"></path>
+  </symbol>
+  <symbol id="icon-bookmark" viewBox="0 0 24 24">
+    <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+  </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12"></path>
+    <path d="m7 10 5 5 5-5"></path>
+    <path d="M5 21h14"></path>
+  </symbol>
+  <symbol id="icon-printer" viewBox="0 0 24 24">
+    <path d="M6 9V4h12v5"></path>
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+    <path d="M6 14h12v6H6z"></path>
+  </symbol>
+  <symbol id="icon-more-horizontal" viewBox="0 0 24 24">
+    <circle cx="5" cy="12" r="1.7"></circle>
+    <circle cx="12" cy="12" r="1.7"></circle>
+    <circle cx="19" cy="12" r="1.7"></circle>
   </symbol>
 </svg>
 <div class="app">
@@ -380,7 +440,7 @@ body{
 
     <section class="launchcard">
       <div class="launchrow">
-        <div class="launchicon">+</div>
+        <div class="launchicon"><svg aria-hidden="true"><use href="#icon-plus"></use></svg></div>
         <div class="launchmeta">
           <strong>Launcher</strong>
           <span>Action surface for quick creation and admin actions</span>
@@ -404,8 +464,13 @@ body{
       <div class="utility">
         <div class="pill">15 minutes</div>
         <div class="pill">3 steps</div>
-        <div class="pill star">★ Follow</div>
-        <div class="pill">Bookmark</div>
+        <div class="pill star"><svg aria-hidden="true"><use href="#icon-star"></use></svg>Follow</div>
+        <div class="pill"><svg aria-hidden="true"><use href="#icon-bookmark"></use></svg>Bookmark</div>
+        <div class="utilityiconbar" aria-label="Snack page actions">
+          <div class="utilityiconbtn" role="button" aria-label="Download snack overview" title="Download snack overview"><svg aria-hidden="true"><use href="#icon-download"></use></svg></div>
+          <div class="utilityiconbtn" role="button" aria-label="Print snack page" title="Print snack page"><svg aria-hidden="true"><use href="#icon-printer"></use></svg></div>
+          <div class="utilityiconbtn" role="button" aria-label="More snack actions" title="More snack actions"><svg aria-hidden="true"><use href="#icon-more-horizontal"></use></svg></div>
+        </div>
       </div>
     </header>
 

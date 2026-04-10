@@ -94,8 +94,15 @@ body{
   border-radius:14px;
   background:#fff;
   color:var(--accent);
-  font-weight:700;
-  font-size:22px;
+}
+.launchicon svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 .launchmeta strong{
   display:block;
@@ -146,6 +153,7 @@ body{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+  align-items:center;
 }
 .pill{
   padding:10px 14px;
@@ -154,6 +162,21 @@ body{
   background:rgba(255,255,255,.9);
   color:var(--nav);
   font-weight:700;
+}
+.utilityiconbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.utilityiconbtn{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.92);
+  color:var(--nav);
 }
 .layout{
   display:grid;
@@ -297,13 +320,25 @@ body{
   font-size:12px;
 }
 .itemcta{
-  padding:10px 14px;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
   border-radius:999px;
   border:1px solid var(--line);
   background:var(--panel-soft);
   color:var(--nav);
-  font-weight:700;
   white-space:nowrap;
+}
+.utilityiconbtn svg,
+.itemcta svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.05;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
 .aside{
   display:grid;
@@ -378,6 +413,10 @@ body{
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-plus" viewBox="0 0 24 24">
+    <path d="M12 5v14"></path>
+    <path d="M5 12h14"></path>
+  </symbol>
   <symbol id="icon-book-open" viewBox="0 0 24 24">
     <path d="M12 7v14"></path>
     <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
@@ -405,6 +444,25 @@ body{
     <path d="M8 9h8"></path>
     <path d="M8 13h5"></path>
   </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12"></path>
+    <path d="m7 10 5 5 5-5"></path>
+    <path d="M5 21h14"></path>
+  </symbol>
+  <symbol id="icon-printer" viewBox="0 0 24 24">
+    <path d="M6 9V4h12v5"></path>
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+    <path d="M6 14h12v6H6z"></path>
+  </symbol>
+  <symbol id="icon-more-horizontal" viewBox="0 0 24 24">
+    <circle cx="5" cy="12" r="1.7"></circle>
+    <circle cx="12" cy="12" r="1.7"></circle>
+    <circle cx="19" cy="12" r="1.7"></circle>
+  </symbol>
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+    <path d="M5 12h14"></path>
+    <path d="m12 5 7 7-7 7"></path>
+  </symbol>
 </svg>
 <div class="app">
   <aside class="sidebar">
@@ -422,7 +480,7 @@ body{
 
     <section class="launchcard">
       <div class="launchrow">
-        <div class="launchicon">+</div>
+        <div class="launchicon"><svg aria-hidden="true"><use href="#icon-plus"></use></svg></div>
         <div class="launchmeta">
           <strong>Launcher</strong>
           <span>Action-oriented, not full navigation</span>
@@ -447,6 +505,11 @@ body{
         <div class="pill">Teacher</div>
         <div class="pill">24 participants</div>
         <div class="pill">School flavour</div>
+        <div class="utilityiconbar" aria-label="Course page actions">
+          <div class="utilityiconbtn" role="button" aria-label="Download course overview" title="Download course overview"><svg aria-hidden="true"><use href="#icon-download"></use></svg></div>
+          <div class="utilityiconbtn" role="button" aria-label="Print course page" title="Print course page"><svg aria-hidden="true"><use href="#icon-printer"></use></svg></div>
+          <div class="utilityiconbtn" role="button" aria-label="More course actions" title="More course actions"><svg aria-hidden="true"><use href="#icon-more-horizontal"></use></svg></div>
+        </div>
       </div>
     </header>
 
@@ -484,7 +547,7 @@ body{
                     <span>Orientation content</span>
                   </div>
                 </div>
-                <div class="itemcta">Open</div>
+                <div class="itemcta" role="button" aria-label="Open welcome and course overview" title="Open welcome and course overview"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>
               </article>
               <article class="item">
                 <div class="itemicon">
@@ -498,7 +561,7 @@ body{
                     <span>Dates and format</span>
                   </div>
                 </div>
-                <div class="itemcta">Open</div>
+                <div class="itemcta" role="button" aria-label="Open teaching format and schedule" title="Open teaching format and schedule"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>
               </article>
             </div>
           </section>
@@ -521,7 +584,7 @@ body{
                     <span>Reading or short input</span>
                   </div>
                 </div>
-                <div class="itemcta">Open</div>
+                <div class="itemcta" role="button" aria-label="Open short input" title="Open short input"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>
               </article>
               <article class="item">
                 <div class="itemicon">
@@ -535,7 +598,7 @@ body{
                     <span>Short task</span>
                   </div>
                 </div>
-                <div class="itemcta">Open</div>
+                <div class="itemcta" role="button" aria-label="Open reflection task" title="Open reflection task"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>
               </article>
               <article class="item">
                 <div class="itemicon">
@@ -549,7 +612,7 @@ body{
                     <span>Guided exchange</span>
                   </div>
                 </div>
-                <div class="itemcta">Open</div>
+                <div class="itemcta" role="button" aria-label="Open discussion prompt" title="Open discussion prompt"><svg aria-hidden="true"><use href="#icon-arrow-right"></use></svg></div>
               </article>
             </div>
           </section>

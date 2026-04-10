@@ -160,6 +160,7 @@ body{
 .utility{
   display:flex;
   gap:10px;
+  align-items:center;
 }
 .utility .pill{
   padding:10px 14px;
@@ -240,6 +241,11 @@ body{
   gap:18px;
   margin-bottom:12px;
 }
+.sectionheadmeta{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 .sectionhead h3{
   margin:0;
   font-size:24px;
@@ -248,6 +254,21 @@ body{
 .sectionhead p{
   margin:0;
   color:var(--muted);
+}
+.utilitybar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.utilitychip{
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--nav);
 }
 .grid{
   display:grid;
@@ -416,6 +437,16 @@ body{
     <path d="M5 12h14"></path>
     <path d="m12 5 7 7-7 7"></path>
   </symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24">
+    <path d="M12 3v12"></path>
+    <path d="m7 10 5 5 5-5"></path>
+    <path d="M5 21h14"></path>
+  </symbol>
+  <symbol id="icon-more-horizontal" viewBox="0 0 24 24">
+    <circle cx="5" cy="12" r="1.7"></circle>
+    <circle cx="12" cy="12" r="1.7"></circle>
+    <circle cx="19" cy="12" r="1.7"></circle>
+  </symbol>
 </svg>
 <div class="app">
   <aside class="sidebar">
@@ -479,7 +510,13 @@ body{
     <section class="section">
       <div class="sectionhead">
         <h3>New in your community</h3>
-        <p>Digest-relevant updates from nearby learning context.</p>
+        <div class="sectionheadmeta">
+          <p>Digest-relevant updates from nearby learning context.</p>
+          <div class="utilitybar" aria-label="New in your community actions">
+            <div class="utilitychip" role="button" aria-label="Download community updates" title="Download community updates"><svg aria-hidden="true"><use href="#icon-download"></use></svg></div>
+            <div class="utilitychip" role="button" aria-label="More community actions" title="More community actions"><svg aria-hidden="true"><use href="#icon-more-horizontal"></use></svg></div>
+          </div>
+        </div>
       </div>
       <div class="grid">
         <article class="card">
