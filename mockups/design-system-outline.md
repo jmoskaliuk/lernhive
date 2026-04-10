@@ -88,6 +88,14 @@ It should help keep School, optional LXP, launcher, course pages, reporting, and
 - form field group
 - stepper / progress pattern
 
+### Shape logic
+
+- structural containers may use calmer and more angular geometry
+- panels, cards, tables, and helper surfaces should communicate structure first
+- explicit interactive actions should be rounder and easier to recognize as clickable
+- buttons, CTA pills, launcher triggers, and comparable action elements should usually use a softer or fully rounded radius
+- the UI should make the difference between structure and interaction visible through shape, not only through color
+
 ### Relationship actions
 
 - Follow with star icon
