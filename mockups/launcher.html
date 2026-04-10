@@ -29,156 +29,14 @@ body{
     linear-gradient(180deg,#ffffff 0,var(--bg) 100%);
   color:var(--ink);
 }
-.shell{
-  width:min(1220px,100%);
+.wrap{
+  width:min(1340px,100%);
   margin:0 auto;
-  display:grid;
-  grid-template-columns:280px 1fr;
-  gap:24px;
 }
-.sidebar{
-  background:linear-gradient(180deg,var(--nav) 0,var(--nav-soft) 100%);
-  color:#f8f1e8;
-  border-radius:28px;
-  padding:24px 18px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-.brand{
-  padding:4px 10px 14px;
-  border-bottom:1px solid rgba(255,255,255,.14);
-}
-.brand h1{
-  margin:0 0 6px;
-  font-size:30px;
-  font-weight:700;
-}
-.brand p{
-  margin:0;
-  color:rgba(248,241,232,.76);
-  line-height:1.45;
-}
-.nav{
-  display:grid;
-  gap:10px;
-}
-.navitem{
-  display:grid;
-  grid-template-columns:40px 1fr;
-  gap:12px;
-  align-items:center;
-  padding:12px 12px;
-  border-radius:18px;
-  color:#fff;
-}
-.navitem.active{
-  background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.14);
-}
-.navicon{
-  width:40px;
-  height:40px;
-  display:grid;
-  place-items:center;
-  border-radius:14px;
-  background:rgba(255,255,255,.12);
-  font-weight:700;
-}
-.navcopy strong{
-  display:block;
-  margin-bottom:2px;
-}
-.navcopy span{
-  color:rgba(248,241,232,.72);
-  font-size:13px;
-}
-.navlauncher{
-  margin-top:8px;
-  position:relative;
-  padding:14px;
-  border-radius:22px;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.14);
-}
-.navlauncher .label{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  color:#fff;
-  font-weight:700;
-}
-.navlauncher .label .navicon{
-  background:#ffffff;
-  color:var(--accent);
-}
-.flyout{
-  margin-top:14px;
-  background:#ffffff;
-  color:var(--ink);
-  border-radius:24px;
-  padding:16px;
-  box-shadow:var(--shadow);
-}
-.flyout h2{
-  margin:0 0 8px;
-  font-size:16px;
-  font-weight:700;
-  color:var(--nav);
-}
-.flyout p{
-  margin:0 0 14px;
-  color:var(--muted);
-  line-height:1.45;
-  font-size:14px;
-}
-.quicklist{
-  display:grid;
-  gap:10px;
-}
-.quickitem{
-  display:grid;
-  grid-template-columns:38px 1fr auto;
-  gap:12px;
-  align-items:center;
-  padding:10px 12px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  background:var(--soft);
-}
-.quickitem .miniicon{
-  width:38px;
-  height:38px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:#ffffff;
-  color:var(--accent);
-  font-weight:700;
-}
-.quickitem strong{
-  display:block;
-  font-size:14px;
-}
-.quickitem span{
-  display:block;
-  color:var(--muted);
-  font-size:12px;
-}
-.badge{
-  padding:6px 9px;
-  border-radius:999px;
-  background:var(--accent-soft);
-  color:var(--accent);
-  font-size:11px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-}
-.main{
+.hero{
   background:var(--panel);
   border:1px solid var(--line);
-  border-radius:30px;
+  border-radius:32px;
   padding:28px;
   box-shadow:var(--shadow);
 }
@@ -189,70 +47,287 @@ body{
   font-size:12px;
   font-weight:700;
 }
-.main h2{
+h1{
   margin:10px 0 10px;
-  font-size:40px;
+  font-size:42px;
   font-weight:700;
 }
 .intro{
-  max-width:760px;
+  max-width:900px;
   color:var(--muted);
   line-height:1.55;
 }
-.dock{
-  margin-top:26px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:14px;
-  padding:14px;
-  border-radius:24px;
-  background:linear-gradient(180deg,#ffffff 0,#f8fafc 100%);
-  border:1px solid var(--line);
+.compare{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+  margin-top:28px;
 }
-.dockitem{
-  width:108px;
-  min-height:104px;
-  padding:14px 10px 12px;
-  border-radius:20px;
+.variant{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:22px;
+}
+.varianthead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:18px;
+}
+.varianthead h2{
+  margin:0 0 8px;
+  font-size:24px;
+  color:var(--nav);
+}
+.varianthead p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+.tag{
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  white-space:nowrap;
+}
+
+.appframe{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:18px;
+  min-height:520px;
+}
+.sidebar{
+  background:linear-gradient(180deg,var(--nav) 0,var(--nav-soft) 100%);
+  color:#f8f1e8;
+  border-radius:24px;
+  padding:18px 14px;
+}
+.brand{
+  padding:6px 8px 14px;
+  border-bottom:1px solid rgba(255,255,255,.14);
+  margin-bottom:12px;
+}
+.brand strong{
+  display:block;
+  font-size:24px;
+}
+.brand span{
+  display:block;
+  color:rgba(248,241,232,.76);
+  font-size:13px;
+  margin-top:4px;
+}
+.nav{
+  display:grid;
+  gap:10px;
+}
+.navitem{
+  display:grid;
+  grid-template-columns:38px 1fr;
+  gap:10px;
+  align-items:center;
+  padding:10px 10px;
+  border-radius:16px;
+  color:#fff;
+}
+.navitem.active{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.14);
+}
+.navicon{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:rgba(255,255,255,.12);
+}
+.navlabel strong{
+  display:block;
+  font-size:14px;
+}
+.navlabel span{
+  display:block;
+  color:rgba(248,241,232,.72);
+  font-size:12px;
+}
+.mockmain{
+  background:#f8fbfd;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:18px;
+  position:relative;
+  overflow:hidden;
+}
+.mockmain h3{
+  margin:0 0 8px;
+  font-size:24px;
+}
+.mockmain p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+  max-width:520px;
+}
+
+.launchertrigger{
+  margin-top:14px;
+  padding:12px;
+  border-radius:18px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.14);
+}
+.triggerrow{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#fff;
+  font-weight:700;
+}
+.triggerrow .navicon{
+  background:#fff;
+  color:var(--accent);
+}
+.flyout{
+  position:absolute;
+  top:110px;
+  left:32px;
+  width:320px;
   background:#ffffff;
   border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  padding:16px;
+}
+.flyout h4{
+  margin:0 0 8px;
+  font-size:16px;
+  color:var(--nav);
+}
+.flyout p{
+  margin:0 0 14px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.45;
+}
+.quicklist{
+  display:grid;
+  gap:10px;
+}
+.quickitem{
+  display:grid;
+  grid-template-columns:40px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--soft);
+}
+.lucidebox{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#fff;
+  color:var(--accent);
+}
+.lucide{
+  width:18px;
+  height:18px;
+  display:block;
+}
+.quickitem strong{
+  display:block;
+  font-size:14px;
+}
+.quickitem span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+.microtag{
+  padding:6px 8px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:var(--accent);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.dockstage{
+  position:absolute;
+  left:26px;
+  right:26px;
+  bottom:22px;
+  display:flex;
+  justify-content:center;
+}
+.dock{
+  display:flex;
+  gap:12px;
+  align-items:flex-end;
+  padding:12px 14px;
+  border-radius:24px;
+  background:rgba(255,255,255,.84);
+  border:1px solid rgba(25,72,102,.12);
+  box-shadow:0 18px 36px rgba(25,72,102,.12);
+  backdrop-filter:blur(12px);
+}
+.dockitem{
+  width:66px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:flex-start;
-  gap:10px;
-  text-align:center;
+  gap:8px;
 }
 .dockicon{
-  width:52px;
-  height:52px;
+  width:56px;
+  height:56px;
   display:grid;
   place-items:center;
   border-radius:18px;
-  background:var(--accent-soft);
+  background:linear-gradient(180deg,#ffffff 0,#ffecdb 100%);
+  border:1px solid rgba(249,128,18,.16);
   color:var(--accent);
-  font-size:22px;
-  font-weight:700;
+  box-shadow:0 10px 20px rgba(25,72,102,.1);
 }
-.dockitem strong{
-  font-size:13px;
-  line-height:1.25;
+.dockitem span{
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.2;
 }
+.dockitem.center .dockicon{
+  transform:translateY(-10px) scale(1.08);
+}
+
 .principles{
-  margin-top:24px;
+  margin-top:22px;
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:16px;
 }
 .principle{
-  padding:18px;
-  border-radius:22px;
-  border:1px solid var(--line);
+  padding:16px;
+  border-radius:20px;
   background:#fff;
+  border:1px solid var(--line);
 }
 .principle h3{
   margin:0 0 8px;
-  font-size:19px;
+  font-size:18px;
   color:var(--nav);
 }
 .principle p{
@@ -268,124 +343,241 @@ body{
   background:var(--accent-soft);
   color:var(--ink);
 }
-@media (max-width: 980px){
-  .shell{grid-template-columns:1fr}
+@media (max-width: 1100px){
+  .compare{grid-template-columns:1fr}
+}
+@media (max-width: 820px){
+  .appframe{grid-template-columns:1fr}
   .principles{grid-template-columns:1fr}
+  .flyout{position:relative; top:auto; left:auto; width:100%; margin-top:18px}
+  .dockstage{position:relative; left:auto; right:auto; bottom:auto; margin-top:24px}
 }
 </style>
 </head>
 <body>
-<div class="shell">
-  <aside class="sidebar">
-    <div class="brand">
-      <h1>LernHive</h1>
-      <p>Launcher as a navigation icon with a compact flyout. Fast actions should feel immediate, not like a second navigation tree.</p>
-    </div>
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Launcher Exploration</div>
+    <h1>Icon-first launcher directions</h1>
+    <p class="intro">Both concepts use a launcher icon in the left navigation. The difference is emphasis: the first variant is a compact Lucide-oriented action flyout, the second pushes harder toward a MacOS-like dock feeling for fast repeated actions.</p>
 
-    <nav class="nav">
-      <div class="navitem active">
-        <div class="navicon">Ex</div>
-        <div class="navcopy"><strong>Explore</strong><span>Optional LXP home</span></div>
-      </div>
-      <div class="navitem">
-        <div class="navicon">ML</div>
-        <div class="navcopy"><strong>My Learning</strong><span>Courses and progress</span></div>
-      </div>
-      <div class="navitem">
-        <div class="navicon">Co</div>
-        <div class="navcopy"><strong>Communities</strong><span>Learning spaces</span></div>
-      </div>
-    </nav>
-
-    <section class="navlauncher">
-      <div class="label">
-        <div class="navicon">+</div>
-        <div>Launcher</div>
-      </div>
-
-      <div class="flyout">
-        <h2>Quick actions</h2>
-        <p>A compact menu from the navigation. Good for the 4–6 actions people need most often.</p>
-
-        <div class="quicklist">
-          <div class="quickitem">
-            <div class="miniicon">C</div>
-            <div><strong>Create course</strong><span>Start a standard course flow</span></div>
-            <div class="badge">Core</div>
+    <div class="compare">
+      <section class="variant">
+        <div class="varianthead">
+          <div>
+            <h2>Variant A: Compact Lucide launcher</h2>
+            <p>Small, fast, and focused. Best when the launcher should stay lightweight and consistent with the left navigation.</p>
           </div>
-          <div class="quickitem">
-            <div class="miniicon">H</div>
-            <div><strong>Open ContentHub</strong><span>Copy, Template, Library</span></div>
-            <div class="badge">Content</div>
-          </div>
-          <div class="quickitem">
-            <div class="miniicon">S</div>
-            <div><strong>Create snack</strong><span>Lightweight 10–30 minute item</span></div>
-            <div class="badge">LXP</div>
-          </div>
-          <div class="quickitem">
-            <div class="miniicon">U</div>
-            <div><strong>Add users</strong><span>Fast admin action</span></div>
-            <div class="badge">Admin</div>
+          <div class="tag">Recommended</div>
+        </div>
+
+        <div class="appframe">
+          <aside class="sidebar">
+            <div class="brand">
+              <strong>LernHive</strong>
+              <span>Left navigation remains primary.</span>
+            </div>
+
+            <nav class="nav">
+              <div class="navitem active">
+                <div class="navicon">Ex</div>
+                <div class="navlabel"><strong>Explore</strong><span>LXP home</span></div>
+              </div>
+              <div class="navitem">
+                <div class="navicon">ML</div>
+                <div class="navlabel"><strong>My Learning</strong><span>Courses and progress</span></div>
+              </div>
+            </nav>
+
+            <div class="launchertrigger">
+              <div class="triggerrow">
+                <div class="navicon">
+                  <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14"></path><path d="M5 12h14"></path>
+                  </svg>
+                </div>
+                <div>Launcher</div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="mockmain">
+            <h3>Focused action menu</h3>
+            <p>The flyout opens close to the launcher icon and offers only the most important actions with short labels.</p>
+
+            <div class="flyout">
+              <h4>Quick actions</h4>
+              <p>Lucide-like icons plus short labels. Good for fast recognition without turning the launcher into a dashboard.</p>
+
+              <div class="quicklist">
+                <div class="quickitem">
+                  <div class="lucidebox">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 19.5V8a2 2 0 0 1 2-2h8l6 6v7.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M14 6v6h6"></path>
+                    </svg>
+                  </div>
+                  <div><strong>Create course</strong><span>Primary course action</span></div>
+                  <div class="microtag">Core</div>
+                </div>
+                <div class="quickitem">
+                  <div class="lucidebox">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect>
+                    </svg>
+                  </div>
+                  <div><strong>ContentHub</strong><span>Copy, Template, Library</span></div>
+                  <div class="microtag">Content</div>
+                </div>
+                <div class="quickitem">
+                  <div class="lucidebox">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="4" y="4" width="7" height="16" rx="1.5"></rect><rect x="13" y="4" width="7" height="16" rx="1.5"></rect>
+                    </svg>
+                  </div>
+                  <div><strong>Template</strong><span>Structured starting point</span></div>
+                  <div class="microtag">Path</div>
+                </div>
+                <div class="quickitem">
+                  <div class="lucidebox">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 7.5 12 4l9 3.5"></path><path d="M5 9.5V18l7 3 7-3V9.5"></path><path d="M12 13v8"></path>
+                    </svg>
+                  </div>
+                  <div><strong>Library</strong><span>Managed `.mbz` import</span></div>
+                  <div class="microtag">Managed</div>
+                </div>
+                <div class="quickitem">
+                  <div class="lucidebox">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="9"></circle><path d="m10 8 6 4-6 4Z"></path>
+                    </svg>
+                  </div>
+                  <div><strong>Create snack</strong><span>10–30 minute item</span></div>
+                  <div class="microtag">LXP</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  </aside>
+      </section>
 
-  <main class="main">
-    <div class="eyebrow">Launcher Direction</div>
-    <h2>Icon-first launcher</h2>
-    <p class="intro">The launcher should start from a single icon in the left navigation. After click, it opens a small, focused action menu. For frequent actions, it can also behave like a dock row with recognizable icons, similar to a lightweight app launcher.</p>
+      <section class="variant">
+        <div class="varianthead">
+          <div>
+            <h2>Variant B: MacOS-like dock</h2>
+            <p>More visual and more playful. Better for frequent power actions, but easier to overload if too many items are added.</p>
+          </div>
+          <div class="tag">Experimental</div>
+        </div>
 
-    <section class="dock">
-      <article class="dockitem">
-        <div class="dockicon">C</div>
-        <strong>Create course</strong>
-      </article>
-      <article class="dockitem">
-        <div class="dockicon">H</div>
-        <strong>ContentHub</strong>
-      </article>
-      <article class="dockitem">
-        <div class="dockicon">T</div>
-        <strong>Template</strong>
-      </article>
-      <article class="dockitem">
-        <div class="dockicon">L</div>
-        <strong>Library</strong>
-      </article>
-      <article class="dockitem">
-        <div class="dockicon">S</div>
-        <strong>Create snack</strong>
-      </article>
-      <article class="dockitem">
-        <div class="dockicon">Cm</div>
-        <strong>Create community</strong>
-      </article>
-      <article class="dockitem">
-        <div class="dockicon">U</div>
-        <strong>Add users</strong>
-      </article>
-    </section>
+        <div class="appframe">
+          <aside class="sidebar">
+            <div class="brand">
+              <strong>LernHive</strong>
+              <span>Launcher still starts from one icon.</span>
+            </div>
+
+            <nav class="nav">
+              <div class="navitem active">
+                <div class="navicon">Ex</div>
+                <div class="navlabel"><strong>Explore</strong><span>LXP home</span></div>
+              </div>
+              <div class="navitem">
+                <div class="navicon">ML</div>
+                <div class="navlabel"><strong>My Learning</strong><span>Courses and progress</span></div>
+              </div>
+            </nav>
+
+            <div class="launchertrigger">
+              <div class="triggerrow">
+                <div class="navicon">
+                  <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14"></path><path d="M5 12h14"></path>
+                  </svg>
+                </div>
+                <div>Launcher</div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="mockmain">
+            <h3>Launcher as quick-start dock</h3>
+            <p>The icon opens a compact overlay, but repeated users can work almost entirely through recognizable action icons.</p>
+
+            <div class="dockstage">
+              <div class="dock">
+                <div class="dockitem">
+                  <div class="dockicon">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 19.5V8a2 2 0 0 1 2-2h8l6 6v7.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"></path><path d="M14 6v6h6"></path>
+                    </svg>
+                  </div>
+                  <span>Course</span>
+                </div>
+                <div class="dockitem">
+                  <div class="dockicon">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect>
+                    </svg>
+                  </div>
+                  <span>Hub</span>
+                </div>
+                <div class="dockitem">
+                  <div class="dockicon">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="4" y="4" width="7" height="16" rx="1.5"></rect><rect x="13" y="4" width="7" height="16" rx="1.5"></rect>
+                    </svg>
+                  </div>
+                  <span>Template</span>
+                </div>
+                <div class="dockitem center">
+                  <div class="dockicon">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="9"></circle><path d="m10 8 6 4-6 4Z"></path>
+                    </svg>
+                  </div>
+                  <span>Snack</span>
+                </div>
+                <div class="dockitem">
+                  <div class="dockicon">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 7.5 12 4l9 3.5"></path><path d="M5 9.5V18l7 3 7-3V9.5"></path><path d="M12 13v8"></path>
+                    </svg>
+                  </div>
+                  <span>Library</span>
+                </div>
+                <div class="dockitem">
+                  <div class="dockicon">
+                    <svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6"></path><path d="M22 11h-6"></path>
+                    </svg>
+                  </div>
+                  <span>Users</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <section class="principles">
       <article class="principle">
-        <h3>Compact first</h3>
-        <p>The default interaction should stay small and fast. The launcher is for starting actions, not for browsing areas.</p>
+        <h3>Lucide direction</h3>
+        <p>Use a consistent line icon style, equal stroke weight, and the same icon size grid so the launcher feels coherent rather than decorative.</p>
       </article>
       <article class="principle">
-        <h3>Icon recognition</h3>
-        <p>Frequently used actions may be represented as a small icon row so repeat users build muscle memory.</p>
+        <h3>Icon-first, not icon-only</h3>
+        <p>Icons can dominate visually, but labels or tooltips are still needed so actions remain understandable and accessible.</p>
       </article>
       <article class="principle">
-        <h3>Clear limits</h3>
-        <p>Only the most important actions belong here. If the launcher gets too long, the interface should route people into ContentHub or dedicated pages instead.</p>
+        <h3>Keep the set short</h3>
+        <p>The launcher works best when only the most important repeated actions are shown. Everything else should route into a dedicated flow.</p>
       </article>
     </section>
 
-    <div class="note">Mockup note: preferred long-term pattern is a single launcher icon in the navigation plus a compact flyout. The dock-like icon row is a secondary refinement for high-frequency actions, not a replacement for navigation.</div>
-  </main>
+    <div class="note">Current direction: Variant A is the safer long-term baseline for LernHive. Variant B is useful as inspiration for motion, icon emphasis, and high-frequency quick actions.</div>
+  </section>
 </div>
 </body>
 </html>

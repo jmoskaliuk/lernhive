@@ -43,6 +43,13 @@ LernHive should feel calmer, clearer, and more guided than standard Moodle witho
 - the launcher must remain action-oriented and must not become a second site navigation
 - if too many actions are needed, route the user into a dedicated surface such as ContentHub
 
+### Icon system
+- use a consistent line-icon family such as Lucide
+- keep stroke weight, icon box size, and alignment consistent
+- prefer recognizable utility icons over decorative illustration
+- use labels or tooltips alongside icons where understanding might otherwise suffer
+- reserve orange emphasis for active, primary, or highlighted action states
+
 ## Component system
 
 ### Page shell
