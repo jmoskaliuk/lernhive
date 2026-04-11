@@ -157,6 +157,13 @@ $lh-bp-tablet:   768px;
 // sidebar's right edge. No tile chrome (no background, border, radius, shadow).
 // Internal padding keeps the notification / launcher / user icons off the edge.
 // Shows: page h1 / breadcrumb (from full_header) + user actions.
+//
+// 0.9.53: The header is sticky to the viewport top so profile / settings /
+// logout and the other user actions remain visible while scrolling long
+// pages. A solid $lh-bg background + subtle bottom shadow separate it from
+// content scrolling underneath. Plugin-shell pages whose own .lh-plugin-header
+// is also sticky get a top offset applied below so the two headers stack
+// cleanly instead of overlapping.
 
 .lernhive-page-header {
     display: flex;
@@ -169,10 +176,17 @@ $lh-bp-tablet:   768px;
     // post.scss; here we just trim the header's own top padding to 0 so the
     // icons visually sit at the top of the page column.
     padding: 0 $lh-spacing-lg $lh-spacing-xs;
-    background: transparent;
+    // 0.9.53: sticky so it stays visible while scrolling. Background needs to
+    // be opaque ($lh-bg matches the page gutter) so content doesn't bleed
+    // through. z-index sits above .lh-plugin-header (20) but below the fixed
+    // sidebar (100), so launcher / user dropdowns remain usable.
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: $lh-bg;
     border: none;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: 0 1px 0 rgba(25, 72, 102, 0.06);
 
     &__main {
         flex: 1;

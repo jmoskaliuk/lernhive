@@ -2,6 +2,13 @@
 
 ## Done (shipped)
 
+- [x] 0.9.53 — Sticky page header (profile / settings / logout stay visible on scroll) (2026-04-11):
+  - `scss/lernhive/_layout.scss` — `.lernhive-page-header` gained `position: sticky; top: 0; z-index: 30;` plus an opaque `background: $lh-bg` (was `transparent`) and a 1 px bottom shadow for visual separation from content scrolling underneath. z-index 30 sits above `.lh-plugin-header` (20) but below the fixed sidebar (100), so launcher/user dropdowns and the sidebar stacking are unaffected.
+  - `scss/lernhive/_plugin-shell.scss` — `.lh-plugin-header` `top: 0` → `top: 3rem`, so on Plugin Shell pages (where the page-header hides its `__main` and only the ~48 px action-icon row shows) the two sticky headers stack cleanly instead of overlapping.
+  - `scss/lernhive/_sidepanel.scss` — the pre-existing `.lernhive-page-header { position: relative; z-index: 1092 }` override would have killed stickiness by re-setting position. Switched to `position: sticky; top: 0;` while keeping `z-index: 1092` so the header still sits above the side-panel backdrop (1090) and the panel itself (1091) when a Header Dock panel is open.
+  - `templates/sidepanel.mustache` JS still measures `.lernhive-page-header` via `getBoundingClientRect().bottom`, which naturally reflects the stuck position, so Header Dock panels keep sitting flush under the nav bar when opened mid-scroll.
+  - Motivation: Johannes reported that scrolling long pages pushed the profile / settings / logout icons off-screen, forcing a scroll back to the top for common actions. Sticking the whole top bar is the lightest fix and keeps the design language consistent with `.lh-plugin-header` which has been sticky since 0.9.40.
+  - Rebase note: initially bumped to 0.9.52 locally, but the course-sidebar-polish 0.9.52 shipped to main in parallel, so this change ended up as 0.9.53.
 - [x] 0.9.51 — Context Dock moved from sidebar column to bottom-right viewport corner (2026-04-11):
   - `scss/lernhive/_dock.scss` — desktop rule switched from `left: 0; width: $lh-sidebar-width; justify-content: center` to `right: 1.5rem; bottom: 1.5rem; left: auto; width: auto; max-width: calc(100vw - 3rem); justify-content: flex-end`. Dock now hugs its contents and grows leftward as items are added, with a consistent 1.5 rem breathing distance from the viewport's right edge. The `max-width` guard covers narrow desktop windows before the mobile breakpoint takes over.
   - Mobile `@media` branch re-asserts `justify-content: center` explicitly so the desktop flex-end rule does not leak into the full-width strip layout.

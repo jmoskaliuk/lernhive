@@ -23,8 +23,16 @@
 // on top of the page header; we lift the header into its own stacking
 // context so dock clicks still register and the user can swap between
 // panels without closing first.
+//
+// 0.9.53: _layout.scss now owns the base `.lernhive-page-header` rule and
+// sets `position: sticky; top: 0;` so the action icons stay visible while
+// scrolling. We must preserve sticky positioning here — switching back to
+// `position: relative` would undo the stickiness. Keep position: sticky and
+// just bump the z-index so the header stays above the side-panel backdrop
+// (1090) and the panel itself (1091) when a panel is open.
 .lernhive-page-header {
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 1092; // above .lh-sidepanel-backdrop (1090) and .lh-sidepanel (1091)
 }
 

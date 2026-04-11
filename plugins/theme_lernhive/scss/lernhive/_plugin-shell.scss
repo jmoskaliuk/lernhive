@@ -50,7 +50,12 @@
     box-shadow: 0 2px 10px rgba(25, 72, 102, 0.08);
     padding: $lh-spacing-md $lh-spacing-lg;
     position: sticky;
-    top: 0;
+    // 0.9.53: the theme's .lernhive-page-header is now sticky at top: 0 too
+    // (so profile / settings / logout stay visible on scroll). Offset the
+    // plugin header by the page-header's own height so the two stack
+    // without overlap. On plugin-shell pages the page-header hides its
+    // __main area and only shows the action-icon row (~48px tall).
+    top: 3rem;
     z-index: 20;
 
     &__row {
