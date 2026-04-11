@@ -417,11 +417,17 @@ function theme_lernhive_get_admin_topnav($PAGE): array {
         }
     };
 
-    // --- Level 1: top-level children of admin_get_root() ---------------------
+    // --- Level 1: top-level admin_category children of admin_get_root() ------
+    // Only include proper admin_category nodes — individual settings pages
+    // (admin_externalpage, admin_settingpage) are skipped here and will appear
+    // as Level 2 items when their parent category is active.
     $toplevel = [];
     $activetopkey = '';
 
     foreach ($adminroot->children as $section) {
+        if (!($section instanceof admin_category)) {
+            continue;  // Skip individual pages — only category groupings as L1.
+        }
         if (!$is_visible($section)) {
             continue;
         }
