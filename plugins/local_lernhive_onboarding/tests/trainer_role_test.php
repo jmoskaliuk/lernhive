@@ -25,12 +25,11 @@
 namespace local_lernhive_onboarding;
 
 use advanced_testcase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * @covers \local_lernhive_onboarding\trainer_role
- */
+#[CoversClass(trainer_role::class)]
 final class trainer_role_test extends advanced_testcase {
 
     /**

@@ -25,12 +25,11 @@
 namespace local_lernhive_onboarding;
 
 use advanced_testcase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * @covers \local_lernhive_onboarding\banner_gate
- */
+#[CoversClass(banner_gate::class)]
 final class banner_gate_test extends advanced_testcase {
 
     /**
