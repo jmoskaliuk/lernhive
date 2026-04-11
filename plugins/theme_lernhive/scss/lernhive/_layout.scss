@@ -1,0 +1,253 @@
+// =============================================================================
+// _layout.scss — LernHive 0.9.5
+// Mobile-first. Single source of truth for the app shell.
+//
+// Mobile  (<1024px) : flex-column, sidebar = full-width top bar with
+//                     horizontal scrollable nav.
+// Desktop (≥1024px) : CSS grid, sidebar = sticky left column.
+//
+// ADR-P02: theme block regions stay neutral. Sidebar position is static
+// on desktop (sticky), not fixed — participates in grid layout naturally.
+// =============================================================================
+
+// Breakpoints (SCSS variables used in media queries — must be bare values).
+$lh-bp-desktop: 1024px;
+$lh-bp-tablet:   768px;
+
+// --- Skip link ---------------------------------------------------------------
+
+.lernhive-skip-link {
+    position: absolute;
+    top: -4rem;
+    left: $lh-spacing-md;
+    z-index: 9999;
+    background: $lh-primary;
+    color: #fff;
+    padding: $lh-spacing-sm $lh-spacing-md;
+    border-radius: 0 0 $lh-radius-sm $lh-radius-sm;
+    font-size: $lh-font-size-sm;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.15s ease;
+
+    &:focus {
+        top: 0;
+        outline: 3px solid $lh-accent;
+        outline-offset: 2px;
+        color: #fff;
+    }
+}
+
+// --- App shell ---------------------------------------------------------------
+
+.lernhive-app-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    background: $lh-bg;
+}
+
+@media (min-width: $lh-bp-desktop) {
+    .lernhive-app-shell {
+        display: grid;
+        grid-template-columns: $lh-sidebar-width 1fr;
+        align-items: start;
+        gap: $lh-spacing-lg;
+        padding: $lh-spacing-lg;
+        box-sizing: border-box;
+    }
+}
+
+// --- Sidebar -----------------------------------------------------------------
+// Mobile: compact horizontal app bar.
+// Desktop: sticky vertical column.
+
+.lernhive-sidebar {
+    // Layout
+    position: static;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: $lh-spacing-sm;
+    width: 100%;
+    // Visual
+    background: linear-gradient(135deg, $lh-primary 0%, $lh-secondary-dark 100%);
+    color: #fff;
+    padding: $lh-spacing-sm $lh-spacing-md;
+    // Overflow
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+}
+
+@media (min-width: $lh-bp-desktop) {
+    .lernhive-sidebar {
+        // Restore vertical layout for desktop
+        flex-direction: column;
+        align-items: stretch;
+        flex-wrap: nowrap;
+        width: auto; // fills grid column
+        // Sticky scroll
+        position: sticky;
+        top: $lh-spacing-lg;
+        align-self: start;
+        max-height: calc(100dvh - #{$lh-spacing-lg} * 2);
+        overflow-x: hidden;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        // Visual
+        padding: $lh-spacing-lg $lh-spacing-md;
+        gap: $lh-spacing-md;
+        border-radius: 1.5rem;
+    }
+}
+
+// --- Page (content column) ---------------------------------------------------
+
+.lernhive-page {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: $lh-spacing-sm $lh-spacing-md $lh-spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $lh-spacing-md;
+}
+
+@media (min-width: $lh-bp-desktop) {
+    .lernhive-page {
+        padding: 0;
+    }
+}
+
+// --- Page header (title bar inside content column) ---------------------------
+// Shows: page h1 / breadcrumb + user actions (notifications, user menu).
+
+.lernhive-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $lh-spacing-md;
+    padding: $lh-spacing-md $lh-spacing-lg;
+    background: #fff;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    box-shadow: $lh-shadow;
+
+    &__main {
+        flex: 1;
+        min-width: 0;
+
+        // Moodle full_header renders h1 and breadcrumb
+        h1 {
+            font-size: $lh-font-size-xl;
+            font-weight: 700;
+            color: $lh-text;
+            margin: 0 0 0.125rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: $lh-spacing-sm;
+        flex-shrink: 0;
+
+        // Moodle notification + message icons — neutral on white bg
+        .nav-link,
+        .popover-region-toggle {
+            color: $lh-text-secondary;
+            padding: $lh-spacing-xs;
+            border-radius: $lh-radius-sm;
+            transition: background 0.15s ease, color 0.15s ease;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background: $lh-primary-light;
+                color: $lh-primary;
+            }
+        }
+    }
+}
+
+@media (max-width: #{$lh-bp-tablet - 1px}) {
+    .lernhive-page-header {
+        padding: $lh-spacing-sm $lh-spacing-md;
+
+        &__main h1 {
+            font-size: $lh-font-size-lg;
+        }
+    }
+}
+
+// --- Page content area -------------------------------------------------------
+
+.lernhive-page-content {
+    display: flex;
+    flex-direction: column;
+    gap: $lh-spacing-md;
+}
+
+// --- Main content ------------------------------------------------------------
+// The actual Moodle course/activity content area.
+
+.lernhive-main {
+    background: #fff;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    box-shadow: $lh-shadow;
+    padding: $lh-spacing-lg;
+
+    // Moodle adds .generalbox, .box, etc. — keep them flat inside main.
+    .generalbox,
+    .box {
+        border: 0;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+@media (max-width: #{$lh-bp-tablet - 1px}) {
+    .lernhive-main {
+        padding: $lh-spacing-md;
+        border-radius: $lh-radius-sm;
+    }
+}
+
+// --- Settings menu (gear icon, edit mode toggle) ----------------------------
+
+.lernhive-settings-menu {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: $lh-spacing-xs;
+}
+
+// --- Page wrapper shell ------------------------------------------------------
+
+#page-wrapper.theme-lernhive-shell {
+    min-height: 100dvh;
+    background: $lh-bg;
+}
+
+// --- Responsive page padding at very small sizes ----------------------------
+
+@media (max-width: 374px) {
+    .lernhive-page {
+        padding-left: $lh-spacing-sm;
+        padding-right: $lh-spacing-sm;
+    }
+    .lernhive-page-header {
+        padding: $lh-spacing-sm;
+    }
+}

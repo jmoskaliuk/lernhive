@@ -1,516 +1,191 @@
-// LernHive Theme – Navigation
-// ============================
-// Header, navbar, secondary nav, breadcrumbs, user menu, drawer.
-// All selectors use body prefix for specificity over Boost.
+// =============================================================================
+// _navigation.scss — LernHive 0.9.5
+// Sidebar brand, Moodle flat_navigation, launcher zone, sidebar notes.
+// Mobile: horizontal scroll bar. Desktop: vertical stack.
+// =============================================================================
 
-// --- Top Navbar ---
-body .navbar.fixed-top,
-body .navbar {
-    background-color: $lh-bg-white !important;
-    border-bottom: 1px solid $lh-border !important;
-    box-shadow: none !important;
-    padding: 0 $lh-spacing-lg !important;
-    min-height: $lh-header-height;
+// --- Brand -------------------------------------------------------------------
+
+.lernhive-brand {
+    flex-shrink: 0;
+    padding-right: $lh-spacing-md;
+
+    @media (min-width: $lh-bp-desktop) {
+        padding-right: 0;
+        padding-bottom: $lh-spacing-md;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
 }
 
-// Logo — LernHive blue, bold.
-body .navbar .navbar-brand {
-    font-weight: 700 !important;
-    font-size: $lh-font-size-lg;
-    color: $lh-primary !important;
-    padding: 0;
+.lernhive-brand__link {
+    color: #fff;
+    font-size: $lh-font-size-xl;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    display: block;
+    line-height: 1.2;
 
     &:hover {
-        color: $lh-primary-dark !important;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+    }
+}
+
+.lernhive-brand__meta {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: $lh-font-size-xs;
+    margin: 0.125rem 0 0;
+    white-space: nowrap;
+
+    @media (max-width: #{$lh-bp-desktop - 1px}) {
+        display: none;
+    }
+}
+
+// --- Navigation container ---------------------------------------------------
+
+.lernhive-nav {
+    flex: 1;
+    min-width: 0;
+    // Mobile: allow horizontal scroll
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+
+    @media (min-width: $lh-bp-desktop) {
+        flex: unset;
+        width: 100%;
+        overflow: visible;
+    }
+}
+
+// --- Moodle flat_navigation inside .lernhive-nav ----------------------------
+
+.lernhive-nav .list-group {
+    display: flex;
+    flex-direction: row;
+    gap: 0.125rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    background: transparent;
+    border: 0;
+
+    @media (min-width: $lh-bp-desktop) {
+        flex-direction: column;
+        gap: 0.1875rem;
+    }
+}
+
+.lernhive-nav .list-group-item,
+.lernhive-nav a.list-group-item,
+.lernhive-nav .list-group-item-action {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid transparent;
+    border-radius: $lh-radius-sm;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: $lh-font-size-sm;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    min-height: 44px; // WCAG touch target
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    svg, .icon, i {
+        flex-shrink: 0;
+        width: 1.125rem;
+        height: 1.125rem;
+        opacity: 0.8;
+    }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.18);
+        color: #fff;
         text-decoration: none;
     }
 
-    img {
-        max-height: 36px;
-    }
-}
-
-// Nav links in header.
-body .navbar .nav-link {
-    color: $lh-text-secondary !important;
-    font-size: $lh-font-size-sm;
-    font-weight: 500;
-    transition: $lh-transition;
-
-    &:hover {
-        color: $lh-primary !important;
-    }
-
-    &.active {
-        color: $lh-primary !important;
+    &.active,
+    &[aria-current="page"] {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.25);
+        color: #fff;
         font-weight: 600;
     }
-}
 
-// --- Secondary Navigation (Course Tabs) ---
-// Styled as bordered buttons to match Moodle's "Turn editing off" style.
-body .secondary-navigation {
-    background: $lh-bg-white !important;
-    border-bottom: 1px solid $lh-border-light !important;
-    padding: $lh-spacing-xs 0;
-
-    .moremenu .nav,
-    .navigation .nav {
-        gap: $lh-spacing-xs;
-    }
-
-    .moremenu .nav-link,
-    .nav-link {
-        font-size: $lh-font-size-sm !important;
-        font-weight: 500;
-        color: $lh-text-secondary !important;
-        padding: 6px 16px !important;
-        border-radius: $lh-radius-sm;
-        border: 1px solid $lh-border !important;
-        background: $lh-bg-white !important;
-        transition: $lh-transition;
-        margin-bottom: 0;
-        line-height: 1.5;
-
-        &:hover {
-            color: $lh-text !important;
-            background: #f7f7f7 !important;
-            border-color: #d0d0d0 !important;
-            text-decoration: none;
-        }
-
-        &.active {
-            color: #fff !important;
-            font-weight: 600 !important;
-            background: $lh-primary !important;
-            border-color: $lh-primary !important;
-        }
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 1px;
     }
 }
 
-// --- Breadcrumbs ---
-body .breadcrumb {
-    background: transparent !important;
-    padding: $lh-spacing-sm 0;
-    margin-bottom: $lh-spacing-sm;
-    font-size: $lh-font-size-sm;
+.lernhive-nav .dropdown-divider,
+.lernhive-nav hr {
+    border-color: rgba(255, 255, 255, 0.15);
+    margin: 0.25rem 0;
 
-    .breadcrumb-item {
-        color: $lh-text-light;
-
-        a {
-            color: $lh-text-secondary;
-
-            &:hover {
-                color: $lh-primary;
-            }
-        }
-
-        &.active {
-            color: $lh-text;
-        }
-
-        + .breadcrumb-item::before {
-            color: $lh-text-light;
-        }
+    @media (max-width: #{$lh-bp-desktop - 1px}) {
+        display: none;
     }
 }
 
-// --- User Menu ---
-body .usermenu {
-    .dropdown-toggle {
-        border-radius: $lh-radius-pill;
-        transition: $lh-transition;
+// --- Sidebar blocks region --------------------------------------------------
 
-        &:hover {
-            background: $lh-primary-light;
-        }
+.lernhive-sidebar__blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: $lh-spacing-sm;
+    padding-top: $lh-spacing-sm;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
 
-        // Hide Bootstrap caret arrow (for Explorer level where we replace with direct link).
-        &::after {
-            display: none !important;
-        }
-    }
+    .block {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
 
-    // Hide any remaining dropdown caret globally in usermenu.
-    .usermenu-container .dropdown-toggle::after,
-    .dropdown .dropdown-toggle::after {
-        display: none !important;
-    }
-
-    // Direct profile link (Explorer level — no dropdown).
-    .lernhive-profile-link {
-        display: flex;
-        align-items: center;
-        border-radius: 50%;
-        transition: $lh-transition;
-        padding: 2px;
-        cursor: pointer;
-
-        img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        &:hover {
-            box-shadow: 0 0 0 3px rgba(25, 72, 102, 0.15);
-        }
-    }
-
-    // Dropdown panel — clean card style.
-    .dropdown-menu {
-        border-radius: $lh-radius !important;
-        box-shadow: $lh-shadow-md !important;
-        border: 1px solid $lh-border-light !important;
-        padding: $lh-spacing-xs 0 !important;
-        min-width: 220px;
-
-        .dropdown-item {
+        .card-body,
+        .content {
+            padding: 0.25rem 0;
+            color: rgba(255, 255, 255, 0.85);
             font-size: $lh-font-size-sm;
-            padding: 8px 16px;
-            color: $lh-text-secondary;
-            transition: $lh-transition;
-
-            &:hover {
-                background: $lh-bg;
-                color: $lh-text;
-            }
-
-            &.dropdown-item-active {
-                color: $lh-primary;
-                font-weight: 600;
-                background: $lh-primary-light;
-            }
-        }
-
-        .dropdown-divider {
-            border-color: $lh-border-light;
-            margin: $lh-spacing-xs 0;
-        }
-
-        // Language carousel slide (slide 2).
-        .carousel-item.submenu {
-            .header {
-                padding: $lh-spacing-xs $lh-spacing-sm;
-                display: flex;
-                align-items: center;
-                gap: $lh-spacing-xs;
-
-                .carousel-navigation-link {
-                    border-radius: $lh-radius-sm;
-                    color: $lh-text-secondary !important;
-                    padding: 4px;
-
-                    &:hover {
-                        background: $lh-bg;
-                        color: $lh-text !important;
-                    }
-                }
-
-                .ps-2 {
-                    font-size: $lh-font-size-sm;
-                    font-weight: 600;
-                    color: $lh-text;
-                }
-            }
-
-            // Language options — left-align, remove excessive padding.
-            .dropdown-item.ps-5 {
-                padding-left: 16px !important;
-                border-radius: $lh-radius-sm;
-                margin: 1px $lh-spacing-xs;
-
-                &.dropdown-item-active {
-                    color: $lh-primary;
-                    font-weight: 600;
-                    background: $lh-primary-light;
-                }
-            }
-        }
-
-        // First slide items.
-        .carousel-item[role="menu"] {
-            .carousel-navigation-link {
-                font-size: $lh-font-size-sm;
-                color: $lh-text-secondary;
-
-                &:hover {
-                    background: $lh-bg;
-                    color: $lh-text;
-                }
-            }
         }
     }
-}
 
-// --- Drawer (Course Index Sidebar) ---
-body .drawer {
-    border-right: 1px solid $lh-border-light !important;
-    background: $lh-bg-white !important;
-
-    .list-group-item {
-        border: none !important;
-        border-radius: $lh-radius-sm;
-        margin: 1px $lh-spacing-xs;
-        transition: $lh-transition;
-
-        &:hover {
-            background: $lh-primary-light !important;
-        }
-
-        &.active {
-            background: $lh-primary-light !important;
-            color: $lh-primary !important;
-            font-weight: 600;
-        }
+    @media (max-width: #{$lh-bp-desktop - 1px}) {
+        display: none;
     }
 }
 
-// --- Page context header ---
-body #page-header {
-    .page-context-header {
-        padding: $lh-spacing-md 0;
+// --- Sidebar notes ----------------------------------------------------------
+
+.lernhive-sidebar__notes {
+    margin-top: auto;
+    padding-top: $lh-spacing-md;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+    @media (max-width: #{$lh-bp-desktop - 1px}) {
+        display: none;
     }
 }
 
-// --- Action menu (3-dot menus) ---
-body .action-menu .dropdown-menu {
-    border-radius: $lh-radius !important;
-    box-shadow: $lh-shadow-md !important;
-    border: 1px solid $lh-border-light !important;
-}
+.lernhive-sidebar__note {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: $lh-font-size-xs;
+    line-height: 1.5;
+    margin: 0 0 0.25rem;
 
-// --- Edit mode toggle alignment ---
-body .navbar .d-flex {
-    align-items: center;
-    gap: $lh-spacing-sm;
-}
-
-body .editmode-switch-form .form-check-label {
-    font-size: $lh-font-size-sm;
-    font-weight: 500;
-}
-
-// --- LernHive Navbar Action Icons (Explorer level: lang, logout, profile) ---
-.lernhive-navbar-actions {
-    display: flex;
-    align-items: center;
-    gap: $lh-spacing-xs;
-    position: relative;
-}
-
-.lernhive-navbar-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    color: $lh-text-secondary;
-    text-decoration: none;
-    transition: $lh-transition;
-    cursor: pointer;
-
-    svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    &:hover {
-        background: $lh-bg;
-        color: $lh-primary;
-        text-decoration: none;
-    }
-
-    &.lernhive-navbar-logout:hover {
-        color: $lh-danger;
-        background: rgba(171, 29, 121, 0.08);
-    }
-}
-
-// Language popup (small popover below the globe icon).
-.lernhive-lang-popup {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 6px;
-    background: $lh-bg-white;
-    border: 1px solid $lh-border-light;
-    border-radius: $lh-radius;
-    box-shadow: $lh-shadow-md;
-    padding: $lh-spacing-xs;
-    z-index: 1060;
-    min-width: 140px;
-
-    &.open {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .lernhive-lang-option {
+    strong {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
         display: block;
-        padding: 8px 14px;
-        font-size: $lh-font-size-sm;
-        color: $lh-text-secondary;
-        text-decoration: none;
-        border-radius: $lh-radius-sm;
-        transition: $lh-transition;
-
-        &:hover {
-            background: $lh-bg;
-            color: $lh-text;
-            text-decoration: none;
-        }
-    }
-}
-
-// --- Unified LernHive search input style ---
-// Applied to all search fields across LernHive pages.
-.lh-search-input,
-.lernhive-userlist-search input[type="text"],
-.lh-enrol-search input[type="text"] {
-    flex: 1;
-    max-width: 400px;
-    border-radius: $lh-radius-pill !important;
-    border: 1px solid $lh-border !important;
-    padding: 8px 18px !important;
-    font-size: $lh-font-size-sm !important;
-    background: $lh-bg !important;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-
-    &:focus {
-        border-color: $lh-primary !important;
-        background: $lh-bg-white !important;
-        box-shadow: 0 0 0 3px rgba($lh-primary, 0.12) !important;
-        outline: none !important;
-    }
-}
-
-// Unified search button (next to input).
-.lh-search-btn {
-    border-radius: 0 $lh-radius-pill $lh-radius-pill 0 !important;
-    padding: 8px 20px !important;
-    font-size: $lh-font-size-sm !important;
-    font-weight: 500 !important;
-    background: $lh-primary !important;
-    border-color: $lh-primary !important;
-    color: white !important;
-
-    &:hover {
-        background: $lh-primary-dark !important;
-    }
-}
-
-// When search input is followed by search button, flatten the right border.
-.lh-search-input + .lh-search-btn,
-input[type="text"] + .lh-search-btn {
-    margin-left: -1px !important;
-}
-
-// Moodle myoverview search input on dashboard — same style.
-body.pagelayout-mydashboard .block-myoverview input[type="text"],
-body.pagelayout-mydashboard .block_myoverview input[type="text"],
-body.pagelayout-mydashboard [data-action="search"] {
-    border-radius: $lh-radius-pill 0 0 $lh-radius-pill !important;
-    border: 1px solid $lh-border !important;
-    padding: 8px 18px !important;
-    font-size: $lh-font-size-sm !important;
-    background: $lh-bg !important;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-
-    &:focus {
-        border-color: $lh-primary !important;
-        background: $lh-bg-white !important;
-        box-shadow: 0 0 0 3px rgba($lh-primary, 0.12) !important;
-        outline: none !important;
-    }
-}
-
-// --- LernHive Navbar Search (global, injected by plugin) ---
-.lernhive-navbar-search {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    margin-right: $lh-spacing-md;
-    position: relative;
-
-    input[type="text"] {
-        border-radius: $lh-radius-pill;
-        border: 1px solid $lh-border;
-        background: $lh-bg;
-        padding: 6px 36px 6px 16px;
-        font-size: $lh-font-size-sm;
-        min-width: 220px;
-        transition: $lh-transition;
-
-        &:focus {
-            border-color: $lh-primary;
-            background: $lh-bg-white;
-            box-shadow: 0 0 0 3px rgba(25, 72, 102, 0.12);
-            outline: none;
-        }
-
-        &::placeholder {
-            color: $lh-text-light;
-        }
-    }
-
-    .lernhive-search-btn {
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: $lh-text-light;
-        cursor: pointer;
-        padding: 2px;
-        display: flex;
-
-        &:hover {
-            color: $lh-primary;
-        }
-    }
-}
-
-// --- Dashboard-specific: simplified top navbar (logo + search + profile) ---
-body.pagelayout-mydashboard {
-    // The primary navigation is hidden via _dashboard.scss.
-    // Ensure the navbar itself stays clean and full-width.
-    .navbar {
-        z-index: 100;
-    }
-
-    // Global search form in navbar — pill-shaped.
-    .navbar .simplesearchform,
-    .navbar [data-region="searchform"] {
-        input[type="text"],
-        .form-control {
-            border-radius: $lh-radius-pill;
-            border: 1px solid $lh-border;
-            background: $lh-bg;
-            padding: 6px 16px 6px 36px;
-            font-size: $lh-font-size-sm;
-            min-width: 280px;
-            transition: $lh-transition;
-
-            &:focus {
-                border-color: $lh-primary;
-                background: $lh-bg-white;
-                box-shadow: 0 0 0 3px rgba(25, 72, 102, 0.12);
-            }
-        }
-
-        .btn-submit,
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: $lh-text-light;
-        }
+        margin-bottom: 0.125rem;
     }
 }

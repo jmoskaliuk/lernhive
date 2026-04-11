@@ -1,0 +1,186 @@
+// =============================================================================
+// _base.scss — LernHive 0.9.5
+// Global resets, body context, Moodle chrome overrides, focus styles.
+// Mobile-first. No layout rules here — those are in _layout.scss.
+// =============================================================================
+
+// --- Root context & body -----------------------------------------------------
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background: $lh-bg;
+    color: $lh-text;
+    font-family: $lh-font-family;
+    font-size: $lh-font-size-base;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// --- Focus styles (WCAG 2.2 AA) ----------------------------------------------
+// Consistent, high-contrast focus ring across all interactive elements.
+
+:focus-visible {
+    outline: 3px solid $lh-accent;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid $lh-accent;
+    outline-offset: 2px;
+}
+
+// Remove default :focus when :focus-visible is supported
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+// --- Links -------------------------------------------------------------------
+
+a {
+    color: $lh-primary;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+        color: $lh-primary-dark;
+        text-decoration: underline;
+    }
+}
+
+// --- Headings ----------------------------------------------------------------
+
+h1, h2, h3, h4, h5, h6 {
+    color: $lh-text;
+    font-weight: 600;
+    line-height: 1.25;
+    margin-top: 0;
+}
+
+// --- Images ------------------------------------------------------------------
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+// --- Moodle chrome overrides -------------------------------------------------
+// Hide or neutralise Moodle UI elements that conflict with the LernHive shell.
+
+// Primary navigation tabs — replaced by sidebar.
+.primary-navigation,
+nav.moremenu {
+    display: none !important;
+}
+
+// Boost-era drawers — we use our own sidebar.
+.drawer.drawer-left,
+#theme_boost-drawers-courseindex,
+.drawer-toggler {
+    display: none !important;
+}
+
+// Moodle's default Boost navbar — replaced by our page header.
+#page-navbar,
+.navbar {
+    display: none !important;
+}
+
+// Page header (Moodle core) — we render our own via lernhive-page-header.
+#page-header {
+    display: none !important;
+}
+
+// Remove default Moodle body background overrides.
+#page-wrapper {
+    background: transparent;
+}
+
+// Breadcrumb — let it render but with our styling.
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0 0 $lh-spacing-sm;
+    font-size: $lh-font-size-sm;
+
+    .breadcrumb-item {
+        color: $lh-text-secondary;
+
+        &.active {
+            color: $lh-text;
+            font-weight: 500;
+        }
+
+        + .breadcrumb-item::before {
+            color: $lh-text-light;
+        }
+    }
+
+    a {
+        color: $lh-text-secondary;
+
+        &:hover {
+            color: $lh-primary;
+        }
+    }
+}
+
+// Full header — h1 styling when Moodle renders it.
+.page-header-headings h1 {
+    font-size: $lh-font-size-xl;
+    font-weight: 700;
+    color: $lh-text;
+    margin: 0;
+}
+
+// Activity header — slim it down.
+.activity-header {
+    border: 0;
+    padding: 0;
+    margin-bottom: $lh-spacing-md;
+}
+
+// Activity description — can be verbose, let it breathe.
+.activity-description {
+    color: $lh-text-secondary;
+    font-size: $lh-font-size-sm;
+    margin-top: $lh-spacing-sm;
+}
+
+// --- Selection ---------------------------------------------------------------
+
+::selection {
+    background: rgba(#194866, 0.15);
+    color: $lh-text;
+}
+
+// --- Scrollbar (Webkit) ------------------------------------------------------
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $lh-border;
+    border-radius: $lh-radius-pill;
+
+    &:hover {
+        background: $lh-text-light;
+    }
+}

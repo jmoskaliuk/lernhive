@@ -1,763 +1,104 @@
-// LernHive Theme – Dashboard
-// ===========================
-// Customisations for the /my/ dashboard page.
-// High specificity — loaded AFTER Boost.
+// =============================================================================
+// _dashboard.scss — LernHive 0.9.5
+// Dashboard surfaces for Learner (primary) and Trainer.
+// Focus: findability contract anchor (Priority / Progress / Explore).
+// Course content rendering is NOT here — that belongs to format plugins.
+// Admin pages are not themed here; they fall through to standard Moodle.
+// =============================================================================
 
-// --- Dashboard background & page structure ---
-body.pagelayout-mydashboard {
-    // Full white background — no boxed grey look.
-    background-color: $lh-bg-white !important;
+// --- Dashboard grid layout --------------------------------------------------
+// Responsive grid for the main dashboard surface.
 
-    #page {
-        background-color: $lh-bg-white !important;
-    }
-
-    // Hide the right drawer (Calendar, Recently accessed) on dashboard.
-    .drawer.drawer-right,
-    #theme_boost-drawers-blocks,
-    [data-region="blocks-column"],
-    [data-region="right-hand-drawer"] {
-        display: none !important;
-    }
-
-    // Also hide the toggle button for the right drawer.
-    button[data-toggler="drawers"][title*="block" i],
-    button[data-toggler="drawers"][aria-controls*="blocks"] {
-        display: none !important;
-    }
-
-    // Full-width content — left-aligned, not centered.
-    .main-inner {
-        max-width: 1200px !important;
-        margin-left: 0 !important;
-        margin-right: auto !important;
-        padding-left: 24px !important;
-        padding-right: 24px !important;
-    }
-
-    // Remove right margin reservation from drawers.
-    #page-content,
-    #topofscroll {
-        margin-right: 0 !important;
-    }
-
-    // Compact top padding — push Willkommen closer to navbar.
-    #region-main {
-        padding: $lh-spacing-xs $lh-spacing-xl $lh-spacing-md;
-
-        // Remove extra padding from block-region wrapper so
-        // "Meine Kurse" aligns flush with injected sections above.
-        > div > .block-region,
-        .block-region {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-
-        // Also remove padding from the unnamed wrapper div.
-        > div {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-    }
-
-    // Dashboard page title — more prominent (hidden by JS, but just in case).
-    .page-header-headings h1,
-    #page-header h2 {
-        font-size: $lh-font-size-2xl !important;
-        font-weight: 700;
-    }
-
-    // Hide Zeitleiste/Timeline block on dashboard (Explorer level).
-    .block_timeline {
-        display: none !important;
-    }
+.lernhive-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: $lh-spacing-lg;
 }
 
-// --- LernHive Dashboard Action Buttons (injected by plugin) ---
-.lernhive-dashboard-actions {
+// --- Dashboard welcome / entry surface --------------------------------------
+
+.lernhive-welcome {
     display: flex;
     align-items: center;
-    gap: $lh-spacing-sm;
-    padding: $lh-spacing-md 0;
-    margin-bottom: $lh-spacing-md;
-    flex-wrap: wrap;
-
-    .btn {
-        border-radius: $lh-radius-sm !important;
-        font-weight: 500;
-        padding: $lh-spacing-sm $lh-spacing-md;
-        transition: $lh-transition;
-        font-size: $lh-font-size-sm;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-
-        i {
-            font-size: 14px;
-        }
-
-        &:hover {
-            transform: translateY(-1px);
-            box-shadow: $lh-shadow-md;
-        }
-    }
-}
-
-// --- LernHive Level Bar (injected by plugin) ---
-.lernhive-level-bar {
-    background: linear-gradient(135deg, $lh-primary, $lh-primary-dark) !important;
-    border-radius: $lh-radius-lg !important;
-    padding: $lh-spacing-lg $lh-spacing-xl;
+    justify-content: space-between;
+    gap: $lh-spacing-md;
+    padding: $lh-spacing-lg;
+    background: linear-gradient(135deg, $lh-primary 0%, $lh-secondary 100%);
+    border-radius: $lh-radius-lg;
     color: #fff;
-    margin-bottom: $lh-spacing-xl;
-    box-shadow: $lh-shadow-md;
 
-    .lernhive-level-name {
-        font-size: $lh-font-size-2xl;
-        font-weight: 700;
-    }
-
-    .lernhive-level-desc {
-        opacity: 0.9;
-        font-size: $lh-font-size-sm;
-    }
-}
-
-// --- Course overview card deck (Moodle myoverview) ---
-// Style Moodle's native course cards to match mockup: colored header, clean body.
-body .dashboard-card-deck {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $lh-spacing-lg;
-    justify-items: stretch;
-
-    .dashboard-card {
-        border-radius: $lh-radius !important;
-        box-shadow: $lh-shadow !important;
-        border: none !important;
-        overflow: hidden;
-        transition: $lh-transition;
-        display: flex;
-        flex-direction: column;
-
-        &:hover {
-            box-shadow: $lh-shadow-hover !important;
-            transform: translateY(-3px);
-        }
-
-        .dashboard-card-img {
-            height: 120px;
-            object-fit: cover;
-        }
-
-        .dashboard-card-footer {
-            padding: $lh-spacing-md $lh-spacing-lg;
-        }
-
-        .course-card-title {
-            font-weight: 600;
-            font-size: $lh-font-size-base;
-            color: $lh-text;
-        }
-
-        .course-card-actions .dropdown-toggle {
-            color: $lh-text-light;
-        }
-    }
-}
-
-// Course cards in list/card view (Moodle myoverview paged content).
-// IMPORTANT: Do NOT set grid on [data-region="paged-content-page"] itself,
-// because .dashboard-card-deck inside it already has a grid — nesting grids
-// would compress cards to 1/9 width.
-body [data-region="paged-content-page"] {
-    width: 100%;
-
-    .card {
-        border-radius: $lh-radius !important;
-        box-shadow: $lh-shadow !important;
-        border: none !important;
-        overflow: hidden;
-        transition: $lh-transition;
-
-        &:hover {
-            box-shadow: $lh-shadow-hover !important;
-            transform: translateY(-3px);
-        }
-    }
-
-    // Colored course image header (gradient fallback when no image).
-    .course-image,
-    .courseimage {
-        min-height: 120px;
-    }
-
-    // If Moodle uses a different container (not dashboard-card-deck),
-    // apply grid to the direct card wrapper.
-    > .card-deck:not(.dashboard-card-deck) {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr);
-        gap: $lh-spacing-lg;
-    }
-}
-
-// Responsive for card-deck fallback.
-@media (max-width: 992px) {
-    body [data-region="paged-content-page"] > .card-deck:not(.dashboard-card-deck) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-@media (max-width: 576px) {
-    body [data-region="paged-content-page"] > .card-deck:not(.dashboard-card-deck) {
-        grid-template-columns: 1fr;
-    }
-}
-
-// Responsive: 2-col tablet, 1-col mobile.
-@media (max-width: 992px) {
-    body .dashboard-card-deck {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-@media (max-width: 576px) {
-    body .dashboard-card-deck {
-        grid-template-columns: 1fr;
-    }
-}
-
-// --- Course overview block (My Courses) ---
-body .block-myoverview,
-body .block_myoverview {
-    // Remove wrapping card chrome — our "Meine Kurse" header replaces it.
-    &.block {
-        box-shadow: none !important;
-        border: none !important;
-        background: transparent !important;
-    }
-
-    // Only reset the block's own wrapper card — NOT the course cards inside.
-    > .card,
-    > .card-body > .card {
-        border: none !important;
-        box-shadow: none !important;
-        background: transparent !important;
-    }
-
-    > .card > .card-body,
-    > .card-body {
-        padding: 0;
-    }
-
-    // Remove any card header padding that indents the content.
-    > .card > .card-header,
-    > .card-header {
-        padding: 0 !important;
-        border: none !important;
-        background: transparent !important;
-    }
-
-    // Ensure the courses view and paged content use full width.
-    [data-region="courses-view"],
-    .paged-content-container,
-    [data-region="paged-content-page"] {
-        width: 100% !important;
-    }
-
-    // Hide "Kursübersicht / Course overview" heading only (NOT .card-text which wraps all content!).
-    > .card-body > h3.card-title,
-    > .card-body > .h5.card-title,
-    .card-title.d-inline {
-        display: none !important;
-    }
-
-    // Hide the "Kurs erstellen" button and its wrapper + the <hr> separator.
-    .d-flex.flex-wrap.gap-2.my-2,
-    hr.border-bottom {
-        display: none !important;
-    }
-    // Also catch by href/action.
-    a[href*="editcourse.php"],
-    a[href*="edit.php"][href*="category"],
-    .btn[data-action="create-course"],
-    a[data-action="create-course"],
-    form:has(.btn:only-child) {
-        display: none !important;
-    }
-
-    // --- Explorer simplification: clean up the filter/controls bar ---
-    // Hide the entire filter bar (Alle + sort + view dropdowns) but keep search.
-    [data-region="filter"] {
-        // Don't hide entirely — restyle to show only search.
-        .dropdown {
-            display: none !important;
-        }
-    }
-
-    // Hide three-dot action menu on individual course cards.
-    .course-card-actions,
-    .coursemenubtn,
-    [data-region="course-card-actions"] {
-        display: none !important;
-    }
-
-    // Course cards inside the overview.
-    .course-summaryimage,
-    .courseimage {
-        border-radius: $lh-radius $lh-radius 0 0;
-        overflow: hidden;
-        min-height: 100px;
-    }
-
-    // Individual course cards.
-    [data-region="paged-content-page"] .card,
-    .course-listitem {
-        border-radius: $lh-radius !important;
-        box-shadow: $lh-shadow !important;
-        border: none !important;
-        overflow: hidden;
-        transition: $lh-transition;
-        background: $lh-bg-white !important;
-
-        &:hover {
-            box-shadow: $lh-shadow-hover !important;
-            transform: translateY(-2px);
-        }
-    }
-
-    .coursename {
-        font-weight: 600;
-    }
-}
-
-// --- Block styling on dashboard ---
-body .block {
-    border-radius: $lh-radius !important;
-    border: none !important;
-    box-shadow: $lh-shadow !important;
-    background: $lh-bg-white !important;
-    overflow: hidden;
-
-    .card-title {
-        font-size: $lh-font-size-base;
-        font-weight: 600 !important;
-    }
-
-    .card-body {
-        padding: $lh-spacing-md $lh-spacing-lg;
-    }
-}
-
-// --- Timeline block ---
-body .block_timeline {
-    .event-list-item {
-        padding: $lh-spacing-sm $lh-spacing-md;
-        border-radius: $lh-radius-sm;
-        transition: $lh-transition;
-
-        &:hover {
-            background: $lh-primary-light;
-        }
-    }
-}
-
-// --- Course cards in grid/list view ---
-body [data-region="courses-view"] {
-    // Ensure the paged content container uses left-aligned grid.
-    .paged-content-container {
-        width: 100%;
-    }
-
-    .paged-content-container .card {
-        border-radius: $lh-radius !important;
-        overflow: hidden;
-        transition: $lh-transition;
-
-        &:hover {
-            box-shadow: $lh-shadow-hover !important;
-            transform: translateY(-2px);
-        }
-    }
-}
-
-// --- Recently accessed items ---
-body .block_recentlyaccesseditems {
-    .course-info-container {
-        border-radius: $lh-radius-sm;
-    }
-}
-
-// --- Calendar block ---
-body .block_calendar_month {
-    .calendarwrapper .day {
-        border-radius: $lh-radius-sm;
-
-        &.today {
-            background: $lh-primary-light !important;
-            color: $lh-primary !important;
-            font-weight: 600;
-        }
-    }
-}
-
-// --- Progress bars ---
-body .progress {
-    border-radius: $lh-radius-pill !important;
-    background: $lh-border-light;
-    height: 8px;
-
-    .progress-bar {
-        border-radius: $lh-radius-pill;
-        background-color: $lh-accent !important;
-    }
-}
-
-// --- Quick Stats Cards (4-column grid on dashboard, injected by plugin) ---
-.lernhive-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: $lh-spacing-md;
-    margin-bottom: $lh-spacing-xl;
-
-    .lernhive-stat-card {
-        background: $lh-bg-white;
-        border-radius: $lh-radius;
-        padding: 18px 20px;
-        box-shadow: $lh-shadow;
-        display: flex;
-        flex-direction: column;
-        gap: $lh-spacing-sm;
-        transition: $lh-transition;
-
-        &:hover {
-            box-shadow: $lh-shadow-hover;
-            transform: translateY(-2px);
-        }
-    }
-
-    .lernhive-stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &.blue { background: $lh-primary-light; color: $lh-primary; }
-        &.orange { background: $lh-accent-light; color: $lh-accent; }
-        &.green { background: $lh-success-light; color: $lh-success; }
-        &.lightblue { background: $lh-secondary-light; color: $lh-secondary; }
-        &.teal { background: rgba($lh-success, 0.10); color: #3aadaa; }
-    }
-
-    .lernhive-stat-value {
-        font-size: $lh-font-size-2xl;
-        font-weight: 700;
-        color: $lh-text;
-        line-height: 1.2;
-    }
-
-    .lernhive-stat-label {
-        font-size: $lh-font-size-sm;
-        color: $lh-text-secondary;
-    }
-
-    // Clickable stat cards (wrapped in <a>).
-    a.lernhive-stat-link {
-        text-decoration: none;
-        color: inherit;
-        cursor: pointer;
-
-        &:hover {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .lernhive-stat-label {
-            color: $lh-text-secondary;
-        }
-    }
-}
-
-// Responsive: 2 columns on smaller screens.
-@media (max-width: 768px) {
-    .lernhive-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-// --- Onboarding Tour Tiles (3-column, horizontal layout) ---
-.lernhive-tour-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: $lh-spacing-md;
-    margin-bottom: $lh-spacing-xl;
-
-    .lernhive-tour-tile {
-        background: $lh-bg-white;
-        border-radius: $lh-radius;
-        padding: $lh-spacing-md $lh-spacing-lg;
-        box-shadow: $lh-shadow;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: $lh-spacing-md;
-        transition: $lh-transition;
-        cursor: pointer;
-
-        &:hover {
-            box-shadow: $lh-shadow-md;
-            transform: translateY(-2px);
-        }
-    }
-
-    .lernhive-tour-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-
-        svg {
-            width: 22px;
-            height: 22px;
-            stroke: currentColor;
-        }
-    }
-
-    .lernhive-tour-tile-body {
-        flex: 1;
+    &__content {
         min-width: 0;
     }
 
-    .lernhive-tour-name {
+    &__greeting {
         font-size: $lh-font-size-sm;
-        font-weight: 600;
-        color: $lh-text;
-        line-height: 1.3;
-        margin-bottom: 6px;
+        color: rgba(255, 255, 255, 0.75);
+        margin-bottom: 0.25rem;
     }
 
-    .lernhive-tour-progress {
-        width: 100%;
-        height: 4px;
-        background: $lh-border-light;
-        border-radius: 2px;
+    &__name {
+        font-size: $lh-font-size-2xl;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        white-space: nowrap;
         overflow: hidden;
-        margin-bottom: 4px;
-
-        .lernhive-tour-progress-fill {
-            height: 100%;
-            background: $lh-accent;
-            transition: width 0.3s ease;
-        }
+        text-overflow: ellipsis;
     }
 
-    .lernhive-tour-progress-text {
-        font-size: $lh-font-size-xs;
-        color: $lh-text-light;
-    }
-}
-
-// Responsive: 2 columns on tablet, 1 on mobile.
-@media (max-width: 992px) {
-    .lernhive-tour-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-@media (max-width: 576px) {
-    .lernhive-tour-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-// --- Onboarding Modal (popup when clicking a tour tile) ---
-.lernhive-modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1050;
-    align-items: center;
-    justify-content: center;
-
-    &.open {
-        display: flex;
-    }
-}
-
-.lernhive-modal {
-    background: $lh-bg-white;
-    border-radius: $lh-radius-lg;
-    box-shadow: $lh-shadow-hover;
-    width: 480px;
-    max-width: 90vw;
-    max-height: 80vh;
-    overflow-y: auto;
-    animation: lernhive-modal-in 0.2s ease;
-}
-
-@keyframes lernhive-modal-in {
-    from { opacity: 0; transform: scale(0.95) translateY(8px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.lernhive-modal-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: $lh-spacing-lg $lh-spacing-lg $lh-spacing-md;
-
-    .lernhive-modal-header-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: flex;
+    &__level {
+        display: inline-flex;
         align-items: center;
-        justify-content: center;
+        gap: $lh-spacing-xs;
+        margin-top: $lh-spacing-xs;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: $lh-radius-pill;
+        padding: 0.25rem 0.75rem;
+        font-size: $lh-font-size-xs;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    &__avatar {
         flex-shrink: 0;
 
-        svg {
-            width: 20px;
-            height: 20px;
+        img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            object-fit: cover;
+        }
+
+        @media (max-width: #{$lh-bp-tablet - 1px}) {
+            display: none;
         }
     }
+}
 
-    h3 {
-        flex: 1;
+// --- My courses grid (Priority + Progress slots) ----------------------------
+
+.lernhive-my-courses {
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $lh-spacing-md;
+    }
+
+    &__title {
         font-size: $lh-font-size-lg;
         font-weight: 600;
         color: $lh-text;
         margin: 0;
     }
-}
 
-.lernhive-modal-desc {
-    padding: 0 $lh-spacing-lg;
-    font-size: $lh-font-size-sm;
-    color: $lh-text-secondary;
-    line-height: 1.5;
-    margin-bottom: $lh-spacing-sm;
-}
-
-.lernhive-modal-close {
-    background: none;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: $lh-text-light;
-    transition: $lh-transition;
-
-    &:hover {
-        background: $lh-bg;
-        color: $lh-text;
-    }
-}
-
-.lernhive-modal-progress {
-    padding: 0 $lh-spacing-lg $lh-spacing-md;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .lernhive-modal-progress-bar {
-        flex: 1;
-        height: 6px;
-        background: $lh-border-light;
-        border-radius: 3px;
-        overflow: hidden;
-    }
-
-    .lernhive-modal-progress-fill {
-        height: 100%;
-        border-radius: 3px;
-        transition: width 0.3s ease;
-    }
-
-    .lernhive-modal-progress-text {
-        font-size: $lh-font-size-xs;
-        color: $lh-text-secondary;
-        white-space: nowrap;
-    }
-}
-
-.lernhive-modal-tours {
-    padding: 0 $lh-spacing-lg $lh-spacing-lg;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.lernhive-modal-tour {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: $lh-radius-sm;
-    text-decoration: none;
-    color: $lh-text;
-    transition: $lh-transition;
-
-    &:hover {
-        background: $lh-bg;
-        text-decoration: none;
-        color: $lh-text;
-    }
-
-    &.completed {
-        .lernhive-modal-tour-icon {
-            color: $lh-success;
-        }
-        .lernhive-modal-tour-name {
-            color: $lh-text-secondary;
-        }
-    }
-
-    .lernhive-modal-tour-icon {
-        flex-shrink: 0;
-        color: $lh-text-light;
-        display: flex;
-    }
-
-    .lernhive-modal-tour-name {
-        flex: 1;
-        font-size: $lh-font-size-sm;
-        font-weight: 500;
-    }
-
-    .lernhive-modal-tour-btn {
-        font-size: $lh-font-size-xs;
-        color: $lh-primary;
-        font-weight: 500;
-        white-space: nowrap;
-    }
-}
-
-// --- Section Headers (e.g. "Lernpfad", "Meine Kurse") ---
-.lernhive-section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-
-    h2, .h2 {
-        font-size: $lh-font-size-lg !important;
-        font-weight: 600;
-        color: $lh-text;
-        margin: 0;
-    }
-
-    .lernhive-view-all {
+    &__viewall {
         font-size: $lh-font-size-sm;
         color: $lh-primary;
-        text-decoration: none;
         font-weight: 500;
+        text-decoration: none;
 
         &:hover {
             text-decoration: underline;
@@ -765,492 +106,201 @@ body .progress {
     }
 }
 
-// --- Welcome Section (clean white, compact) ---
-.lernhive-welcome-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 0 $lh-spacing-sm 0;
-    margin-bottom: $lh-spacing-sm;
-    border-bottom: 1px solid $lh-border-light;
-}
+// Course overview cards grid
+.lernhive-courses-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $lh-spacing-md;
 
-.lernhive-welcome-left {
-    flex: 1;
-    min-width: 0;
-
-    .lernhive-welcome-heading {
-        font-size: $lh-font-size-2xl;
-        font-weight: 700;
-        color: $lh-text;
-        margin: 0 0 4px 0;
+    @media (min-width: $lh-bp-tablet) {
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .lernhive-welcome-sub {
-        font-size: $lh-font-size-sm;
-        color: $lh-text-secondary;
-        margin: 0;
+    @media (min-width: $lh-bp-desktop) {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
-.lernhive-welcome-right {
-    display: flex;
-    align-items: center;
-    gap: $lh-spacing-xl;
-    flex-shrink: 0;
-}
+// --- Course overview item (compact dashboard card) --------------------------
 
-// Level Badge (inside welcome section — dark text on white).
-.lernhive-level-badge {
+.lernhive-course-item {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: $lh-spacing-sm;
-}
-
-.lernhive-level-badge-circle {
-    width: 64px;
-    height: 64px;
-    background: $lh-primary-light;
+    padding: $lh-spacing-md;
+    background: #fff;
+    border: 1px solid $lh-border;
     border-radius: $lh-radius;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $lh-primary;
+    box-shadow: $lh-shadow;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    cursor: pointer;
 
-    svg {
-        width: 32px;
-        height: 32px;
+    &:hover {
+        box-shadow: $lh-shadow-hover;
+        transform: translateY(-1px);
+        text-decoration: none;
+        color: inherit;
     }
-}
 
-.lernhive-level-badge-text {
-    font-size: $lh-font-size-xs;
-    font-weight: 500;
-    text-align: center;
-    color: $lh-text-secondary;
-
-    strong {
-        font-weight: 700;
-        color: $lh-text;
+    &--due {
+        border-left: 3px solid $lh-accent;
     }
-}
 
-// Progress Ring (inside welcome section — dark text on white).
-.lernhive-progress-ring {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $lh-spacing-sm;
-}
-
-.lernhive-progress-circle {
-    width: 64px;
-    height: 64px;
-    position: relative;
-
-    svg {
-        width: 100%;
-        height: 100%;
+    &--complete {
+        opacity: 0.75;
     }
-}
 
-.lernhive-progress-circle-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    color: $lh-text;
-
-    strong {
+    &__title {
+        font-weight: 600;
         font-size: $lh-font-size-base;
-        font-weight: 700;
-        line-height: 1;
+        color: $lh-text;
+        line-height: 1.3;
+        margin: 0;
     }
 
-    small {
-        font-size: 0.6rem;
+    &__teacher {
+        font-size: $lh-font-size-xs;
         color: $lh-text-secondary;
     }
+
+    &__progress {
+        margin-top: auto;
+        padding-top: $lh-spacing-xs;
+    }
+
+    &__progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: $lh-font-size-xs;
+        color: $lh-text-secondary;
+        margin-bottom: 0.25rem;
+    }
 }
 
-.lernhive-progress-ring-label {
-    font-size: $lh-font-size-xs;
-    font-weight: 600;
-    text-align: center;
-    color: $lh-text-secondary;
-}
+// --- Moodle course overview block (when rendered as a block) ----------------
+// Moodle's course overview block uses data-region="course-content"
+// and various Bootstrap card patterns internally.
 
-// Responsive: stack on mobile.
-@media (max-width: 768px) {
-    .lernhive-welcome-section {
-        flex-direction: column;
-        text-align: center;
-        gap: $lh-spacing-lg;
+[data-block="myoverview"] {
+    .card-deck,
+    .card-columns {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: $lh-spacing-md;
 
-        .lernhive-welcome-right {
-            width: 100%;
-            justify-content: center;
+        @media (min-width: $lh-bp-tablet) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (min-width: $lh-bp-desktop) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    // Inline summary view
+    .course-summary-item {
+        border: 1px solid $lh-border;
+        border-radius: $lh-radius;
+        box-shadow: $lh-shadow;
+        transition: box-shadow 0.2s ease;
+
+        &:hover {
+            box-shadow: $lh-shadow-hover;
         }
     }
 }
 
-// --- LernHive Sidebar Navigation ---
-// Note: The legacy .lernhive-sidebar { position: fixed; ... } block that
-// lived here was designed for the pre-0.9.3 layout where the sidebar sat
-// on top of Moodle's default #page.drawers. Since the 0.9.3 block-region
-// refactor, the sidebar is a first-class in-flow grid child inside
-// .lernhive-app-shell (see post.scss .lernhive-app-shell rule). The
-// visual styling of the sidebar container (blue gradient background,
-// padding, border-radius) now lives in post.scss .lernhive-sidebar.
-// This file keeps only the interior nav-section / nav-item / nav-label
-// rules which still apply.
+// --- Stats row (Trainer / learner progress summary) -------------------------
 
-.lernhive-nav-section {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding-bottom: $lh-spacing-md;
-    margin-bottom: $lh-spacing-md;
-    border-bottom: 1px solid $lh-border-light;
+.lernhive-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $lh-spacing-md;
 
-    &:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
+    @media (min-width: $lh-bp-tablet) {
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
-.lernhive-nav-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: $lh-text-light;
-    padding: 4px 12px 6px;
+.lernhive-stat {
+    padding: $lh-spacing-md;
+    background: #fff;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    box-shadow: $lh-shadow;
+    text-align: center;
+
+    &__value {
+        font-size: $lh-font-size-2xl;
+        font-weight: 800;
+        color: $lh-primary;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    &__label {
+        font-size: $lh-font-size-xs;
+        color: $lh-text-secondary;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    &--accent .lernhive-stat__value {
+        color: $lh-accent;
+    }
+
+    &--success .lernhive-stat__value {
+        color: $lh-green;
+    }
 }
 
-.lernhive-nav-item {
+// --- Level bar / XP display -------------------------------------------------
+
+.lernhive-level-bar {
+    padding: $lh-spacing-md $lh-spacing-lg;
+    background: #fff;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    box-shadow: $lh-shadow;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 7px 12px;
-    border-radius: $lh-radius-sm;
-    color: $lh-text-secondary;
-    text-decoration: none;
-    font-size: $lh-font-size-sm;
-    font-weight: 500;
-    transition: $lh-transition;
-    cursor: pointer;
+    gap: $lh-spacing-md;
 
-    svg {
-        width: 18px;
-        height: 18px;
+    &__badge {
+        width: 48px;
+        height: 48px;
         flex-shrink: 0;
-        stroke: currentColor;
     }
 
-    &:hover {
-        background: $lh-bg;
-        color: $lh-text;
-        text-decoration: none;
+    &__info {
+        flex: 1;
+        min-width: 0;
     }
 
-    &.active {
-        background: $lh-primary-light;
-        color: $lh-primary;
-    }
-
-    // Course list items — smaller, truncated.
-    &.lernhive-nav-course {
-        font-size: $lh-font-size-xs;
-        padding: 5px 12px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        svg {
-            width: 14px;
-            height: 14px;
-            opacity: 0.5;
-        }
-    }
-
-    // "Alle Kurse →" link.
-    &.lernhive-nav-viewall {
-        font-size: $lh-font-size-xs;
-        color: $lh-primary;
-        padding: 4px 12px;
-        font-weight: 500;
-
-        &:hover {
-            text-decoration: underline;
-            background: none;
-        }
-    }
-}
-
-// --- Dashboard-specific layout tweaks ---
-// The 0.9.3 block-region refactor replaced Moodle's #page.drawers wrapper
-// with .lernhive-app-shell, so the old margin-left offset for the sidebar
-// is obsolete (the sidebar is now an in-flow grid child, not a fixed
-// overlay). What remains dashboard-specific is hiding Moodle core chrome
-// that we replace with our own surfaces.
-body.pagelayout-mydashboard {
-    // Hide Moodle's primary navigation (tabs) — replaced by sidebar.
-    .primary-navigation,
-    nav.moremenu {
-        display: none !important;
-    }
-
-    // Hide Moodle's left drawer (course index) — replaced by sidebar.
-    .drawer.drawer-left,
-    #theme_boost-drawers-courseindex {
-        display: none !important;
-    }
-
-    // Remove #page-header (hidden by JS but also by CSS as fallback).
-    #page-header {
-        display: none !important;
-    }
-}
-
-// Responsive: collapse sidebar visually on narrow viewports.
-// Actual grid collapse is handled by post.scss @media (max-width: 991px)
-// .lernhive-app-shell { grid-template-columns: 1fr } — which turns the
-// sidebar into a full-width row above the main content instead of hiding
-// it. We only need to ensure the old `display: none` behaviour from the
-// fixed-overlay era is not re-introduced.
-@media (max-width: 768px) {
-    // Intentionally empty — legacy rule removed.
-}
-
-// --- Legacy Level Bar (on course pages, kept for backwards compat) ---
-body.pagelayout-mydashboard .lernhive-level-bar {
-    display: none !important; // Hidden on dashboard — replaced by Welcome Banner.
-}
-
-// --- User Profile Page Styling (matching mockup-theme-profile) ---
-body.path-user {
-    // Profile hero card — large, prominent.
-    .userprofile {
-        background: $lh-bg-white;
-        border-radius: $lh-radius-lg;
-        box-shadow: $lh-shadow-md;
-        padding: $lh-spacing-xl $lh-spacing-xl $lh-spacing-lg;
-        margin-bottom: $lh-spacing-xl;
-    }
-
-    // Large circular avatar.
-    .userpicture {
-        border-radius: 50% !important;
-        box-shadow: $lh-shadow-md;
-        width: 120px !important;
-        height: 120px !important;
-    }
-
-    // Smaller in-page avatars (not the hero).
-    .userprofile .userpicture {
-        width: 120px !important;
-        height: 120px !important;
-    }
-
-    // Profile name heading.
-    .page-header-headings h2,
-    .page-header-headings h1 {
-        font-size: $lh-font-size-2xl !important;
-        font-weight: 700;
-    }
-
-    // Page header — clean layout.
-    #page-header {
-        .page-context-header {
-            display: flex;
-            align-items: center;
-            gap: $lh-spacing-lg;
-        }
-    }
-
-    // Role pill badge.
-    .profile_tree .contentnode .tag,
-    .userprofile .badge,
-    .userprofile .tag {
-        display: inline-block;
-        background: $lh-primary-light;
-        color: $lh-primary;
-        padding: 4px 14px;
-        border-radius: $lh-radius-pill;
+    &__level-name {
         font-size: $lh-font-size-sm;
         font-weight: 600;
+        color: $lh-text;
+        margin-bottom: 0.25rem;
     }
 
-    // Profile info cards.
-    .profile_tree section {
-        background: $lh-bg-white;
-        border-radius: $lh-radius;
-        border: 1px solid $lh-border-light;
-        padding: $lh-spacing-lg;
-        margin-bottom: $lh-spacing-md;
-        box-shadow: $lh-shadow;
-
-        h3 {
-            font-size: $lh-font-size-lg !important;
-            font-weight: 600;
-            color: $lh-text;
-            padding-bottom: $lh-spacing-sm;
-            border-bottom: 1px solid $lh-border-light;
-            margin-bottom: $lh-spacing-md;
-        }
-    }
-
-    // Profile detail list — clean grid layout.
-    .profile_tree .contentnode dl {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: $lh-spacing-sm $lh-spacing-md;
-
-        dt {
-            font-weight: 600;
-            font-size: $lh-font-size-sm;
-            color: $lh-text-secondary;
-        }
-
-        dd {
-            font-size: $lh-font-size-base;
-            color: $lh-text;
-            margin-bottom: 0;
-        }
-    }
-
-    // Action buttons (Edit profile, Message, etc.).
-    .profile_tree .btn,
-    .userprofile .btn {
-        border-radius: $lh-radius-sm;
-        font-weight: 500;
-        font-size: $lh-font-size-sm;
-        padding: 8px 20px;
-        transition: $lh-transition;
-
-        &.btn-primary {
-            background: $lh-primary;
-            border-color: $lh-primary;
-
-            &:hover {
-                background: $lh-primary-dark;
-                border-color: $lh-primary-dark;
-                box-shadow: $lh-shadow-md;
-            }
-        }
-
-        &.btn-secondary,
-        &.btn-outline-secondary {
-            background: $lh-bg-white;
-            border: 1px solid $lh-border;
-            color: $lh-text-secondary;
-
-            &:hover {
-                border-color: $lh-primary;
-                color: $lh-primary;
-                background: $lh-bg-white;
-            }
-        }
-    }
-
-    // Hide unnecessary sections for cleaner profile.
-    .description-inner:empty,
-    .profile_tree section:empty {
-        display: none;
-    }
-
-    // Login activity — subtle styling.
-    .profile_tree .contentnode.loginactivity {
-        font-size: $lh-font-size-sm;
+    &__xp {
+        font-size: $lh-font-size-xs;
         color: $lh-text-secondary;
+        margin-bottom: 0.375rem;
     }
 }
 
-// --- User Preferences Page ---
-body.path-user.pagelayout-admin,
-body.path-user:not(.path-course-view) {
-    // Preferences page — card grid for settings categories.
-    .preferences-groups {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: $lh-spacing-md;
-    }
+// --- Moodle dashboard-specific chrome overrides ----------------------------
 
-    .preferences-group {
-        background: $lh-bg-white;
+body.pagelayout-mydashboard {
+    // Dashboard blocks should blend in, not have heavy card chrome
+    [data-block] > .card {
+        border: 1px solid $lh-border;
         border-radius: $lh-radius;
-        border: 1px solid $lh-border-light;
-        padding: $lh-spacing-lg;
         box-shadow: $lh-shadow;
-        transition: $lh-transition;
-
-        &:hover {
-            box-shadow: $lh-shadow-md;
-        }
-
-        h3, .lead {
-            font-size: $lh-font-size-lg;
-            font-weight: 600;
-            color: $lh-text;
-            margin-bottom: $lh-spacing-sm;
-        }
-
-        .list-group-item {
-            border: none !important;
-            padding: 8px 0;
-            font-size: $lh-font-size-sm;
-            color: $lh-text-secondary;
-
-            a {
-                color: $lh-text-secondary;
-
-                &:hover {
-                    color: $lh-primary;
-                }
-            }
-        }
     }
-
-    // Edit profile form — clean card.
-    .mform {
-        background: $lh-bg-white;
-        border-radius: $lh-radius;
-        padding: $lh-spacing-lg;
-        box-shadow: $lh-shadow;
-
-        fieldset {
-            border: none;
-            margin-bottom: $lh-spacing-md;
-            padding: 0;
-
-            legend, .fheader {
-                font-size: $lh-font-size-lg;
-                font-weight: 600;
-                color: $lh-text;
-                padding-bottom: $lh-spacing-sm;
-                border-bottom: 1px solid $lh-border-light;
-                margin-bottom: $lh-spacing-md;
-                width: 100%;
-            }
-        }
-    }
-}
-
-// --- Notification popover ---
-body .popover-region-notifications .popover-region-content-container {
-    border-radius: $lh-radius;
-    box-shadow: $lh-shadow-md;
-}
-
-// --- Footer ---
-body #page-footer {
-    background: $lh-bg-white !important;
-    border-top: 1px solid $lh-border-light;
-    font-size: $lh-font-size-sm;
-    color: $lh-text-light;
-    padding: $lh-spacing-lg $lh-spacing-xl;
 }

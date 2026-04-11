@@ -68,17 +68,24 @@ function theme_lernhive_get_extra_scss($theme) {
     }
 
     $scssdir = $CFG->dirroot . '/theme/lernhive/scss/lernhive';
+    // 0.9.5: mobile-first rewrite — single-responsibility partials in load order.
+    // _base       → global resets, body, a11y, Moodle chrome hide
+    // _layout     → app shell, sidebar, page, page-header (single source of truth)
+    // _navigation → brand, flat_navigation, sidebar blocks/notes
+    // _components → cards, buttons, badges, progress, alerts, tables, forms
+    // _blocks     → block regions (content-top/bottom, footer columns)
+    // _dashboard  → Learner/Trainer dashboard surfaces (NO admin, NO course content)
+    // _course     → course page shell only (NO section/activity content — ADR-P01)
+    // _login      → login page (full-screen, does NOT use app-shell grid)
     $partials = [
-        '_typography.scss',
-        '_colors.scss',
-        '_buttons.scss',
-        '_cards.scss',
+        '_base.scss',
+        '_layout.scss',
         '_navigation.scss',
+        '_components.scss',
         '_blocks.scss',
-        '_course.scss',
         '_dashboard.scss',
+        '_course.scss',
         '_login.scss',
-        '_responsive.scss',
     ];
 
     foreach ($partials as $partial) {

@@ -1,0 +1,410 @@
+// =============================================================================
+// _components.scss — LernHive 0.9.5
+// Cards, buttons, badges, progress bars, alerts.
+// Builds on Bootstrap 5 base; only overrides what LernHive needs to differ.
+// =============================================================================
+
+// --- Cards -------------------------------------------------------------------
+
+.card {
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    box-shadow: $lh-shadow;
+    background: #fff;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: $lh-shadow-hover;
+    }
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid $lh-border-light;
+    padding: $lh-spacing-md $lh-spacing-lg;
+    font-weight: 600;
+    color: $lh-text;
+}
+
+.card-body {
+    padding: $lh-spacing-lg;
+
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        padding: $lh-spacing-md;
+    }
+}
+
+.card-footer {
+    background: transparent;
+    border-top: 1px solid $lh-border-light;
+    padding: $lh-spacing-sm $lh-spacing-lg;
+    color: $lh-text-secondary;
+    font-size: $lh-font-size-sm;
+}
+
+// Card title
+.card-title {
+    font-size: $lh-font-size-lg;
+    font-weight: 600;
+    color: $lh-text;
+    margin-bottom: $lh-spacing-sm;
+}
+
+.card-subtitle {
+    font-size: $lh-font-size-sm;
+    color: $lh-text-secondary;
+    margin-top: -0.25rem;
+    margin-bottom: $lh-spacing-sm;
+}
+
+// --- Course/content cards (used on dashboard & catalog) ----------------------
+
+.lernhive-content-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    &__image {
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        border-radius: $lh-radius $lh-radius 0 0;
+        background: $lh-primary-light;
+        width: 100%;
+    }
+
+    &__body {
+        flex: 1;
+        padding: $lh-spacing-md;
+    }
+
+    &__type {
+        font-size: $lh-font-size-xs;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: $lh-accent;
+        margin-bottom: $lh-spacing-xs;
+    }
+
+    &__title {
+        font-size: $lh-font-size-base;
+        font-weight: 600;
+        color: $lh-text;
+        margin-bottom: $lh-spacing-xs;
+        line-height: 1.3;
+    }
+
+    &__meta {
+        font-size: $lh-font-size-xs;
+        color: $lh-text-secondary;
+    }
+
+    &__footer {
+        padding: $lh-spacing-sm $lh-spacing-md;
+        border-top: 1px solid $lh-border-light;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+// --- Buttons -----------------------------------------------------------------
+
+.btn {
+    font-weight: 500;
+    border-radius: $lh-radius-sm;
+    transition: background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    min-height: 44px; // Touch target
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1.125rem;
+
+    &:focus-visible {
+        outline: 3px solid $lh-accent;
+        outline-offset: 2px;
+        box-shadow: none;
+    }
+}
+
+.btn-primary {
+    background: $lh-primary;
+    border-color: $lh-primary;
+    color: #fff;
+
+    &:hover, &:active {
+        background: $lh-primary-dark;
+        border-color: $lh-primary-dark;
+        color: #fff;
+    }
+}
+
+.btn-secondary {
+    background: $lh-secondary;
+    border-color: $lh-secondary;
+    color: #fff;
+
+    &:hover, &:active {
+        background: $lh-secondary-dark;
+        border-color: $lh-secondary-dark;
+        color: #fff;
+    }
+}
+
+.btn-outline-primary {
+    color: $lh-primary;
+    border-color: $lh-primary;
+    background: transparent;
+
+    &:hover, &:active {
+        background: $lh-primary;
+        border-color: $lh-primary;
+        color: #fff;
+    }
+}
+
+// Accent button (CTAs — orange)
+.btn-accent,
+.btn-warning {
+    background: $lh-accent;
+    border-color: $lh-accent;
+    color: #fff;
+
+    &:hover, &:active {
+        background: $lh-accent-dark;
+        border-color: $lh-accent-dark;
+        color: #fff;
+    }
+}
+
+// Small variant
+.btn-sm {
+    min-height: 36px;
+    padding: 0.3rem 0.875rem;
+    font-size: $lh-font-size-sm;
+}
+
+// --- Badges ------------------------------------------------------------------
+
+.badge {
+    font-weight: 600;
+    font-size: 0.6875rem;
+    padding: 0.2em 0.6em;
+    border-radius: $lh-radius-pill;
+}
+
+// --- Progress bars -----------------------------------------------------------
+
+.progress {
+    border-radius: $lh-radius-pill;
+    background: $lh-border-light;
+    height: 8px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: $lh-primary;
+    border-radius: $lh-radius-pill;
+    transition: width 0.4s ease;
+}
+
+// Progress with label above
+.lernhive-progress {
+    &__label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.25rem;
+        font-size: $lh-font-size-xs;
+        color: $lh-text-secondary;
+    }
+
+    &__value {
+        font-weight: 600;
+        color: $lh-text;
+    }
+}
+
+// --- Alerts ------------------------------------------------------------------
+
+.alert {
+    border-radius: $lh-radius-sm;
+    border-left: 3px solid transparent;
+    padding: $lh-spacing-md;
+    font-size: $lh-font-size-sm;
+
+    &-success {
+        background: $lh-success-light;
+        border-color: $lh-success;
+        color: darken($lh-success, 10%);
+    }
+
+    &-warning {
+        background: $lh-accent-light;
+        border-color: $lh-accent;
+        color: $lh-accent-dark;
+    }
+
+    &-danger {
+        background: $lh-danger-light;
+        border-color: $lh-danger;
+        color: darken($lh-danger, 5%);
+    }
+
+    &-info {
+        background: $lh-secondary-light;
+        border-color: $lh-secondary;
+        color: darken($lh-secondary, 20%);
+    }
+}
+
+// --- Tables ------------------------------------------------------------------
+
+.table {
+    color: $lh-text;
+
+    thead th {
+        font-size: $lh-font-size-xs;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: $lh-text-secondary;
+        border-bottom: 2px solid $lh-border;
+        padding: $lh-spacing-sm $lh-spacing-md;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: $lh-spacing-sm $lh-spacing-md;
+        vertical-align: middle;
+        border-bottom: 1px solid $lh-border-light;
+        font-size: $lh-font-size-sm;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    tbody tr:hover td {
+        background: $lh-primary-light;
+    }
+}
+
+.table-responsive {
+    border-radius: $lh-radius-sm;
+    border: 1px solid $lh-border;
+    overflow-x: auto;
+}
+
+// --- Form elements -----------------------------------------------------------
+
+.form-control,
+.form-select {
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius-sm;
+    color: $lh-text;
+    font-size: $lh-font-size-sm;
+    min-height: 44px; // Touch target
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus {
+        border-color: $lh-primary;
+        box-shadow: 0 0 0 3px rgba(25, 72, 102, 0.12);
+        outline: none;
+    }
+
+    &::placeholder {
+        color: $lh-text-light;
+    }
+}
+
+.form-label {
+    font-size: $lh-font-size-sm;
+    font-weight: 500;
+    color: $lh-text;
+    margin-bottom: 0.375rem;
+}
+
+// --- User picture (avatar) --------------------------------------------------
+
+.userpicture {
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+// User menu toggle (in page header actions)
+.usermenu .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: $lh-spacing-xs;
+    padding: $lh-spacing-xs $lh-spacing-sm;
+    border-radius: $lh-radius-sm;
+    color: $lh-text;
+    font-size: $lh-font-size-sm;
+    font-weight: 500;
+    min-height: 44px;
+
+    &:hover {
+        background: $lh-primary-light;
+        color: $lh-primary;
+        text-decoration: none;
+    }
+
+    img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+    }
+}
+
+.usermenu .dropdown-menu {
+    border-radius: $lh-radius;
+    border-color: $lh-border-light;
+    box-shadow: $lh-shadow-md;
+    min-width: 14rem;
+}
+
+// --- Notifications / popover regions ----------------------------------------
+
+.popover-region-container {
+    .popover-region-header-container {
+        padding: $lh-spacing-md $lh-spacing-lg;
+        border-bottom: 1px solid $lh-border-light;
+        font-weight: 600;
+        color: $lh-text;
+    }
+}
+
+// --- Moodle notification badges on icons ------------------------------------
+
+.count-container {
+    position: relative;
+    display: inline-flex;
+
+    .count-badge {
+        position: absolute;
+        top: -0.25rem;
+        right: -0.25rem;
+        background: $lh-accent;
+        color: #fff;
+        font-size: 0.625rem;
+        font-weight: 700;
+        min-width: 1.125rem;
+        height: 1.125rem;
+        border-radius: $lh-radius-pill;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 0.25rem;
+    }
+}

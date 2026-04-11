@@ -1,13 +1,14 @@
-// LernHive Theme – Login Page
-// ============================
-// Dramatic gradient background, centered card layout.
-// This is the first page users see — make it count.
+// =============================================================================
+// _login.scss — LernHive 0.9.5
+// Login page: full-screen gradient + centered card.
+// This is the first page users see — it does NOT use the app-shell grid.
 // Aggressively hides Moodle's default two-column marketing layout.
+// =============================================================================
 
 body.pagelayout-login {
-    // Gradient background matching the mockup: primary → secondary blue.
+    // Gradient background: primary → secondary blue.
     background: linear-gradient(135deg, $lh-primary 0%, $lh-secondary 100%) !important;
-    min-height: 100vh;
+    min-height: 100dvh;
 
     // ── Hide everything we don't need ──
 
@@ -32,7 +33,7 @@ body.pagelayout-login {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        min-height: 100vh !important;
+        min-height: 100dvh !important;
         background: transparent !important;
     }
 
