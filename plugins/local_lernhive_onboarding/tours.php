@@ -148,19 +148,27 @@ $shell = [
             ]),
         ],
     ],
-    'hastags'  => true,
+    'hastags'     => true,
+    // Overall progress lives in Zone B so every level card grid starts right
+    // under it — same visual rhythm ContentHub uses for its "2 paths available"
+    // stats row.
+    'hasprogress' => true,
+    'progress'    => [
+        'label'   => get_string('tours_overall_progress', 'local_lernhive_onboarding'),
+        'percent' => $progress['percent'],
+        'count'   => get_string('tours_x_of_y', 'local_lernhive_onboarding', (object) [
+            'done'  => $progress['completed_tours'],
+            'total' => $progress['total_tours'],
+        ]),
+    ],
 ];
 
 $templatecontext = [
     'shell' => $shell,
     'level' => $level,
     'levelname' => $levelname,
-    'overall_label' => get_string('tours_overall_progress', 'local_lernhive_onboarding'),
-    'overall_percent' => $progress['percent'],
-    'overall_text' => get_string('tours_x_of_y', 'local_lernhive_onboarding', (object) [
-        'done' => $progress['completed_tours'],
-        'total' => $progress['total_tours'],
-    ]),
+    // overall_* keys are gone in 0.2.6 — the progress bar is rendered by the
+    // shared shell partial's `hasprogress` branch (see $shell['progress']).
     'categories' => $categories,
     'has_categories' => !empty($categories),
     'all_done' => $progress['done'],

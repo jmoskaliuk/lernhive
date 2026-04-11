@@ -268,6 +268,13 @@
         font-weight: 800;
         color: $lh-primary;
         white-space: nowrap;
+
+        // Secondary count label (e.g. "5 of 12 tours" next to the "42%").
+        // Same line, muted colour, non-bold.
+        &--muted {
+            color: $lh-text-secondary;
+            font-weight: 600;
+        }
     }
 
     // Primary CTA — one per infobar, always rightmost.

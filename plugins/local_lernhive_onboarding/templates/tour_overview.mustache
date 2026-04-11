@@ -4,6 +4,12 @@
     LernHive Onboarding — Tour overview page.
     Displays tour categories as cards with progress tracking.
 
+    0.2.6: overall progress bar moved from an ad-hoc card above the grid into
+    Zone B of the shared plugin shell (orange infobar strip). Consumed via the
+    `hasprogress` branch of theme_lernhive/plugin_shell_header (requires
+    theme_lernhive 0.9.48). The template now only owns the category grid and
+    the level-unlock panel below it.
+
     0.2.5: cards now use the shared `lh-plugin-card` shell classes (same as
     local_lernhive_contenthub/hub_page) so every LernHive plugin surface uses
     the same visual language. The old hand-rolled `.lh-tours-card` block was
@@ -17,12 +23,11 @@
     Zone B info bar) via the `theme_lernhive/plugin_shell_header` partial.
 
     Context variables required for this template:
-    * shell (object) - Plugin Shell Zone A + Zone B context (see partial)
+    * shell (object) - Plugin Shell Zone A + Zone B context. When `hasprogress`
+                       is true the overall progress bar is rendered in Zone B
+                       (see theme_lernhive/plugin_shell_header docblock).
     * level (int) - The user's current LernHive level
     * levelname (string) - Display name of the level
-    * overall_label (string) - "Overall progress"
-    * overall_percent (int) - 0-100
-    * overall_text (string) - "X of Y tours"
     * categories (array) - Tour categories
     * has_categories (bool)
     * all_done (bool)
@@ -40,11 +45,15 @@
             "tags": [
                 { "modifier": "level", "faicon": "fa-layer-group",
                   "label": "Level 1: Explorer" }
-            ]
+            ],
+            "hasprogress": true,
+            "progress": {
+                "label": "Overall progress",
+                "percent": 42,
+                "count": "5 of 12 tours"
+            }
         },
         "level": 1, "levelname": "Explorer",
-        "overall_label": "Overall progress", "overall_percent": 42,
-        "overall_text": "5 of 12 tours",
         "has_categories": true, "categories": [],
         "all_done": false, "can_unlock": false,
         "unlock_text": "", "unlock_btn": ""
@@ -57,19 +66,10 @@
 {{/shell}}
 
 {{! ── Content area — matches ContentHub's .lh-plugin-content-area wrapper ─ }}
+{{!    The overall progress bar now lives in Zone B (shell partial), rendered via
+       the `hasprogress` branch. Zone B's orange strip acts as the visual
+       separator between sticky header and card grid.                          }}
 <div class="lh-plugin-content-area">
-
-    {{! Overall progress bar — sits above the card grid }}
-    <div class="lh-onboarding-overall">
-        <span class="lh-onboarding-overall__label">{{overall_label}}</span>
-        <div class="lh-onboarding-overall__bar">
-            <div class="lh-onboarding-overall__fill" role="progressbar"
-                 style="width: {{overall_percent}}%"
-                 aria-valuenow="{{overall_percent}}" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <span class="lh-onboarding-overall__pct">{{overall_percent}}%</span>
-        <span class="lh-onboarding-overall__text">{{overall_text}}</span>
-    </div>
 
     {{! Category cards grid — 3 columns, shared shell classes }}
     {{#has_categories}}
@@ -173,49 +173,16 @@
 {{!
     Inline styles — plugin-local extensions to the shared shell card pattern.
     Only things that don't belong in the global _plugin-shell.scss live here:
-      - overall progress bar (onboarding-specific)
       - 2 extra category icon colours (teal, red) — the shell ships course /
         snack / community / tour; onboarding has 6 categories
       - per-card progress bar + status overlays
       - expandable tour detail list
       - unlock CTA panel
     The base card/icon/button styling comes from theme_lernhive.
+    The overall progress strip lives in Zone B of the shared shell partial
+    (theme_lernhive/plugin_shell_header, `hasprogress` branch).
 }}
 <style>
-/* ── Overall progress strip (above the grid) ───────────────────────────── */
-.lh-onboarding-overall {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
-    margin-bottom: 18px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(25, 72, 102, 0.08), 0 0 0 1px #e4eaef;
-}
-.lh-onboarding-overall__label {
-    font-size: 0.8rem; font-weight: 600; color: #5f6b77; white-space: nowrap;
-}
-.lh-onboarding-overall__bar {
-    flex: 1 1 auto;
-    height: 8px;
-    background: #eef1f5;
-    border-radius: 4px;
-    overflow: hidden;
-}
-.lh-onboarding-overall__fill {
-    height: 100%;
-    background: linear-gradient(90deg, #194866 0%, #2a7a3a 100%);
-    border-radius: 4px;
-    transition: width 0.4s ease;
-}
-.lh-onboarding-overall__pct {
-    font-size: 0.9rem; font-weight: 800; color: #194866;
-}
-.lh-onboarding-overall__text {
-    font-size: 0.78rem; color: #5f6b77;
-}
-
 /* ── Card state rings (re-uses .lh-plugin-card--current visual hook) ──── */
 .lh-onboarding-card--in_progress {
     box-shadow: 0 0 0 2px #f98012, 0 4px 12px rgba(249, 128, 18, 0.15);

@@ -33,12 +33,17 @@
     hint line just like ContentHub's infobar row.
 
     Context variables required for this template:
-    * name     (string) - Plugin / area name shown bold in Zone A (e.g. "Dashboard")
-    * tagline  (string) - Short tagline shown after the `|` separator
-    * subtitle (string) - One-sentence description below the name line
-    * hint     (string) - Zone B info hint row (always shown)
-    * tags     (array)  - Optional list of tag pills { modifier, faicon, label }
-    * hastags  (bool)   - Whether the tag row should render
+    * name        (string) - Plugin / area name shown bold in Zone A (e.g. "Dashboard")
+    * tagline     (string) - Short tagline shown after the `|` separator
+    * subtitle    (string) - One-sentence description below the name line
+    * hint        (string) - Zone B info hint row (rendered when `hasprogress` is falsy)
+    * tags        (array)  - Optional list of tag pills { modifier, faicon, label }
+    * hastags     (bool)   - Whether the tag row should render
+    * hasprogress (bool)   - When true, Zone B renders a progress bar instead of the hint row
+    * progress    (object) - Progress bar data (only read when `hasprogress` is true):
+                              - label   (string) e.g. "Overall progress"
+                              - percent (int)    0-100
+                              - count   (string) e.g. "5 of 12 tours"
 
     Example context (json):
     {
@@ -49,7 +54,13 @@
         "hastags":  true,
         "tags": [
             { "modifier": "type", "faicon": "fa-home", "label": "Overview" }
-        ]
+        ],
+        "hasprogress": false,
+        "progress": {
+            "label":   "Overall progress",
+            "percent": 42,
+            "count":   "5 of 12 tours"
+        }
     }
 }}
 {{! ── Zone A: sticky page header ─────────────────────────────────────────── }}
@@ -78,10 +89,29 @@
 
 {{! ── Zone B: info bar ───────────────────────────────────────────────────── }}
 <div class="lh-plugin-infobar">
-    <div class="lh-plugin-infobar__stats">
-        <span class="lh-plugin-infobar__stat">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
-            {{ hint }}
-        </span>
-    </div>
+    {{#hasprogress}}
+        {{#progress}}
+        <div class="lh-plugin-infobar__progress">
+            <span class="lh-plugin-infobar__progress-label">{{ label }}</span>
+            <div class="lh-plugin-infobar__progress-track">
+                <div class="lh-plugin-infobar__progress-fill"
+                     role="progressbar"
+                     style="width: {{ percent }}%"
+                     aria-valuenow="{{ percent }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100"></div>
+            </div>
+            <span class="lh-plugin-infobar__progress-count">{{ percent }}%</span>
+            <span class="lh-plugin-infobar__progress-count lh-plugin-infobar__progress-count--muted">{{ count }}</span>
+        </div>
+        {{/progress}}
+    {{/hasprogress}}
+    {{^hasprogress}}
+        <div class="lh-plugin-infobar__stats">
+            <span class="lh-plugin-infobar__stat">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                {{ hint }}
+            </span>
+        </div>
+    {{/hasprogress}}
 </div>
