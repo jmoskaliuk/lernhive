@@ -91,6 +91,13 @@ if ($PAGE->has_secondary_navigation()) {
     }
 }
 
+// Plugin Shell: /user/preferences.php uses the admin layout and should feel
+// like a LernHive local plugin. The helper only returns a context for that
+// specific pagetype (and any other core admin-layout pages we add later);
+// real Moodle admin pages (settings tree) return null and render unchanged.
+$pluginshell = theme_lernhive_get_plugin_shell_context($PAGE);
+$haspluginshell = $pluginshell !== null;
+
 // Admin pages have no block regions — keep $blockregions empty rather than
 // calling theme_lernhive_get_block_regions_context() with regions that don't
 // exist in this layout (config.php maps admin → regions: []).
@@ -109,6 +116,8 @@ $templatecontext = array_merge([
     'overflow'                  => $overflow,
     'sidepanelitems'            => $sidepanelitems,
     'hassidepanel'              => !empty($sidepanelitems),
+    'pluginshell'               => $pluginshell,
+    'haspluginshell'            => $haspluginshell,
 ], $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/admin', $templatecontext);

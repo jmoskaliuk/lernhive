@@ -49,6 +49,15 @@ $string['banner_progress_label'] = '{$a->done} von {$a->total} Touren';
 $string['tours_pagetitle'] = 'Dein Onboarding';
 $string['tours_heading'] = 'Dein Onboarding';
 $string['tours_intro'] = 'Schritt für Schritt durch LernHive — interaktive Touren führen dich durch alle wichtigen Funktionen.';
+
+// --- Plugin Shell (0.2.2) ---
+// Zone A (sticky header) + Zone B (info bar) Strings für tours.php.
+$string['shell_name'] = 'Onboarding';
+$string['shell_tagline'] = 'Lernpfad';
+$string['shell_subtitle'] = 'Schritt für Schritt durch LernHive — interaktive Touren führen dich durch alle wichtigen Trainer-Skills.';
+$string['shell_hint'] = 'Schließe eine Kategorie ab, um die nächste Tour-Stufe freizuschalten.';
+$string['shell_tag_level'] = 'Level {$a}';
+
 $string['tours_level_badge'] = 'Level {$a->level}: {$a->name}';
 $string['tours_overall_progress'] = 'Gesamtfortschritt';
 $string['tours_x_of_y'] = '{$a->done} von {$a->total} Touren';

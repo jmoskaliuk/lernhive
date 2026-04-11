@@ -150,3 +150,34 @@ $string['help_dashboard'] = 'Dein Dashboard';
 $string['help_dashboard_desc'] = 'Deinen Lernpfad ansehen';
 $string['help_preferences'] = 'Benutzereinstellungen';
 $string['help_preferences_desc'] = 'Sprache, Benachrichtigungen, Profil';
+
+// --- Plugin Shell für Moodle-Kernseiten (0.9.40) ----------------------------
+// Zone A / Zone B Strings, die von templates/plugin_shell_header.mustache
+// via theme_lernhive_get_plugin_shell_context() gerendert werden. Ein Set pro
+// freigeschalteter Pagetype: dashboard (my-index), mycourses (my-courses),
+// profile (user-profile), preferences (user-preferences).
+$string['shell_name_dashboard'] = 'Dashboard';
+$string['shell_tagline_dashboard'] = 'Übersicht';
+$string['shell_subtitle_dashboard'] = 'Dein Lernfortschritt, deine Kurse und schnelle Aktionen auf einen Blick.';
+$string['shell_hint_dashboard'] = 'Mach da weiter, wo du aufgehört hast, oder entdecke unten neue Inhalte.';
+
+$string['shell_name_mycourses'] = 'Meine Kurse';
+$string['shell_tagline_mycourses'] = 'Einschreibungen';
+$string['shell_subtitle_mycourses'] = 'Alles, wo du gerade eingeschrieben bist — laufende, kommende und abgeschlossene Kurse.';
+$string['shell_hint_mycourses'] = 'Filtere nach Status oder suche einen Kurs direkt über seinen Namen.';
+
+$string['shell_name_profile'] = 'Profil';
+$string['shell_tagline_profile'] = 'Über dich';
+$string['shell_subtitle_profile'] = 'Dein öffentliches LernHive-Profil — Name, Avatar, Interessen und aktuelle Aktivität.';
+$string['shell_hint_profile'] = 'Andere Lernende sehen diese Seite. Halte sie aufgeräumt und zu dir passend.';
+
+$string['shell_name_preferences'] = 'Einstellungen';
+$string['shell_tagline_preferences'] = 'Kontoeinstellungen';
+$string['shell_subtitle_preferences'] = 'Sprache, Benachrichtigungen, Sicherheit und alles andere zu deinem LernHive-Konto.';
+$string['shell_hint_preferences'] = 'Änderungen werden sofort gespeichert. Einige Einstellungen greifen erst nach dem nächsten Login.';
+
+// Tag-Pillen — eine kontextuelle Pille pro Seite, kombiniert mit einem FontAwesome-Icon.
+$string['shell_tag_overview'] = 'Übersicht';
+$string['shell_tag_courses'] = 'Kurse';
+$string['shell_tag_account'] = 'Konto';
+$string['shell_tag_settings'] = 'Einstellungen';

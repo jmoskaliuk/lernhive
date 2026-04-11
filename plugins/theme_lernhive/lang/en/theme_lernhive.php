@@ -144,3 +144,34 @@ $string['help_dashboard'] = 'Your dashboard';
 $string['help_dashboard_desc'] = 'See your learning path';
 $string['help_preferences'] = 'User preferences';
 $string['help_preferences_desc'] = 'Language, notifications, profile';
+
+// --- Plugin Shell for core Moodle pages (0.9.40) ----------------------------
+// Zone A / Zone B strings rendered by templates/plugin_shell_header.mustache
+// via theme_lernhive_get_plugin_shell_context(). One set per whitelisted
+// pagetype: dashboard (my-index), mycourses (my-courses), profile
+// (user-profile), preferences (user-preferences).
+$string['shell_name_dashboard'] = 'Dashboard';
+$string['shell_tagline_dashboard'] = 'Overview';
+$string['shell_subtitle_dashboard'] = 'Your learning progress, courses, and quick actions at a glance.';
+$string['shell_hint_dashboard'] = 'Pick up where you left off, or explore new content below.';
+
+$string['shell_name_mycourses'] = 'My Courses';
+$string['shell_tagline_mycourses'] = 'Enrolments';
+$string['shell_subtitle_mycourses'] = 'Everything you are currently enrolled in — active, upcoming, and past courses.';
+$string['shell_hint_mycourses'] = 'Use the filters to focus on a specific state or search for a course by name.';
+
+$string['shell_name_profile'] = 'Profile';
+$string['shell_tagline_profile'] = 'About you';
+$string['shell_subtitle_profile'] = 'Your public LernHive profile — name, avatar, interests, and recent activity.';
+$string['shell_hint_profile'] = 'Other learners see this page. Keep it tidy and representative of who you are.';
+
+$string['shell_name_preferences'] = 'Preferences';
+$string['shell_tagline_preferences'] = 'Account settings';
+$string['shell_subtitle_preferences'] = 'Language, notifications, security, and everything else about your LernHive account.';
+$string['shell_hint_preferences'] = 'Changes are saved immediately. Some settings only take effect after the next login.';
+
+// Tag pills — one contextual pill per page, paired with a fontawesome icon.
+$string['shell_tag_overview'] = 'Overview';
+$string['shell_tag_courses'] = 'Courses';
+$string['shell_tag_account'] = 'Account';
+$string['shell_tag_settings'] = 'Settings';

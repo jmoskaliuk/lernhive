@@ -95,3 +95,14 @@
 </div>
 </body>
 </html>
+{{!
+    0.9.42: bootstrap theme_boost/loader on course pages so Bootstrap
+    tabs, dropdowns, popovers and tooltips all work. Matches the
+    require block Boost's upstream layout templates use.
+}}
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

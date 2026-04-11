@@ -1,0 +1,87 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template  theme_lernhive/plugin_shell_header
+
+    Shared Plugin Shell Zone A + Zone B header (0.9.40).
+
+    Used by:
+    - theme_lernhive drawers.mustache / admin.mustache — injected into
+      core Moodle pages (Dashboard, My courses, Profile, Preferences)
+      via `theme_lernhive_get_plugin_shell_context($PAGE)`.
+    - local LernHive plugins that want to reuse the same markup instead
+      of hand-rolling Zone A + Zone B (see local_lernhive_onboarding).
+
+    The markup mirrors `local_lernhive_contenthub/templates/hub_page.mustache`
+    one-to-one — the two must stay visually identical.  When Zone B has
+    no work to do (pure navigation pages) pass `hint` as the only field;
+    the template falls back to a single `<i class="fa fa-info-circle">`
+    hint line just like ContentHub's infobar row.
+
+    Context variables required for this template:
+    * name     (string) - Plugin / area name shown bold in Zone A (e.g. "Dashboard")
+    * tagline  (string) - Short tagline shown after the `|` separator
+    * subtitle (string) - One-sentence description below the name line
+    * hint     (string) - Zone B info hint row (always shown)
+    * tags     (array)  - Optional list of tag pills { modifier, faicon, label }
+    * hastags  (bool)   - Whether the tag row should render
+
+    Example context (json):
+    {
+        "name":     "Dashboard",
+        "tagline":  "Overview",
+        "subtitle": "Your learning progress, courses, and quick actions.",
+        "hint":     "Pick up where you left off, or explore new content below.",
+        "hastags":  true,
+        "tags": [
+            { "modifier": "type", "faicon": "fa-home", "label": "Overview" }
+        ]
+    }
+}}
+{{! ── Zone A: sticky page header ─────────────────────────────────────────── }}
+<div class="lh-plugin-header">
+    <div class="lh-plugin-header__row">
+        <div class="lh-plugin-header__title-block">
+            <div class="lh-plugin-header__name">
+                {{ name }}
+                <span class="lh-plugin-header__sep" aria-hidden="true">|</span>
+                <span class="lh-plugin-header__tagline">{{ tagline }}</span>
+            </div>
+            <p class="lh-plugin-header__subtitle">{{ subtitle }}</p>
+            {{#hastags}}
+                <div class="lh-plugin-header__tags" aria-label="{{#str}} tags {{/str}}">
+                    {{#tags}}
+                        <span class="lh-plugin-tag lh-plugin-tag--{{ modifier }}">
+                            <i class="fa {{ faicon }}" aria-hidden="true"></i>
+                            {{ label }}
+                        </span>
+                    {{/tags}}
+                </div>
+            {{/hastags}}
+        </div>
+    </div>
+</div>
+
+{{! ── Zone B: info bar ───────────────────────────────────────────────────── }}
+<div class="lh-plugin-infobar">
+    <div class="lh-plugin-infobar__stats">
+        <span class="lh-plugin-infobar__stat">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            {{ hint }}
+        </span>
+    </div>
+</div>

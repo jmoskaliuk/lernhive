@@ -82,6 +82,14 @@ if (is_siteadmin()) {
 
 $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
 
+// Plugin Shell: build a Zone A / Zone B context for the handful of core
+// Moodle pages (Dashboard, My courses, Profile) that should look like the
+// LernHive local plugins. Returns null for everything else — local plugins
+// render their own Plugin Shell inside `output.main_content`, so we never
+// inject a second header on top of theirs.
+$pluginshell = theme_lernhive_get_plugin_shell_context($PAGE);
+$haspluginshell = $pluginshell !== null;
+
 // Context Dock — floating action strip (Teacher/Trainer actions per page context).
 $dockitems = theme_lernhive_get_context_dock_items();
 
@@ -109,6 +117,8 @@ $templatecontext = array_merge([
     'hasdockitems'              => !empty($dockitems),
     'sidepanelitems'            => $sidepanelitems,
     'hassidepanel'              => !empty($sidepanelitems),
+    'pluginshell'               => $pluginshell,
+    'haspluginshell'            => $haspluginshell,
 ], $blockregions, $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/drawers', $templatecontext);

@@ -130,14 +130,31 @@ $nextlevel = min($level + 1, 5);
 $nextlevelname = \local_lernhive\level_manager::get_level_name($nextlevel);
 $remaining = $progress['total_tours'] - $progress['completed_tours'];
 
+// Plugin Shell context — mirrors ContentHub's `name | tagline + subtitle + tags`
+// header so every LernHive surface feels part of the same family. Rendered via
+// the shared theme partial `theme_lernhive/plugin_shell_header`.
+$shell = [
+    'name'     => get_string('shell_name', 'local_lernhive_onboarding'),
+    'tagline'  => get_string('shell_tagline', 'local_lernhive_onboarding'),
+    'subtitle' => get_string('shell_subtitle', 'local_lernhive_onboarding'),
+    'hint'     => get_string('shell_hint', 'local_lernhive_onboarding'),
+    'tags'     => [
+        [
+            'modifier' => 'level',
+            'faicon'   => 'fa-layer-group',
+            'label'    => get_string('tours_level_badge', 'local_lernhive_onboarding', (object) [
+                'level' => $level,
+                'name'  => $levelname,
+            ]),
+        ],
+    ],
+    'hastags'  => true,
+];
+
 $templatecontext = [
+    'shell' => $shell,
     'level' => $level,
     'levelname' => $levelname,
-    'level_badge' => get_string('tours_level_badge', 'local_lernhive_onboarding', (object) [
-        'level' => $level,
-        'name' => $levelname,
-    ]),
-    'intro' => get_string('tours_intro', 'local_lernhive_onboarding'),
     'overall_label' => get_string('tours_overall_progress', 'local_lernhive_onboarding'),
     'overall_percent' => $progress['percent'],
     'overall_text' => get_string('tours_x_of_y', 'local_lernhive_onboarding', (object) [

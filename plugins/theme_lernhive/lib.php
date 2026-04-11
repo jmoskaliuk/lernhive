@@ -549,3 +549,91 @@ function theme_lernhive_get_block_regions_context($output): array {
     $context['hasfooterblocks'] = $hasfooter;
     return $context;
 }
+
+/**
+ * Build a Plugin Shell context for core Moodle pages so they render with the
+ * same Zone A (sticky header) + Zone B (info bar) pattern that LernHive local
+ * plugins use.
+ *
+ * Returns null when the current page is NOT a known core page — in that case
+ * the layout template renders nothing extra and lets the page render as today.
+ * LernHive local plugins that own their own Plugin Shell output (ContentHub,
+ * Copy, …) are intentionally excluded: their pagetype is not in the whitelist,
+ * so the theme never injects a second, duplicate header on top of theirs.
+ *
+ * Each returned context carries the same keys the `plugin_shell_header`
+ * partial consumes: `name`, `tagline`, `subtitle`, zero-or-more `tags`, and a
+ * `hint` string for Zone B. Strings are resolved to the current language via
+ * get_string() up front — the partial stays purely presentational.
+ *
+ * Handled core pagetypes (0.9.40):
+ *   - my-index           → /my/                  (Dashboard)
+ *   - my-courses         → /my/courses.php       (My courses)
+ *   - user-profile       → /user/profile.php     (Profile)
+ *   - user-preferences   → /user/preferences.php (Preferences — admin layout)
+ *
+ * @param moodle_page $page The current $PAGE object.
+ * @return array<string, mixed>|null Shell context, or null when not applicable.
+ */
+function theme_lernhive_get_plugin_shell_context(\moodle_page $page): ?array {
+    // Whitelist of core Moodle pagetypes that should receive the Plugin Shell
+    // treatment. Each entry maps to the lang-string suffix used below, keeping
+    // this list the single source of truth for "which core page belongs where".
+    $map = [
+        'my-index'         => 'dashboard',
+        'my-courses'       => 'mycourses',
+        'user-profile'     => 'profile',
+        'user-preferences' => 'preferences',
+    ];
+
+    $pagetype = $page->pagetype ?? '';
+    if (!isset($map[$pagetype])) {
+        return null;
+    }
+
+    $key = $map[$pagetype];
+
+    // Page-specific tag row. Keep it to one contextual pill per page — the
+    // Plugin Shell SCSS (`_plugin-shell.scss`) caps tag density at 4 and the
+    // guidance in the file header says "pair with icon where possible".
+    $tags = [];
+    switch ($key) {
+        case 'dashboard':
+            $tags[] = [
+                'modifier' => 'type',
+                'faicon'   => 'fa-home',
+                'label'    => get_string('shell_tag_overview', 'theme_lernhive'),
+            ];
+            break;
+        case 'mycourses':
+            $tags[] = [
+                'modifier' => 'type',
+                'faicon'   => 'fa-graduation-cap',
+                'label'    => get_string('shell_tag_courses', 'theme_lernhive'),
+            ];
+            break;
+        case 'profile':
+            $tags[] = [
+                'modifier' => 'type',
+                'faicon'   => 'fa-user',
+                'label'    => get_string('shell_tag_account', 'theme_lernhive'),
+            ];
+            break;
+        case 'preferences':
+            $tags[] = [
+                'modifier' => 'type',
+                'faicon'   => 'fa-cog',
+                'label'    => get_string('shell_tag_settings', 'theme_lernhive'),
+            ];
+            break;
+    }
+
+    return [
+        'name'     => get_string('shell_name_' . $key, 'theme_lernhive'),
+        'tagline'  => get_string('shell_tagline_' . $key, 'theme_lernhive'),
+        'subtitle' => get_string('shell_subtitle_' . $key, 'theme_lernhive'),
+        'hint'     => get_string('shell_hint_' . $key, 'theme_lernhive'),
+        'tags'     => $tags,
+        'hastags'  => !empty($tags),
+    ];
+}

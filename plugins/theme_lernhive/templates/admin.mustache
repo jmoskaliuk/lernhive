@@ -96,6 +96,23 @@
                 <main id="region-main-box" class="lernhive-main">
                     <span id="maincontent" class="lernhive-skip-anchor"></span>
                     <div id="region-main">
+                        {{! Plugin Shell (0.9.40): /user/preferences.php and
+                            any future admin-layout page on the whitelist get a
+                            Zone A + Zone B header so they feel like LernHive
+                            local plugins. Real Moodle admin settings pages
+                            return null from the helper and render unchanged.
+
+                            When the shell is active the core page content is
+                            wrapped in .lh-plugin-content-area so the :has()
+                            rules in _layout.scss that strip outer padding get
+                            compensated by the content-area's own gutter —
+                            same trick ContentHub and drawers.mustache use. }}
+                        {{#haspluginshell}}
+                            {{#pluginshell}}
+                                {{> theme_lernhive/plugin_shell_header }}
+                            {{/pluginshell}}
+                            <div class="lh-plugin-content-area">
+                        {{/haspluginshell}}
                         {{#hasregionmainsettingsmenu}}
                             <div class="lernhive-settings-menu">
                                 {{{ regionmainsettingsmenu }}}
@@ -105,6 +122,9 @@
                         {{{ output.main_content }}}
                         {{{ output.activity_navigation }}}
                         {{{ output.course_content_footer }}}
+                        {{#haspluginshell}}
+                            </div>
+                        {{/haspluginshell}}
                     </div>
                 </main>
             </div>
@@ -118,3 +138,16 @@
 </div>
 </body>
 </html>
+{{!
+    0.9.42: bootstrap theme_boost/loader so that Aria.tabElementFix() is
+    installed and admin secondary-nav tabs become clickable on /admin/search.php.
+    Without this require, the [role="tablist"] click handler that calls
+    Bootstrap Tab.show() is never registered, and tabs like Users/Courses/Plugins
+    don't switch panels. Boost's own drawers.mustache has this same block.
+}}
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}

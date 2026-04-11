@@ -4,11 +4,15 @@
     LernHive Lernpfad (Learning Path) — Tour overview page.
     Displays tour categories as cards with progress tracking.
 
+    0.2.2: wrapped in the shared Plugin Shell (Zone A sticky header +
+    Zone B info bar) via the `theme_lernhive/plugin_shell_header` partial.
+    The old hand-rolled tour header block (title/intro/badge) has been
+    removed in favour of the shell, so the page matches ContentHub 1:1.
+
     Context variables required for this template:
+    * shell (object) - Plugin Shell Zone A + Zone B context (see partial)
     * level (int) - The user's current LernHive level
     * levelname (string) - Display name of the level
-    * level_badge (string) - "Level X: Name"
-    * intro (string) - Intro paragraph
     * overall_label (string) - "Overall progress"
     * overall_percent (int) - 0-100
     * overall_text (string) - "X of Y tours"
@@ -21,9 +25,17 @@
 
     Example context (json):
     {
+        "shell": {
+            "name": "Onboarding", "tagline": "Learning Path",
+            "subtitle": "Step by step through LernHive.",
+            "hint": "Complete a category to unlock the next level.",
+            "hastags": true,
+            "tags": [
+                { "modifier": "level", "faicon": "fa-layer-group",
+                  "label": "Level 1: Explorer" }
+            ]
+        },
         "level": 1, "levelname": "Explorer",
-        "level_badge": "Level 1: Explorer",
-        "intro": "Step by step through Moodle.",
         "overall_label": "Overall progress", "overall_percent": 42,
         "overall_text": "5 of 12 tours",
         "has_categories": true, "categories": [],
@@ -32,15 +44,14 @@
     }
 }}
 
+{{! ── Plugin Shell: Zone A (header) + Zone B (info bar) ─────────────────── }}
+{{#shell}}
+    {{> theme_lernhive/plugin_shell_header }}
+{{/shell}}
+
+{{! ── Content area — matches ContentHub's .lh-plugin-content-area wrapper ─ }}
+<div class="lh-plugin-content-area">
 <div class="lh-tours-container">
-    {{! Header }}
-    <div class="lh-tours-header mb-4">
-        <h2 class="lh-tours-title">{{tours_heading}}</h2>
-        <p class="lh-tours-intro text-muted">{{{intro}}}</p>
-        <span class="lh-tours-level-badge badge">
-            <i class="fa fa-layer-group fa-fw"></i> {{level_badge}}
-        </span>
-    </div>
 
     {{! Overall progress bar }}
     <div class="lh-tours-overall card mb-4">
@@ -156,6 +167,7 @@
         </div>
     </div>
 </div>
+</div>{{! /.lh-plugin-content-area }}
 
 {{! Inline styles matching the mockup design }}
 <style>

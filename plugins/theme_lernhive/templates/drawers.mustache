@@ -98,9 +98,31 @@
                     <span id="maincontent" class="lernhive-skip-anchor"></span>
                     <section class="lernhive-main-section" aria-label="content">
                         <div id="region-main">
+                        {{! Plugin Shell (0.9.40): core Moodle pages like /my/,
+                            /my/courses.php and /user/profile.php get a Zone A +
+                            Zone B header injected here so they look like the
+                            LernHive local plugins. Local plugins that already
+                            render their own Plugin Shell inside main_content
+                            (ContentHub, Copy, …) are excluded by the helper
+                            and therefore never render a duplicate header.
+
+                            When the shell is active the core page content is
+                            wrapped in .lh-plugin-content-area so the :has()
+                            rules in _layout.scss that strip outer padding get
+                            compensated by the content-area's own gutter — same
+                            trick ContentHub uses. }}
+                        {{#haspluginshell}}
+                            {{#pluginshell}}
+                                {{> theme_lernhive/plugin_shell_header }}
+                            {{/pluginshell}}
+                            <div class="lh-plugin-content-area">
+                        {{/haspluginshell}}
                         {{{ output.course_content_header }}}
                         {{{ output.main_content }}}
                         {{{ output.course_content_footer }}}
+                        {{#haspluginshell}}
+                            </div>
+                        {{/haspluginshell}}
                         </div>
                     </section>
                 </main>
@@ -123,3 +145,15 @@
 </div>
 </body>
 </html>
+{{!
+    0.9.42: bootstrap theme_boost/loader so Aria fixes, tab remembering,
+    popovers, tooltips, dropdown keyboard nav and collapse interactions all
+    work across drawer-based pages. Boost's upstream drawers.mustache has
+    this same require block — we were missing it entirely.
+}}
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}
