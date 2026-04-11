@@ -1,11 +1,117 @@
+// =============================================================================
+// pre.scss — LernHive CSS Custom Properties
+// Loaded by theme_lernhive_get_pre_scss(), BEFORE Bootstrap.
+// Contains:
+//   1. --lernhive-*  — internal brand tokens (consumed by our own SCSS)
+//   2. --mds-*       — Moodle Design System overrides (Moodle 5.2+ forward-compat)
+//
+// SCOPE: .theme-lernhive matches <body class="theme-lernhive ..."> on every page,
+// so tokens cascade to all descendants without polluting :root globally.
+// =============================================================================
+
 .theme-lernhive {
-  --lernhive-white: #{$lh-bg-white};
-  --lernhive-ink: #{$lh-text};
-  --lernhive-orange: #{$lh-accent};
-  --lernhive-blue: #{$lh-primary};
-  --lernhive-blue-light: #{$lh-secondary};
-  --lernhive-cool-gray: #{$lh-bg};
-  --lernhive-line: #{$lh-border};
-  --lernhive-orange-soft: #{$lh-accent-light};
-  --lernhive-blue-soft: #{$lh-secondary-light};
+
+    // ── LernHive brand tokens ─────────────────────────────────────────────────
+    // These mirror the $lh-* SCSS variables as CSS custom properties so that
+    // JavaScript, inline styles, and non-SCSS components can consume them.
+
+    // Core palette
+    --lernhive-white:           #{$lh-bg-white};
+    --lernhive-ink:             #{$lh-text};
+    --lernhive-blue:            #{$lh-primary};
+    --lernhive-blue-dark:       #{$lh-primary-dark};
+    --lernhive-blue-light:      #{$lh-secondary};
+    --lernhive-blue-superlight: #{$lh-secondary-light};
+    --lernhive-cool-gray:       #{$lh-bg};
+    --lernhive-line:            #{$lh-border};
+
+    // Orange / accent
+    --lernhive-orange:          #{$lh-accent};
+    --lernhive-orange-dark:     #{$lh-accent-dark};
+    --lernhive-orange-soft:     #{$lh-accent-light};
+
+    // Semantic feedback
+    --lernhive-aqua:            #{$lh-success};
+    --lernhive-aqua-light:      #{$lh-success-light};
+    --lernhive-lila:            #{$lh-danger};
+    --lernhive-lila-light:      #{$lh-danger-light};
+    --lernhive-green:           #{$lh-green};
+
+    // ── Moodle Design System token overrides (--mds-*) ───────────────────────
+    //
+    // The @moodlehq/design-system package ships CSS tokens that Moodle 5.2+
+    // components consume for branding. Overriding semantic tokens here means
+    // every future Moodle component inherits eLeDia colours automatically,
+    // with zero per-component CSS patches.
+    //
+    // STATUS: Moodle 5.1 emits no --mds-* tokens in its compiled CSS — these
+    // are purely forward-looking overrides that are harmless until 5.2 ships.
+    //
+    // VERIFY ON 5.2 UPGRADE: Run this in browser console on dev.lernhive.de
+    // after upgrading to find which token names are actually live:
+    //
+    //   const found = {};
+    //   for (const s of document.styleSheets) {
+    //     try { for (const r of s.cssRules)
+    //       [...(r.cssText||'').matchAll(/--mds-([\w-]+)\s*:/g)]
+    //       .forEach(m => found['--mds-'+m[1]] = 1); } catch(e){}
+    //   }
+    //   console.log(Object.keys(found).sort().join('\n'));
+    //
+    // Then remove any --mds-* lines below that don't appear in the output.
+    // Multiple naming-variant candidates are included intentionally — the
+    // non-matching ones are silently ignored by the browser.
+
+    // ── Primary / Interactive ─────────────────────────────────────────────────
+    --mds-color-primary:                        #{$lh-primary};
+    --mds-color-primary-hover:                  #{$lh-primary-dark};
+    --mds-color-action:                         #{$lh-primary};
+    --mds-color-action-hover:                   #{$lh-primary-dark};
+    --mds-bg-interactive-primary-default:       #{$lh-primary};
+    --mds-bg-interactive-primary-hover:         #{$lh-primary-dark};
+    --mds-bg-interactive-primary-active:        #{$lh-primary-dark};
+    --mds-color-interactive-primary-default:    #ffffff;
+    --mds-border-interactive-primary-default:   #{$lh-primary};
+
+    // ── Secondary / Outline ───────────────────────────────────────────────────
+    --mds-color-secondary:                      #{$lh-secondary};
+    --mds-bg-interactive-secondary-default:     transparent;
+    --mds-border-interactive-secondary-default: #{$lh-primary};
+    --mds-color-interactive-secondary-default:  #{$lh-primary};
+
+    // ── Focus ring ────────────────────────────────────────────────────────────
+    // WCAG 2.2 § 2.4.11 — focus must be visually distinct; eLeDia orange ✓
+    --mds-color-focus:                          #{$lh-accent};
+    --mds-focus-color:                          #{$lh-accent};
+    --mds-focus-default:                        #{$lh-accent};
+    --mds-focus-outline-color:                  #{$lh-accent};
+
+    // ── Feedback: Success ─────────────────────────────────────────────────────
+    --mds-color-success:                        #{$lh-success};
+    --mds-color-success-default:                #{$lh-success};
+    --mds-bg-success:                           #{$lh-success-light};
+    --mds-bg-success-default:                   #{$lh-success-light};
+
+    // ── Feedback: Warning ─────────────────────────────────────────────────────
+    --mds-color-warning:                        #{$lh-warning};
+    --mds-color-warning-default:                #{$lh-warning};
+    --mds-bg-warning:                           #{$lh-warning-light};
+    --mds-bg-warning-default:                   #{$lh-warning-light};
+
+    // ── Feedback: Danger ──────────────────────────────────────────────────────
+    --mds-color-danger:                         #{$lh-danger};
+    --mds-color-danger-default:                 #{$lh-danger};
+    --mds-bg-danger:                            #{$lh-danger-light};
+    --mds-bg-danger-default:                    #{$lh-danger-light};
+
+    // ── Feedback: Info ────────────────────────────────────────────────────────
+    --mds-color-info:                           #{$lh-info};
+    --mds-color-info-default:                   #{$lh-info};
+    --mds-bg-info:                              #{$lh-secondary-light};
+    --mds-bg-info-default:                      #{$lh-secondary-light};
+
+    // ── Typography ────────────────────────────────────────────────────────────
+    --mds-font-family:                          #{$lh-font-family};
+    --mds-font-family-default:                  #{$lh-font-family};
+    --mds-font-sans:                            #{$lh-font-family};
 }

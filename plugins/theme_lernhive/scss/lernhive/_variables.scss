@@ -1,52 +1,98 @@
 // LernHive Theme – SCSS Variables
 // ================================
 // Central design tokens. All components reference these variables.
-// Prefix: $lh- (LernHive)
+// Prefix: $lh- (LernHive), $eledia- (raw CI palette)
 //
 // IMPORTANT: This file is loaded via prescsscallback BEFORE Boost's SCSS.
-// All variables use !default so they are set FIRST; Boost's own !default
+// All $lh-* variables use !default so they are set FIRST; Boost's own !default
 // values will then be skipped (SCSS !default = "set only if not yet defined").
 
-// --- Brand Colours (eLeDia CI) ---
-$lh-primary:         #194866 !default;   // eLeDia dark blue
-$lh-primary-dark:    #0f2d3f !default;   // Darker shade
-$lh-primary-light:   #f3f5f8 !default;   // eLeDia soft grey-blue
-$lh-accent:          #f98012 !default;   // eLeDia orange
-$lh-accent-dark:     #d96a0a !default;   // Darker orange
-$lh-accent-light:    #ffecdb !default;   // eLeDia soft orange
-$lh-secondary:       #65a1b3 !default;   // eLeDia light blue
-$lh-secondary-dark:  #4d8a9c !default;   // Darker light blue
-$lh-secondary-light: #dfedf1 !default;   // Tinted light blue
+// =============================================================================
+// eLeDia Complete CI Palette — named reference variables
+// Source: "eLeDia: Farben für Grafiken" brand document (April 2026)
+//
+// These $eledia-* variables are the single authoritative source for the full
+// eLeDia colour system. The $lh-* semantic tokens below map onto them.
+// Never change a $lh-* colour without updating its $eledia-* source here.
+// =============================================================================
 
-// --- Semantic Colours (eLeDia CI) ---
-$lh-success:         #3aadaa !default;   // eLeDia aqua
-$lh-success-light:   #d4f0ef !default;
-$lh-warning:         #f98012 !default;   // Same as accent (orange)
-$lh-warning-light:   #ffecdb !default;
-$lh-danger:          #ab1d79 !default;   // eLeDia lila
-$lh-danger-light:    #f5d5e8 !default;
-$lh-info:            #65a1b3 !default;   // Same as secondary
-$lh-green:           #669933 !default;   // eLeDia green (completed)
+// --- Hauptfarben (Main colours) -------------------------------------------
+$eledia-blue:           #194866;   // dark blue
+$eledia-blue-light:     #65a1b3;   // light blue
+$eledia-orange-peach:   #ffecdb;   // medium peach
+$eledia-orange:         #f98012;   // orange
+$eledia-aqua:           #3aadaa;   // aqua
+$eledia-aqua-dark:      #267372;   // dark aqua
+$eledia-green-light:    #d1e0c1;   // light green
+$eledia-green:          #669933;   // green
+$eledia-lila-light:     #dda4c9;   // light lila
+$eledia-lila:           #ab1d79;   // lila
+$eledia-gray-mid:       #8a8a8e;   // middle gray
+$eledia-gray-dark:      #707070;   // dark gray
+
+// --- Hilffarben (Helper colours) ------------------------------------------
+$eledia-blue-superlight: #a9cbd5;  // super light blue
+$eledia-blue-dark:      #0f2b3d;   // very dark blue
+$eledia-orange-mid:     #fcbc82;   // middle orange
+$eledia-orange-dark:    #c25b00;   // dark orange
+$eledia-aqua-light:     #d1eceb;   // light aqua
+$eledia-aqua-vdark:     #1b5050;   // very dark aqua
+$eledia-green-mid:      #a5c387;   // middle green
+$eledia-green-dark:     #334d1a;   // dark green
+$eledia-lila-vlight:    #f5e4ef;   // very light lila
+$eledia-lila-dark:      #540e3b;   // very dark lila (also used for text-on-lila)
+$eledia-gray-light:     #d9d9d9;   // light gray
+
+// --- Neutral ---------------------------------------------------------------
+$eledia-white:          #ffffff;
+$eledia-offwhite:       #f3f5f8;   // very light gray (background)
+$eledia-warm-gray:      #7c6576;   // warm gray
+$eledia-black:          #000000;
+
+// =============================================================================
+// LernHive Semantic Tokens — mapped onto the eLeDia palette above
+// =============================================================================
+
+// --- Brand Colours ---
+$lh-primary:         $eledia-blue       !default;   // #194866 — eLeDia dark blue
+$lh-primary-dark:    $eledia-blue-dark  !default;   // #0f2b3d — very dark blue
+$lh-primary-light:   $eledia-offwhite   !default;   // #f3f5f8 — eLeDia soft grey-blue
+$lh-accent:          $eledia-orange     !default;   // #f98012 — eLeDia orange
+$lh-accent-dark:     $eledia-orange-dark !default;  // #c25b00 — dark orange
+$lh-accent-light:    $eledia-orange-peach !default; // #ffecdb — soft orange
+$lh-secondary:       $eledia-blue-light !default;   // #65a1b3 — eLeDia light blue
+$lh-secondary-dark:  #4d8a9c            !default;   // Interpolated darker shade
+$lh-secondary-light: $eledia-blue-superlight !default; // #a9cbd5 — super light blue
+
+// --- Semantic Colours ---
+$lh-success:         $eledia-aqua       !default;   // #3aadaa — eLeDia aqua
+$lh-success-light:   $eledia-aqua-light !default;   // #d1eceb — light aqua
+$lh-warning:         $eledia-orange     !default;   // #f98012 — same as accent
+$lh-warning-light:   $eledia-orange-peach !default; // #ffecdb — soft orange
+$lh-danger:          $eledia-lila       !default;   // #ab1d79 — eLeDia lila
+$lh-danger-light:    $eledia-lila-vlight !default;  // #f5e4ef — very light lila
+$lh-info:            $eledia-blue-light !default;   // #65a1b3 — same as secondary
+$lh-green:           $eledia-green      !default;   // #669933 — eLeDia green
 
 // --- Background Colours ---
-$lh-bg:              #f3f5f8 !default;   // eLeDia soft
-$lh-bg-white:        #ffffff !default;
-$lh-bg-dark:         #194866 !default;   // eLeDia dark blue
+$lh-bg:              $eledia-offwhite   !default;   // #f3f5f8
+$lh-bg-white:        $eledia-white      !default;   // #ffffff
+$lh-bg-dark:         $eledia-blue       !default;   // #194866
 
 // --- Text Colours ---
-$lh-text:            #353535 !default;   // eLeDia neutral
-$lh-text-secondary:  #5f6368 !default;
-$lh-text-light:      #80868b !default;
+$lh-text:            #353535            !default;   // eLeDia neutral dark text
+$lh-text-secondary:  #5f6368            !default;
+$lh-text-light:      #80868b            !default;
 
 // --- Border Colours ---
-$lh-border:          #e9e9e9 !default;   // eLeDia soft grey
-$lh-border-light:    #f0f0f0 !default;
+$lh-border:          #e9e9e9            !default;   // soft grey
+$lh-border-light:    #f0f0f0            !default;
 
 // --- Border Radius ---
-$lh-radius:          12px !default;
-$lh-radius-sm:       8px !default;
-$lh-radius-lg:       16px !default;
-$lh-radius-pill:     9999px !default;
+$lh-radius:          12px               !default;
+$lh-radius-sm:       8px                !default;
+$lh-radius-lg:       16px               !default;
+$lh-radius-pill:     9999px             !default;
 
 // --- Shadows ---
 $lh-shadow:          0 1px 3px rgba(60, 64, 67, 0.12) !default;
@@ -55,116 +101,99 @@ $lh-shadow-hover:    0 4px 16px rgba(60, 64, 67, 0.18) !default;
 
 // --- Typography ---
 $lh-font-family:     'Open Sans', 'Helvetica Neue', Arial, sans-serif !default;
-$lh-font-size-xs:    0.75rem !default;
-$lh-font-size-sm:    0.875rem !default;
-$lh-font-size-base:  1rem !default;
-$lh-font-size-lg:    1.125rem !default;
-$lh-font-size-xl:    1.25rem !default;
-$lh-font-size-2xl:   1.5rem !default;
-$lh-font-size-3xl:   1.875rem !default;
+$lh-font-size-xs:    0.75rem   !default;
+$lh-font-size-sm:    0.875rem  !default;
+$lh-font-size-base:  1rem      !default;
+$lh-font-size-lg:    1.125rem  !default;
+$lh-font-size-xl:    1.25rem   !default;
+$lh-font-size-2xl:   1.5rem    !default;
+$lh-font-size-3xl:   1.875rem  !default;
 
 // --- Spacing ---
-$lh-spacing-xs:      4px !default;
-$lh-spacing-sm:      8px !default;
-$lh-spacing-md:      16px !default;
-$lh-spacing-lg:      24px !default;
-$lh-spacing-xl:      32px !default;
-$lh-spacing-2xl:     48px !default;
+$lh-spacing-xs:      4px       !default;
+$lh-spacing-sm:      8px       !default;
+$lh-spacing-md:      16px      !default;
+$lh-spacing-lg:      24px      !default;
+$lh-spacing-xl:      32px      !default;
+$lh-spacing-2xl:     48px      !default;
 
 // --- Transitions ---
 $lh-transition:      all 0.2s ease !default;
 
 // --- Layout ---
-$lh-sidebar-width:   260px !default;
-$lh-header-height:   60px !default;
+$lh-sidebar-width:   260px     !default;
+$lh-header-height:   60px      !default;
 
-// --- Level Colours (eLeDia palette) ---
-$lh-level-1-color:   $lh-primary !default;     // Explorer: dark blue
-$lh-level-2-color:   $lh-secondary !default;   // Creator: light blue
-$lh-level-3-color:   $lh-accent !default;      // Pro: orange
-$lh-level-4-color:   $lh-green !default;       // Expert: green
-$lh-level-5-color:   #ab1d79 !default;         // Master: lila
+// --- Level Colours (gamification) ---
+$lh-level-1-color:   $lh-primary      !default;  // Explorer: dark blue
+$lh-level-2-color:   $lh-secondary    !default;  // Creator:  light blue
+$lh-level-3-color:   $lh-accent       !default;  // Pro:      orange
+$lh-level-4-color:   $lh-green        !default;  // Expert:   green
+$lh-level-5-color:   $eledia-lila     !default;  // Master:   lila
 
-// ------------------------------------------------------------------
+// ===========================================================================
 // Bootstrap / Boost variable overrides
-// These variables MUST NOT use !default — Boost's pre-SCSS may run
-// before ours, and !default would skip already-defined variables.
-// Without !default, our values FORCE-override Bootstrap/Boost defaults.
-// ------------------------------------------------------------------
+// Must NOT use !default — we need to force-override Bootstrap/Boost defaults.
+// ===========================================================================
 
-// Core Bootstrap colours
-$primary:            $lh-primary;
-$secondary:          $lh-secondary;
-$success:            $lh-success;
-$warning:            $lh-accent;
-$danger:             $lh-danger;
-$info:               $lh-info;
-$light:              $lh-bg;
-$dark:               $lh-text;
+$primary:                $lh-primary;
+$secondary:              $lh-secondary;
+$success:                $lh-success;
+$warning:                $lh-accent;
+$danger:                 $lh-danger;
+$info:                   $lh-info;
+$light:                  $lh-bg;
+$dark:                   $lh-text;
 
-// Body — white background on all pages (no grey boxing).
-$body-bg:            $lh-bg-white;
-$body-color:         $lh-text;
+$body-bg:                $lh-bg-white;
+$body-color:             $lh-text;
 
-// Typography
 $font-family-sans-serif: $lh-font-family;
-$font-size-base:     1rem;
-$headings-font-weight: 600;
-$headings-color:     $lh-text;
+$font-size-base:         1rem;
+$headings-font-weight:   600;
+$headings-color:         $lh-text;
 
-// Links
-$link-color:         $lh-primary;
-$link-hover-color:   $lh-primary-dark;
-$link-decoration:    none;
+$link-color:             $lh-primary;
+$link-hover-color:       $lh-primary-dark;
+$link-decoration:        none;
 
-// Border radius — affects ALL Bootstrap components
-$border-radius:      $lh-radius-sm;
-$border-radius-sm:   6px;
-$border-radius-lg:   $lh-radius;
+$border-radius:          $lh-radius-sm;
+$border-radius-sm:       6px;
+$border-radius-lg:       $lh-radius;
 
-// Cards
-$card-border-radius: $lh-radius;
-$card-border-color:  $lh-border-light;
-$card-cap-bg:        $lh-bg-white;
+$card-border-radius:     $lh-radius;
+$card-border-color:      $lh-border-light;
+$card-cap-bg:            $lh-bg-white;
 
-// Buttons
-$btn-border-radius:  $lh-radius-sm;
-$btn-border-radius-sm: 6px;
-$btn-border-radius-lg: $lh-radius;
-$btn-font-weight:    500;
+$btn-border-radius:      $lh-radius-sm;
+$btn-border-radius-sm:   6px;
+$btn-border-radius-lg:   $lh-radius;
+$btn-font-weight:        500;
 
-// Inputs
-$input-border-radius: $lh-radius-sm;
-$input-border-color: $lh-border;
+$input-border-radius:    $lh-radius-sm;
+$input-border-color:     $lh-border;
 $input-focus-border-color: $lh-primary;
 $input-focus-box-shadow: 0 0 0 3px rgba(25, 72, 102, 0.15);
 
-// Dropdowns
 $dropdown-border-radius: $lh-radius;
-$dropdown-border-color: $lh-border-light;
-$dropdown-box-shadow: $lh-shadow-md;
+$dropdown-border-color:  $lh-border-light;
+$dropdown-box-shadow:    $lh-shadow-md;
 
-// Navbar
-$navbar-light-color:  $lh-text-secondary;
+$navbar-light-color:     $lh-text-secondary;
 $navbar-light-active-color: $lh-primary;
 $navbar-light-hover-color: $lh-primary;
-$navbar-padding-y:   0;
+$navbar-padding-y:       0;
 
-// Breadcrumbs
-$breadcrumb-bg:      transparent;
-$breadcrumb-padding-x: 0;
+$breadcrumb-bg:          transparent;
+$breadcrumb-padding-x:   0;
 
-// Alerts
-$alert-border-radius: $lh-radius-sm;
+$alert-border-radius:    $lh-radius-sm;
 
-// Progress bars
 $progress-border-radius: $lh-radius-pill;
-$progress-height:    8px;
-$progress-bg:        $lh-border-light;
+$progress-height:        8px;
+$progress-bg:            $lh-border-light;
 
-// Modals
 $modal-content-border-radius: $lh-radius-lg;
 $modal-content-border-color: $lh-border-light;
 
-// Tables
-$table-hover-bg:     $lh-primary-light;
+$table-hover-bg:         $lh-primary-light;
