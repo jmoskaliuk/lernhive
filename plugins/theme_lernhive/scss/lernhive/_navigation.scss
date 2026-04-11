@@ -539,6 +539,21 @@
     font-size: $lh-font-size-sm;
     margin: 0;
 
+    // Hide Moodle's core skeleton loader (core_courseformat/local/
+    // courseindex/placeholders.mustache) — a ul.placeholders with four
+    // .bg-pulse-grey rows. It's designed for Boost's light drawer and
+    // flashes on the dark sidebar for a few hundred milliseconds before
+    // the AMD module (core_courseformat/local/courseindex/drawer) swaps
+    // #courseindex-content for the real section list. The flash is more
+    // jarring than showing an empty beat; if the AMD module never loads,
+    // an empty region under the "Course navigation" heading fails more
+    // gracefully than mangled grey rectangles.
+    #course-index-placeholder,
+    [data-region="loading-placeholder-content"],
+    .placeholders {
+        display: none !important;
+    }
+
     // Nuke ALL structural chrome on the nested core elements.
     .courseindex,
     .courseindex-item,
