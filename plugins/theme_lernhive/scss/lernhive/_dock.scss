@@ -15,23 +15,25 @@
 // =============================================================================
 
 // --- Dock container -----------------------------------------------------------
-// Transparent on desktop — the circular icons float directly over the sidebar.
-// On mobile a solid strip anchors them at the screen bottom.
+// Horizontal row of circular icons, centered in the sidebar column.
+// Desktop: row anchored at bottom of sidebar, transparent background.
+// Mobile:  same row, solid background strip at screen bottom.
 
 .lh-dock {
     position: fixed;
-    left: $lh-spacing-md;
-    bottom: 5.5rem;
-    width: calc(#{$lh-sidebar-width} - (#{$lh-spacing-md} * 2));
+    left: 0;
+    bottom: 1.25rem;
+    width: $lh-sidebar-width;
     z-index: 200;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;          // horizontal — icons side by side
+    justify-content: center;
     align-items: center;
     gap: $lh-spacing-sm;          // 8px between circles
-    padding: $lh-spacing-xs 0;
+    padding: $lh-spacing-xs;
 
-    background: none;             // no pill / no container background
+    background: none;             // no container background — circles float
     border: none;
     box-shadow: none;
 
@@ -41,9 +43,6 @@
         bottom: 0;
         width: 100%;
         border-radius: 0;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
         gap: $lh-spacing-md;
         padding: 0.625rem $lh-spacing-md;
         background: rgba($lh-primary-dark, 0.96);
@@ -91,7 +90,7 @@
     // Hover: subtle zoom + stronger shadow → feels "lifted"
     &:hover,
     &:focus-visible {
-        transform: scale(1.10) translateX(3px);  // zoom + nudge right toward content
+        transform: scale(1.10) translateY(-2px);  // zoom + float up slightly
         background: lighten($lh-primary-dark, 6%);
         border-color: rgba(255, 255, 255, 0.28);
         box-shadow:
@@ -99,12 +98,6 @@
             0 8px 28px  rgba(0, 0, 0, 0.22);
         color: #fff;
         text-decoration: none;
-
-        .lh-dock__tooltip {
-            opacity: 1;
-            transform: translateY(-50%) translateX(0);
-            pointer-events: none;
-        }
     }
 
     &:focus-visible {
@@ -130,14 +123,14 @@
         }
     }
 
-    // Mobile: larger touch circles, no translateX nudge
+    // Mobile: slightly larger touch circles
     @media (max-width: #{$lh-bp-desktop - 1px}) {
         width: 48px;
         height: 48px;
 
         &:hover,
         &:focus-visible {
-            transform: scale(1.08) translateX(0);  // no horizontal nudge on mobile
+            transform: scale(1.08) translateY(-2px);
         }
     }
 }
@@ -165,14 +158,14 @@
 }
 
 // --- Tooltip ----------------------------------------------------------------
-// Appears to the RIGHT of the circle on desktop, ABOVE on mobile.
-// Slides in from a small leftward offset on hover.
+// Pops ABOVE the icon (horizontal dock, both desktop and mobile).
+// Slides up from a small downward offset on hover.
 
 .lh-dock__tooltip {
     position: absolute;
-    left: calc(100% + 0.75rem);     // right of the 44px circle
-    top: 50%;
-    transform: translateY(-50%) translateX(-8px);   // start slightly left, slides right
+    left: 50%;
+    bottom: calc(100% + 0.625rem);  // above the circle
+    transform: translateX(-50%) translateY(6px);    // starts slightly low
 
     white-space: nowrap;
     background: rgba($lh-primary-dark, 0.95);
@@ -192,32 +185,23 @@
 
     // Progressive disclosure
     .lh-dock--experienced & { display: none; }
-
-    @media (max-width: #{$lh-bp-desktop - 1px}) {
-        left: 50%;
-        top: auto;
-        bottom: calc(100% + 0.5rem);
-        transform: translateX(-50%) translateY(4px);
-
-        .lh-dock__item:hover & {
-            transform: translateX(-50%) translateY(0);
-        }
-    }
 }
 
-// --- Spacer between item groups (replaces line divider) ---------------------
-// A small invisible gap between semantic groups of icons.
-// More appropriate than a horizontal line between floating circles.
+// Hover trigger is on the parent item
+.lh-dock__item:hover .lh-dock__tooltip,
+.lh-dock__item:focus-visible .lh-dock__tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: none;
+}
+
+// --- Spacer between item groups ---------------------------------------------
+// Invisible gap between semantic groups of icons in the horizontal row.
 
 .lh-dock__divider {
-    height: 6px;
-    width: 100%;
+    width: 6px;
+    height: 100%;
     background: none;
     flex-shrink: 0;
     pointer-events: none;
-
-    @media (max-width: #{$lh-bp-desktop - 1px}) {
-        width: 12px;
-        height: 100%;
-    }
 }

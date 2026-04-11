@@ -1,27 +1,34 @@
 {{!
-    Admin layout — uses standard Moodle navigation (no LernHive app-shell).
-    Admin pages must remain fully navigable; the LernHive sidebar/launcher
-    is for Learners and Trainers only.
+    Admin layout — LernHive app-shell (sidebar) + Moodle full_header (admin nav tree).
+
+    The sidebar provides consistent top-level navigation (Home / Dashboard /
+    MyCourses / SiteAdmin). full_header renders Moodle's secondary navigation
+    which includes the admin settings category tree on admin pages.
+
+    No block regions, no Context Dock on admin pages.
 }}
 {{> theme_boost/head }}
 <body {{{ bodyattributes }}}>
 {{> core/local/toast/wrapper}}
-<div id="page-wrapper" class="theme-lernhive theme-lernhive-admin-shell">
+<div id="page-wrapper" class="theme-lernhive-shell">
     {{{ output.standard_top_of_body_html }}}
-    <a class="sr-only sr-only-focusable" href="#maincontent">{{#str}} skiptomain, core {{/str}}</a>
+    <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
 
-    {{! Standard Moodle header — includes primary navigation and user menu }}
-    {{{ output.full_header }}}
+    <div class="lernhive-app-shell">
+        {{! LernHive sidebar — same as drawers.mustache }}
+        {{> theme_lernhive/sidebar }}
 
-    <div id="page" class="container-fluid de-initialized lernhive-admin-page">
-        <div id="page-content">
-            <div id="region-main-box">
-                <div class="row">
-                    <div id="region-main" class="col-12" aria-label="{{#str}} content {{/str}}">
-                        {{#hasregionmainsettingsmenu}}
-                            <div class="region_main_settings_menu_proxy"></div>
-                        {{/hasregionmainsettingsmenu}}
-                        <div id="maincontent"></div>
+        <div id="page" class="lernhive-page lernhive-admin-page">
+            {{! full_header outputs the primary nav bar + Moodle secondary nav
+                (admin settings category tree) for admin pagelayout pages. }}
+            <div class="lernhive-admin-header">
+                {{{ output.full_header }}}
+            </div>
+
+            <div id="page-content" class="lernhive-page-content">
+                <main id="region-main-box" class="lernhive-main">
+                    <span id="maincontent" class="lernhive-skip-anchor"></span>
+                    <div id="region-main" class="lernhive-main-section lernhive-admin-content">
                         {{#hasregionmainsettingsmenu}}
                             <div class="lernhive-settings-menu">
                                 {{{ regionmainsettingsmenu }}}
@@ -32,8 +39,10 @@
                         {{{ output.activity_navigation }}}
                         {{{ output.course_content_footer }}}
                     </div>
-                </div>
+                </main>
             </div>
+
+            {{> theme_lernhive/footer }}
         </div>
     </div>
 
