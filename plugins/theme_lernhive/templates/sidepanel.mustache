@@ -1,0 +1,279 @@
+{{!
+    Header Dock + Side Panel — LernHive unified overlay system (0.9.36).
+
+    Replaces Moodle's native navbar_plugin_output popovers (messages + bell)
+    with a dock of always-visible icon buttons. Each button toggles a right
+    side panel that shares a common Header / Filter / Body / Footer skeleton.
+
+    Panels defined in layout/drawers.php → sidepanelitems:
+      - messages        : icon + badge count
+      - notifications   : icon + badge count
+      - aiassistant     : icon (no badge)
+      - help            : icon (no badge)
+
+    Only ONE panel can be open at a time. Dock icons stay visible when a
+    panel is open; the button for the active panel gets aria-expanded="true".
+
+    The panel body for messages/notifications in v1 is a simple empty-state
+    stub + "open full view" CTA that links to the existing Moodle pages.
+    Real popover content will be wired in a follow-up release.
+
+    Context required:
+      sidepanelitems[] {
+          key           : string (messages | notifications | aiassistant | help)
+          label         : string (accessible label)
+          size          : string ("" | "m" | "l")
+          badge         : string|false
+          badgedot      : bool
+          title         : string (panel header title)
+          subtitle      : string (panel header sub-label)
+          iconsvg       : raw SVG markup
+          emptytext     : string
+          primaryurl    : string (CTA URL)
+          primarylabel  : string
+          secondaryurl  : string (optional)
+          secondarylabel: string
+          helplinks[]   : optional list for help panel
+      }
+}}
+<div class="lh-hdock" role="toolbar" aria-label="{{#str}} dock, theme_lernhive {{/str}}">
+    {{#sidepanelitems}}
+    <button type="button"
+            class="lh-hdock__btn"
+            id="lh-hdock-btn-{{ key }}"
+            data-lh-sidepanel-trigger="{{ key }}"
+            aria-expanded="false"
+            aria-controls="lh-sidepanel"
+            aria-label="{{ label }}"
+            title="{{ label }}">
+        {{{ iconsvg }}}
+        {{#badge}}
+            <span class="lh-hdock__badge{{#badgedot}} lh-hdock__badge--dot{{/badgedot}}" aria-hidden="true">{{^badgedot}}{{ badge }}{{/badgedot}}</span>
+        {{/badge}}
+    </button>
+    {{/sidepanelitems}}
+</div>
+
+{{! Single backdrop and single panel container for all triggers.
+    JS swaps the inner DOM based on which dock button was clicked. }}
+<div class="lh-sidepanel-backdrop" id="lh-sidepanel-backdrop" aria-hidden="true"></div>
+
+<aside class="lh-sidepanel"
+       id="lh-sidepanel"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="lh-sidepanel-title"
+       aria-hidden="true"
+       tabindex="-1">
+    {{! Populated dynamically by the IIFE below from data-sources in the script tag. }}
+</aside>
+
+{{! Panel content payloads — hidden templates. JS reads the innerHTML of the
+    matching block and injects it into #lh-sidepanel when the trigger fires. }}
+<div id="lh-sidepanel-payloads" hidden>
+    {{#sidepanelitems}}
+    <template id="lh-sidepanel-payload-{{ key }}" data-size="{{ size }}">
+        <div class="lh-sidepanel__header">
+            <div class="lh-sidepanel__icon" aria-hidden="true">{{{ iconsvg }}}</div>
+            <h2 class="lh-sidepanel__title" id="lh-sidepanel-title-for-{{ key }}">
+                {{ title }}
+                {{#subtitle}}<small>{{ subtitle }}</small>{{/subtitle}}
+            </h2>
+            <button type="button" class="lh-sidepanel__action" data-lh-sidepanel-close aria-label="{{#str}} close, theme_lernhive {{/str}}">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="lh-sidepanel__body">
+            {{#hashelplinks}}
+                <div class="lh-sidepanel__section-title">{{#str}} help_onthispage, theme_lernhive {{/str}}</div>
+                <div class="lh-sidepanel__linklist">
+                    {{#helplinks}}
+                    <a href="{{{ url }}}">
+                        <span>
+                            <span class="lh-sidepanel__linklist-title">{{ title }}</span>
+                            {{#desc}}<span class="lh-sidepanel__linklist-desc">{{ desc }}</span>{{/desc}}
+                        </span>
+                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    {{/helplinks}}
+                </div>
+            {{/hashelplinks}}
+            {{^hashelplinks}}
+                <div class="lh-sidepanel__empty">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p>{{ emptytext }}</p>
+                </div>
+            {{/hashelplinks}}
+        </div>
+        {{#primaryurl}}
+        <div class="lh-sidepanel__footer">
+            {{#secondaryurl}}
+            <a href="{{{ secondaryurl }}}" class="lh-sidepanel__footer-btn">{{ secondarylabel }}</a>
+            {{/secondaryurl}}
+            <a href="{{{ primaryurl }}}" class="lh-sidepanel__footer-btn lh-sidepanel__footer-btn--primary">{{ primarylabel }}</a>
+        </div>
+        {{/primaryurl}}
+    </template>
+    {{/sidepanelitems}}
+</div>
+
+<script>
+// LernHive Side Panel — vanilla IIFE (no AMD dependency).
+// Responsibilities: open/close panel, swap payload, focus trap, Esc to close,
+// backdrop click to close, return focus to the trigger button on close.
+(function () {
+    'use strict';
+
+    var dock = document.querySelector('.lh-hdock');
+    var panel = document.getElementById('lh-sidepanel');
+    var backdrop = document.getElementById('lh-sidepanel-backdrop');
+    var payloads = document.getElementById('lh-sidepanel-payloads');
+
+    if (!dock || !panel || !backdrop || !payloads) { return; }
+
+    var currentKey = null;
+    var previousFocus = null;
+
+    function getTriggerButton(key) {
+        return document.getElementById('lh-hdock-btn-' + key);
+    }
+
+    function getFocusables() {
+        return panel.querySelectorAll(
+            'a[href], button:not([disabled]), textarea:not([disabled]), ' +
+            'input:not([disabled]):not([type="hidden"]), select:not([disabled]), ' +
+            '[tabindex]:not([tabindex="-1"])'
+        );
+    }
+
+    function openPanel(key) {
+        var template = document.getElementById('lh-sidepanel-payload-' + key);
+        if (!template) { return; }
+
+        // If clicking the currently active dock button, toggle closed.
+        if (currentKey === key) {
+            closePanel();
+            return;
+        }
+
+        // If another panel is open, silently swap: reset its trigger state first.
+        if (currentKey) {
+            var oldBtn = getTriggerButton(currentKey);
+            if (oldBtn) { oldBtn.setAttribute('aria-expanded', 'false'); }
+        }
+
+        // Apply width variant from template data-size.
+        var size = template.getAttribute('data-size') || '';
+        panel.className = 'lh-sidepanel' + (size ? ' lh-sidepanel--size-' + size : '');
+
+        // Inject the template content (clone, not move).
+        panel.innerHTML = '';
+        panel.appendChild(template.content.cloneNode(true));
+
+        // Sync aria-labelledby to the cloned title's id.
+        panel.setAttribute('aria-labelledby', 'lh-sidepanel-title-for-' + key);
+        panel.setAttribute('aria-hidden', 'false');
+
+        // Wire close button.
+        var closeBtn = panel.querySelector('[data-lh-sidepanel-close]');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closePanel);
+        }
+
+        // Visually open.
+        panel.classList.add('lh-sidepanel--open');
+        backdrop.classList.add('lh-sidepanel-backdrop--open');
+        backdrop.setAttribute('aria-hidden', 'false');
+
+        // Update dock button state.
+        var btn = getTriggerButton(key);
+        if (btn) { btn.setAttribute('aria-expanded', 'true'); }
+
+        // Remember focus so we can restore it on close.
+        if (!previousFocus) { previousFocus = document.activeElement; }
+
+        currentKey = key;
+
+        // Focus the first focusable inside the panel (fall back to the panel itself).
+        requestAnimationFrame(function () {
+            var focusables = getFocusables();
+            if (focusables.length > 0) {
+                focusables[0].focus();
+            } else {
+                panel.focus();
+            }
+        });
+    }
+
+    function closePanel() {
+        if (!currentKey) { return; }
+
+        panel.classList.remove('lh-sidepanel--open');
+        backdrop.classList.remove('lh-sidepanel-backdrop--open');
+        panel.setAttribute('aria-hidden', 'true');
+        backdrop.setAttribute('aria-hidden', 'true');
+
+        var btn = getTriggerButton(currentKey);
+        if (btn) { btn.setAttribute('aria-expanded', 'false'); }
+
+        var key = currentKey;
+        currentKey = null;
+
+        // Return focus to the trigger that opened the panel.
+        if (previousFocus && typeof previousFocus.focus === 'function') {
+            previousFocus.focus();
+        } else if (btn) {
+            btn.focus();
+        }
+        previousFocus = null;
+
+        // Clear panel DOM after the transition so stale content isn't announced.
+        // Using setTimeout — prefers-reduced-motion users skip the animation.
+        setTimeout(function () {
+            if (currentKey === null) { panel.innerHTML = ''; }
+        }, 280);
+    }
+
+    // Dock button clicks → open / toggle panel.
+    dock.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-lh-sidepanel-trigger]');
+        if (!btn) { return; }
+        e.preventDefault();
+        openPanel(btn.getAttribute('data-lh-sidepanel-trigger'));
+    });
+
+    // Backdrop click → close.
+    backdrop.addEventListener('click', closePanel);
+
+    // Esc → close.
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape' || !currentKey) { return; }
+        closePanel();
+    });
+
+    // Simple focus trap inside the panel while it's open.
+    panel.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab' || !currentKey) { return; }
+        var focusables = getFocusables();
+        if (focusables.length === 0) { return; }
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    });
+}());
+</script>

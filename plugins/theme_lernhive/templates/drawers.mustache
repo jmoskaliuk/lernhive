@@ -23,8 +23,12 @@
                         {{{ output.full_header }}}
                     </div>
                     <div class="lernhive-page-header__actions">
-                        {{! Notifications, messages etc. from core plugins }}
-                        {{{ output.navbar_plugin_output }}}
+                        {{! Header Dock — unified side-panel system (0.9.36).
+                            Replaces core navbar_plugin_output with one shared panel
+                            for messages, notifications, AI assistant and help. }}
+                        {{#hassidepanel}}
+                            {{> theme_lernhive/sidepanel }}
+                        {{/hassidepanel}}
 
                         {{! Language selector — only visible when Moodle has >1 language }}
                         {{#haslangmenu}}

@@ -115,3 +115,32 @@ $string['actionopenlibrary'] = 'Import from library';
 
 $string['follow'] = 'Follow';
 $string['bookmark'] = 'Bookmark';
+
+// --- Header Dock + Side Panel (0.9.36) --------------------------------------
+$string['dock'] = 'Quick tools';
+$string['close'] = 'Close';
+
+$string['messages'] = 'Messages';
+$string['messages_sub'] = 'Chats and conversations';
+$string['messages_empty'] = 'Your conversations will appear here. Unread counts and previews are coming soon — for now open the full messages view.';
+$string['messages_openfull'] = 'Open messages';
+
+$string['notifications'] = 'Notifications';
+$string['notifications_sub'] = 'Alerts and activity updates';
+$string['notifications_empty'] = 'Your notifications will appear here. Grouped by day, with mark-all-read — coming in the next release. For now open the full view.';
+$string['notifications_openfull'] = 'Open notifications';
+$string['notifications_prefs'] = 'Preferences';
+
+$string['aiassistant'] = 'AI Assistant';
+$string['aiassistant_sub'] = 'Ask a question about your learning';
+$string['aiassistant_empty'] = 'The LernHive AI assistant is coming soon. It will help you with explanations, practice questions and study suggestions — tailored to where you are in your courses.';
+
+$string['help'] = 'Help';
+$string['help_sub'] = 'Guides and links for this page';
+$string['help_onthispage'] = 'For this page';
+$string['help_startguide'] = 'Getting started with LernHive';
+$string['help_startguide_desc'] = 'Short intro · 2 min';
+$string['help_dashboard'] = 'Your dashboard';
+$string['help_dashboard_desc'] = 'See your learning path';
+$string['help_preferences'] = 'User preferences';
+$string['help_preferences_desc'] = 'Language, notifications, profile';

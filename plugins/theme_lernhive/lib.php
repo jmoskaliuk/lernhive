@@ -89,6 +89,7 @@ function theme_lernhive_get_extra_scss($theme) {
         '_dock.scss',        // 0.9.21: Context Dock — floating action strip
         '_plugin-shell.scss', // 0.9.27: Plugin Shell — 2-zone page header for local plugins
         '_icons.scss',       // 0.9.32: Icon Taxonomy — nav / artifact / action classes
+        '_sidepanel.scss',   // 0.9.36: Header Dock + Side Panel — unified overlay system
     ];
 
     foreach ($partials as $partial) {
@@ -314,6 +315,155 @@ function theme_lernhive_get_context_dock_items(): array {
             'divider' => !empty($items), // separator when other items precede it
         ];
     }
+
+    return $items;
+}
+
+/**
+ * Build the Side Panel items for the header dock.
+ *
+ * Returns the list of dock triggers + their panel payloads. Each entry renders
+ * one icon button in the top-right dock plus a hidden <template> that is
+ * injected into the shared #lh-sidepanel container when the button is clicked.
+ *
+ * v1 scope (0.9.36): Messages + Notifications panels show a stub empty state
+ * with a CTA to the existing Moodle full pages. Real popover content
+ * (unread lists, threads, live counts) is wired in a follow-up release.
+ * AI Assistant is a "coming soon" stub. Help panel shows a curated link list.
+ *
+ * Returns an empty array when the user is not logged in — the dock is
+ * hidden entirely on the login page and for guests.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function theme_lernhive_get_sidepanel_items(): array {
+    if (!isloggedin() || isguestuser()) {
+        return [];
+    }
+
+    // --- Inline SVG markup for each dock icon (Lucide-style, stroke-only). ---
+    $iconmessage = '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">'
+        . '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
+        . '</svg>';
+    $iconbell = '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">'
+        . '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>'
+        . '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>'
+        . '</svg>';
+    $iconai = '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">'
+        . '<path d="M12 2a4 4 0 0 0-4 4c0 1 .5 2 1 3L5 12l4 4 3-3 3 3 4-4-4-3c.5-1 1-2 1-3a4 4 0 0 0-4-4z"/>'
+        . '</svg>';
+    $iconhelp = '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">'
+        . '<circle cx="12" cy="12" r="10"/>'
+        . '<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>'
+        . '<line x1="12" y1="17" x2="12.01" y2="17"/>'
+        . '</svg>';
+
+    // --- URL targets (use core Moodle paths as the "full view" fallback). ---
+    $messagesurl = (new moodle_url('/message/index.php'))->out(false);
+    $notificationsurl = (new moodle_url('/message/output/popup/notifications.php'))->out(false);
+    $preferencesurl = (new moodle_url('/user/preferences.php'))->out(false);
+    $docsbase = rtrim(get_docs_url(''), '/');
+
+    // --- Panel definitions. -------------------------------------------------
+    $items = [];
+
+    // 1. Messages.
+    $items[] = [
+        'key'           => 'messages',
+        'label'         => get_string('messages', 'theme_lernhive'),
+        'size'          => 'm',
+        'badge'         => false, // v1: no live count (wired in next release).
+        'badgedot'      => false,
+        'iconsvg'       => $iconmessage,
+        'title'         => get_string('messages', 'theme_lernhive'),
+        'subtitle'      => get_string('messages_sub', 'theme_lernhive'),
+        'emptytext'     => get_string('messages_empty', 'theme_lernhive'),
+        'primaryurl'    => $messagesurl,
+        'primarylabel'  => get_string('messages_openfull', 'theme_lernhive'),
+        'secondaryurl'  => '',
+        'secondarylabel' => '',
+        'helplinks'     => [],
+    ];
+
+    // 2. Notifications.
+    $items[] = [
+        'key'           => 'notifications',
+        'label'         => get_string('notifications', 'theme_lernhive'),
+        'size'          => '',
+        'badge'         => false,
+        'badgedot'      => false,
+        'iconsvg'       => $iconbell,
+        'title'         => get_string('notifications', 'theme_lernhive'),
+        'subtitle'      => get_string('notifications_sub', 'theme_lernhive'),
+        'emptytext'     => get_string('notifications_empty', 'theme_lernhive'),
+        'primaryurl'    => $notificationsurl,
+        'primarylabel'  => get_string('notifications_openfull', 'theme_lernhive'),
+        'secondaryurl'  => $preferencesurl,
+        'secondarylabel' => get_string('notifications_prefs', 'theme_lernhive'),
+        'helplinks'     => [],
+    ];
+
+    // 3. AI Assistant (stub in v1 — infrastructure for future KI integration).
+    $items[] = [
+        'key'           => 'aiassistant',
+        'label'         => get_string('aiassistant', 'theme_lernhive'),
+        'size'          => 'm',
+        'badge'         => '·',
+        'badgedot'      => true,
+        'iconsvg'       => $iconai,
+        'title'         => get_string('aiassistant', 'theme_lernhive'),
+        'subtitle'      => get_string('aiassistant_sub', 'theme_lernhive'),
+        'emptytext'     => get_string('aiassistant_empty', 'theme_lernhive'),
+        'primaryurl'    => '',
+        'primarylabel'  => '',
+        'secondaryurl'  => '',
+        'secondarylabel' => '',
+        'helplinks'     => [],
+    ];
+
+    // 4. Help — curated link list.
+    $helplinks = [
+        [
+            'title' => get_string('help_startguide', 'theme_lernhive'),
+            'desc'  => get_string('help_startguide_desc', 'theme_lernhive'),
+            'url'   => $docsbase ?: 'https://docs.moodle.org',
+        ],
+        [
+            'title' => get_string('help_dashboard', 'theme_lernhive'),
+            'desc'  => get_string('help_dashboard_desc', 'theme_lernhive'),
+            'url'   => (new moodle_url('/my/'))->out(false),
+        ],
+        [
+            'title' => get_string('help_preferences', 'theme_lernhive'),
+            'desc'  => get_string('help_preferences_desc', 'theme_lernhive'),
+            'url'   => $preferencesurl,
+        ],
+    ];
+    $items[] = [
+        'key'           => 'help',
+        'label'         => get_string('help', 'theme_lernhive'),
+        'size'          => '',
+        'badge'         => false,
+        'badgedot'      => false,
+        'iconsvg'       => $iconhelp,
+        'title'         => get_string('help', 'theme_lernhive'),
+        'subtitle'      => get_string('help_sub', 'theme_lernhive'),
+        'emptytext'     => '',
+        'primaryurl'    => '',
+        'primarylabel'  => '',
+        'secondaryurl'  => '',
+        'secondarylabel' => '',
+        'helplinks'     => $helplinks,
+        'hashelplinks'  => !empty($helplinks),
+    ];
+
+    // Fill in `hashelplinks` for the other panels so Mustache can switch on it.
+    foreach ($items as &$item) {
+        if (!array_key_exists('hashelplinks', $item)) {
+            $item['hashelplinks'] = false;
+        }
+    }
+    unset($item);
 
     return $items;
 }

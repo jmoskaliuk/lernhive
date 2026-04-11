@@ -343,21 +343,22 @@
         border-top-color: $lh-green;
     }
 
-    // Icon — artifact style: coloured square, no radius (matches strip)
+    // Icon — artifact-icon style: rounded soft square, matches .lh-icon-artifact
+    // on plugin card grids. Dark solid icon replaced by soft tint + brand colour.
     &__icon {
         width: 40px;
         height: 40px;
-        border-radius: 0;
-        background: $lh-primary;
-        color: #fff;
+        border-radius: 9px;           // matches .lh-icon-artifact border-radius
+        background: $lh-primary-light;  // soft primary tint (was: solid $lh-primary)
+        color: $lh-primary;             // brand colour on light bg (was: #fff)
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.125rem;
         flex-shrink: 0;
 
-        .lh-cta-strip--warning & { background: $lh-accent; }
-        .lh-cta-strip--success & { background: $lh-green; }
+        .lh-cta-strip--warning & { background: $lh-accent-light; color: $lh-accent-dark; }
+        .lh-cta-strip--success & { background: #dcfce7; color: #166534; }
     }
 
     // Body: heading + intro text + optional progress

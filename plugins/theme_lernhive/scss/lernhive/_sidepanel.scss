@@ -1,0 +1,453 @@
+// =============================================================================
+// _sidepanel.scss — LernHive Header Dock + Side Panel (0.9.36)
+//
+// The Header Dock is a small strip of always-visible icon buttons in the
+// top-right of the page header: Messages, Notifications, AI Assistant, Help.
+//
+// Clicking a dock icon opens the Side Panel — a right-anchored drawer that
+// slides in, carries a shared Header/Filter/Body/Footer skeleton, and hosts
+// different content per trigger. Only ONE panel can be open at a time.
+//
+// On narrow viewports (< 720 px) the Side Panel becomes a bottom-sheet that
+// slides up from the bottom of the screen with a drag-handle hint.
+//
+// Design tokens consumed: $lh-accent (orange), $lh-primary, $lh-text,
+// $lh-bg-white, $lh-bg, $lh-border. No external colours — anything outside
+// these tokens is a bug.
+// =============================================================================
+
+
+// --- Header Dock (lives in .lernhive-page-header__actions) -------------------
+
+.lh-hdock {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    padding: 0.1875rem;
+    border-radius: 999px;
+    background: $lh-bg;
+    border: 1px solid $lh-border;
+
+    // Reset Moodle's padding that can leak into this region.
+    margin: 0 0.25rem 0 0;
+}
+
+.lh-hdock__btn {
+    position: relative;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: $lh-text;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+    svg {
+        width: 1.125rem;
+        height: 1.125rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-bg-white;
+        color: $lh-primary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    // Active state = this dock button's panel is currently open.
+    // Must remain visually distinct because dock stays visible when panel opens.
+    &[aria-expanded="true"] {
+        background: $lh-bg-white;
+        color: $lh-accent-dark;
+        box-shadow: inset 0 0 0 1px $lh-accent;
+    }
+}
+
+.lh-hdock__badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 1rem;
+    height: 1rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: $lh-danger;
+    color: #fff;
+    font-size: 0.625rem;
+    font-weight: 700;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid $lh-bg-white;
+
+    // If no count is passed, template may render a simple dot instead.
+    &.lh-hdock__badge--dot {
+        min-width: 0.5rem;
+        height: 0.5rem;
+        padding: 0;
+        border-width: 2px;
+    }
+}
+
+
+// --- Side Panel backdrop -----------------------------------------------------
+
+.lh-sidepanel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(#0e1d2c, 0.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1090; // above Moodle drawers (1080) and below any modal dialog.
+
+    &.lh-sidepanel-backdrop--open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+
+// --- Side Panel container ----------------------------------------------------
+
+.lh-sidepanel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 380px;
+    max-width: 92vw;
+    background: $lh-bg-white;
+    border-left: 1px solid $lh-border;
+    box-shadow: -0.375rem 0 1.5rem rgba(#0e1d2c, 0.12),
+                -0.125rem 0 0.375rem rgba(#0e1d2c, 0.06);
+    transform: translateX(100%);
+    transition: transform 0.25s ease, width 0.25s ease;
+    z-index: 1091;
+    display: flex;
+    flex-direction: column;
+
+    &.lh-sidepanel--open {
+        transform: translateX(0);
+    }
+
+    // Width variants — chosen by PHP per trigger.
+    &.lh-sidepanel--size-m { width: 480px; }
+    &.lh-sidepanel--size-l { width: 640px; }
+}
+
+
+// --- Side Panel: Header ------------------------------------------------------
+
+.lh-sidepanel__header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid $lh-border;
+}
+
+.lh-sidepanel__icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    background: $lh-accent-light;
+    color: $lh-accent-dark;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+        width: 1.125rem;
+        height: 1.125rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.lh-sidepanel__title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: $lh-text;
+
+    small {
+        display: block;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        color: $lh-text-secondary;
+        margin-top: 0.125rem;
+    }
+}
+
+.lh-sidepanel__action {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: $lh-text-secondary;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-bg;
+        color: $lh-text;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+}
+
+
+// --- Side Panel: Body --------------------------------------------------------
+
+.lh-sidepanel__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+
+// --- Side Panel: Empty State -------------------------------------------------
+
+.lh-sidepanel__empty {
+    text-align: center;
+    padding: 3rem 1.25rem;
+    color: $lh-text-secondary;
+
+    svg {
+        width: 2.25rem;
+        height: 2.25rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        opacity: 0.4;
+        margin-bottom: 0.625rem;
+    }
+
+    p {
+        margin: 0 0 0.875rem;
+        font-size: 0.8125rem;
+    }
+}
+
+
+// --- Side Panel: Link list (Help panel) --------------------------------------
+
+.lh-sidepanel__section-title {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03125rem;
+    color: $lh-text-secondary;
+    font-weight: 700;
+    padding: 0.875rem 1rem 0.375rem;
+    margin: 0;
+}
+
+.lh-sidepanel__linklist {
+    display: flex;
+    flex-direction: column;
+
+    a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.875rem 1rem;
+        border-bottom: 1px solid $lh-border;
+        text-decoration: none;
+        color: $lh-text;
+        font-size: 0.8125rem;
+        gap: 0.75rem;
+
+        &:hover,
+        &:focus-visible {
+            background: $lh-bg;
+            color: $lh-primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: -2px;
+        }
+
+        .lh-sidepanel__linklist-title {
+            font-weight: 600;
+        }
+
+        .lh-sidepanel__linklist-desc {
+            display: block;
+            font-size: 0.6875rem;
+            font-weight: 400;
+            color: $lh-text-secondary;
+            margin-top: 0.125rem;
+        }
+
+        svg {
+            width: 0.875rem;
+            height: 0.875rem;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            color: $lh-text-secondary;
+            flex-shrink: 0;
+        }
+    }
+}
+
+
+// --- Side Panel: Footer ------------------------------------------------------
+
+.lh-sidepanel__footer {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid $lh-border;
+    background: $lh-bg;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.lh-sidepanel__footer-btn {
+    flex: 1;
+    padding: 0.5625rem 0.875rem;
+    border-radius: 0.375rem;
+    border: 1px solid $lh-border;
+    background: $lh-bg-white;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $lh-text;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-bg;
+        color: $lh-primary;
+        text-decoration: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    &.lh-sidepanel__footer-btn--primary {
+        background: $lh-accent;
+        color: #fff;
+        border-color: $lh-accent-dark;
+
+        &:hover,
+        &:focus-visible {
+            background: $lh-accent-dark;
+            color: #fff;
+        }
+    }
+}
+
+
+// --- Mobile: bottom sheet ----------------------------------------------------
+
+@media (max-width: 720px) {
+    .lh-sidepanel {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 85vh;
+        transform: translateY(100%);
+        border-left: none;
+        border-top: 1px solid $lh-border;
+        border-radius: 1rem 1rem 0 0;
+
+        &.lh-sidepanel--open {
+            transform: translateY(0);
+        }
+
+        // Drag-handle hint at the top.
+        &::before {
+            content: "";
+            display: block;
+            width: 2.5rem;
+            height: 0.25rem;
+            background: $lh-border;
+            border-radius: 999px;
+            margin: 0.5rem auto 0;
+            flex-shrink: 0;
+        }
+
+        // Size variants collapse on mobile.
+        &.lh-sidepanel--size-m,
+        &.lh-sidepanel--size-l {
+            width: 100%;
+        }
+    }
+
+    // On very narrow screens, compress the dock slightly.
+    .lh-hdock {
+        gap: 0;
+    }
+    .lh-hdock__btn {
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+
+// --- Reduced motion ----------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+    .lh-sidepanel,
+    .lh-sidepanel-backdrop {
+        transition: none;
+    }
+}

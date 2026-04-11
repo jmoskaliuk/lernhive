@@ -160,10 +160,10 @@ $lh-bp-tablet:   768px;
 
 .lernhive-page-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;     // icons pin to top of header, not vertically centred
     justify-content: space-between;
     gap: $lh-spacing-md;
-    padding: $lh-spacing-sm $lh-spacing-lg;
+    padding: $lh-spacing-xs $lh-spacing-lg;  // 4px top (was 8px) — icons closer to viewport edge
     background: transparent;
     border: none;
     border-radius: 0;
@@ -190,6 +190,7 @@ $lh-bp-tablet:   768px;
         align-items: center;
         gap: $lh-spacing-sm;
         flex-shrink: 0;
+        padding-top: $lh-spacing-xs;  // 4px — slight visual lift so icons clear the edge
 
         // Moodle notification + message icons — neutral on white bg
         .nav-link,
@@ -298,6 +299,107 @@ $lh-bp-tablet:   768px;
                 border: 1px solid $lh-border;
                 box-shadow: $lh-shadow-hover;
                 border-radius: $lh-radius;
+            }
+        }
+    }
+
+    // --- User block (drawers.mustache, 0.9.37) --------------------------------
+    // Replaces the legacy .usermenu structure. The template renders:
+    //   .lernhive-user-block > __avatar (profile link) + __action (settings, logout)
+    // Moodle 5.x outputs initials as <span class="userinitials size-35 bg-color-X">
+    // not as img.defaultuserpic — so we target .userinitials directly.
+
+    .lernhive-user-block {
+        display: flex;
+        align-items: center;
+        gap: $lh-spacing-xs;
+
+        // Avatar link — circular button wrapping Moodle's useravatar output
+        &__avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            overflow: hidden;
+            flex-shrink: 0;
+            text-decoration: none;
+            transition: border-color 0.15s ease, background 0.15s ease;
+
+            &:hover {
+                border-color: $lh-border;
+                background: $lh-primary-light;
+            }
+
+            // Uploaded user photo (img.userpicture without .defaultuserpic)
+            img.userpicture:not(.defaultuserpic) {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+            }
+
+            // Moodle 5.x: no photo → <span class="userinitials size-35 bg-color-X">AU</span>
+            // We hide the "AU" text and show a Lucide "user" person icon via CSS mask.
+            .userinitials {
+                font-size: 0 !important;         // hide initials text
+                color: transparent !important;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: $lh-primary-light !important;  // override Moodle's bg-color-X
+                flex-shrink: 0;
+                position: relative;
+
+                // Lucide "user" icon — path: body + head circle
+                &::before {
+                    content: '';
+                    display: block;
+                    width: 1.125rem;
+                    height: 1.125rem;
+                    background-color: $lh-primary;
+                    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+                    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+                    mask-repeat: no-repeat;
+                    mask-position: center;
+                    mask-size: contain;
+                    -webkit-mask-repeat: no-repeat;
+                    -webkit-mask-position: center;
+                    -webkit-mask-size: contain;
+                }
+            }
+        }
+
+        // Settings + logout icon buttons
+        &__action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: $lh-radius-sm;
+            color: $lh-text-secondary;
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: background 0.15s ease, color 0.15s ease;
+
+            i { font-size: 1rem; }
+
+            &:hover {
+                background: $lh-primary-light;
+                color: $lh-primary;
+            }
+
+            // Logout — danger hover
+            &--danger:hover {
+                background: rgba($lh-danger, 0.08);
+                color: $lh-danger;
             }
         }
     }

@@ -29,7 +29,10 @@
                     {{{ output.full_header }}}
                 </div>
                 <div class="lernhive-page-header__actions">
-                    {{{ output.navbar_plugin_output }}}
+                    {{! Header Dock — unified side-panel system (0.9.36). }}
+                    {{#hassidepanel}}
+                        {{> theme_lernhive/sidepanel }}
+                    {{/hassidepanel}}
 
                     {{#haslangmenu}}
                         <div class="lernhive-lang-menu">

@@ -25,6 +25,9 @@ $launchercontext['launcherisdock'] = $launcherstyle === 'dock';
 
 $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
 
+// Header Dock — unified side-panel system (0.9.36).
+$sidepanelitems = theme_lernhive_get_sidepanel_items();
+
 $templatecontext = array_merge([
     'sitename' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output' => $OUTPUT,
@@ -35,6 +38,8 @@ $templatecontext = array_merge([
     'launcherisdock' => $launcherstyle === 'dock',
     'showlauncher' => $showlauncher,
     'launcher' => $launchercontext,
+    'sidepanelitems' => $sidepanelitems,
+    'hassidepanel' => !empty($sidepanelitems),
 ], $blockregions);
 
 echo $OUTPUT->render_from_template('theme_lernhive/course', $templatecontext);

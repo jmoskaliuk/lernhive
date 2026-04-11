@@ -25,8 +25,10 @@
                     </div>
                 </div>
                 <div class="lernhive-course-header__actions">
-                    {{! user_menu lives in the sidebar — keep notification icons here only. }}
-                    {{{ output.navbar_plugin_output }}}
+                    {{! Header Dock — unified side-panel system (0.9.36). }}
+                    {{#hassidepanel}}
+                        {{> theme_lernhive/sidepanel }}
+                    {{/hassidepanel}}
                     <div class="lernhive-course-header__utilities" aria-label="{{#str}} courseheadertools, theme_lernhive {{/str}}">
                         <button class="lernhive-course-header__tool" type="button" aria-label="{{#str}} coursedownload, theme_lernhive {{/str}}" title="{{#str}} coursedownload, theme_lernhive {{/str}}">
                             <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">

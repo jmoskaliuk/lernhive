@@ -121,3 +121,32 @@ $string['actionopenlibrary'] = 'Aus der Library importieren';
 // Relationship actions.
 $string['follow'] = 'Folgen';
 $string['bookmark'] = 'Merken';
+
+// --- Header Dock + Side Panel (0.9.36) --------------------------------------
+$string['dock'] = 'Schnellzugriff';
+$string['close'] = 'Schließen';
+
+$string['messages'] = 'Nachrichten';
+$string['messages_sub'] = 'Chats und Unterhaltungen';
+$string['messages_empty'] = 'Deine Unterhaltungen erscheinen hier. Ungelesen-Zähler und Vorschauen kommen bald — bis dahin öffnest du die vollständige Nachrichtenansicht.';
+$string['messages_openfull'] = 'Nachrichten öffnen';
+
+$string['notifications'] = 'Benachrichtigungen';
+$string['notifications_sub'] = 'Hinweise und Aktivitäts-Updates';
+$string['notifications_empty'] = 'Deine Benachrichtigungen erscheinen hier. Gruppiert nach Tag, mit „Alle als gelesen markieren" — kommt in der nächsten Version. Bis dahin öffnest du die vollständige Ansicht.';
+$string['notifications_openfull'] = 'Benachrichtigungen öffnen';
+$string['notifications_prefs'] = 'Einstellungen';
+
+$string['aiassistant'] = 'KI-Assistent';
+$string['aiassistant_sub'] = 'Stell eine Frage zu deinem Lernstoff';
+$string['aiassistant_empty'] = 'Der LernHive-KI-Assistent kommt bald. Er hilft dir mit Erklärungen, Übungsaufgaben und Lernvorschlägen — passend zu dem, wo du in deinen Kursen stehst.';
+
+$string['help'] = 'Hilfe';
+$string['help_sub'] = 'Anleitungen und Links für diese Seite';
+$string['help_onthispage'] = 'Zu dieser Seite';
+$string['help_startguide'] = 'Erste Schritte mit LernHive';
+$string['help_startguide_desc'] = 'Kurzer Einstieg · 2 Min';
+$string['help_dashboard'] = 'Dein Dashboard';
+$string['help_dashboard_desc'] = 'Deinen Lernpfad ansehen';
+$string['help_preferences'] = 'Benutzereinstellungen';
+$string['help_preferences_desc'] = 'Sprache, Benachrichtigungen, Profil';

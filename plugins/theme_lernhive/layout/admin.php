@@ -69,6 +69,9 @@ if (is_siteadmin()) {
 // User header context: avatar → profile link, language menu, logout.
 $userheaderctx = theme_lernhive_get_header_user_context($OUTPUT);
 
+// Header Dock — unified side-panel system (0.9.36).
+$sidepanelitems = theme_lernhive_get_sidepanel_items();
+
 // Admin secondary navigation — render via the canonical Boost pipeline:
 //   more_menu($PAGE->secondarynav) → core/moremenu template partial.
 // This produces the standard admin category tab bar (General | Users |
@@ -104,6 +107,8 @@ $templatecontext = array_merge([
     'navitems'                  => $navitems,
     'secondarymoremenu'         => $secondarymoremenu ?: false,
     'overflow'                  => $overflow,
+    'sidepanelitems'            => $sidepanelitems,
+    'hassidepanel'              => !empty($sidepanelitems),
 ], $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/admin', $templatecontext);

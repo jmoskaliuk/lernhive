@@ -85,6 +85,10 @@ $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
 // Context Dock — floating action strip (Teacher/Trainer actions per page context).
 $dockitems = theme_lernhive_get_context_dock_items();
 
+// Header Dock — unified side-panel system (messages, notifications, AI, help).
+// Always visible in the top-right, one shared panel, only one open at a time.
+$sidepanelitems = theme_lernhive_get_sidepanel_items();
+
 // User header context: avatar → profile link, language menu, logout.
 $userheaderctx = theme_lernhive_get_header_user_context($OUTPUT);
 
@@ -103,6 +107,8 @@ $templatecontext = array_merge([
     'isfrontpage'               => $isfrontpage,
     'dockitems'                 => $dockitems,
     'hasdockitems'              => !empty($dockitems),
+    'sidepanelitems'            => $sidepanelitems,
+    'hassidepanel'              => !empty($sidepanelitems),
 ], $blockregions, $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/drawers', $templatecontext);

@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LernHive — Side Panel & Dock Concept</title>
+<style>
+  :root {
+    --lh-orange: #f98012;
+    --lh-orange-dark: #d96a04;
+    --lh-ink: #1a2733;
+    --lh-ink-muted: #5b6b7a;
+    --lh-surface: #ffffff;
+    --lh-bg: #f4f6f8;
+    --lh-border: #e3e7eb;
+    --lh-border-strong: #cdd4db;
+    --lh-rail: #ffffff;
+    --lh-hover: #f0f3f6;
+    --lh-badge: #e53935;
+    --lh-success: #2e8b57;
+    --lh-focus: #f9801233;
+    --lh-shadow: 0 6px 24px rgba(26,39,51,0.12), 0 2px 6px rgba(26,39,51,0.06);
+    --lh-radius: 10px;
+    font-family: 'Open Sans', -apple-system, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--lh-bg); color: var(--lh-ink); }
+  body { min-height: 100vh; }
+
+  /* ============ PAGE SHELL (dummy Moodle) ============ */
+  .page { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .rail {
+    background: var(--lh-rail);
+    border-right: 1px solid var(--lh-border);
+    padding: 18px 12px;
+  }
+  .rail .brand {
+    font-weight: 800; font-size: 18px; color: var(--lh-orange);
+    padding: 6px 10px 18px; letter-spacing: 0.2px;
+  }
+  .rail a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 6px;
+    color: var(--lh-ink); text-decoration: none; font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .rail a:hover { background: var(--lh-hover); }
+  .rail a.active { background: #fff3e6; color: var(--lh-orange-dark); font-weight: 600; }
+
+  .main { display: flex; flex-direction: column; min-width: 0; }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    height: 56px;
+    background: var(--lh-surface);
+    border-bottom: 1px solid var(--lh-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; position: sticky; top: 0; z-index: 5;
+  }
+  .topbar .crumbs { color: var(--lh-ink-muted); font-size: 14px; }
+
+  /* ============ THE DOCK ============ */
+  .dock {
+    display: flex; align-items: center; gap: 4px;
+    padding: 4px; border-radius: 999px;
+    background: var(--lh-bg); border: 1px solid var(--lh-border);
+  }
+  .dock button {
+    position: relative;
+    width: 38px; height: 38px; border-radius: 999px;
+    background: transparent; border: none; cursor: pointer;
+    display: grid; place-items: center;
+    color: var(--lh-ink-muted);
+    transition: background .15s, color .15s;
+  }
+  .dock button:hover { background: var(--lh-hover); color: var(--lh-ink); }
+  .dock button.active {
+    background: #fff3e6; color: var(--lh-orange-dark);
+    box-shadow: inset 0 0 0 1px var(--lh-orange);
+  }
+  .dock button svg { width: 20px; height: 20px; }
+  .dock .badge {
+    position: absolute; top: 2px; right: 2px;
+    min-width: 16px; height: 16px; padding: 0 4px;
+    border-radius: 999px;
+    background: var(--lh-badge); color: #fff;
+    font-size: 10px; font-weight: 700;
+    display: grid; place-items: center;
+    border: 2px solid var(--lh-surface);
+  }
+  .dock .badge.dot {
+    min-width: 8px; height: 8px; padding: 0; border-width: 2px;
+  }
+
+  /* ============ CONTENT (dummy) ============ */
+  .content { padding: 28px; flex: 1; overflow: auto; }
+  .content h1 { font-size: 22px; margin: 0 0 6px; }
+  .content p.lead { color: var(--lh-ink-muted); margin: 0 0 20px; font-size: 14px; }
+  .content .card {
+    background: var(--lh-surface); border: 1px solid var(--lh-border);
+    border-radius: var(--lh-radius); padding: 20px; margin-bottom: 16px;
+  }
+  .legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .legend-grid .item { padding: 12px; border: 1px dashed var(--lh-border-strong); border-radius: 8px; font-size: 13px; }
+  .legend-grid .item b { display: block; margin-bottom: 4px; }
+  kbd {
+    font-family: inherit; font-size: 11px; padding: 1px 6px;
+    border: 1px solid var(--lh-border-strong); border-bottom-width: 2px;
+    border-radius: 4px; background: var(--lh-bg);
+  }
+
+  /* ============ SIDE PANEL ============ */
+  .backdrop {
+    position: fixed; inset: 0; background: rgba(26,39,51,0.28);
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+    z-index: 20;
+  }
+  .backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .sidepanel {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 380px; max-width: 92vw;
+    background: var(--lh-surface);
+    border-left: 1px solid var(--lh-border);
+    box-shadow: var(--lh-shadow);
+    transform: translateX(100%);
+    transition: transform .25s ease, width .25s ease;
+    z-index: 21;
+    display: flex; flex-direction: column;
+  }
+  .sidepanel.open { transform: translateX(0); }
+  .sidepanel.size-m { width: 480px; }
+  .sidepanel.size-l { width: 640px; }
+
+  .sp-header {
+    flex-shrink: 0;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--lh-border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sp-header .icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #fff3e6; color: var(--lh-orange-dark);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .sp-header .icon svg { width: 18px; height: 18px; }
+  .sp-header h2 {
+    font-size: 15px; font-weight: 700; margin: 0; flex: 1;
+    line-height: 1.3;
+  }
+  .sp-header h2 small {
+    display: block; font-size: 11px; font-weight: 500;
+    color: var(--lh-ink-muted); margin-top: 2px;
+  }
+  .sp-header button {
+    width: 32px; height: 32px; border-radius: 6px;
+    border: none; background: transparent; cursor: pointer;
+    color: var(--lh-ink-muted); display: grid; place-items: center;
+  }
+  .sp-header button:hover { background: var(--lh-hover); color: var(--lh-ink); }
+  .sp-header button svg { width: 16px; height: 16px; }
+
+  .sp-filter {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--lh-border);
+    background: #fafbfc;
+  }
+  .sp-filter input {
+    width: 100%; padding: 8px 12px;
+    border: 1px solid var(--lh-border-strong); border-radius: 6px;
+    font: inherit; font-size: 13px; outline: none;
+  }
+  .sp-filter input:focus { border-color: var(--lh-orange); box-shadow: 0 0 0 3px var(--lh-focus); }
+
+  .sp-body { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+  .sp-item {
+    padding: 12px 16px; border-bottom: 1px solid var(--lh-border);
+    display: flex; gap: 12px; cursor: pointer;
+  }
+  .sp-item:hover { background: var(--lh-hover); }
+  .sp-item.unread { background: #fffaf3; }
+  .sp-item.unread:hover { background: #fff3e6; }
+  .sp-item .avatar {
+    width: 36px; height: 36px; border-radius: 999px;
+    background: linear-gradient(135deg, #f98012, #e53935);
+    color: #fff; font-weight: 700; font-size: 13px;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .sp-item .avatar.muted { background: #e3e7eb; color: var(--lh-ink-muted); }
+  .sp-item .body { flex: 1; min-width: 0; }
+  .sp-item .body .top {
+    display: flex; justify-content: space-between; gap: 8px;
+    font-size: 13px; font-weight: 600;
+  }
+  .sp-item .body .top time { font-size: 11px; font-weight: 500; color: var(--lh-ink-muted); white-space: nowrap; }
+  .sp-item .body .preview {
+    font-size: 12px; color: var(--lh-ink-muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .sp-item .unread-dot {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--lh-orange); flex-shrink: 0; margin-top: 14px;
+  }
+
+  .sp-section-title {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--lh-ink-muted); font-weight: 700;
+    padding: 14px 16px 6px;
+  }
+
+  .sp-empty {
+    text-align: center; padding: 48px 20px; color: var(--lh-ink-muted);
+  }
+  .sp-empty svg { width: 36px; height: 36px; opacity: 0.4; margin-bottom: 10px; }
+  .sp-empty p { margin: 0 0 14px; font-size: 13px; }
+
+  .sp-footer {
+    flex-shrink: 0; padding: 12px 16px;
+    border-top: 1px solid var(--lh-border);
+    background: #fafbfc;
+    display: flex; gap: 8px;
+  }
+  .sp-footer .btn {
+    flex: 1; padding: 9px 14px; border-radius: 6px;
+    border: 1px solid var(--lh-border-strong); background: var(--lh-surface);
+    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    color: var(--lh-ink);
+  }
+  .sp-footer .btn:hover { background: var(--lh-hover); }
+  .sp-footer .btn.primary {
+    background: var(--lh-orange); color: #fff; border-color: var(--lh-orange-dark);
+  }
+  .sp-footer .btn.primary:hover { background: var(--lh-orange-dark); }
+
+  /* ============ KI CHAT SPECIFIC ============ */
+  .chat-stream { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+  .chat-msg { max-width: 85%; padding: 10px 13px; border-radius: 12px; font-size: 13px; line-height: 1.45; }
+  .chat-msg.user {
+    align-self: flex-end; background: var(--lh-orange); color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-msg.ai {
+    align-self: flex-start; background: #f0f3f6; color: var(--lh-ink);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-input {
+    padding: 12px 16px; border-top: 1px solid var(--lh-border);
+    background: var(--lh-surface);
+  }
+  .chat-input textarea {
+    width: 100%; min-height: 56px; resize: none;
+    border: 1px solid var(--lh-border-strong); border-radius: 8px;
+    padding: 10px 12px; font: inherit; font-size: 13px; outline: none;
+  }
+  .chat-input textarea:focus { border-color: var(--lh-orange); box-shadow: 0 0 0 3px var(--lh-focus); }
+  .chat-input .row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .chat-input .hint { font-size: 11px; color: var(--lh-ink-muted); }
+  .chat-input button {
+    padding: 7px 14px; border-radius: 6px; border: none;
+    background: var(--lh-orange); color: #fff; font: inherit; font-size: 12px; font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ============ HELP SPECIFIC ============ */
+  .help-list a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; border-bottom: 1px solid var(--lh-border);
+    text-decoration: none; color: var(--lh-ink); font-size: 13px;
+  }
+  .help-list a:hover { background: var(--lh-hover); }
+  .help-list a svg { width: 14px; height: 14px; color: var(--lh-ink-muted); }
+  .help-list a .desc { font-size: 11px; color: var(--lh-ink-muted); font-weight: 400; margin-top: 2px; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 720px) {
+    .page { grid-template-columns: 1fr; }
+    .rail { display: none; }
+    .sidepanel {
+      width: 100%; max-width: 100%;
+      top: auto; height: 85vh;
+      transform: translateY(100%);
+      border-radius: 16px 16px 0 0;
+    }
+    .sidepanel.open { transform: translateY(0); }
+    .sidepanel::before {
+      content: ""; display: block; width: 40px; height: 4px;
+      background: var(--lh-border-strong); border-radius: 999px;
+      margin: 8px auto 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <!-- Left rail (dummy Moodle) -->
+  <nav class="rail" aria-label="Hauptnavigation">
+    <div class="brand">LernHive</div>
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">Meine Kurse</a>
+    <a href="#">Lernpfade</a>
+    <a href="#">Kalender</a>
+    <a href="#">Bibliothek</a>
+  </nav>
+
+  <div class="main">
+    <!-- Top bar with dock -->
+    <header class="topbar">
+      <div class="crumbs">Dashboard</div>
+      <nav class="dock" role="toolbar" aria-label="LernHive Dock">
+        <button type="button" data-panel="messages" aria-label="Nachrichten (2 ungelesen)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="badge">2</span>
+        </button>
+        <button type="button" data-panel="notifications" aria-label="Benachrichtigungen (5 neue)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="badge">5</span>
+        </button>
+        <button type="button" data-panel="ai" aria-label="LernHive KI-Assistent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4c0 1 .5 2 1 3L5 12l4 4 3-3 3 3 4-4-4-3c.5-1 1-2 1-3a4 4 0 0 0-4-4z"/></svg>
+          <span class="badge dot"></span>
+        </button>
+        <button type="button" data-panel="help" aria-label="Hilfe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+      <h1>LernHive Side Panel &amp; Dock — Konzept-Skizze</h1>
+      <p class="lead">Klicke oben rechts auf ein Dock-Icon, um das jeweilige Panel zu öffnen. <kbd>Esc</kbd> oder Klick außerhalb schließt.</p>
+
+      <div class="card">
+        <h3 style="margin-top:0">Die vier Panels im Vergleich</h3>
+        <div class="legend-grid">
+          <div class="item"><b>Nachrichten (M · 480 px)</b>Thread-Liste mit Suche, Starred/Group/Private-Gruppen, „Alle anzeigen".</div>
+          <div class="item"><b>Benachrichtigungen (S · 380 px)</b>Zeitgruppierte Liste, Mark-all-read, „Zu allen Benachrichtigungen".</div>
+          <div class="item"><b>KI-Assistent (M · 480 px)</b>Chat-Stream + Eingabefeld, bleibt sticky, Exit via X.</div>
+          <div class="item"><b>Hilfe (S · 380 px)</b>Suche + kuratierte Links, kontextabhängige Vorschläge.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Gemeinsame Struktur (DNA aller Panels)</h3>
+        <ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.7;color:var(--lh-ink-muted)">
+          <li><b>Header</b> — Farbiges Icon links, Titel + kleiner Kontext-Sublabel, 0–2 Action-Icons, Close-X rechts.</li>
+          <li><b>Optionaler Filter-Bereich</b> — Suche oder Tabs direkt unter dem Header.</li>
+          <li><b>Body</b> — Scrollbare Liste von Items ODER spezieller Content (Chat, Hilfe-Artikel).</li>
+          <li><b>Optionaler Footer</b> — Ein einziger primärer CTA („Alle anzeigen", „Neues Thema").</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Interaktionsregeln</h3>
+        <ul style="margin:0;padding-left:20px;font-size:14px;line-height:1.7;color:var(--lh-ink-muted)">
+          <li>Nur ein Panel gleichzeitig offen — neues Öffnen schließt das vorherige.</li>
+          <li><kbd>Esc</kbd> schließt, Klick auf Backdrop schließt.</li>
+          <li>Fokus wird beim Öffnen ins Panel getrappt, beim Schließen zurück zum Dock-Button gegeben.</li>
+          <li>Mobile: Panel wird zum Bottom-Sheet (von unten einfahrend, 85 vh Höhe, mit Drag-Handle).</li>
+          <li>Sonderfall KI-Chat: Backdrop-Klick schließt <em>nicht</em> — nur explizites X, damit Chat-Verlauf nicht aus Versehen weggeht.</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Backdrop + Panel -->
+<div class="backdrop" id="backdrop"></div>
+
+<aside class="sidepanel" id="panel" role="dialog" aria-modal="true" aria-labelledby="sp-title">
+  <!-- Content gets rendered by JS depending on active panel -->
+</aside>
+
+<script>
+  const PANELS = {
+    messages: {
+      size: 'size-m',
+      title: 'Nachrichten',
+      subtitle: '2 ungelesen · 12 Kontakte',
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+      headerActions: [
+        { label: 'Neue Nachricht', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>' },
+        { label: 'Einstellungen', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>' },
+      ],
+      filter: { placeholder: 'Nachrichten durchsuchen…' },
+      body: `
+        <div class="sp-section-title">Angeheftet</div>
+        <div class="sp-item unread">
+          <div class="avatar">AK</div>
+          <div class="body">
+            <div class="top"><span>Anna Keller</span><time>10:24</time></div>
+            <div class="preview">Hey, hast du die Aufgabe aus Modul 3 schon…</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+        <div class="sp-item unread">
+          <div class="avatar">MR</div>
+          <div class="body">
+            <div class="top"><span>Max Richter</span><time>09:12</time></div>
+            <div class="preview">Kann ich dich kurz zu Bruchrechnung fragen?</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+        <div class="sp-section-title">Gruppen</div>
+        <div class="sp-item">
+          <div class="avatar muted">7a</div>
+          <div class="body">
+            <div class="top"><span>Klasse 7a · Mathe</span><time>Gestern</time></div>
+            <div class="preview">Lina: Danke für das Erklärvideo!</div>
+          </div>
+        </div>
+        <div class="sp-item">
+          <div class="avatar muted">KT</div>
+          <div class="body">
+            <div class="top"><span>Kollegium Team</span><time>Mo</time></div>
+            <div class="preview">Jan: Agenda für Dienstag angehängt</div>
+          </div>
+        </div>
+      `,
+      footer: [{ label: 'Alle Nachrichten anzeigen', primary: true }],
+    },
+
+    notifications: {
+      size: '',
+      title: 'Benachrichtigungen',
+      subtitle: '5 neue seit gestern',
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+      headerActions: [
+        { label: 'Alle als gelesen markieren', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' },
+        { label: 'Einstellungen', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>' },
+      ],
+      filter: null,
+      body: `
+        <div class="sp-section-title">Heute</div>
+        <div class="sp-item unread">
+          <div class="avatar muted">✓</div>
+          <div class="body">
+            <div class="top"><span>Aufgabe bewertet</span><time>11:02</time></div>
+            <div class="preview">Trainerin Lisa hat „Bruchrechnung Teil 2" bewertet</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+        <div class="sp-item unread">
+          <div class="avatar muted">📣</div>
+          <div class="body">
+            <div class="top"><span>Ankündigung</span><time>09:30</time></div>
+            <div class="preview">Klasse 7a: Klassenarbeit verschoben auf Donnerstag</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+        <div class="sp-item unread">
+          <div class="avatar muted">🏆</div>
+          <div class="body">
+            <div class="top"><span>Lernpfad-Erfolg</span><time>08:15</time></div>
+            <div class="preview">Du hast Level „Explorer" in Mathe erreicht</div>
+          </div>
+          <div class="unread-dot"></div>
+        </div>
+        <div class="sp-section-title">Gestern</div>
+        <div class="sp-item">
+          <div class="avatar muted">💬</div>
+          <div class="body">
+            <div class="top"><span>Neue Forum-Antwort</span><time>Gestern</time></div>
+            <div class="preview">Jonas antwortete auf „Frage zu Aufgabe 4b"</div>
+          </div>
+        </div>
+        <div class="sp-item">
+          <div class="avatar muted">📅</div>
+          <div class="body">
+            <div class="top"><span>Terminerinnerung</span><time>Gestern</time></div>
+            <div class="preview">Abgabe „Lesetagebuch" morgen 23:59</div>
+          </div>
+        </div>
+      `,
+      footer: [{ label: 'Alle Benachrichtigungen anzeigen', primary: false }],
+    },
+
+    ai: {
+      size: 'size-m',
+      title: 'LernHive Assistent',
+      subtitle: 'Dashboard-Kontext · verwendet dein Profil',
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4c0 1 .5 2 1 3L5 12l4 4 3-3 3 3 4-4-4-3c.5-1 1-2 1-3a4 4 0 0 0-4-4z"/></svg>',
+      headerActions: [
+        { label: 'Neuer Chat', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' },
+        { label: 'Verlauf', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+      ],
+      filter: null,
+      bodyHtml: `
+        <div class="chat-stream">
+          <div class="chat-msg ai">Hallo Johannes! Ich sehe, dass du dich im Lernpfad „Bruchrechnung" befindest. Wobei kann ich dir helfen?</div>
+          <div class="chat-msg user">Erklär mir nochmal den Unterschied zwischen echten und unechten Brüchen.</div>
+          <div class="chat-msg ai">Gerne! Ein <b>echter Bruch</b> hat einen Zähler, der kleiner als der Nenner ist (z.B. 3/4). Er beschreibt immer weniger als ein Ganzes. Ein <b>unechter Bruch</b> hat einen Zähler, der größer oder gleich dem Nenner ist (z.B. 7/4) …</div>
+          <div class="chat-msg user">Kannst du mir ein paar Übungsaufgaben dazu erstellen?</div>
+        </div>
+      `,
+      footerHtml: `
+        <div class="chat-input" style="width:100%;padding:0;border:none;background:transparent">
+          <textarea placeholder="Frage eingeben… (⌘+Enter zum Senden)"></textarea>
+          <div class="row">
+            <span class="hint">Antworten werden mit KI generiert — bitte prüfen.</span>
+            <button type="button">Senden</button>
+          </div>
+        </div>
+      `,
+      sticky: true, // backdrop click doesn't close
+    },
+
+    help: {
+      size: '',
+      title: 'Hilfe',
+      subtitle: 'Kontext: Dashboard',
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      headerActions: [
+        { label: 'Feedback geben', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
+      ],
+      filter: { placeholder: 'Hilfe durchsuchen…' },
+      bodyHtml: `
+        <div class="sp-section-title">Empfohlen auf dieser Seite</div>
+        <div class="help-list">
+          <a href="#">
+            <div><div>Wie finde ich meine Lernpfade?</div><div class="desc">Schnellstart · 2 min</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <a href="#">
+            <div><div>Dashboard-Widgets anpassen</div><div class="desc">Anleitung · 3 min</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <a href="#">
+            <div><div>Benachrichtigungen einstellen</div><div class="desc">Anleitung · 1 min</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        </div>
+        <div class="sp-section-title">Allgemein</div>
+        <div class="help-list">
+          <a href="#">
+            <div><div>Alle Hilfe-Artikel</div><div class="desc">Vollständige Dokumentation</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <a href="#">
+            <div><div>Tastenkombinationen</div><div class="desc">Schnell arbeiten mit LernHive</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <a href="#">
+            <div><div>Support kontaktieren</div><div class="desc">Wir antworten innerhalb 24h</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        </div>
+      `,
+      footer: null,
+    },
+  };
+
+  const panel = document.getElementById('panel');
+  const backdrop = document.getElementById('backdrop');
+  const dockButtons = document.querySelectorAll('.dock button');
+  let currentPanel = null;
+
+  function renderPanel(key) {
+    const def = PANELS[key];
+    panel.className = 'sidepanel ' + (def.size || '');
+
+    const actions = (def.headerActions || [])
+      .map(a => `<button type="button" aria-label="${a.label}">${a.svg}</button>`)
+      .join('');
+
+    const filter = def.filter
+      ? `<div class="sp-filter"><input type="search" placeholder="${def.filter.placeholder}"></div>`
+      : '';
+
+    const body = def.bodyHtml
+      ? def.bodyHtml
+      : `<div class="sp-body">${def.body || ''}</div>`;
+
+    const bodyWrap = def.bodyHtml
+      ? `<div class="sp-body">${def.bodyHtml}</div>`
+      : `<div class="sp-body">${def.body || ''}</div>`;
+
+    let footer = '';
+    if (def.footerHtml) {
+      footer = `<div class="sp-footer">${def.footerHtml}</div>`;
+    } else if (def.footer) {
+      footer = '<div class="sp-footer">' +
+        def.footer.map(f => `<button type="button" class="btn${f.primary ? ' primary' : ''}">${f.label}</button>`).join('') +
+        '</div>';
+    }
+
+    panel.innerHTML = `
+      <div class="sp-header">
+        <div class="icon">${def.iconSvg}</div>
+        <h2 id="sp-title">${def.title}<small>${def.subtitle || ''}</small></h2>
+        ${actions}
+        <button type="button" aria-label="Schließen" data-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      ${filter}
+      ${bodyWrap}
+      ${footer}
+    `;
+    panel.dataset.sticky = def.sticky ? '1' : '0';
+
+    panel.querySelector('[data-close]').addEventListener('click', closePanel);
+  }
+
+  function openPanel(key) {
+    if (currentPanel === key) { closePanel(); return; }
+    currentPanel = key;
+    renderPanel(key);
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+    dockButtons.forEach(b => b.classList.toggle('active', b.dataset.panel === key));
+    // focus trap entry
+    const firstFocusable = panel.querySelector('button, input, textarea, a');
+    if (firstFocusable) firstFocusable.focus();
+  }
+
+  function closePanel() {
+    currentPanel = null;
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+    dockButtons.forEach(b => b.classList.remove('active'));
+  }
+
+  dockButtons.forEach(btn => {
+    btn.addEventListener('click', () => openPanel(btn.dataset.panel));
+  });
+
+  backdrop.addEventListener('click', () => {
+    if (panel.dataset.sticky === '1') return;
+    closePanel();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && currentPanel) closePanel();
+  });
+
+  // open notifications by default so the sketch shows its point immediately
+  setTimeout(() => openPanel('notifications'), 200);
+</script>
+
+</body>
+</html>
