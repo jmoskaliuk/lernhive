@@ -125,12 +125,47 @@ require(['theme_boost/loader'], function() {
 
 Between 0.9.34 (admin tab bar delegation) and 0.9.42 (this fix), admin tabs looked correct but never actually switched panels on click. The bug survived multiple styling passes (0.9.36 CSS scoping fix, 0.9.37 header dock rewire) because everyone — including Claude — read the symptom as "CSS still wrong" or "wrong data attribute on the tabs". The real cause was zero JS running. Diagnosing it required going all the way to `theme_boost/aria.js` source and noticing that its `document.addEventListener('click', …)` handler is only installed when `theme_boost/loader` is `require()`d — which our templates never did.
 
+### Sticky positioning (since 0.9.53)
+
+`.lernhive-page-header` is sticky to the viewport top (`position: sticky; top: 0`) so the action-icon row stays reachable while the user scrolls a long page. Two things are load-bearing for this to keep working:
+
+**1. `_sidepanel.scss` must not reset `position`.** An older override already set `.lernhive-page-header { position: relative; z-index: 1092 }` to lift the header into its own stacking context above the side-panel backdrop (1090) and the panel itself (1091). Because `_sidepanel.scss` is imported **after** `_layout.scss` (see `lib.php` `theme_lernhive_get_extra_scss()`), a bare `position: relative` there would cascade-over the sticky rule and silently kill stickiness. The override is therefore written as:
+
+```scss
+// _sidepanel.scss
+.lernhive-page-header {
+    position: sticky;   // preserve stickiness from _layout.scss
+    top: 0;
+    z-index: 1092;      // above .lh-sidepanel-backdrop (1090) + .lh-sidepanel (1091)
+}
+```
+
+When adding new `.lernhive-page-header` rules in a later-loaded partial, **never** set `position` to anything other than `sticky`. If you need a different position mode, refactor the sticky rule out of `_layout.scss` first and document why.
+
+**2. Plugin Shell pages offset `.lh-plugin-header` to `top: 3rem`.** `.lh-plugin-header` (`_plugin-shell.scss`) has been sticky since 0.9.40 at `top: 0`. With the theme header now also sticky at `top: 0`, they would overlap. On Plugin Shell pages the theme header hides its `__main` area and only shows the ~48 px action-icon row, so offsetting the plugin header to `top: 3rem` makes the two stack cleanly:
+
+```
+┌──────────────────────────────────────┐  ← viewport top
+│ .lernhive-page-header (sticky, 48px) │
+├──────────────────────────────────────┤  ← top: 3rem
+│ .lh-plugin-header      (sticky)      │
+├──────────────────────────────────────┤
+│ (scrolling content)                  │
+```
+
+If the action-icon row grows (e.g. a new dock button pushes height past ~48 px), bump `.lh-plugin-header { top }` to match or the two stacking headers will overlap.
+
+**Z-index ladder.** The sticky page header uses `z-index: 30` by default and `1092` while a side panel is open. The plugin header sits at `z-index: 20`. The fixed sidebar is at `z-index: 100`. Side-panel backdrop `1090`, side panel `1091`. Launcher / user dropdowns inside the header are at `z-index: 1050` but participate in the header's own stacking context, so they still render above the page content without colliding with the fixed sidebar (which is on the opposite edge).
+
+**Side-panel offset stays accurate.** `templates/sidepanel.mustache` measures `.lernhive-page-header` via `getBoundingClientRect().bottom` on open and writes `--lh-sidepanel-top` in pixels. Because `getBoundingClientRect()` is already viewport-relative, the measurement stays correct whether the header is in its natural position or stuck — no code change was needed in the side panel JS.
+
 ### SCSS files
 | File | What it contains |
 |---|---|
-| `_layout.scss` | `.lernhive-page-header` shell; `.lernhive-user-block` avatar + action icons (including `.userinitials` mask); `.lernhive-admin-topnav` (removed 0.9.34, CSS now in `.lernhive-secondary-navigation`) |
+| `_layout.scss` | `.lernhive-page-header` shell **+ sticky rule** (base `position: sticky; top: 0; z-index: 30`); `.lernhive-user-block` avatar + action icons (including `.userinitials` mask); `.lernhive-admin-topnav` (removed 0.9.34, CSS now in `.lernhive-secondary-navigation`) |
 | `_navigation.scss` | `.lernhive-page-header__launcher` — launcher toggle + dropdown; `.lernhive-lang-menu` — globe prefix styling |
-| `_sidepanel.scss` | Side panel system (Messages / Notifications / AI / Help — added 0.9.36) |
+| `_plugin-shell.scss` | `.lh-plugin-header` sticky at `top: 3rem` so it stacks below the theme page header (since 0.9.53) |
+| `_sidepanel.scss` | Side panel system (Messages / Notifications / AI / Help — added 0.9.36); preserves sticky on `.lernhive-page-header` while bumping its z-index to 1092 above the panel backdrop |
 
 ### Design decisions
 - Sidebar is purely navigational (since 0.9.26): no launcher, no action controls.

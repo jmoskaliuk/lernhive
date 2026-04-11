@@ -2,6 +2,12 @@
 
 ## Done (shipped)
 
+- [x] 0.9.55 — DevFlow docs alignment for 0.9.53 sticky page header (2026-04-11):
+  - `docs/01-features.md` — "Page header redesign" feature bullet updated with the sticky top bar, explicitly listing which controls stay reachable.
+  - `docs/02-user-doc.md` — R1 experience bullet list gained "top navigation stays anchored to the viewport while scrolling".
+  - `docs/03-dev-doc.md` — new "Sticky positioning (since 0.9.53)" section under the Page header docs: explains the two load-bearing constraints (preserve `position: sticky` in later-loaded partials; Plugin Shell offset `.lh-plugin-header` to `top: 3rem`), lays out the full z-index ladder, and updates the SCSS files table so `_plugin-shell.scss` is listed and the `_sidepanel.scss` preservation rule is called out.
+  - `docs/05-quality.md` — verification checklist entry added covering long-page scrolling, Plugin Shell page stacking, Header Dock side-panel anchoring, dropdown clipping, and sidebar-column overlap.
+  - `version.php` — 0.9.54 → 0.9.55 / 2026041155. Docs-only bump so the plugin bookkeeping stays in lockstep with the docs set; no code changes in this release. Originally prepared as 0.9.54 locally, but a parallel `hide courseindex skeleton placeholder flash` 0.9.54 landed on main first — rebased.
 - [x] 0.9.53 — Sticky page header (profile / settings / logout stay visible on scroll) (2026-04-11):
   - `scss/lernhive/_layout.scss` — `.lernhive-page-header` gained `position: sticky; top: 0; z-index: 30;` plus an opaque `background: $lh-bg` (was `transparent`) and a 1 px bottom shadow for visual separation from content scrolling underneath. z-index 30 sits above `.lh-plugin-header` (20) but below the fixed sidebar (100), so launcher/user dropdowns and the sidebar stacking are unaffected.
   - `scss/lernhive/_plugin-shell.scss` — `.lh-plugin-header` `top: 0` → `top: 3rem`, so on Plugin Shell pages (where the page-header hides its `__main` and only the ~48 px action-icon row shows) the two sticky headers stack cleanly instead of overlapping.
