@@ -31,10 +31,12 @@ body.pagelayout-login {
 
     #page {
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
         min-height: 100dvh !important;
         background: transparent !important;
+        padding: $lh-spacing-lg $lh-spacing-md !important;
     }
 
     #page-content { background: transparent !important; }
