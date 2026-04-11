@@ -192,13 +192,76 @@ container_check() {
 preflight_cleanup() {
   log "preflight: killing stale phpunit/behat processes (if any)"
 
-  # Graceful first — PHP gets to release flock() handles on exit.
-  # pkill returns 1 when no processes match, which is the common case
-  # and must not trip `set -e`.
-  in_container bash -c "pkill -TERM -u '$MOODLE_USER' -f 'phpunit|behat|admin/tool/phpunit/cli|admin/tool/behat/cli' || true"
+  # DO NOT USE `pkill -f 'phpunit|behat|...'` HERE. pkill matches on
+  # /proc/PID/cmdline and matches ALL processes whose argv contains
+  # that substring — including its own parent bash (which has the
+  # pattern literally in `bash -c "pkill ... -f 'phpunit|behat|...'"`).
+  # pkill excludes its own pid from matches, but NOT the parent shell.
+  # Result: pkill SIGTERMs its own parent bash, docker exec returns
+  # 143, set -euo pipefail in test.sh propagates it, and the whole
+  # job dies at the preflight step with exit 143.
+  #
+  # Instead we run a small bash script via stdin-heredoc (so the
+  # running bash's argv is just "bash", no pattern) and put the kill
+  # pattern in an environment variable that awk reads via ENVIRON[]
+  # (so no awk, ps, or kill process has the pattern in its own argv
+  # either). Matching then happens via `ps | awk`, and we explicitly
+  # skip our own PID + the parent bash + the full ancestor chain,
+  # so there is no way to self-kill.
+  in_container bash <<'PREFLIGHT_KILL'
+set -u
+
+# The kill pattern lives in an env var. Environment variables do NOT
+# appear in /proc/PID/cmdline, so no process running this script can
+# self-match.
+export LH_KILL_PAT='vendor/bin/phpunit|vendor/bin/behat|admin/tool/phpunit/cli|admin/tool/behat/cli'
+
+# Build the full ancestor chain of the current shell so we exclude
+# ourselves, our pipe subshells, docker-exec's payload bash, PID 1,
+# etc. Anything in this set is off-limits.
+build_ancestors() {
+  local pid="$1"
+  while [ -n "$pid" ] && [ "$pid" != "0" ] && [ "$pid" != "1" ]; do
+    printf '%s\n' "$pid"
+    pid=$(awk '{print $4}' "/proc/$pid/stat" 2>/dev/null)
+  done
+}
+ANCESTORS=$(build_ancestors "$$" | tr '\n' '|' | sed 's/|$//')
+# Avoid an empty regex (would match everything).
+ANCESTORS="${ANCESTORS:-0}"
+
+matching_pids() {
+  # ps -o pid=,cmd= prints "  PID  full cmdline" so the leading
+  # whitespace/PID can be peeled off by awk. We do NOT use pgrep/pkill
+  # because those tools keep the kill pattern on their own command
+  # line and are therefore self-matching.
+  ps -eo pid=,cmd= 2>/dev/null | awk -v anc="^(${ANCESTORS})$" '
+    {
+      pid = $1
+      # Skip ourselves and the entire ancestor chain no matter what
+      # their cmd looks like.
+      if (pid ~ anc) { next }
+      # $0 is "  PID  cmd ..." — the pattern match covers cmd.
+      if ($0 ~ ENVIRON["LH_KILL_PAT"]) { print pid }
+    }
+  '
+}
+
+targets=$(matching_pids)
+if [ -n "$targets" ]; then
+  # shellcheck disable=SC2086
+  echo "$targets" | xargs -r kill -TERM 2>/dev/null || true
   sleep 2
-  # Hard-kill whatever is still running.
-  in_container bash -c "pkill -KILL -u '$MOODLE_USER' -f 'phpunit|behat|admin/tool/phpunit/cli|admin/tool/behat/cli' || true"
+  targets=$(matching_pids)
+  if [ -n "$targets" ]; then
+    # shellcheck disable=SC2086
+    echo "$targets" | xargs -r kill -KILL 2>/dev/null || true
+  fi
+  echo "[preflight] killed stale phpunit/behat processes"
+else
+  echo "[preflight] no stale phpunit/behat processes"
+fi
+PREFLIGHT_KILL
 
   log "preflight: dropping leftover phpu_* and behat_* tables"
   # Nested heredoc: OUTER is delivered to bash -s as the command body,
