@@ -89,10 +89,12 @@ $THEME->layouts = [
         'defaultregion' => $lhdefaultregion,
         'options' => ['nonavbar' => true],
     ],
+    // Admin pages use the standard Moodle admin layout (full_header + main_content).
+    // This renders the Moodle secondary navigation with the admin settings category
+    // tree, which is absent from drawers.php (LernHive app-shell has no admin nav).
     'admin' => [
-        'file' => 'drawers.php',
-        'regions' => $lhregions,
-        'defaultregion' => $lhdefaultregion,
+        'file' => 'admin.php',
+        'regions' => [],
     ],
     'mydashboard' => [
         'file' => 'drawers.php',
