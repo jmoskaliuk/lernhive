@@ -105,9 +105,14 @@ source "$CONF"
 # Required config vars.
 : "${CONTAINER:?CONTAINER not set in $CONF}"
 : "${MOODLE_CLI_ROOT:?MOODLE_CLI_ROOT not set in $CONF}"
+# MOODLE_REPO_ROOT is the directory containing composer.json, vendor/,
+# config.php and the generated phpunit.xml. For a classic flat Moodle
+# layout it equals MOODLE_CLI_ROOT; for a Moodle 5.x public/ split it
+# is one level above MOODLE_CLI_ROOT.
+MOODLE_REPO_ROOT="${MOODLE_REPO_ROOT:-$MOODLE_CLI_ROOT}"
 MOODLE_USER="${MOODLE_USER:-www-data}"
-PHPUNIT_BIN="${PHPUNIT_BIN:-$MOODLE_CLI_ROOT/vendor/bin/phpunit}"
-BEHAT_BIN="${BEHAT_BIN:-$MOODLE_CLI_ROOT/vendor/bin/behat}"
+PHPUNIT_BIN="${PHPUNIT_BIN:-$MOODLE_REPO_ROOT/vendor/bin/phpunit}"
+BEHAT_BIN="${BEHAT_BIN:-$MOODLE_REPO_ROOT/vendor/bin/behat}"
 PHPUNIT_MEM="${PHPUNIT_MEM:-512M}"
 
 # ---------------------------------------------------------------------------
@@ -124,6 +129,14 @@ in_container() {
 
 in_container_workdir() {
   docker exec -u "$MOODLE_USER" -w "$MOODLE_CLI_ROOT" -i "$CONTAINER" "$@"
+}
+
+# Run inside the container with CWD = Moodle repo root (where phpunit.xml,
+# composer.json and vendor/ live). Needed for the actual phpunit binary
+# invocation so that relative paths inside phpunit.xml resolve correctly
+# against the repo root, not the public/ docroot.
+in_container_repo_root() {
+  docker exec -u "$MOODLE_USER" -w "$MOODLE_REPO_ROOT" -i "$CONTAINER" "$@"
 }
 
 container_check() {
@@ -194,11 +207,19 @@ run_phpunit() {
   # Memory limit bumped — Moodle's PHPUnit run can exceed the default
   # 128M on larger components. XDEBUG is disabled in the container by
   # default; if it's on, this flag is a no-op.
-  if in_container_workdir \
+  #
+  # We run phpunit from the Moodle repo root (MOODLE_REPO_ROOT), NOT
+  # from the public/ docroot, because:
+  #   - Moodle generates phpunit.xml at MOODLE_REPO_ROOT/phpunit.xml
+  #     (next to composer.json and vendor/).
+  #   - The <testsuite> directories inside phpunit.xml are relative
+  #     to the phpunit.xml location, so CWD and -c must both sit at
+  #     the repo root for those paths to resolve.
+  if in_container_repo_root \
       env PHPUNIT_MEMORY_LIMIT="$PHPUNIT_MEM" \
       php -d memory_limit="$PHPUNIT_MEM" \
       "$PHPUNIT_BIN" \
-      -c "$MOODLE_CLI_ROOT" \
+      -c "$MOODLE_REPO_ROOT/phpunit.xml" \
       "${args[@]}"; then
     ok "PHPUnit: passed"
     return 0
@@ -256,9 +277,12 @@ run_behat() {
   fi
 
   # Moodle generates a per-run Behat config at
-  # $CFG->behat_dataroot/behatrun/behat/behat.yml — use that.
+  # $CFG->behat_dataroot/behatrun/behat/behat.yml — use that. The php
+  # one-liner runs from MOODLE_REPO_ROOT so the relative require of
+  # config.php resolves correctly on both flat and public/-split
+  # layouts (config.php always sits at MOODLE_REPO_ROOT).
   local configpath
-  configpath="$(in_container_workdir php -r '
+  configpath="$(in_container_repo_root php -r '
     define("CLI_SCRIPT", true);
     require("config.php");
     echo $CFG->behat_dataroot . "/behatrun/behat/behat.yml";
@@ -275,7 +299,9 @@ run_behat() {
   fi
 
   log "Behat: running ${args[*]}"
-  if in_container_workdir "$BEHAT_BIN" "${args[@]}"; then
+  # Behat is invoked from the repo root (same reason as phpunit):
+  # the composer autoloader lives next to vendor/ at MOODLE_REPO_ROOT.
+  if in_container_repo_root "$BEHAT_BIN" "${args[@]}"; then
     ok "Behat: passed"
     return 0
   else
