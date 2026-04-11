@@ -1,0 +1,57 @@
+{{!
+    Context Dock — floating action strip for Teacher/Trainer and Student actions.
+
+    Rendered only when {{hasdockitems}} is truthy (built in drawers.php).
+    Position: fixed, bottom of sidebar column on desktop; bottom of screen on mobile.
+
+    Tooltip progressive disclosure:
+    Tooltips are CSS-only (always show on :hover). The optional JS snippet below
+    tracks page visits in localStorage and adds .lh-dock--experienced after 3 visits,
+    which hides all tooltips. Works without JS (tooltips always visible as fallback).
+
+    Template context (built by theme_lernhive_get_context_dock_items() in lib.php):
+      hasdockitems  boolean
+      dockitems[]
+        key       string  — stable id for localStorage tracking
+        icon      string  — FontAwesome icon name (without fa- prefix)
+        label     string  — human-readable action name (shown in tooltip)
+        url       string  — href
+        active    bool    — true when action is currently "on"
+        divider   bool    — render a separator line BEFORE this item
+}}
+{{#hasdockitems}}
+<nav class="lh-dock"
+     id="lh-context-dock"
+     aria-label="{{#str}} contextdock, theme_lernhive {{/str}}">
+    {{#dockitems}}
+        {{#divider}}
+        <div class="lh-dock__divider" aria-hidden="true"></div>
+        {{/divider}}
+        <a class="lh-dock__item{{#active}} lh-dock__item--active{{/active}}"
+           href="{{{ url }}}"
+           aria-label="{{ label }}">
+            <span class="lh-dock__icon" aria-hidden="true">
+                <i class="fa fa-{{ icon }}"></i>
+            </span>
+            <span class="lh-dock__tooltip" role="tooltip">{{ label }}</span>
+        </a>
+    {{/dockitems}}
+</nav>
+<script>
+// Progressive disclosure: hide tooltips after 3 page visits.
+// Resets automatically if localStorage is cleared.
+(function () {
+    var KEY = 'lh_dock_v1';
+    var MAX = 3;
+    try {
+        var n = parseInt(localStorage.getItem(KEY) || '0', 10);
+        if (n >= MAX) {
+            var dock = document.getElementById('lh-context-dock');
+            if (dock) { dock.classList.add('lh-dock--experienced'); }
+        } else {
+            localStorage.setItem(KEY, String(n + 1));
+        }
+    } catch (e) { /* storage blocked — tooltips always visible, safe fallback */ }
+}());
+</script>
+{{/hasdockitems}}

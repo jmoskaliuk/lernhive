@@ -86,6 +86,7 @@ function theme_lernhive_get_extra_scss($theme) {
         '_dashboard.scss',
         '_course.scss',
         '_login.scss',
+        '_dock.scss',       // 0.9.21: Context Dock — floating action strip
     ];
 
     foreach ($partials as $partial) {
@@ -203,6 +204,93 @@ function theme_lernhive_get_launcher_context(): array {
     } catch (\Throwable $e) {
         return $fallbackcontext;
     }
+}
+
+/**
+ * Build the Context Dock items array for the current page and user.
+ *
+ * Returns an array of dock items suitable for the context_dock.mustache template.
+ * Returns an empty array when the dock should not be shown (guest, no context).
+ *
+ * Each item has keys: key, icon, label, url, active, divider.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function theme_lernhive_get_context_dock_items(): array {
+    global $PAGE, $COURSE;
+
+    if (!isloggedin() || isguestuser()) {
+        return [];
+    }
+
+    $items = [];
+    $layout = $PAGE->pagelayout;
+
+    // Course-scope actions — only when inside an actual course (id > 1).
+    if ($COURSE->id > 1 && in_array($layout, ['course', 'incourse', 'report'], true)) {
+        $coursecontext = context_course::instance($COURSE->id);
+
+        if (has_capability('moodle/course:manageactivities', $coursecontext)) {
+            // Edit-mode toggle.
+            $editingon = $PAGE->user_is_editing();
+            $items[] = [
+                'key'     => 'edit_mode',
+                'icon'    => $editingon ? 'check' : 'pencil',
+                'label'   => $editingon ? get_string('turneditingoff') : get_string('turneditingon'),
+                'url'     => (new moodle_url('/course/view.php', [
+                    'id'      => $COURSE->id,
+                    'sesskey' => sesskey(),
+                    'edit'    => $editingon ? 'off' : 'on',
+                ]))->out(false),
+                'active'  => $editingon,
+                'divider' => false,
+            ];
+
+            // Participants list.
+            $items[] = [
+                'key'     => 'participants',
+                'icon'    => 'users',
+                'label'   => get_string('participants'),
+                'url'     => (new moodle_url('/user/index.php', ['id' => $COURSE->id]))->out(false),
+                'active'  => false,
+                'divider' => false,
+            ];
+
+            // Gradebook.
+            $items[] = [
+                'key'     => 'gradebook',
+                'icon'    => 'bar-chart',
+                'label'   => get_string('grades'),
+                'url'     => (new moodle_url('/grade/report/grader/index.php', ['id' => $COURSE->id]))->out(false),
+                'active'  => false,
+                'divider' => false,
+            ];
+
+            // Course settings.
+            $items[] = [
+                'key'     => 'course_settings',
+                'icon'    => 'cog',
+                'label'   => get_string('editsettings'),
+                'url'     => (new moodle_url('/course/edit.php', ['id' => $COURSE->id]))->out(false),
+                'active'  => false,
+                'divider' => false,
+            ];
+        }
+    }
+
+    // Site-admin shortcut — only on non-admin pages so admins can jump quickly.
+    if (is_siteadmin() && $layout !== 'admin') {
+        $items[] = [
+            'key'     => 'site_admin',
+            'icon'    => 'shield',
+            'label'   => get_string('administrationsite'),
+            'url'     => (new moodle_url('/admin/index.php'))->out(false),
+            'active'  => false,
+            'divider' => !empty($items), // separator when other items precede it
+        ];
+    }
+
+    return $items;
 }
 
 /**

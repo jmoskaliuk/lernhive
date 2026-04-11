@@ -82,6 +82,9 @@ if (is_siteadmin()) {
 
 $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
 
+// Context Dock — floating action strip (Teacher/Trainer actions per page context).
+$dockitems = theme_lernhive_get_context_dock_items();
+
 $templatecontext = array_merge([
     'sitename'                  => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output'                    => $OUTPUT,
@@ -95,6 +98,8 @@ $templatecontext = array_merge([
     'launcher'                  => $launchercontext,
     'navitems'                  => $navitems,
     'isfrontpage'               => $isfrontpage,
+    'dockitems'                 => $dockitems,
+    'hasdockitems'              => !empty($dockitems),
 ], $blockregions);
 
 echo $OUTPUT->render_from_template('theme_lernhive/drawers', $templatecontext);
