@@ -507,23 +507,44 @@
     margin-bottom: $lh-spacing-sm;
 }
 
+// ─── Plugin content area wrapper ──────────────────────────────────────────────
+// Wraps the card grid. Provides the standard horizontal/vertical gutter that
+// gives cards breathing room without additional Bootstrap container utilities.
+// Default: 3 columns. Use .lh-plugin-grid--cols-N to override.
+
+.lh-plugin-content-area {
+    padding: $lh-spacing-lg $lh-spacing-xl;  // generous left/right gutter
+
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        padding: $lh-spacing-md $lh-spacing-md;
+    }
+
+    @media (max-width: 374px) {
+        padding: $lh-spacing-sm $lh-spacing-sm;
+    }
+}
+
 // ─── Responsive card grid helpers ─────────────────────────────────────────────
 // Wrap cards in .lh-plugin-grid + a column modifier class.
+// Standard: 3 columns (--cols-3) — matches Courses, Snacks, Tours, ContentHub.
 // The grid uses CSS Grid — Bootstrap's col-* can be used alternatively.
 
 .lh-plugin-grid {
     display: grid;
-    gap: $lh-spacing-sm;
+    gap: $lh-spacing-md;   // 16px — was 8px, now airier
 
+    // Default: 3 columns (recommended for all content card grids)
     &--cols-2 { grid-template-columns: repeat(2, 1fr); }
     &--cols-3 { grid-template-columns: repeat(3, 1fr); }
     &--cols-4 { grid-template-columns: repeat(4, 1fr); }
 
+    // Tablet: collapse 3/4-col to 2-col
     @media (max-width: #{$lh-bp-tablet - 1px}) {
         &--cols-3,
         &--cols-4 { grid-template-columns: repeat(2, 1fr); }
     }
 
+    // Mobile: all single column
     @media (max-width: 480px) {
         &--cols-2,
         &--cols-3,

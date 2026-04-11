@@ -9,12 +9,17 @@
 {{!
     @template local_lernhive_contenthub/hub_page
 
-    ContentHub entry page — Plugin Shell layout (0.1.2).
+    ContentHub entry page — Plugin Shell layout (0.1.3).
     Two-zone sticky header + card grid directly on page background.
+
+    Design decisions (0.1.3):
+    - No back button in Zone A: Dashboard is always reachable via sidebar nav
+    - 3-column card grid: matches the standard LernHive card layout
+      (courses, snacks, tours all use 3 columns)
+    - Grid container has generous horizontal padding for breathing room
 
     Context:
     {
-        "backurl":          "/my/",
         "tagline":          "Content Creation",
         "subtitle":         "Choose a starting point for new course content.",
         "available_count":  2,
@@ -40,13 +45,6 @@
 {{! ── Zone A: sticky page header ─────────────────────────────────────────── }}
 <div class="lh-plugin-header">
     <div class="lh-plugin-header__row">
-
-        <a href="{{ backurl }}"
-           class="lh-plugin-header__nav-btn"
-           aria-label="{{#str}} backtodashboard, local_lernhive_contenthub {{/str}}">
-            <i class="fa fa-arrow-left" aria-hidden="true"></i>
-            {{#str}} backtodashboard, local_lernhive_contenthub {{/str}}
-        </a>
 
         <div class="lh-plugin-header__title-block">
             <div class="lh-plugin-header__name">
@@ -81,9 +79,9 @@
     </div>
 </div>
 
-{{! ── Card grid ──────────────────────────────────────────────────────────── }}
-<div class="container-fluid py-4">
-    <div class="lh-plugin-grid lh-plugin-grid--cols-2" role="list">
+{{! ── Card grid — 3 columns, generous padding ────────────────────────────── }}
+<div class="lh-plugin-content-area">
+    <div class="lh-plugin-grid lh-plugin-grid--cols-3" role="list">
 
         {{#cards}}
         <div class="lh-plugin-card{{#coming_soon}} lh-plugin-card--locked{{/coming_soon}}{{#unavailable}} lh-plugin-card--locked{{/unavailable}}"
