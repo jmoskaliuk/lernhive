@@ -18,9 +18,7 @@
             height:1px; overflow:clip. Never put real content inside it. }}
         <div id="maincontent" tabindex="-1" aria-hidden="true"></div>
         <section class="lernhive-login__panel">
-            <div class="lernhive-login__brand">
-                <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link">{{ sitename }}</a>
-            </div>
+            {{! Brand is already rendered inside Moodle's login form content — no duplicate here. }}
             <div class="lernhive-login__content">
                 {{{ output.main_content }}}
             </div>

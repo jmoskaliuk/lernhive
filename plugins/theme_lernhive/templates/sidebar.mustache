@@ -10,10 +10,11 @@
         {{/launcher}}
     {{/showlauncher}}
 
-    {{! Primary navigation — computed in drawers.php, passed as variable.
-        Never call output.primary_nav directly in Mustache — it can fail silently. }}
+    {{! Primary navigation — rendered directly so Moodle's nav tree is
+        fully initialised at render time. output.primary_nav is stable in
+        Moodle 5.x (unlike the removed flat_navigation). }}
     <nav class="lernhive-nav" aria-label="{{#str}} primarynavigation, theme_lernhive {{/str}}">
-        {{{ primarynav }}}
+        {{{ output.primary_nav }}}
     </nav>
 
     {{! User menu — always visible so logged-in users can navigate and log out. }}
