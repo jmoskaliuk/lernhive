@@ -99,6 +99,48 @@ final class start_url_resolver_test extends advanced_testcase {
     }
 
     /**
+     * `{TRAINERCOURSECATEGORYID}` pulls from the plugin config key
+     * `local_lernhive_onboarding.trainercoursecategoryid`, which is the
+     * admin-configurable target category for the "trainer creates a new
+     * course" tour (see LH-ONB-START-05).
+     */
+    public function test_trainercoursecategoryid_placeholder_pulls_from_plugin_config(): void {
+        $this->resetAfterTest();
+
+        set_config('trainercoursecategoryid', 42, 'local_lernhive_onboarding');
+
+        $url = start_url_resolver::resolve(
+            '/course/edit.php?category={TRAINERCOURSECATEGORYID}',
+            1
+        );
+
+        $this->assertSame('42', $url->get_param('category'));
+    }
+
+    /**
+     * `{TRAINERCOURSECATEGORYID}` falls back to `1` (Moodle's default
+     * Miscellaneous category) when the admin has never opened the
+     * settings page AND the install-time default seeding has not run
+     * yet. This is the belt-and-braces floor so the "create course"
+     * tour always resolves to *some* real category page.
+     */
+    public function test_trainercoursecategoryid_defaults_to_one_when_unset(): void {
+        $this->resetAfterTest();
+
+        // Explicitly wipe any value that bootstrap seeding may have
+        // written — we want to exercise the `?: 1` fallback inside
+        // resolve() and nothing else.
+        unset_config('trainercoursecategoryid', 'local_lernhive_onboarding');
+
+        $url = start_url_resolver::resolve(
+            '/course/edit.php?category={TRAINERCOURSECATEGORYID}',
+            1
+        );
+
+        $this->assertSame('1', $url->get_param('category'));
+    }
+
+    /**
      * An empty template is a coding error — callers must fall back to
      * the pathmatch strip BEFORE invoking the resolver.
      */

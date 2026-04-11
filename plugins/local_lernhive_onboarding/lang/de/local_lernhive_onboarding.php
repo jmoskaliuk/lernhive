@@ -117,3 +117,7 @@ $string['tour_communication_messaging_desc'] = 'Direktnachrichten an einzelne Nu
 // Onboarding-Sandbox-Kurs — versteckter Kurs, auf den {DEMOCOURSEID} aufgelöst wird.
 $string['sandbox_course_fullname'] = 'LernHive Onboarding-Sandbox';
 $string['sandbox_course_summary'] = '<p>Versteckter Sandbox-Kurs für die LernHive-Trainer-Onboardingtouren. Dient als sicheres Ziel für Touren, die einen Kurskontext brauchen. Nicht löschen, ohne vorher Ersatz zu schaffen — Touren mit <code>{DEMOCOURSEID}</code>-Platzhalter landen sonst auf einem ungültigen Kurs.</p>';
+
+// Admin-Einstellungen.
+$string['setting_trainercoursecategoryid'] = 'Kurskategorie für Trainer/innen';
+$string['setting_trainercoursecategoryid_desc'] = 'Die Kurskategorie, in der die „Kurs erstellen"-Onboarding-Tour neue Trainer/innen landen lässt. Admins sollten diese Einstellung auf die Kategorie setzen, in der eure Trainer/innen ihre Kurse anlegen sollen — besonders auf mandantenfähigen Installationen, auf denen die Standard-Kategorie <em>Verschiedenes</em> für Trainer/innen oft ausgeblendet ist.';

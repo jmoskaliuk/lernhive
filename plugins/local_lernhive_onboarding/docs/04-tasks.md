@@ -1,5 +1,77 @@
 # local_lernhive_onboarding — Tasks
 
+## Done (0.2.8 — 2026-04-11)
+
+- **LH-ONB-START-05** — `start_url` backfilled on all ten remaining
+  Level-1 tour JSONs plus a new admin-configurable
+  `{TRAINERCOURSECATEGORYID}` placeholder. Final mapping:
+    - `create_users/01_single.json` → `/user/editadvanced.php?id=-1`
+      (the `-1` triggers Moodle's "create new user" form; the
+      04-tasks.md draft that suggested `?id={USERID}` was wrong —
+      that would have been self-edit of the trainer's own profile).
+    - `create_users/02_csv.json` → `/admin/tool/uploaduser/index.php`
+    - `create_courses/01_create.json` →
+      `/course/edit.php?category={TRAINERCOURSECATEGORYID}` —
+      pulls from the new `trainercoursecategoryid` plugin setting
+      (default: first visible top-level category, admin override
+      via Site administration → Plugins → Local plugins → LernHive
+      Onboarding). Lets multi-tenant admins point trainers at
+      whichever category their policy permits new courses in.
+    - `course_settings/01_format.json` →
+      `/course/edit.php?id={DEMOCOURSEID}`
+    - `course_settings/02_completion.json` →
+      `/course/edit.php?id={DEMOCOURSEID}`
+    - `create_activities/02_forum.json` →
+      `/course/modedit.php?add=forum&course={DEMOCOURSEID}&section=1`
+    - `create_activities/03_file.json` →
+      `/course/modedit.php?add=resource&course={DEMOCOURSEID}&section=1`
+    - `enrol_users/01_manual.json` → `/user/index.php?id={DEMOCOURSEID}`
+      — the modern "Participants → Enrol user" entry point. Tour
+      **pathmatch also changed** from `/enrol/manual/manage.php%` to
+      `/user/index.php%` because the tour now lives on a different
+      page. Existing step DOM selectors were authored against the old
+      `/enrol/manual/manage.php` layout and will need a pass from the
+      next tour-content sweep — tracked in the smoke-test follow-up.
+    - `enrol_users/02_self.json` → `/enrol/instances.php?id={DEMOCOURSEID}`
+      — same situation: pathmatch changed from `/enrol/editinstance.php%`
+      to `/enrol/instances.php%`; step selectors need a review pass.
+    - `communication/02_messaging.json` → `/message/index.php`
+
+  Mechanics: a new `start_url_resolver` placeholder
+  `{TRAINERCOURSECATEGORYID}` reads
+  `get_config('local_lernhive_onboarding', 'trainercoursecategoryid')`
+  with a `1` fallback. The config key is seeded on install and on
+  upgrade via new `sandbox_course::seed_trainer_category_default()`
+  (same "first visible top-level category" rule as the sandbox itself).
+  Only writes the default if the admin has not already chosen a
+  category. New `settings.php` registers an `admin_settingpage` under
+  `localplugins` with a category picker, rendered as an indented
+  hierarchy sourced from `course_categories` rows.
+
+  Upgrade path for existing sites uses two new `tour_importer` helpers:
+  - `backfill_start_urls(int $level)` — walks the Level-1 JSON source
+    files, looks up existing tour rows by `name`, and merges the
+    authoritative `start_url` into their `configdata` as `lh_start_url`
+    **without** touching any other keys (`filtervalues`, `placement`,
+    `orphan`, or the future `lh_prereq_tour_id`). No-op when the JSON
+    has no `start_url`, and when the tour row no longer exists (admin
+    deletion).
+  - `reimport_level(int $level)` — thin wrapper that runs
+    `import_level()` (to pick up any brand-new tours added since the
+    previous release) followed by `backfill_start_urls()`. This is
+    the method wired into the 0.2.8 upgrade savepoint.
+
+- **LH-ONB-START-08 (infra move)** — `communication/01_announcements.json`
+  moved from `tours/level1/` to `tours/level2/` (pending Level-2
+  category infra). On existing sites the 0.2.8 upgrade savepoint calls
+  the new `tour_importer::unmap_tour_from_category()` helper to drop
+  the catalog mapping between the tour row and the Level-1
+  `communication` category — the `tool_usertours_tours` row itself is
+  preserved so admin customisations survive, and the tour still plays
+  on any `/mod/forum/post.php` page because its `pathmatch` is
+  unchanged. Full re-registration under Level 2 is the remaining work
+  tracked as LH-ONB-START-08 below.
+
 ## Done (0.2.7 — 2026-04-11)
 
 - **LH-ONB-START-03** — `starttour.php` rewritten as a thin page
@@ -167,13 +239,17 @@ Independent from the registry work above — can land before or in parallel. Unb
 - [x] **LH-ONB-START-02** — *(landed 0.2.4)* Teach `tour_importer::import_tour()` to read the top-level `start_url` key from tour JSON and merge it into `configdata` as `lh_start_url`. Must preserve any existing `filtervalues`/`placement`/etc. Unit test against a fixture JSON that already has a non-empty `configdata`.
 - [x] **LH-ONB-START-03** — *(landed 0.2.7)* Rewrote `starttour.php` as a thin page wrapper around `starttour_flow::prepare_redirect_url()`. Flow per `03-dev-doc.md`: load tour → pull `lh_start_url` from configdata → resolve placeholders → set `_requested=1` → clear `_completed`/`_lastStep` → redirect. Fallback to the 0.2.x pathmatch strip preserved for un-migrated tours; scheduled for removal in 0.4.0 once every tour has a `start_url`.
 - [x] **LH-ONB-START-04** — *(landed 0.2.7)* `tests/starttour_flow_test.php`: fresh-start, replay-after-completion (end-to-end `{DEMOCOURSEID}` resolution), fallback when `lh_start_url` missing, fallback when `configdata` empty, missing-tour error. Sesskey enforcement deferred to Behat (tracked as LH-ONB-START-07).
-- [ ] **LH-ONB-START-05** — Backfill `start_url` on all 12 existing Level-1 tour JSONs. Concrete mapping (Johannes to confirm during review):
-  - `create_users/01_single.json` → `/user/editadvanced.php?id={USERID}` (verify: does editadvanced accept current user's id as a self-edit landing, or do we need a new-user URL?)
-  - `create_users/02_csv.json` → `/admin/tool/uploaduser/index.php`
-  - `enrol_users/*` → `/enrol/users.php?id={DEMOCOURSEID}` or similar — TBD during authoring review
-  - remaining 9 — TBD during the Level-1 review sweep, tracked here as a sub-list.
+- [x] **LH-ONB-START-05** — *(landed 0.2.8)* `start_url` backfilled on all 10 remaining Level-1 tour JSONs (announcements moved to Level 2, tracked separately as LH-ONB-START-08). New `{TRAINERCOURSECATEGORYID}` placeholder + admin settings page so multi-tenant admins can pin the "create course" tour to a policy-approved category. `tour_importer::backfill_start_urls()` + `reimport_level()` drive the upgrade path without disturbing admin edits on existing tour steps. Two pathmatch changes on the enrol tours (`01_manual` → `/user/index.php%`, `02_self` → `/enrol/instances.php%`) — step DOM selectors need a review pass in the smoke-test sweep.
 - [x] **LH-ONB-START-06** — *(landed 0.2.7)* Install/upgrade step provisions the "Onboarding Sandbox" course via `sandbox_course::ensure()` — hidden (`visible=0`), first visible top-level category, shortname `lh_onboarding_sandbox`, config key `local_lernhive_onboarding.democourseid`. Wired into `db/install.php`, 0.2.7 savepoint `2026041207` in `db/upgrade.php`, and `db/uninstall.php` drops only the config key (course survives because admins may have added real content). PHPUnit in `tests/sandbox_course_test.php` covers fresh create, idempotency, shortname-recovery after config wipe, stale-config rebuild via `delete_course()`, `forget()` behaviour, and end-to-end `{DEMOCOURSEID}` resolution.
 - [ ] **LH-ONB-START-07** — Behat: `starttour_sesskey.feature` covering (a) missing sesskey → rejected, (b) valid sesskey → redirect to the resolved target URL. Picks up the unit-test scope gap documented on START-04.
+- [ ] **LH-ONB-START-08** — Sandbox announcements forum + Level-2 `communication` re-registration. The 0.2.8 infra move (tracked in the Done block above) only relocates the JSON file and drops the Level-1 catalog mapping; the tour cannot yet play against a deterministic target because no sandbox forum exists. Work items:
+  1. Extend `sandbox_course::ensure()` to idempotently provision a News-type forum inside the sandbox course. Look up by stable `idnumber` (e.g. `lh_onboarding_sandbox_announcements`) so an admin-renamed forum still round-trips. Persist the `forum.id` in a new config key `local_lernhive_onboarding.sandboxannouncementsforumid`.
+  2. Add `{SANDBOXANNOUNCEMENTSFORUMID}` placeholder to `start_url_resolver::resolve()` (reads the new config key, defaults to `0` when unset so unknown behaviour surfaces loudly in tests rather than silently pointing at forum id 1).
+  3. Rewrite `tours/level2/communication/01_announcements.json` `start_url` to `/mod/forum/post.php?forum={SANDBOXANNOUNCEMENTSFORUMID}` and its `pathmatch` to `/mod/forum/post.php%`. Keep the existing steps as a starting point, but flag for a content review sweep — the current copy was authored against a generic forum page.
+  4. Wire a Level-2 `communication` category into `tour_importer::seed_categories()` (or its 0.3.0 successor) so the new JSON has somewhere to land. Gated on the Level-2 catalog infra generally.
+  5. Upgrade step for existing 0.2.8 sites that already have the orphaned `tool_usertours_tours` row from the original Level-1 import: re-map the surviving row to the new Level-2 category without recreating it (use `tour_importer::map_existing_tour_to_category()`, to be added as part of this ticket).
+  6. PHPUnit extension of `sandbox_course_test.php`: forum provisioned on fresh install, idempotent on re-run, `{SANDBOXANNOUNCEMENTSFORUMID}` resolves end-to-end through `start_url_resolver`, and `forget()` does **not** delete the forum (same data-preservation rule as the course itself).
+  7. Uninstall path: drop only the new config key, never the forum row.
 - [ ] **LH-ONB-CHAIN-01** — Add `prereq` support to `tour_importer::import_tour()`. Read top-level `prereq` (string, tour name) → resolve to tour ID at import time → persist as `lh_prereq_tour_id` in `configdata`. Two-pass import required: first pass imports all tours without resolving prereqs, second pass back-fills prereq IDs once all names are known. Fail loudly (debugging + skip chain activation for that tour) if the prereq name cannot be resolved.
 - [ ] **LH-ONB-CHAIN-02** — New method `tour_manager::activate_successors(int $tourid, int $userid): void`. Queries tours with `lh_prereq_tour_id = $tourid` in `configdata`, sets `_requested=1` and clears `_completed` for each matching successor, for the given user. DB lookup must use `JSON_EXTRACT` where available and fall back to a PHP-side filter for DBs that lack JSON support. Write down the decision in the method docblock.
 - [ ] **LH-ONB-CHAIN-03** — Event observer `\tool_usertours\event\tour_ended` → `hook_callbacks::on_tour_ended` → `tour_manager::activate_successors($event->objectid, $event->userid)`. Register in `db/events.php`. If Moodle 5.x uses a hook instead of an event for tour end, switch to `db/hooks.php` and document the choice. Pick the one that actually fires in 5.2beta — validate on dev.lernhive.de.
@@ -186,7 +262,6 @@ Independent from the registry work above — can land before or in parallel. Unb
 ## Open questions
 
 - **Chain event vs. hook in Moodle 5.x.** Moodle 5.x is still shifting observer code from legacy events to the new hook manager. Tour completion may be exposed via `\tool_usertours\event\tour_ended` *and/or* a new `\core_user_tours\hook\after_tour_ended`. `LH-ONB-CHAIN-03` needs a quick spike on dev.lernhive.de (5.2beta) to pick the one that actually fires. Prefer hook if both are available; document the call.
-- **`start_url` for `enrol_users` tours.** Enrol-users page requires a course ID. Either point at `{DEMOCOURSEID}` (clean, but the sandbox course is empty of users) or at a richer fixture course seeded alongside the sandbox. Decide during the `LH-ONB-START-05` review sweep.
 - **Level 2 trigger.** Decided in matrix review round 1: **auto after Level 1 complete OR manual admin override** — even when tours are unfinished. Implementation ticket still open, tracked as **LH-ONB-FR-12** *(to be created)*.
 - **Dismiss state.** R1 hides the banner automatically once Level 1 is complete. R2 may want an explicit "don't show again" link that writes a user preference; skipped for now to avoid a second visibility axis on top of level progress.
 - **Auto-assignment.** Admins currently have to assign the `lernhive_trainer` role manually via Site administration → Users → Permissions → Assign system roles. A follow-up could auto-assign on first login for users who already have a `local_lernhive_levels` record, using an `auth\user_loggedin` event observer. Intentionally deferred because (a) admin-only first run lets us QA the feature cleanly on dev.lernhive.de and (b) it keeps the trainer audience auditable.

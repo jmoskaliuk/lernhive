@@ -74,6 +74,14 @@ class sandbox_course {
     public const CONFIG_KEY = 'democourseid';
 
     /**
+     * Plugin config key for the admin-configurable "target category for
+     * trainer-created courses". Resolved into the
+     * `{TRAINERCOURSECATEGORYID}` placeholder by
+     * {@see start_url_resolver}.
+     */
+    public const TRAINER_CATEGORY_CONFIG_KEY = 'trainercoursecategoryid';
+
+    /**
      * Ensure the sandbox course exists and the plugin config points at
      * it. Safe to call repeatedly; cheap when everything is already
      * in place (single DB read).
@@ -117,6 +125,30 @@ class sandbox_course {
         set_config(self::CONFIG_KEY, (int) $course->id, 'local_lernhive_onboarding');
 
         return (int) $course->id;
+    }
+
+    /**
+     * Seed the admin-configurable "trainer course category" setting
+     * with a sensible default on fresh installs and on upgrades from
+     * pre-0.2.8 releases. The default is the same first-visible
+     * top-level category the sandbox course itself lives in, so tours
+     * that use `{TRAINERCOURSECATEGORYID}` still resolve to a real
+     * category even if the admin never opens the settings page.
+     *
+     * Only writes the config if it is not already set — admins who
+     * have explicitly picked a category must not be overridden on
+     * the next plugin upgrade.
+     */
+    public static function seed_trainer_category_default(): void {
+        $existing = get_config('local_lernhive_onboarding', self::TRAINER_CATEGORY_CONFIG_KEY);
+        if ($existing !== false && $existing !== '' && (int) $existing > 0) {
+            return;
+        }
+        set_config(
+            self::TRAINER_CATEGORY_CONFIG_KEY,
+            self::pick_target_category(),
+            'local_lernhive_onboarding'
+        );
     }
 
     /**

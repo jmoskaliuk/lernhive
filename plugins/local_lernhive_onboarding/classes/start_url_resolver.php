@@ -39,13 +39,18 @@ defined('MOODLE_INTERNAL') || die();
  *
  * ## Placeholders
  *
- * | Placeholder        | Value                                                      |
- * |--------------------|------------------------------------------------------------|
- * | `{USERID}`         | The `$userid` argument passed to `resolve()`.              |
- * | `{SYSCONTEXTID}`   | `\context_system::instance()->id`                          |
- * | `{SITEID}`         | The `SITEID` constant (Moodle Frontpage course ID).        |
- * | `{DEMOCOURSEID}`   | `get_config('local_lernhive_onboarding', 'democourseid')`  |
- * |                    | or `0` if the Onboarding Sandbox course is not yet seeded. |
+ * | Placeholder              | Value                                                                  |
+ * |--------------------------|------------------------------------------------------------------------|
+ * | `{USERID}`               | The `$userid` argument passed to `resolve()`.                          |
+ * | `{SYSCONTEXTID}`         | `\context_system::instance()->id`                                      |
+ * | `{SITEID}`               | The `SITEID` constant (Moodle Frontpage course ID).                    |
+ * | `{DEMOCOURSEID}`         | `get_config('local_lernhive_onboarding', 'democourseid')`              |
+ * |                          | or `0` if the Onboarding Sandbox course is not yet seeded.             |
+ * | `{TRAINERCOURSECATEGORYID}` | `get_config('local_lernhive_onboarding', 'trainercoursecategoryid')` |
+ * |                          | — the target category for "a trainer creates a new course" tours.      |
+ * |                          | Admin-configurable via settings.php; defaults to the first visible     |
+ * |                          | top-level category at install time and falls back to `1` at runtime    |
+ * |                          | on exotic installs.                                                    |
  *
  * ## Forward compatibility
  *
@@ -86,15 +91,25 @@ class start_url_resolver {
 
         $democourseid = (int) (get_config('local_lernhive_onboarding', 'democourseid') ?: 0);
 
+        // trainercoursecategoryid defaults to 1 (Miscellaneous) if not set,
+        // so the "create course" tour always resolves to *some* valid
+        // category page even on installs where the admin has never
+        // touched the setting.
+        $trainercoursecategoryid = (int) (get_config(
+            'local_lernhive_onboarding',
+            'trainercoursecategoryid'
+        ) ?: 1);
+
         // strtr() with an array applies the substitutions atomically:
         // known placeholders get replaced, everything else (including
         // any unknown `{FOO}` tokens) stays literal. Intentional — see
         // class docblock on forward compatibility.
         $replacements = [
-            '{USERID}'       => (string) $userid,
-            '{SYSCONTEXTID}' => (string) \context_system::instance()->id,
-            '{SITEID}'       => (string) SITEID,
-            '{DEMOCOURSEID}' => (string) $democourseid,
+            '{USERID}'                   => (string) $userid,
+            '{SYSCONTEXTID}'             => (string) \context_system::instance()->id,
+            '{SITEID}'                   => (string) SITEID,
+            '{DEMOCOURSEID}'             => (string) $democourseid,
+            '{TRAINERCOURSECATEGORYID}'  => (string) $trainercoursecategoryid,
         ];
 
         $resolved = strtr($template, $replacements);

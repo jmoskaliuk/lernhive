@@ -2,6 +2,7 @@
     "name": "LernHive: Forum erstellen",
     "description": "Lerne, wie du ein Forum in deinem Kurs anlegst und konfigurierst.",
     "pathmatch": "/course/modedit.php%",
+    "start_url": "/course/modedit.php?add=forum&course={DEMOCOURSEID}&section=1",
     "enabled": 1,
     "sortorder": 1,
     "displaystepnumbers": 1,

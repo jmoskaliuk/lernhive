@@ -59,4 +59,10 @@ function xmldb_local_lernhive_onboarding_install() {
     // the plugin config key. See classes/sandbox_course.php for why
     // we keep the course around even on uninstall.
     \local_lernhive_onboarding\sandbox_course::ensure();
+
+    // Pre-fill the admin-configurable "trainer course category" setting
+    // with a sensible default (first visible top-level category). Admins
+    // can re-point it later via Site administration → Plugins → Local
+    // plugins → LernHive Onboarding.
+    \local_lernhive_onboarding\sandbox_course::seed_trainer_category_default();
 }

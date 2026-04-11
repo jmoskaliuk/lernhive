@@ -2,6 +2,7 @@
     "name": "LernHive: Nutzer/in anlegen",
     "description": "Lerne, wie du eine einzelne Nutzer/in manuell in LernHive anlegst.",
     "pathmatch": "/user/editadvanced.php%",
+    "start_url": "/user/editadvanced.php?id=-1",
     "enabled": 1,
     "sortorder": 0,
     "displaystepnumbers": 1,

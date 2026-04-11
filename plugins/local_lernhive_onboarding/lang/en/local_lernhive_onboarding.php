@@ -116,3 +116,7 @@ $string['tour_communication_messaging_desc'] = 'Send direct messages to individu
 // Onboarding sandbox course — hidden course that {DEMOCOURSEID} resolves to.
 $string['sandbox_course_fullname'] = 'LernHive Onboarding Sandbox';
 $string['sandbox_course_summary'] = '<p>Hidden sandbox course used by LernHive trainer onboarding tours as a safe target for course-context features. Delete at your own risk — tours that rely on <code>{DEMOCOURSEID}</code> will fall back to an invalid course if you do.</p>';
+
+// Admin settings.
+$string['setting_trainercoursecategoryid'] = 'Trainer course category';
+$string['setting_trainercoursecategoryid_desc'] = 'The course category that the "Create a course" onboarding tour lands novice trainers in. Admins should point this at the category where their trainers are expected to create new courses — especially on multi-tenant installs where the default <em>Miscellaneous</em> category is typically hidden from trainers.';

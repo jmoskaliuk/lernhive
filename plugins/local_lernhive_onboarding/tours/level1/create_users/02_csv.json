@@ -2,6 +2,7 @@
     "name": "LernHive: CSV-Upload",
     "description": "Lerne, wie du mehrere Nutzer/innen gleichzeitig über eine CSV-Datei importierst.",
     "pathmatch": "/admin/tool/uploaduser/index.php%",
+    "start_url": "/admin/tool/uploaduser/index.php",
     "enabled": 1,
     "sortorder": 1,
     "displaystepnumbers": 1,

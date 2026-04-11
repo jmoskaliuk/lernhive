@@ -179,6 +179,141 @@ class tour_importer {
     }
 
     /**
+     * Backfill the `lh_start_url` key into every existing tour whose
+     * JSON source file lives under `tours/level{$level}/`.
+     *
+     * `import_tour()` deliberately short-circuits when a tour with the
+     * same `name` already exists (to make repeated installs idempotent
+     * and to protect admin edits on the tour steps). That short-circuit
+     * is why a plain `import_level(1)` does **not** carry the new
+     * `start_url` key into the DB on upgrade — we need an explicit
+     * backfill pass.
+     *
+     * The backfill only touches the `configdata` JSON blob's
+     * `lh_start_url` sub-key:
+     * - preserves every other key (`filtervalues`, `placement`,
+     *   `orphan`, `lh_prereq_tour_id`, …);
+     * - no-op when the source JSON carries no `start_url` (e.g. the
+     *   announcements tour that is scheduled to move to Level 2 in
+     *   LH-ONB-START-08);
+     * - no-op when the tour row no longer exists in the DB (previously
+     *   deleted by an admin — we must not resurrect it).
+     *
+     * @param int $level LernHive level whose JSON files drive the backfill.
+     * @return int Number of tours whose `lh_start_url` was set or updated.
+     */
+    public static function backfill_start_urls(int $level): int {
+        global $CFG, $DB;
+
+        $tourdir = $CFG->dirroot . '/local/lernhive_onboarding/tours/level' . $level;
+        if (!is_dir($tourdir)) {
+            return 0;
+        }
+
+        $files = glob($tourdir . '/*/*.json');
+        if (empty($files)) {
+            return 0;
+        }
+        sort($files);
+
+        $updated = 0;
+
+        foreach ($files as $file) {
+            $json = @file_get_contents($file);
+            if ($json === false) {
+                continue;
+            }
+            $data = json_decode($json, true);
+            if (!is_array($data) || empty($data['name'])) {
+                continue;
+            }
+            $starturl = isset($data['start_url']) ? (string) $data['start_url'] : '';
+            if ($starturl === '') {
+                continue;
+            }
+
+            $tour = $DB->get_record('tool_usertours_tours', ['name' => $data['name']]);
+            if (!$tour) {
+                // Admin deleted this tour — respect that and skip.
+                continue;
+            }
+
+            $merged = self::merge_start_url_into_configdata(
+                (string) ($tour->configdata ?? '{}'),
+                $starturl
+            );
+
+            if ($merged === (string) $tour->configdata) {
+                // Already backfilled on a previous run.
+                continue;
+            }
+
+            $tour->configdata = $merged;
+            $DB->update_record('tool_usertours_tours', $tour);
+            $updated++;
+        }
+
+        return $updated;
+    }
+
+    /**
+     * Unmap a previously-imported tour from its LernHive category
+     * without deleting the underlying `tool_usertours_tours` row.
+     *
+     * Used by upgrade steps that move a tour between levels. Deleting
+     * the tool_usertours row would also wipe admin customisations to
+     * the tour steps — that is explicitly unacceptable. We leave the
+     * row in place so the tour still plays via its `pathmatch` on the
+     * target page, and only drop the catalog mapping so it stops
+     * appearing in the LernHive Onboarding tour list.
+     *
+     * Looks up the tour by its `name` field. No-op if the tour is not
+     * in the DB (fresh installs on 0.2.8+ never imported it under the
+     * old Level-1 category) or not mapped to the given category.
+     *
+     * @param string $tourname    Human-readable tour name, matching the
+     *                            value stored in `tool_usertours_tours.name`.
+     * @param string $categoryshortname  LernHive category shortname the
+     *                                   tour should be unmapped from.
+     * @return bool True if a mapping was removed, false otherwise.
+     */
+    public static function unmap_tour_from_category(string $tourname, string $categoryshortname): bool {
+        global $DB;
+
+        $tour = $DB->get_record('tool_usertours_tours', ['name' => $tourname]);
+        if (!$tour) {
+            return false;
+        }
+
+        $category = tour_manager::get_category_by_shortname($categoryshortname);
+        if (!$category) {
+            return false;
+        }
+
+        return tour_manager::remove_tour_from_category((int) $category->id, (int) $tour->id);
+    }
+
+    /**
+     * Re-import + backfill shortcut for a single level.
+     *
+     * Runs a regular `import_level()` to pick up any brand-new tours
+     * added to the JSON set since the previous release, then calls
+     * `backfill_start_urls()` to ensure every existing tour row
+     * carries the authoritative `lh_start_url`.
+     *
+     * Used from `db/upgrade.php` savepoints — deliberately kept as a
+     * thin wrapper so test code can drive the two phases independently.
+     *
+     * @param int $level LernHive level to re-import + backfill.
+     * @return int Number of tours imported or updated.
+     */
+    public static function reimport_level(int $level): int {
+        $imported = self::import_level($level);
+        $backfilled = self::backfill_start_urls($level);
+        return $imported + $backfilled;
+    }
+
+    /**
      * Seed the 6 default tour categories for Level 1 (Explorer).
      *
      * Safe to call multiple times — skips existing categories.

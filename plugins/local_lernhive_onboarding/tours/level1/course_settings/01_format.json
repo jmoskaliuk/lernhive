@@ -2,6 +2,7 @@
     "name": "LernHive: Kursformat & Sichtbarkeit",
     "description": "Lerne, wie du das Kursformat wählst und die Sichtbarkeit deines Kurses kontrolierst.",
     "pathmatch": "/course/edit.php%",
+    "start_url": "/course/edit.php?id={DEMOCOURSEID}",
     "enabled": 1,
     "sortorder": 0,
     "displaystepnumbers": 1,

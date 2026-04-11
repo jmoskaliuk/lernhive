@@ -118,4 +118,207 @@ final class tour_importer_test extends advanced_testcase {
         $this->assertArrayHasKey('filtervalues', $config);
         $this->assertSame(['student'], $config['filtervalues']['role']);
     }
+
+    /**
+     * `backfill_start_urls()` walks the real `tours/level{N}/` JSON
+     * source files and updates existing tour rows in
+     * `tool_usertours_tours` so their `configdata` carries the
+     * canonical `lh_start_url` key — *without* touching any other
+     * configdata entries (`filtervalues`, `placement`, …).
+     *
+     * This is the upgrade path that keeps existing 0.2.x sites from
+     * losing the deterministic start after they upgrade to 0.2.8 —
+     * `import_tour()` short-circuits on duplicate name so a plain
+     * `import_level(1)` by itself is not enough.
+     *
+     * The test mimics the real upgrade scenario: a tour row already
+     * exists with a pre-0.2.8 configdata (filtervalues only, no
+     * `lh_start_url`), and we assert that after the backfill the key
+     * is written and the pre-existing role filter is preserved.
+     */
+    public function test_backfill_start_urls_merges_into_existing_tour_row(): void {
+        $this->resetAfterTest();
+        global $DB;
+
+        // Pre-0.2.8 state: tour row exists under its canonical name
+        // (matches tours/level1/create_users/01_single.json) but its
+        // configdata has no `lh_start_url`. This is how every existing
+        // site looks on the morning of the 0.2.8 upgrade.
+        $tour = (object) [
+            'name'               => 'LernHive: Nutzer/in anlegen',
+            'description'        => '',
+            'pathmatch'          => '/user/editadvanced.php%',
+            'enabled'            => 1,
+            'sortorder'          => 0,
+            'configdata'         => json_encode([
+                'filtervalues' => ['role' => ['editingteacher']],
+                'placement'    => 'top',
+            ]),
+            'endtourlabel'       => '',
+            'displaystepnumbers' => 1,
+            'showtourwhen'       => 1,
+        ];
+        $tourid = $DB->insert_record('tool_usertours_tours', $tour);
+
+        $updated = tour_importer::backfill_start_urls(1);
+
+        $this->assertGreaterThanOrEqual(1, $updated,
+            'backfill_start_urls must report at least one updated tour.');
+
+        $after = $DB->get_record('tool_usertours_tours', ['id' => $tourid], '*', MUST_EXIST);
+        $config = json_decode($after->configdata, true);
+
+        $this->assertIsArray($config);
+        $this->assertArrayHasKey('lh_start_url', $config,
+            'lh_start_url must be written into configdata after backfill.');
+        $this->assertSame('/user/editadvanced.php?id=-1', $config['lh_start_url'],
+            'backfilled lh_start_url must match the authoritative JSON source.');
+
+        // Pre-existing filter preserved.
+        $this->assertArrayHasKey('filtervalues', $config);
+        $this->assertSame(['editingteacher'], $config['filtervalues']['role'],
+            'backfill must never drop pre-existing filtervalues.');
+
+        // Pre-existing scalar preserved.
+        $this->assertArrayHasKey('placement', $config);
+        $this->assertSame('top', $config['placement']);
+    }
+
+    /**
+     * `backfill_start_urls()` must be a no-op on the second call
+     * once the tour row already carries the canonical `lh_start_url`.
+     * This matters because the upgrade savepoint will re-run on every
+     * 0.2.7 → 0.2.8 site, and `reimport_level()` calls backfill
+     * unconditionally afterwards — double-run must leave configdata
+     * byte-identical instead of churning the row on every upgrade.
+     */
+    public function test_backfill_start_urls_is_idempotent(): void {
+        $this->resetAfterTest();
+        global $DB;
+
+        $tour = (object) [
+            'name'               => 'LernHive: Nutzer/in anlegen',
+            'description'        => '',
+            'pathmatch'          => '/user/editadvanced.php%',
+            'enabled'            => 1,
+            'sortorder'          => 0,
+            'configdata'         => json_encode([
+                'filtervalues' => ['role' => ['editingteacher']],
+            ]),
+            'endtourlabel'       => '',
+            'displaystepnumbers' => 1,
+            'showtourwhen'       => 1,
+        ];
+        $tourid = $DB->insert_record('tool_usertours_tours', $tour);
+
+        // First backfill — writes the key.
+        tour_importer::backfill_start_urls(1);
+        $first = $DB->get_field('tool_usertours_tours', 'configdata', ['id' => $tourid]);
+
+        // Second backfill — must not touch the row.
+        tour_importer::backfill_start_urls(1);
+        $second = $DB->get_field('tool_usertours_tours', 'configdata', ['id' => $tourid]);
+
+        $this->assertSame($first, $second,
+            'Second backfill call must leave configdata byte-identical.');
+    }
+
+    /**
+     * `backfill_start_urls()` must skip tour rows the admin has
+     * deleted since the previous import. Resurrecting them would
+     * countermand an explicit admin action, which is a policy
+     * violation — we leave deleted tours deleted.
+     *
+     * Verified by running the backfill against an empty DB and
+     * asserting nothing is written.
+     */
+    public function test_backfill_start_urls_skips_missing_rows(): void {
+        $this->resetAfterTest();
+        global $DB;
+
+        // Empty tool_usertours_tours — no rows to update. Clear any
+        // state that install.php may have seeded before we got here.
+        $DB->delete_records('tool_usertours_tours', null);
+
+        $updated = tour_importer::backfill_start_urls(1);
+
+        $this->assertSame(0, $updated,
+            'backfill must never resurrect tour rows an admin has deleted.');
+        $this->assertSame(0, $DB->count_records('tool_usertours_tours'));
+    }
+
+    /**
+     * `unmap_tour_from_category()` must drop the `local_lhonb_map`
+     * join row without touching the `tool_usertours_tours` row. The
+     * underlying tour survives (admins may have customised its steps)
+     * while the LernHive catalog stops advertising it under that
+     * category. Drives the 0.2.8 announcements move
+     * (LH-ONB-START-08 infra-move).
+     */
+    public function test_unmap_tour_from_category_drops_mapping_preserves_tour(): void {
+        $this->resetAfterTest();
+        global $DB;
+
+        tour_importer::seed_categories();
+        $category = tour_manager::get_category_by_shortname('communication');
+        $this->assertNotFalse($category);
+
+        // Insert a tour row and attach it to the communication category,
+        // as the pre-0.2.8 import path would have done.
+        $tourid = $DB->insert_record('tool_usertours_tours', (object) [
+            'name'               => 'LernHive: Test Announcements',
+            'description'        => '',
+            'pathmatch'          => '/mod/forum/post.php%',
+            'enabled'            => 1,
+            'sortorder'          => 0,
+            'configdata'         => json_encode([
+                'filtervalues' => ['role' => ['editingteacher']],
+            ]),
+            'endtourlabel'       => '',
+            'displaystepnumbers' => 1,
+            'showtourwhen'       => 1,
+        ]);
+        tour_manager::add_tour_to_category((int) $category->id, (int) $tourid, 1);
+
+        $this->assertTrue(
+            $DB->record_exists('local_lhonb_map',
+                ['categoryid' => $category->id, 'tourid' => $tourid]),
+            'Precondition: mapping row must exist before the unmap call.'
+        );
+
+        $removed = tour_importer::unmap_tour_from_category(
+            'LernHive: Test Announcements',
+            'communication'
+        );
+
+        $this->assertTrue($removed, 'unmap should report success when it drops a mapping.');
+        $this->assertFalse(
+            $DB->record_exists('local_lhonb_map',
+                ['categoryid' => $category->id, 'tourid' => $tourid]),
+            'Mapping row must be gone after unmap.'
+        );
+        $this->assertTrue(
+            $DB->record_exists('tool_usertours_tours', ['id' => $tourid]),
+            'The tool_usertours_tours row must survive — admin edits must not be lost.'
+        );
+    }
+
+    /**
+     * `unmap_tour_from_category()` must no-op (return false) when the
+     * tour is not in the DB at all. Fresh 0.2.8 installs never
+     * imported the announcements tour under Level 1, so the upgrade
+     * step must not fail on them.
+     */
+    public function test_unmap_tour_from_category_noop_when_tour_missing(): void {
+        $this->resetAfterTest();
+
+        tour_importer::seed_categories();
+
+        $removed = tour_importer::unmap_tour_from_category(
+            'LernHive: Totally Nonexistent Tour',
+            'communication'
+        );
+
+        $this->assertFalse($removed);
+    }
 }

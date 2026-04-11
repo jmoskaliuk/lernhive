@@ -169,4 +169,52 @@ final class sandbox_course_test extends advanced_testcase {
 
         $this->assertSame((string) $id, $url->get_param('id'));
     }
+
+    /**
+     * `seed_trainer_category_default()` on an unseeded install must
+     * write *some* positive category id into the plugin config so the
+     * `{TRAINERCOURSECATEGORYID}` placeholder resolves to a real page
+     * even if the admin never opens the settings page.
+     */
+    public function test_seed_trainer_category_default_writes_when_unset(): void {
+        $this->resetAfterTest();
+
+        unset_config(sandbox_course::TRAINER_CATEGORY_CONFIG_KEY, 'local_lernhive_onboarding');
+
+        sandbox_course::seed_trainer_category_default();
+
+        $seeded = (int) get_config(
+            'local_lernhive_onboarding',
+            sandbox_course::TRAINER_CATEGORY_CONFIG_KEY
+        );
+        $this->assertGreaterThan(0, $seeded,
+            'Default seeding must pick a valid category id, not leave the config empty.');
+    }
+
+    /**
+     * Upgrade-safety: an admin who has explicitly picked a category
+     * must *not* be overridden when the upgrade step re-runs
+     * `seed_trainer_category_default()`. This is the critical property
+     * that keeps multi-tenant overrides stable across plugin upgrades.
+     */
+    public function test_seed_trainer_category_default_preserves_admin_override(): void {
+        $this->resetAfterTest();
+
+        // Simulate an admin who went to Site administration → Plugins →
+        // Local plugins → LernHive Onboarding and picked category 99.
+        set_config(
+            sandbox_course::TRAINER_CATEGORY_CONFIG_KEY,
+            99,
+            'local_lernhive_onboarding'
+        );
+
+        sandbox_course::seed_trainer_category_default();
+
+        $after = (int) get_config(
+            'local_lernhive_onboarding',
+            sandbox_course::TRAINER_CATEGORY_CONFIG_KEY
+        );
+        $this->assertSame(99, $after,
+            'seed_trainer_category_default() must never clobber an existing admin choice.');
+    }
 }

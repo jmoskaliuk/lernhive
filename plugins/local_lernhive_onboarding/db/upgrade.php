@@ -157,5 +157,40 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041207, 'local', 'lernhive_onboarding');
     }
 
+    // 0.2.8 — LH-ONB-START-05: deterministic start_url backfill on
+    // every Level-1 tour. The JSON files ship with the new
+    // `start_url` key so fresh installs are covered by
+    // tour_importer::import_level(1). For existing sites we need to
+    // re-import the Level-1 tours with the new flag, otherwise old
+    // DB rows keep their empty `lh_start_url` configdata slot and the
+    // starttour_flow falls back to the pathmatch strip forever.
+    //
+    // Plus: seed the `trainercoursecategoryid` admin setting with a
+    // sensible default so the `{TRAINERCOURSECATEGORYID}` placeholder
+    // resolves to *something* even if the admin never opens the
+    // plugin settings page after upgrade.
+    if ($oldversion < 2026041208) {
+        \local_lernhive_onboarding\sandbox_course::seed_trainer_category_default();
+        \local_lernhive_onboarding\tour_importer::reimport_level(1);
+
+        // The "announcements" tour moved from Level 1 → Level 2
+        // (tracked as LH-ONB-START-08). On existing sites the tour row
+        // still exists in `tool_usertours_tours` from the previous
+        // Level-1 import — we keep the row (admins may have customised
+        // the steps) but unmap it from the Level-1 `communication`
+        // category so the LernHive Onboarding catalog stops advertising
+        // it under Level 1. It will still play on any `/mod/forum/post.php`
+        // page because its `pathmatch` is unchanged. LH-ONB-START-08 will
+        // re-register the tour under the new Level-2 category pack once
+        // that infra lands (together with the sandbox announcements
+        // forum and `{SANDBOXANNOUNCEMENTSFORUMID}` placeholder).
+        \local_lernhive_onboarding\tour_importer::unmap_tour_from_category(
+            'LernHive: Ankündigungen',
+            'communication'
+        );
+
+        upgrade_plugin_savepoint(true, 2026041208, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }

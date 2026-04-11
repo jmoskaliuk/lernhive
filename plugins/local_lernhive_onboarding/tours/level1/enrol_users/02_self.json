@@ -1,7 +1,8 @@
 {
     "name": "LernHive: Selbsteinschreibung einrichten",
     "description": "Lerne, wie du Selbsteinschreibung mit Einschreibeschlüssel für deinen Kurs aktivierst.",
-    "pathmatch": "/enrol/editinstance.php%",
+    "pathmatch": "/enrol/instances.php%",
+    "start_url": "/enrol/instances.php?id={DEMOCOURSEID}",
     "enabled": 1,
     "sortorder": 1,
     "displaystepnumbers": 1,
