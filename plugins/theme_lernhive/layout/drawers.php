@@ -22,7 +22,9 @@ $plainmaincontent = trim(str_replace(['&nbsp;', "\xc2\xa0"], '', html_entity_dec
 $hasmaincontent = $plainmaincontent !== '';
 $isfrontpage = $PAGE->pagelayout === 'frontpage';
 $showlauncher = isloggedin() && !isguestuser();
-$showpageheader = !$isfrontpage || !isloggedin() || isguestuser();
+// Always show the page header so breadcrumb/context-title is visible.
+// User menu is now in the sidebar (always accessible).
+$showpageheader = true;
 
 $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';

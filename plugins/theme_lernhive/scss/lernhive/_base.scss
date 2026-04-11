@@ -80,9 +80,14 @@ img {
 // EXCEPTION: admin pagelayouts keep the full standard Moodle navigation —
 // they don't use the LernHive app-shell at all (see admin.mustache).
 
-:not(body.pagelayout-admin):not(body.pagelayout-admincompact) {
-    // Primary navigation tabs — replaced by LernHive sidebar.
-    .primary-navigation,
+// On non-admin pages: hide Moodle chrome that the LernHive shell replaces.
+// The primary-navigation is rendered INSIDE .lernhive-sidebar via primary_nav()
+// — so we un-hide it there with the rule below, while hiding it everywhere else.
+
+body:not(.pagelayout-admin):not(.pagelayout-admincompact) {
+    // Hide the standalone primary-navigation Moodle renders outside our sidebar.
+    // The copy inside .lernhive-sidebar is un-hidden below.
+    .primary-navigation:not(.lernhive-sidebar .primary-navigation),
     nav.moremenu {
         display: none !important;
     }
@@ -103,6 +108,37 @@ img {
     // Page header (Moodle core) — we render our own via lernhive-page-header.
     #page-header {
         display: none !important;
+    }
+}
+
+// Un-hide primary-navigation when it lives inside the LernHive sidebar.
+.lernhive-sidebar .primary-navigation {
+    display: block !important;
+    // Remove Boost's default horizontal-tab styling.
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+// User menu inside sidebar — always visible, light text on dark bg.
+.lernhive-sidebar__usermenu {
+    margin-top: auto; // push to bottom of sidebar flex column
+    padding-top: $lh-spacing-md;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+
+    .usermenu {
+        width: 100%;
+    }
+
+    // Make the user avatar/name link readable on dark sidebar bg.
+    .userbutton,
+    .userbutton a,
+    [data-region="usermenu"] a {
+        color: rgba(255, 255, 255, 0.9) !important;
+
+        &:hover {
+            color: #fff !important;
+        }
     }
 }
 

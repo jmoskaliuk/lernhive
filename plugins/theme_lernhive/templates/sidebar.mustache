@@ -10,9 +10,16 @@
         {{/launcher}}
     {{/showlauncher}}
 
+    {{! Primary navigation — Dashboard, My Courses, Site admin, etc.
+        Moodle 5.x provides this via primary_nav(); flat_navigation is gone. }}
     <nav class="lernhive-nav" aria-label="{{#str}} primarynavigation, theme_lernhive {{/str}}">
-        {{{ output.flat_navigation }}}
+        {{{ output.primary_nav }}}
     </nav>
+
+    {{! User menu — always visible so logged-in users can navigate and log out. }}
+    <div class="lernhive-sidebar__usermenu">
+        {{{ output.user_menu }}}
+    </div>
 
     {{#hassidebarbottom}}
         <div class="lernhive-sidebar__blocks" data-region="sidebar-bottom" aria-label="{{#str}} region-sidebar-bottom, theme_lernhive {{/str}}">
