@@ -751,85 +751,35 @@ function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
     // gets filled client-side by the drawer AMD module via the
     // `core_course_get_state` webservice.
     //
-    // Two earlier render paths failed:
-    //   0.9.46 — called core_course_drawer() which routes here, but the
-    //            resulting HTML was empty. Almost certainly because the
-    //            {{#js}} block wasn't being honoured when the markup was
-    //            re-embedded inside another template context. 0.9.48 fixes
-    //            this by letting Moodle's Mustache engine process the child
-    //            template's js block naturally — course_index_drawer() uses
-    //            $renderer->render_from_template(), which registers js
-    //            requirements on $PAGE->requires at render time, not at
-    //            output time, so embedding the returned HTML elsewhere is
-    //            safe.
-    //   0.9.47 — tried the content-embedded courseindex renderable
-    //            (\core_courseformat\output\local\content\courseindex
-    //            \courseindex), which renders a *different* template with
-    //            no js hydration. Wrong layer entirely.
-    //
-    // We also embed a diagnostic HTML comment so that if the sidebar is
-    // still empty the user can View Source and report exactly what the
-    // render path saw — course id, format, uses_course_index() verdict,
-    // HTML length. No more blind fix attempts.
+    // Guard note (0.9.51 fix): on our course.php layout, $page->course is
+    // *not* reliably set to the active course at the time this helper runs,
+    // even though require_login($course) has already executed in /course/
+    // view.php. The empirically-verified workaround is to fall back to the
+    // $COURSE global, which require_login() sets synchronously. When the
+    // diag instrumentation was live we saw status=using-global-course fire
+    // on every successful render; $page->course reports as an object with
+    // id=1 (SITE) instead of the real course id.
     global $COURSE;
     $courseindexhtml = '';
-    $diag = [
-        'pagelayout'     => $page->pagelayout ?? 'n/a',
-        'page_course_t'  => 'n/a',
-        'page_course_id' => 'n/a',
-        'global_course'  => isset($COURSE) && !empty($COURSE->id) ? (string) $COURSE->id : 'none',
-        'formatname'     => 'none',
-        'usescourseidx'  => 'n/a',
-        'rendererclass'  => 'n/a',
-        'drawerlen'      => 0,
-        'status'         => 'skipped',
-    ];
-    // Describe whatever $page->course actually is — null vs stdClass vs
-    // something else — so we stop guessing.
-    if (!isset($page->course)) {
-        $diag['page_course_t'] = 'unset';
-    } else if ($page->course === null) {
-        $diag['page_course_t'] = 'null';
-    } else if (is_object($page->course)) {
-        $diag['page_course_t']  = 'object';
-        $diag['page_course_id'] = (string) ($page->course->id ?? 'noid');
-    } else {
-        $diag['page_course_t'] = gettype($page->course);
-    }
-
-    // Relaxed guard: pick the best course object we can — prefer $page->course
-    // if it has id > SITEID, fall back to $COURSE global if that has id >
-    // SITEID. This handles layouts where $page->course is still the site
-    // course at template render time but $COURSE has already been set by
-    // require_login().
     $course = null;
     if (!empty($page->course) && is_object($page->course) && !empty($page->course->id) && $page->course->id > SITEID) {
         $course = $page->course;
     } else if (isset($COURSE) && is_object($COURSE) && !empty($COURSE->id) && $COURSE->id > SITEID) {
         $course = $COURSE;
-        $diag['status'] = 'using-global-course';
     }
 
     if ($course !== null) {
         try {
             $format = course_get_format($course);
-            $diag['formatname']    = $format->get_format();
-            $diag['usescourseidx'] = $format->uses_course_index() ? 'yes' : 'no';
             $renderer = $format->get_renderer($page);
-            $diag['rendererclass'] = get_class($renderer);
             if (method_exists($renderer, 'course_index_drawer')) {
                 $courseindexhtml = (string) $renderer->course_index_drawer($format);
-                $diag['drawerlen'] = strlen($courseindexhtml);
-                if ($courseindexhtml !== '') {
-                    $diag['status'] = 'rendered';
-                } else if ($diag['status'] === 'skipped') {
-                    $diag['status'] = 'empty';
-                }
-            } else {
-                $diag['status'] = 'no-method';
             }
         } catch (\Throwable $e) {
-            $diag['status'] = 'exception: ' . $e->getMessage();
+            // Fail soft — an empty course index is always better than a
+            // fatal course page. The divider is suppressed downstream via
+            // hascourseindex when this happens. The debugging() output
+            // lands in Moodle's debug log when developer debug is on.
             debugging(
                 'theme_lernhive: course index render failed — ' . $e->getMessage(),
                 DEBUG_DEVELOPER
@@ -838,36 +788,10 @@ function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
         }
     }
 
-    // Diagnostic HTML comment — safe to leave in for alpha, remove once
-    // course index is stable. Values are normalised so the comment cannot
-    // break HTML parsing even if a class name contains something surprising.
-    $diagcomment = "\n<!-- lernhive-course-idx-diag: "
-        . 'pagelayout=' . clean_param($diag['pagelayout'], PARAM_ALPHANUMEXT)
-        . ' pcourse_t=' . clean_param($diag['page_course_t'], PARAM_ALPHANUMEXT)
-        . ' pcourse_id=' . clean_param($diag['page_course_id'], PARAM_ALPHANUMEXT)
-        . ' gcourse=' . clean_param($diag['global_course'], PARAM_ALPHANUMEXT)
-        . ' format=' . clean_param($diag['formatname'], PARAM_ALPHANUMEXT)
-        . ' uses=' . clean_param($diag['usescourseidx'], PARAM_ALPHANUMEXT)
-        . ' renderer=' . clean_param(str_replace('\\', '_', $diag['rendererclass']), PARAM_ALPHANUMEXT)
-        . ' drawerlen=' . (int) $diag['drawerlen']
-        . ' status=' . clean_param(substr($diag['status'], 0, 80), PARAM_TEXT)
-        . " -->\n";
-
-    // When the drawer call returns non-empty, we have both the placeholder
-    // <nav id="courseindex"> and a trailing script block. Keep the diag
-    // comment BEFORE the drawer HTML so it is the first thing inside our
-    // .lernhive-course-index wrapper — easy to find in View Source.
-    $finalhtml = $diagcomment . $courseindexhtml;
-
     return [
         'reducednavitems' => $reduced,
-        // Always render the wrapper so the diag comment is visible, even
-        // if the drawer HTML is empty. Frontend CSS already hides the
-        // heading / body when hascourseindex is false — we override that
-        // here by always setting hascourseindex true so debuggers can see
-        // the <!-- lernhive-course-idx-diag ... --> marker in the DOM.
-        'courseindex'     => $finalhtml,
-        'hascourseindex'  => true,
+        'courseindex'     => $courseindexhtml,
+        'hascourseindex'  => trim($courseindexhtml) !== '',
         'primarynavlabel' => get_string('primarynavigation', 'theme_lernhive'),
         'coursenavlabel'  => get_string('coursenavigation', 'theme_lernhive'),
     ];

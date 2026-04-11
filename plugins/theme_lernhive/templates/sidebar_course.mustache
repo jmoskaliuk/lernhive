@@ -56,7 +56,10 @@
         <hr class="lernhive-nav__divider" role="separator" aria-orientation="horizontal">
 
         <nav class="lernhive-course-index" aria-label="{{ coursesidebar.coursenavlabel }}">
-            <h2 class="lernhive-course-index__heading">{{ coursesidebar.coursenavlabel }}</h2>
+            <h2 class="lernhive-course-index__heading">
+                <i class="fa fa-sitemap lernhive-course-index__heading-icon" aria-hidden="true"></i>
+                <span>{{ coursesidebar.coursenavlabel }}</span>
+            </h2>
             <div class="lernhive-course-index__body">
                 {{{ coursesidebar.courseindex }}}
             </div>
