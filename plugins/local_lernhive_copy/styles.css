@@ -91,6 +91,27 @@
     color: #38478c;
 }
 
+.lh-copy-form {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .06);
+}
+
+.lh-copy-form .mform {
+    margin: 0;
+}
+
+.lh-copy-form .mform .fitem {
+    margin-bottom: 16px;
+}
+
+.lh-copy-form .mform .fitem .col-md-3 {
+    /* Narrower label column reads better in a centred wizard card. */
+    max-width: 260px;
+}
+
 @media (max-width: 600px) {
     .lh-copy-container {
         margin: 16px auto;

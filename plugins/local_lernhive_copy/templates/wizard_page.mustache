@@ -17,11 +17,15 @@
 {{!
     @template local_lernhive_copy/wizard_page
 
-    Copy wizard entry page — two mode tiles plus a placeholder notice.
+    Copy wizard entry page. Has two rendering modes:
+      - hasform: shows the pre-rendered simple copy form (course mode)
+      - otherwise: shows the two-tile stub (template mode, or fallback)
 
     Context:
     {
         "istemplate": false,
+        "hasform": true,
+        "formhtml": "<form>...</form>",
         "heading": "Copy a course",
         "intro": "Pick an existing course.",
         "mode_simple": "Simple",
@@ -39,24 +43,32 @@
         <p>{{intro}}</p>
     </div>
 
-    <div class="lh-copy-modes" role="list">
-        <div class="lh-copy-mode lh-copy-mode--simple" role="listitem">
-            <h3 class="lh-copy-mode-title">{{mode_simple}}</h3>
-            <p class="lh-copy-mode-desc">{{mode_simple_desc}}</p>
-            <button type="button" class="btn btn-primary disabled" disabled aria-disabled="true">
-                {{cta_simple}}
-            </button>
+    {{#hasform}}
+        <div class="lh-copy-form">
+            {{{formhtml}}}
         </div>
-        <div class="lh-copy-mode lh-copy-mode--expert" role="listitem">
-            <h3 class="lh-copy-mode-title">{{mode_expert}}</h3>
-            <p class="lh-copy-mode-desc">{{mode_expert_desc}}</p>
-            <button type="button" class="btn btn-secondary disabled" disabled aria-disabled="true">
-                {{cta_expert}}
-            </button>
-        </div>
-    </div>
+    {{/hasform}}
 
-    <div class="lh-copy-notice" role="note">
-        {{notice}}
-    </div>
+    {{^hasform}}
+        <div class="lh-copy-modes" role="list">
+            <div class="lh-copy-mode lh-copy-mode--simple" role="listitem">
+                <h3 class="lh-copy-mode-title">{{mode_simple}}</h3>
+                <p class="lh-copy-mode-desc">{{mode_simple_desc}}</p>
+                <button type="button" class="btn btn-primary disabled" disabled aria-disabled="true">
+                    {{cta_simple}}
+                </button>
+            </div>
+            <div class="lh-copy-mode lh-copy-mode--expert" role="listitem">
+                <h3 class="lh-copy-mode-title">{{mode_expert}}</h3>
+                <p class="lh-copy-mode-desc">{{mode_expert_desc}}</p>
+                <button type="button" class="btn btn-secondary disabled" disabled aria-disabled="true">
+                    {{cta_expert}}
+                </button>
+            </div>
+        </div>
+
+        <div class="lh-copy-notice" role="note">
+            {{notice}}
+        </div>
+    {{/hasform}}
 </div>

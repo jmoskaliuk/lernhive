@@ -34,17 +34,27 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Wizard entry page.
  *
- * R1 scope: render two mode tiles (Simple / Expert) plus an explicit
- * "not yet implemented" notice. The actual wizard that wires this
- * page to Moodle's backup/restore API is tracked in
- * `docs/04-tasks.md` of the copy plugin.
+ * The page has two rendering modes:
+ *
+ *  1. Course source: the ContentHub "Copy" card lands here. If a
+ *     pre-rendered copy form is passed in, the template shows the form;
+ *     otherwise it falls back to the mode-tile stub (useful if the
+ *     form could not be built, e.g. during install checks).
+ *  2. Template source: the ContentHub "Template" card lands here. This
+ *     always shows the stub — template copy is scheduled for a later
+ *     slice and has different semantics (see `docs/04-tasks.md`).
  */
 class wizard_page implements renderable, templatable {
 
     /**
-     * @param source $source The content source the wizard is serving.
+     * @param source      $source   The content source the wizard is serving.
+     * @param string|null $formhtml Pre-rendered form HTML for the simple
+     *                              copy flow, or null to show the stub.
      */
-    public function __construct(private readonly source $source) {
+    public function __construct(
+        private readonly source $source,
+        private readonly ?string $formhtml = null,
+    ) {
     }
 
     /**
@@ -55,8 +65,12 @@ class wizard_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output): array {
         $suffix = $this->source->string_suffix();
+        $hasform = $this->formhtml !== null && $this->formhtml !== '';
+
         return [
             'istemplate'       => $this->source->is_template(),
+            'hasform'          => $hasform,
+            'formhtml'         => $this->formhtml ?? '',
             'heading'          => get_string('page_title_' . $suffix, 'local_lernhive_copy'),
             'intro'            => get_string('page_intro_' . $suffix, 'local_lernhive_copy'),
             'mode_simple'      => get_string('mode_simple', 'local_lernhive_copy'),

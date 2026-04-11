@@ -35,10 +35,10 @@ $string['open_wizard'] = 'Open copy wizard';
 // Page headings.
 $string['page_title_copy'] = 'Copy a course';
 $string['page_title_template'] = 'Start from a template';
-$string['page_intro_copy'] = 'Pick an existing course to reuse as a starting point. The copy wizard hands off to Moodle backup and restore for the actual work.';
+$string['page_intro_copy'] = 'Pick an existing course to reuse as a starting point. The Simple copy wizard hands the source course to Moodle backup and restore, which run asynchronously in the background.';
 $string['page_intro_template'] = 'Pick a curated template to seed your new course. Templates are maintained by your organisation; changes to the template do not propagate into copies.';
 
-// Modes.
+// Modes (stub / template fallback).
 $string['mode_simple'] = 'Simple';
 $string['mode_simple_desc'] = 'Copy structure and activities. Skip participants, grades, and attempt data. Recommended for most trainers.';
 $string['mode_expert'] = 'Expert';
@@ -47,7 +47,19 @@ $string['mode_cta_simple'] = 'Start simple copy';
 $string['mode_cta_expert'] = 'Open expert mode';
 
 // Placeholder / empty states.
-$string['not_implemented'] = 'This wizard is still under construction — Release 1 will wire it up to Moodle backup/restore. For now, use Site administration → Courses to copy content manually.';
+$string['not_implemented'] = 'Template copy is still under construction. The course copy flow on the other card is live — use it to duplicate an existing course.';
+
+// Simple copy form.
+$string['form_source_course'] = 'Source course';
+$string['form_source_course_help'] = 'The existing course you want to copy. Only courses you are allowed to back up are shown.';
+$string['form_target_fullname'] = 'New course full name';
+$string['form_target_shortname'] = 'New course short name';
+$string['form_target_category'] = 'Target category';
+$string['form_target_visible'] = 'Visible';
+$string['form_include_userdata'] = 'Include participants and progress';
+$string['form_include_userdata_help'] = 'When enabled, enrolments, grades, and attempt data are copied along with the course structure. Keep this off if you want a clean copy to reuse for a new cohort.';
+$string['form_submit'] = 'Start copy';
+$string['form_queued'] = 'Copy queued. Moodle will finish the copy in the background; you can follow progress here.';
 
 // Privacy.
 $string['privacy:metadata'] = 'The LernHive Copy plugin does not store any personal data itself — it hands off copy operations to Moodle core backup and restore, which have their own privacy providers.';
