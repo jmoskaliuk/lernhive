@@ -1,0 +1,18 @@
+{
+  "job": "behat",
+  "status": "failed",
+  "exit_code": 3,
+  "has_warnings": false,
+  "run_id": "24282925901",
+  "run_number": 9,
+  "sha": "98573893b5feeef8546b9f499e8d33643f16f73a",
+  "short_sha": "98573893",
+  "ref": "main",
+  "actor": "jmoskaliuk",
+  "event": "push",
+  "timestamp": "20260411T132713Z",
+  "log_path": "runs/latest-behat.log",
+  "archive_path": "runs/archive/20260411T132713Z-98573893-behat.log",
+  "tests": null,
+  "assertions": null
+}

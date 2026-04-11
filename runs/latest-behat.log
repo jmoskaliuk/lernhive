@@ -1,0 +1,897 @@
+[server-test] updating /opt/lernhive from origin/main...
+HEAD is now at cc206bd theme_lernhive 0.9.15: fix empty block cards + user_menu dedup
+[server-test] invoking playbooks/test.sh --target=hetzner --suite=behat
+[1;34m[test][0m target=hetzner  container=lernhive-webserver-1  suite=behat  component=<default: lernhive plugins>  full=0  reinit=0
+[1;34m[test][0m Behat: diag
+Reinstall Behat: The test environment was initialised for a different version, use:
+ php init.php
+[1;34m[test][0m Behat: init (diag rc=253, force=0)
+You are already using the latest available Composer version 2.9.5 (stable channel).
+Installing dependencies from lock file (including require-dev)
+Verifying lock file contents can be installed on current platform.
+Nothing to install, update or remove
+Generating autoload files
+56 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+Dropping tables:
+............................................................
+............................................................
+............................................................
+............................................................
+............................................................
+............................................................
+............................................................
+............................................................
+..............
+Acceptance tests site dropped
+-->System
+++ install.xml: Success (3.34 seconds) ++
+++ xmldb_main_install: Success (2.54 seconds) ++
+++ admin_apply_default_settings: Success (7.78 seconds) ++
+++ Success (14.56 seconds) ++
+-->aiplacement_courseassist
+++ Success (0.09 seconds) ++
+-->aiplacement_editor
+++ Success (0.08 seconds) ++
+-->aiprovider_azureai
+++ Success (0.04 seconds) ++
+-->aiprovider_deepseek
+++ Success (0.04 seconds) ++
+-->aiprovider_ollama
+++ Success (0.05 seconds) ++
+-->aiprovider_openai
+++ Success (0.05 seconds) ++
+-->antivirus_clamav
+++ Success (0.04 seconds) ++
+-->availability_completion
+++ Success (0.05 seconds) ++
+-->availability_date
+++ Success (0.03 seconds) ++
+-->availability_grade
+++ Success (0.02 seconds) ++
+-->availability_group
+++ Success (0.03 seconds) ++
+-->availability_grouping
+++ Success (0.02 seconds) ++
+-->availability_profile
+++ Success (0.04 seconds) ++
+-->qtype_calculated
+++ Success (0.10 seconds) ++
+-->qtype_calculatedmulti
+++ Success (0.04 seconds) ++
+-->qtype_calculatedsimple
+++ Success (0.04 seconds) ++
+-->qtype_ddimageortext
+++ Success (0.05 seconds) ++
+-->qtype_ddmarker
+++ Success (0.07 seconds) ++
+-->qtype_ddwtos
+++ Success (0.06 seconds) ++
+-->qtype_description
+++ Success (0.05 seconds) ++
+-->qtype_essay
+++ Success (0.06 seconds) ++
+-->qtype_gapselect
+++ Success (0.07 seconds) ++
+-->qtype_match
+++ Success (0.06 seconds) ++
+-->qtype_missingtype
+++ Success (0.02 seconds) ++
+-->qtype_multianswer
+++ Success (0.04 seconds) ++
+-->qtype_multichoice
+++ Success (0.05 seconds) ++
+-->qtype_numerical
+++ Success (0.06 seconds) ++
+-->qtype_ordering
+++ Success (0.08 seconds) ++
+-->qtype_random
+++ Success (0.06 seconds) ++
+-->qtype_randomsamatch
+++ Success (0.07 seconds) ++
+-->qtype_shortanswer
+++ Success (0.08 seconds) ++
+-->qtype_truefalse
+++ Success (0.08 seconds) ++
+-->mod_assign
+++ Success (0.54 seconds) ++
+-->mod_bigbluebuttonbn
+++ Success (0.25 seconds) ++
+-->mod_book
+++ Success (0.15 seconds) ++
+-->mod_choice
+++ Success (0.13 seconds) ++
+-->mod_data
+++ Success (0.23 seconds) ++
+-->mod_feedback
+++ Success (0.23 seconds) ++
+-->mod_folder
+++ Success (0.07 seconds) ++
+-->mod_forum
+++ Success (0.48 seconds) ++
+-->mod_glossary
+++ Success (0.23 seconds) ++
+-->mod_h5pactivity
+++ Success (0.14 seconds) ++
+-->mod_imscp
+++ Success (0.06 seconds) ++
+-->mod_label
+++ Success (0.06 seconds) ++
+-->mod_lesson
+++ Success (0.17 seconds) ++
+-->mod_lti
+++ Success (0.31 seconds) ++
+-->mod_page
+++ Success (0.06 seconds) ++
+-->mod_qbank
+++ Success (0.10 seconds) ++
+-->mod_quiz
+++ Success (0.27 seconds) ++
+-->mod_resource
+++ Success (0.07 seconds) ++
+-->mod_scorm
+++ Success (0.27 seconds) ++
+-->mod_subsection
+++ Success (0.05 seconds) ++
+-->mod_url
+++ Success (0.06 seconds) ++
+-->mod_wiki
+++ Success (0.18 seconds) ++
+-->mod_workshop
+++ Success (0.29 seconds) ++
+-->auth_db
+++ Success (0.05 seconds) ++
+-->auth_email
+++ Success (0.04 seconds) ++
+-->auth_ldap
+++ Success (0.05 seconds) ++
+-->auth_lti
+++ Success (0.08 seconds) ++
+-->auth_manual
+++ Success (0.04 seconds) ++
+-->auth_nologin
+++ Success (0.05 seconds) ++
+-->auth_none
+++ Success (0.05 seconds) ++
+-->auth_oauth2
+++ Success (0.08 seconds) ++
+-->auth_shibboleth
+++ Success (0.03 seconds) ++
+-->auth_webservice
+++ Success (0.04 seconds) ++
+-->calendartype_gregorian
+++ Success (0.05 seconds) ++
+-->communication_customlink
+++ Success (0.06 seconds) ++
+-->communication_matrix
+++ Success (0.08 seconds) ++
+-->customfield_checkbox
+++ Success (0.05 seconds) ++
+-->customfield_date
+++ Success (0.05 seconds) ++
+-->customfield_number
+++ Success (0.06 seconds) ++
+-->customfield_select
+++ Success (0.05 seconds) ++
+-->customfield_text
+++ Success (0.03 seconds) ++
+-->customfield_textarea
+++ Success (0.03 seconds) ++
+-->enrol_category
+++ Success (0.03 seconds) ++
+-->enrol_cohort
+++ Success (0.04 seconds) ++
+-->enrol_database
+++ Success (0.04 seconds) ++
+-->enrol_fee
+++ Success (0.03 seconds) ++
+-->enrol_flatfile
+++ Success (0.07 seconds) ++
+-->enrol_guest
+++ Success (0.04 seconds) ++
+-->enrol_imsenterprise
+++ Success (0.04 seconds) ++
+-->enrol_ldap
+++ Success (0.03 seconds) ++
+-->enrol_lti
+++ Success (0.52 seconds) ++
+-->enrol_manual
+++ Success (0.05 seconds) ++
+-->enrol_meta
+++ Success (0.04 seconds) ++
+-->enrol_paypal
+++ Success (0.06 seconds) ++
+-->enrol_self
+++ Success (0.06 seconds) ++
+-->message_airnotifier
+++ Success (0.11 seconds) ++
+-->message_email
+++ Success (0.14 seconds) ++
+-->message_popup
+++ Success (0.19 seconds) ++
+-->message_sms
+++ Success (0.11 seconds) ++
+-->block_accessreview
+++ Success (0.04 seconds) ++
+-->block_activity_modules
+++ Success (0.03 seconds) ++
+-->block_activity_results
+++ Success (0.03 seconds) ++
+-->block_admin_bookmarks
+++ Success (0.03 seconds) ++
+-->block_badges
+++ Success (0.03 seconds) ++
+-->block_blog_menu
+++ Success (0.03 seconds) ++
+-->block_blog_recent
+++ Success (0.03 seconds) ++
+-->block_blog_tags
+++ Success (0.03 seconds) ++
+-->block_calendar_month
+++ Success (0.03 seconds) ++
+-->block_calendar_upcoming
+++ Success (0.03 seconds) ++
+-->block_comments
+++ Success (0.03 seconds) ++
+-->block_completionstatus
+++ Success (0.03 seconds) ++
+-->block_course_list
+++ Success (0.03 seconds) ++
+-->block_course_summary
+++ Success (0.03 seconds) ++
+-->block_feedback
+++ Success (0.03 seconds) ++
+-->block_globalsearch
+++ Success (0.03 seconds) ++
+-->block_glossary_random
+++ Success (0.03 seconds) ++
+-->block_html
+++ Success (0.03 seconds) ++
+-->block_login
+++ Success (0.03 seconds) ++
+-->block_lp
+++ Success (0.03 seconds) ++
+-->block_mentees
+++ Success (0.03 seconds) ++
+-->block_myoverview
+++ Success (0.03 seconds) ++
+-->block_myprofile
+++ Success (0.03 seconds) ++
+-->block_navigation
+++ Success (0.03 seconds) ++
+-->block_news_items
+++ Success (0.03 seconds) ++
+-->block_online_users
+++ Success (0.04 seconds) ++
+-->block_private_files
+++ Success (0.03 seconds) ++
+-->block_recent_activity
+++ Success (0.06 seconds) ++
+-->block_recentlyaccessedcourses
+++ Success (0.03 seconds) ++
+-->block_recentlyaccesseditems
+++ Success (0.05 seconds) ++
+-->block_rss_client
+++ Success (0.06 seconds) ++
+-->block_search_forums
+++ Success (0.03 seconds) ++
+-->block_selfcompletion
+++ Success (0.03 seconds) ++
+-->block_settings
+++ Success (0.03 seconds) ++
+-->block_site_main_menu
+++ Success (0.03 seconds) ++
+-->block_social_activities
+++ Success (0.03 seconds) ++
+-->block_starredcourses
+++ Success (0.03 seconds) ++
+-->block_tag_flickr
+++ Success (0.03 seconds) ++
+-->block_tag_youtube
+++ Success (0.05 seconds) ++
+-->block_tags
+++ Success (0.05 seconds) ++
+-->block_timeline
+++ Success (0.06 seconds) ++
+-->media_html5audio
+++ Success (0.03 seconds) ++
+-->media_html5video
+++ Success (0.03 seconds) ++
+-->media_videojs
+++ Success (0.03 seconds) ++
+-->media_vimeo
+++ Success (0.03 seconds) ++
+-->media_youtube
+++ Success (0.02 seconds) ++
+-->filter_activitynames
+++ Success (0.03 seconds) ++
+-->filter_algebra
+++ Success (0.03 seconds) ++
+-->filter_codehighlighter
+++ Success (0.03 seconds) ++
+-->filter_data
+++ Success (0.03 seconds) ++
+-->filter_displayh5p
+++ Success (0.03 seconds) ++
+-->filter_emailprotect
+++ Success (0.02 seconds) ++
+-->filter_emoticon
+++ Success (0.03 seconds) ++
+-->filter_glossary
+++ Success (0.03 seconds) ++
+-->filter_mathjaxloader
+++ Success (0.03 seconds) ++
+-->filter_mediaplugin
+++ Success (0.03 seconds) ++
+-->filter_multilang
+++ Success (0.02 seconds) ++
+-->filter_tex
+++ Success (0.03 seconds) ++
+-->filter_urltolink
+++ Success (0.03 seconds) ++
+-->editor_textarea
+++ Success (0.03 seconds) ++
+-->editor_tiny
+++ Success (0.03 seconds) ++
+-->format_singleactivity
+++ Success (0.02 seconds) ++
+-->format_social
+++ Success (0.03 seconds) ++
+-->format_topics
+++ Success (0.03 seconds) ++
+-->format_weeks
+++ Success (0.03 seconds) ++
+-->dataformat_csv
+++ Success (0.03 seconds) ++
+-->dataformat_excel
+++ Success (0.03 seconds) ++
+-->dataformat_html
+++ Success (0.03 seconds) ++
+-->dataformat_json
+++ Success (0.03 seconds) ++
+-->dataformat_ods
+++ Success (0.03 seconds) ++
+-->dataformat_pdf
+++ Success (0.03 seconds) ++
+-->profilefield_checkbox
+++ Success (0.02 seconds) ++
+-->profilefield_datetime
+++ Success (0.02 seconds) ++
+-->profilefield_menu
+++ Success (0.02 seconds) ++
+-->profilefield_social
+++ Success (0.03 seconds) ++
+-->profilefield_text
+++ Success (0.03 seconds) ++
+-->profilefield_textarea
+++ Success (0.02 seconds) ++
+-->report_backups
+++ Success (0.02 seconds) ++
+-->report_competency
+++ Success (0.02 seconds) ++
+-->report_completion
+++ Success (0.03 seconds) ++
+-->report_configlog
+++ Success (0.02 seconds) ++
+-->report_courseoverview
+++ Success (0.03 seconds) ++
+-->report_eventlist
+++ Success (0.02 seconds) ++
+-->report_infectedfiles
+++ Success (0.02 seconds) ++
+-->report_insights
+++ Success (0.03 seconds) ++
+-->report_log
+++ Success (0.05 seconds) ++
+-->report_loglive
+++ Success (0.05 seconds) ++
+-->report_outline
+++ Success (0.06 seconds) ++
+-->report_participation
+++ Success (0.06 seconds) ++
+-->report_performance
+++ Success (0.05 seconds) ++
+-->report_progress
+++ Success (0.05 seconds) ++
+-->report_questioninstances
+++ Success (0.04 seconds) ++
+-->report_security
+++ Success (0.04 seconds) ++
+-->report_stats
+++ Success (0.04 seconds) ++
+-->report_status
+++ Success (0.03 seconds) ++
+-->report_themeusage
+++ Success (0.02 seconds) ++
+-->report_usersessions
+++ Success (0.03 seconds) ++
+-->gradeexport_ods
+++ Success (0.03 seconds) ++
+-->gradeexport_txt
+++ Success (0.03 seconds) ++
+-->gradeexport_xls
+++ Success (0.03 seconds) ++
+-->gradeexport_xml
+++ Success (0.03 seconds) ++
+-->gradeimport_csv
+++ Success (0.03 seconds) ++
+-->gradeimport_direct
+++ Success (0.03 seconds) ++
+-->gradeimport_xml
+++ Success (0.03 seconds) ++
+-->gradepenalty_duedate
+++ Success (0.05 seconds) ++
+-->gradereport_grader
+++ Success (0.03 seconds) ++
+-->gradereport_history
+++ Success (0.03 seconds) ++
+-->gradereport_outcomes
+++ Success (0.03 seconds) ++
+-->gradereport_overview
+++ Success (0.03 seconds) ++
+-->gradereport_singleview
+++ Success (0.03 seconds) ++
+-->gradereport_summary
+++ Success (0.03 seconds) ++
+-->gradereport_user
+++ Success (0.04 seconds) ++
+-->gradingform_guide
+++ Success (0.06 seconds) ++
+-->gradingform_rubric
+++ Success (0.06 seconds) ++
+-->mlbackend_python
+++ Success (0.02 seconds) ++
+-->webservice_rest
+++ Success (0.03 seconds) ++
+-->webservice_soap
+++ Success (0.03 seconds) ++
+-->repository_areafiles
+++ Success (0.05 seconds) ++
+-->repository_contentbank
+++ Success (0.07 seconds) ++
+-->repository_coursefiles
+++ Success (0.04 seconds) ++
+-->repository_dropbox
+++ Success (0.03 seconds) ++
+-->repository_equella
+++ Success (0.03 seconds) ++
+-->repository_filesystem
+++ Success (0.03 seconds) ++
+-->repository_flickr
+++ Success (0.03 seconds) ++
+-->repository_flickr_public
+++ Success (0.04 seconds) ++
+-->repository_googledocs
+++ Success (0.03 seconds) ++
+-->repository_local
+++ Success (0.08 seconds) ++
+-->repository_merlot
+++ Success (0.03 seconds) ++
+-->repository_nextcloud
+++ Success (0.03 seconds) ++
+-->repository_onedrive
+++ Success (0.05 seconds) ++
+-->repository_recent
+++ Success (0.05 seconds) ++
+-->repository_s3
+++ Success (0.03 seconds) ++
+-->repository_upload
+++ Success (0.05 seconds) ++
+-->repository_url
+++ Success (0.05 seconds) ++
+-->repository_user
+++ Success (0.04 seconds) ++
+-->repository_webdav
+++ Success (0.03 seconds) ++
+-->repository_wikimedia
+++ Success (0.04 seconds) ++
+-->repository_youtube
+++ Success (0.03 seconds) ++
+-->portfolio_download
+++ Success (0.02 seconds) ++
+-->portfolio_flickr
+++ Success (0.02 seconds) ++
+-->portfolio_googledocs
+++ Success (0.02 seconds) ++
+-->search_simpledb
+++ Success (0.06 seconds) ++
+-->search_solr
+++ Success (0.02 seconds) ++
+-->qbank_bulkmove
+++ Success (0.02 seconds) ++
+-->qbank_columnsortorder
+++ Success (0.05 seconds) ++
+-->qbank_comment
+++ Success (0.05 seconds) ++
+-->qbank_customfields
+++ Success (0.03 seconds) ++
+-->qbank_deletequestion
+++ Success (0.02 seconds) ++
+-->qbank_editquestion
+++ Success (0.02 seconds) ++
+-->qbank_exportquestions
+++ Success (0.02 seconds) ++
+-->qbank_exporttoxml
+++ Success (0.02 seconds) ++
+-->qbank_history
+++ Success (0.02 seconds) ++
+-->qbank_importquestions
+++ Success (0.03 seconds) ++
+-->qbank_managecategories
+++ Success (0.02 seconds) ++
+-->qbank_previewquestion
+++ Success (0.02 seconds) ++
+-->qbank_statistics
+++ Success (0.02 seconds) ++
+-->qbank_tagquestion
+++ Success (0.02 seconds) ++
+-->qbank_usage
+++ Success (0.02 seconds) ++
+-->qbank_viewcreator
+++ Success (0.02 seconds) ++
+-->qbank_viewquestionname
+++ Success (0.02 seconds) ++
+-->qbank_viewquestiontext
+++ Success (0.02 seconds) ++
+-->qbank_viewquestiontype
+++ Success (0.03 seconds) ++
+-->qbehaviour_adaptive
+++ Success (0.02 seconds) ++
+-->qbehaviour_adaptivenopenalty
+++ Success (0.02 seconds) ++
+-->qbehaviour_deferredcbm
+++ Success (0.03 seconds) ++
+-->qbehaviour_deferredfeedback
+++ Success (0.03 seconds) ++
+-->qbehaviour_immediatecbm
+++ Success (0.02 seconds) ++
+-->qbehaviour_immediatefeedback
+++ Success (0.03 seconds) ++
+-->qbehaviour_informationitem
+++ Success (0.03 seconds) ++
+-->qbehaviour_interactive
+++ Success (0.02 seconds) ++
+-->qbehaviour_interactivecountback
+++ Success (0.02 seconds) ++
+-->qbehaviour_manualgraded
+++ Success (0.03 seconds) ++
+-->qbehaviour_missing
+++ Success (0.03 seconds) ++
+-->qformat_aiken
+++ Success (0.03 seconds) ++
+-->qformat_blackboard_six
+++ Success (0.02 seconds) ++
+-->qformat_gift
+++ Success (0.02 seconds) ++
+-->qformat_missingword
+++ Success (0.03 seconds) ++
+-->qformat_multianswer
+++ Success (0.03 seconds) ++
+-->qformat_xhtml
+++ Success (0.03 seconds) ++
+-->qformat_xml
+++ Success (0.03 seconds) ++
+-->tool_admin_presets
+++ Success (0.02 seconds) ++
+-->tool_analytics
+++ Success (0.03 seconds) ++
+-->tool_availabilityconditions
+++ Success (0.02 seconds) ++
+-->tool_behat
+++ Success (0.03 seconds) ++
+-->tool_brickfield
+++ Success (0.20 seconds) ++
+-->tool_capability
+++ Success (0.03 seconds) ++
+-->tool_cohortroles
+++ Success (0.04 seconds) ++
+-->tool_componentlibrary
+++ Success (0.02 seconds) ++
+-->tool_customlang
+++ Success (0.05 seconds) ++
+-->tool_dataprivacy
+++ Success (0.17 seconds) ++
+-->tool_dbtransfer
+++ Success (0.02 seconds) ++
+-->tool_filetypes
+++ Success (0.02 seconds) ++
+-->tool_generator
+++ Success (0.03 seconds) ++
+-->tool_httpsreplace
+++ Success (0.03 seconds) ++
+-->tool_installaddon
+++ Success (0.05 seconds) ++
+-->tool_langimport
+++ Success (0.04 seconds) ++
+-->tool_licensemanager
+++ Success (0.03 seconds) ++
+-->tool_log
+++ Success (0.03 seconds) ++
+-->tool_lp
+++ Success (0.04 seconds) ++
+-->tool_lpimportcsv
+++ Success (0.02 seconds) ++
+-->tool_lpmigrate
+++ Success (0.02 seconds) ++
+-->tool_messageinbound
+++ Success (0.05 seconds) ++
+-->tool_mfa
+++ Success (0.07 seconds) ++
+-->tool_mobile
+++ Success (0.03 seconds) ++
+-->tool_monitor
+++ Success (0.10 seconds) ++
+-->tool_moodlenet
+++ Success (0.03 seconds) ++
+-->tool_multilangupgrade
+++ Success (0.02 seconds) ++
+-->tool_oauth2
+++ Success (0.02 seconds) ++
+-->tool_phpunit
+++ Success (0.02 seconds) ++
+-->tool_policy
+++ Success (0.08 seconds) ++
+-->tool_profiling
+++ Success (0.02 seconds) ++
+-->tool_recyclebin
+++ Success (0.08 seconds) ++
+-->tool_replace
+++ Success (0.03 seconds) ++
+-->tool_spamcleaner
+++ Success (0.02 seconds) ++
+-->tool_task
+++ Success (0.03 seconds) ++
+-->tool_templatelibrary
+++ Success (0.03 seconds) ++
+-->tool_unsuproles
+++ Success (0.04 seconds) ++
+-->tool_uploadcourse
+++ Success (0.04 seconds) ++
+-->tool_uploaduser
+++ Success (0.03 seconds) ++
+-->tool_usertours
+++ Success (0.23 seconds) ++
+-->tool_xmldb
+++ Success (0.03 seconds) ++
+-->cachestore_apcu
+++ Success (0.02 seconds) ++
+-->cachestore_file
+++ Success (0.02 seconds) ++
+-->cachestore_redis
+++ Success (0.02 seconds) ++
+-->cachestore_session
+++ Success (0.03 seconds) ++
+-->cachestore_static
+++ Success (0.02 seconds) ++
+-->cachelock_file
+++ Success (0.02 seconds) ++
+-->fileconverter_googledrive
+++ Success (0.02 seconds) ++
+-->fileconverter_unoconv
+++ Success (0.02 seconds) ++
+-->contenttype_h5p
+++ Success (0.04 seconds) ++
+-->theme_boost
+++ Success (0.02 seconds) ++
+-->theme_classic
+++ Success (0.02 seconds) ++
+-->theme_lernhive
+++ Success (0.02 seconds) ++
+-->local_lernhive
+++ Success (0.06 seconds) ++
+-->local_lernhive_contenthub
+++ Success (0.03 seconds) ++
+-->local_lernhive_copy
+++ Success (0.03 seconds) ++
+-->local_lernhive_discovery
+++ Success (0.02 seconds) ++
+-->local_lernhive_flavour
+++ Success (0.05 seconds) ++
+-->local_lernhive_launcher
+++ Success (0.02 seconds) ++
+-->local_lernhive_library
+++ Success (0.03 seconds) ++
+-->local_lernhive_onboarding
+++ Success (0.19 seconds) ++
+-->h5plib_v128
+++ Success (0.02 seconds) ++
+-->paygw_paypal
+++ Success (0.05 seconds) ++
+-->smsgateway_aws
+++ Success (0.02 seconds) ++
+-->smsgateway_modica
+++ Success (0.02 seconds) ++
+-->assignsubmission_comments
+++ Success (0.03 seconds) ++
+-->assignsubmission_file
+++ Success (0.04 seconds) ++
+-->assignsubmission_onlinetext
+++ Success (0.06 seconds) ++
+-->assignfeedback_comments
+++ Success (0.05 seconds) ++
+-->assignfeedback_editpdf
+++ Success (0.09 seconds) ++
+-->assignfeedback_file
+++ Success (0.05 seconds) ++
+-->assignfeedback_offline
+++ Success (0.03 seconds) ++
+-->booktool_exportimscp
+++ Success (0.03 seconds) ++
+-->booktool_importhtml
+++ Success (0.03 seconds) ++
+-->booktool_print
+++ Success (0.04 seconds) ++
+-->datafield_checkbox
+++ Success (0.02 seconds) ++
+-->datafield_date
+++ Success (0.02 seconds) ++
+-->datafield_file
+++ Success (0.02 seconds) ++
+-->datafield_latlong
+++ Success (0.02 seconds) ++
+-->datafield_menu
+++ Success (0.02 seconds) ++
+-->datafield_multimenu
+++ Success (0.02 seconds) ++
+-->datafield_number
+++ Success (0.02 seconds) ++
+-->datafield_picture
+++ Success (0.02 seconds) ++
+-->datafield_radiobutton
+++ Success (0.02 seconds) ++
+-->datafield_text
+++ Success (0.03 seconds) ++
+-->datafield_textarea
+++ Success (0.02 seconds) ++
+-->datafield_url
+++ Success (0.02 seconds) ++
+-->datapreset_imagegallery
+++ Success (0.02 seconds) ++
+-->datapreset_journal
+++ Success (0.02 seconds) ++
+-->datapreset_proposals
+++ Success (0.02 seconds) ++
+-->datapreset_resources
+++ Success (0.02 seconds) ++
+-->forumreport_summary
+++ Success (0.04 seconds) ++
+-->ltiservice_basicoutcomes
+++ Success (0.03 seconds) ++
+-->ltiservice_gradebookservices
+++ Success (0.05 seconds) ++
+-->ltiservice_memberships
+++ Success (0.02 seconds) ++
+-->ltiservice_profile
+++ Success (0.02 seconds) ++
+-->ltiservice_toolproxy
+++ Success (0.03 seconds) ++
+-->ltiservice_toolsettings
+++ Success (0.04 seconds) ++
+-->quiz_grading
+++ Success (0.05 seconds) ++
+-->quiz_overview
+++ Success (0.04 seconds) ++
+-->quiz_responses
+++ Success (0.02 seconds) ++
+-->quiz_statistics
+++ Success (0.04 seconds) ++
+-->quizaccess_delaybetweenattempts
+++ Success (0.04 seconds) ++
+-->quizaccess_ipaddress
+++ Success (0.04 seconds) ++
+-->quizaccess_numattempts
+++ Success (0.04 seconds) ++
+-->quizaccess_offlineattempts
+++ Success (0.03 seconds) ++
+-->quizaccess_openclosedate
+++ Success (0.03 seconds) ++
+-->quizaccess_password
+++ Success (0.05 seconds) ++
+-->quizaccess_seb
+++ Success (0.22 seconds) ++
+-->quizaccess_securewindow
+++ Success (0.03 seconds) ++
+-->quizaccess_timelimit
+++ Success (0.02 seconds) ++
+-->scormreport_basic
+++ Success (0.03 seconds) ++
+-->scormreport_graphs
+++ Success (0.03 seconds) ++
+-->scormreport_interactions
+++ Success (0.03 seconds) ++
+-->scormreport_objectives
+++ Success (0.03 seconds) ++
+-->workshopform_accumulative
+++ Success (0.04 seconds) ++
+-->workshopform_comments
+++ Success (0.06 seconds) ++
+-->workshopform_numerrors
+++ Success (0.07 seconds) ++
+-->workshopform_rubric
+++ Success (0.06 seconds) ++
+-->workshopallocation_manual
+++ Success (0.03 seconds) ++
+-->workshopallocation_random
+++ Success (0.03 seconds) ++
+-->workshopallocation_scheduled
+++ Success (0.04 seconds) ++
+-->workshopeval_best
+++ Success (0.04 seconds) ++
+-->tiny_accessibilitychecker
+++ Success (0.03 seconds) ++
+-->tiny_aiplacement
+++ Success (0.03 seconds) ++
+-->tiny_autosave
+++ Success (0.05 seconds) ++
+-->tiny_equation
+++ Success (0.03 seconds) ++
+-->tiny_h5p
+++ Success (0.03 seconds) ++
+-->tiny_html
+++ Success (0.03 seconds) ++
+-->tiny_link
+++ Success (0.05 seconds) ++
+-->tiny_media
+++ Success (0.04 seconds) ++
+-->tiny_noautolink
+++ Success (0.04 seconds) ++
+-->tiny_premium
+++ Success (0.07 seconds) ++
+-->tiny_recordrtc
+++ Success (0.03 seconds) ++
+-->logstore_database
+++ Success (0.03 seconds) ++
+-->logstore_standard
+++ Success (0.09 seconds) ++
+-->factor_admin
+++ Success (0.03 seconds) ++
+-->factor_auth
+++ Success (0.03 seconds) ++
+-->factor_capability
+++ Success (0.03 seconds) ++
+-->factor_cohort
+++ Success (0.03 seconds) ++
+-->factor_email
+++ Success (0.03 seconds) ++
+-->factor_grace
+++ Success (0.03 seconds) ++
+-->factor_iprange
+++ Success (0.02 seconds) ++
+-->factor_nosetup
+++ Success (0.03 seconds) ++
+-->factor_role
+++ Success (0.03 seconds) ++
+-->factor_sms
+++ Success (0.03 seconds) ++
+-->factor_token
+++ Success (0.03 seconds) ++
+-->factor_totp
+++ Success (0.03 seconds) ++
+-->factor_webauthn
+++ Success (0.03 seconds) ++
+-->upgrade_noncore()
+++ Success (0.74 seconds) ++
+Acceptance tests site installed
+Creating Behat configuration ... done in 0.87 seconds.
+Building theme CSS for boost [ltr] ... done in 2.5 seconds.
+Building theme CSS for classic [ltr] ... done in 2.51 seconds.
+Building theme CSS for lernhive [ltr] ...++ Error while compiling SCSS: Undefined variable $lh-shadow-lg: line: 1285, column: 9 ++
+* line 1288 of /public/lib/classes/output/theme_config.php: call to debugging()
+* line 943 of /public/lib/classes/output/theme_config.php: call to core\output\theme_config->get_css_content_from_scss()
+* line 228 of /public/lib/outputlib.php: call to core\output\theme_config->get_css_content()
+* line 160 of /public/lib/behat/classes/util.php: call to theme_build_css_for_themes()
+* line 213 of /public/admin/tool/behat/cli/util_single_run.php: call to behat_util::build_themes()
+ done in 2.52 seconds.
+Testing environment themes built
+Acceptance tests environment enabled on http://webserver, to run the tests use: 
+vendor/bin/behat --config /var/www/moodledata_behat/behatrun/behat/behat.yml
+[1;34m[test][0m Behat: default filter → @local_lernhive_contenthub||@local_lernhive_copy||@local_lernhive_flavour||@local_lernhive_library
+[1;34m[test][0m Behat: running --config /var/www/moodledata_behat/behatrun/behatrun/behat/behat.yml --tags @local_lernhive_contenthub||@local_lernhive_copy||@local_lernhive_flavour||@local_lernhive_library
+
+In Application.php line 122:
+                                            
+  The requested config file does not exist  
+                                            
+
+[1;31m[test][0m Behat: failed
+[1;31m[test][0m One or more suites failed.
