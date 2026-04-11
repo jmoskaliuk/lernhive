@@ -27,10 +27,20 @@
     duplicates a Moodle core concept must be removed during review.
 
 ## CI gates
-- `moodle-plugin-ci phplint / phpcs --max-warnings 0 / phpdoc`
-- `moodle-plugin-ci validate / savepoints / mustache / grunt`
-- `moodle-plugin-ci phpunit --fail-on-warning`
-- `moodle-plugin-ci behat --profile chrome`
+The only automated gate in R1 is `.github/workflows/deploy-hetzner.yml`,
+which runs on every push to `main` that touches `plugins/**`. It rsyncs
+the plugin into the `lernhive-webserver-1` container, runs
+`admin/cli/upgrade.php` and `admin/cli/purge_caches.php`, and fails the
+run if either exits non-zero. That covers the bar for R1: the plugin
+installs into a real Moodle 5.x tree, the upgrade script accepts the new
+version.php, and caches stay purgeable. A dedicated `moodle-plugin-ci`
+matrix (phplint, phpcs, phpdoc, phpunit, behat) is deliberately
+postponed until the plugin stops churning, so that we only introduce the
+strict checks once violations can be fixed without blocking the roadmap.
+
+Until the matrix exists, authors are expected to run phpunit and behat
+locally via the `moodle-deploy` skill before pushing anything non-trivial
+(see `04-tasks.md`).
 
 ## Known limitations
 - the AI card is hardcoded as "coming soon" in R1, hidden behind an
