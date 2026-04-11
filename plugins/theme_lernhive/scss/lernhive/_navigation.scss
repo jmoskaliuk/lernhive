@@ -99,7 +99,7 @@
     .dropdown-menu {
         background: #fff;
         border: 1px solid $lh-border;
-        box-shadow: $lh-shadow-lg;
+        box-shadow: $lh-shadow-hover;
         border-radius: $lh-radius;
         min-width: 14rem;
 
@@ -177,7 +177,7 @@
     z-index: 1050;
     background: #fff;
     border: 1px solid $lh-border;
-    box-shadow: $lh-shadow-lg;
+    box-shadow: $lh-shadow-hover;
     border-radius: $lh-radius;
     padding: $lh-spacing-sm;
     display: flex;

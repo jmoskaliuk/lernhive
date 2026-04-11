@@ -90,7 +90,7 @@ $THEME->layouts = [
         'options' => ['nonavbar' => true],
     ],
     'admin' => [
-        'file' => 'admin.php',
+        'file' => 'drawers.php',
         'regions' => $lhregions,
         'defaultregion' => $lhdefaultregion,
     ],
