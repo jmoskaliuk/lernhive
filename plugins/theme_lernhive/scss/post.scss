@@ -190,11 +190,13 @@
   align-items: start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 0 1.25rem;
+  margin-bottom: 1rem;
   border: 1px solid var(--lernhive-line);
-  border-radius: 1.25rem;
-  background: rgba(255, 255, 255, .95);
-  box-shadow: 0 .75rem 1.5rem rgba(25, 72, 102, .06);
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .lernhive-admin-header__main,
@@ -224,10 +226,21 @@
 }
 
 .lernhive-admin-aside {
-  padding: 1rem;
+  padding-top: 1rem;
+}
+
+.lernhive-admin-main {
+  background: transparent;
+}
+
+.lernhive-admin-main .main-inner {
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem;
   border: 1px solid var(--lernhive-line);
   border-radius: 1.25rem;
   background: rgba(255, 255, 255, .96);
+  box-shadow: 0 .75rem 1.5rem rgba(25, 72, 102, .06);
 }
 
 .lernhive-course-layout {
@@ -1402,6 +1415,10 @@
   }
 
   .lernhive-admin-layout {
+    padding: 1rem;
+  }
+
+  .lernhive-admin-main .main-inner {
     padding: 1rem;
   }
 }
