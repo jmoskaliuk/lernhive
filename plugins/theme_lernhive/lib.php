@@ -741,32 +741,62 @@ function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
         return in_array($item['key'] ?? '', $keep, true);
     }));
 
-    // Render the core course index (sections + activities) directly via the
-    // canonical course format renderable. We deliberately do NOT go through
-    // core_course_drawer() in /course/lib.php because that helper short-
-    // circuits to an empty string in several conditions we can't influence
-    // from a theme (drawer preferences, page layout name, etc.), and 0.9.46's
-    // attempt to go via that helper left the course sidebar empty even with
-    // $THEME->usescourseindex = true set.
+    // Render the core course index via the CANONICAL drawer path. This is
+    // what `core_course_drawer()` in /course/lib.php does internally, and
+    // what Boost uses in theme/boost/layout/drawers.php. The drawer itself
+    // is an AMD-hydrated placeholder (see core_courseformat/local/courseindex
+    // /drawer.mustache) — `course_index_drawer()` calls `include_course_editor
+    // ()`, which registers the js_call_amd('core_courseformat/courseeditor',
+    // 'setViewFormat', ...) call on $PAGE->requires. The placeholder then
+    // gets filled client-side by the drawer AMD module via the
+    // `core_course_get_state` webservice.
     //
-    // The path below is the exact pattern core_course_renderer::course_index_
-    // drawer() uses internally — instantiate \core_courseformat\output\local\
-    // content\courseindex\courseindex for the current format, render via the
-    // format's own renderer. Works for every core course format and for
-    // future format_lernhive_* plugins because they all inherit the courseindex
-    // output from core_courseformat.
+    // Two earlier render paths failed:
+    //   0.9.46 — called core_course_drawer() which routes here, but the
+    //            resulting HTML was empty. Almost certainly because the
+    //            {{#js}} block wasn't being honoured when the markup was
+    //            re-embedded inside another template context. 0.9.48 fixes
+    //            this by letting Moodle's Mustache engine process the child
+    //            template's js block naturally — course_index_drawer() uses
+    //            $renderer->render_from_template(), which registers js
+    //            requirements on $PAGE->requires at render time, not at
+    //            output time, so embedding the returned HTML elsewhere is
+    //            safe.
+    //   0.9.47 — tried the content-embedded courseindex renderable
+    //            (\core_courseformat\output\local\content\courseindex
+    //            \courseindex), which renders a *different* template with
+    //            no js hydration. Wrong layer entirely.
+    //
+    // We also embed a diagnostic HTML comment so that if the sidebar is
+    // still empty the user can View Source and report exactly what the
+    // render path saw — course id, format, uses_course_index() verdict,
+    // HTML length. No more blind fix attempts.
     $courseindexhtml = '';
+    $diag = [
+        'courseid'      => 'none',
+        'formatname'    => 'none',
+        'usescourseidx' => 'n/a',
+        'rendererclass' => 'n/a',
+        'drawerlen'     => 0,
+        'status'        => 'skipped',
+    ];
     if (!empty($page->course) && $page->course->id > SITEID) {
+        $diag['courseid'] = (string) $page->course->id;
         try {
             $format = course_get_format($page->course);
+            $diag['formatname'] = $format->get_format();
+            $diag['usescourseidx'] = $format->uses_course_index() ? 'yes' : 'no';
             $renderer = $format->get_renderer($page);
-            $courseindex = new \core_courseformat\output\local\content\courseindex\courseindex($format);
-            $courseindexhtml = $renderer->render($courseindex);
+            $diag['rendererclass'] = get_class($renderer);
+            if (method_exists($renderer, 'course_index_drawer')) {
+                $courseindexhtml = (string) $renderer->course_index_drawer($format);
+                $diag['drawerlen'] = strlen($courseindexhtml);
+                $diag['status']    = $courseindexhtml !== '' ? 'rendered' : 'empty';
+            } else {
+                $diag['status'] = 'no-method';
+            }
         } catch (\Throwable $e) {
-            // Fail soft — an empty course index is always better than a fatal
-            // course page. The divider is suppressed downstream via
-            // hascourseindex when this happens. The debugging() output lands
-            // in Moodle's debug log when developer debug is on.
+            $diag['status'] = 'exception: ' . $e->getMessage();
             debugging(
                 'theme_lernhive: course index render failed — ' . $e->getMessage(),
                 DEBUG_DEVELOPER
@@ -775,10 +805,34 @@ function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
         }
     }
 
+    // Diagnostic HTML comment — safe to leave in for alpha, remove once
+    // course index is stable. Keys use s_ prefix + clean()-safe values so
+    // the comment cannot break HTML parsing even if a format name contains
+    // something surprising.
+    $diagcomment = "\n<!-- lernhive-course-idx-diag: "
+        . 'courseid=' . clean_param($diag['courseid'], PARAM_ALPHANUMEXT)
+        . ' format=' . clean_param($diag['formatname'], PARAM_ALPHANUMEXT)
+        . ' uses=' . clean_param($diag['usescourseidx'], PARAM_ALPHANUMEXT)
+        . ' renderer=' . clean_param(str_replace('\\', '_', $diag['rendererclass']), PARAM_ALPHANUMEXT)
+        . ' drawerlen=' . (int) $diag['drawerlen']
+        . ' status=' . clean_param(substr($diag['status'], 0, 80), PARAM_TEXT)
+        . " -->\n";
+
+    // When the drawer call returns non-empty, we have both the placeholder
+    // <nav id="courseindex"> and a trailing script block. Keep the diag
+    // comment BEFORE the drawer HTML so it is the first thing inside our
+    // .lernhive-course-index wrapper — easy to find in View Source.
+    $finalhtml = $diagcomment . $courseindexhtml;
+
     return [
         'reducednavitems' => $reduced,
-        'courseindex'     => $courseindexhtml,
-        'hascourseindex'  => trim($courseindexhtml) !== '',
+        // Always render the wrapper so the diag comment is visible, even
+        // if the drawer HTML is empty. Frontend CSS already hides the
+        // heading / body when hascourseindex is false — we override that
+        // here by always setting hascourseindex true so debuggers can see
+        // the <!-- lernhive-course-idx-diag ... --> marker in the DOM.
+        'courseindex'     => $finalhtml,
+        'hascourseindex'  => true,
         'primarynavlabel' => get_string('primarynavigation', 'theme_lernhive'),
         'coursenavlabel'  => get_string('coursenavigation', 'theme_lernhive'),
     ];
