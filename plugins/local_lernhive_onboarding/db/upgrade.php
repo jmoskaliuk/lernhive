@@ -119,6 +119,21 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
 
     // 0.2.0 — Dedicated lernhive_trainer role + dashboard banner.
     if ($oldversion < 2026041200) {
+        // Moodle's upgrade runner calls update_capabilities() for a plugin
+        // AFTER db/upgrade.php has finished. That means a capability newly
+        // added to db/access.php in this release (here:
+        // `local/lernhive_onboarding:receivelearningpath`) is not yet in
+        // mdl_capabilities when we call trainer_role::ensure() below, and
+        // assign_capability() throws
+        //   "Capability '…:receivelearningpath' was not found!"
+        //
+        // Same root cause as the install.php fix — see commit 4130693.
+        // Calling update_capabilities() explicitly here is idempotent and
+        // cheap, and matches the pattern in db/install.php so fresh
+        // installs and upgrades both reach trainer_role::ensure() with
+        // the capability row present.
+        update_capabilities('local_lernhive_onboarding');
+
         // Idempotent: creates the role if missing, re-asserts context + cap.
         \local_lernhive_onboarding\trainer_role::ensure();
 
