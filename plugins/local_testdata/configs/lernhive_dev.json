@@ -1,0 +1,226 @@
+{
+  "dataset": "lernhive_dev",
+  "description": "LernHive Dev-Testdaten: 3 Trainer, 12 Lernende, 5 Kurse. Testet Theme-Layout, Navigation, Dashboard, Kursseiten und Admin-Ansicht.",
+  "users": [
+    {"username": "trainer.meyer",    "firstname": "Sandra",  "lastname": "Meyer",     "email": "s.meyer@lernhive.test",   "password": "Train1234!", "role": "editingteacher"},
+    {"username": "trainer.hoffmann", "firstname": "Markus",  "lastname": "Hoffmann",  "email": "m.hoffmann@lernhive.test","password": "Train1234!", "role": "editingteacher"},
+    {"username": "trainer.klein",    "firstname": "Julia",   "lastname": "Klein",     "email": "j.klein@lernhive.test",   "password": "Train1234!", "role": "editingteacher"},
+    {"username": "lernende.01", "firstname": "Leon",    "lastname": "Braun",       "email": "leon.braun@lernhive.test",    "password": "Learn1234!"},
+    {"username": "lernende.02", "firstname": "Emma",    "lastname": "Fischer",     "email": "emma.fischer@lernhive.test",  "password": "Learn1234!"},
+    {"username": "lernende.03", "firstname": "Ben",     "lastname": "Wagner",      "email": "ben.wagner@lernhive.test",    "password": "Learn1234!"},
+    {"username": "lernende.04", "firstname": "Sophie",  "lastname": "Schulz",      "email": "sophie.schulz@lernhive.test", "password": "Learn1234!"},
+    {"username": "lernende.05", "firstname": "Finn",    "lastname": "Becker",      "email": "finn.becker@lernhive.test",   "password": "Learn1234!"},
+    {"username": "lernende.06", "firstname": "Mia",     "lastname": "Richter",     "email": "mia.richter@lernhive.test",   "password": "Learn1234!"},
+    {"username": "lernende.07", "firstname": "Luca",    "lastname": "König",       "email": "luca.koenig@lernhive.test",   "password": "Learn1234!"},
+    {"username": "lernende.08", "firstname": "Anna",    "lastname": "Wolf",        "email": "anna.wolf@lernhive.test",     "password": "Learn1234!"},
+    {"username": "lernende.09", "firstname": "Noah",    "lastname": "Müller",      "email": "noah.mueller@lernhive.test",  "password": "Learn1234!"},
+    {"username": "lernende.10", "firstname": "Leonie",  "lastname": "Schneider",   "email": "leonie.schneider@lernhive.test","password": "Learn1234!"},
+    {"username": "lernende.11", "firstname": "Elias",   "lastname": "Werner",      "email": "elias.werner@lernhive.test",  "password": "Learn1234!"},
+    {"username": "lernende.12", "firstname": "Marie",   "lastname": "Zimmermann",  "email": "marie.zimm@lernhive.test",    "password": "Learn1234!"}
+  ],
+  "courses": [
+    {
+      "fullname": "Onboarding: LernHive kennenlernen",
+      "shortname": "lh-onboarding",
+      "category": 1,
+      "summary": "<p>Dieser Kurs führt neue Nutzer/innen durch die LernHive-Plattform. Ideal zum Testen der Startseite, Navigation und des Dashboards.</p>",
+      "questions": [
+        {
+          "category": "Plattform-Wissen",
+          "items": [
+            {"name": "Was ist LernHive?",      "questiontext": "<p>Wofür steht LernHive?</p>",                    "answer": "Eine Lernplattform für modernes E-Learning",        "wrong": ["Ein Social-Media-Netzwerk", "Ein Videokonferenz-Tool", "Ein E-Mail-Client"]},
+            {"name": "Navigation: Dashboard", "questiontext": "<p>Wo findet man auf LernHive das Dashboard?</p>","answer": "In der linken Seitenleiste unter 'Dashboard'",       "wrong": ["In den Einstellungen", "Unter 'Profil'", "Im Footer"]},
+            {"name": "Profil bearbeiten",     "questiontext": "<p>Wie bearbeitet man das eigene Profil?</p>",    "answer": "Über das Nutzermenü oben in der Seitenleiste",      "wrong": ["Per E-Mail an den Admin", "Im Kursbereich", "Über die Startseite"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "quiz",
+          "name": "Quiz: LernHive kennenlernen",
+          "section": 1,
+          "settings": {"intro": "<p>Teste dein Wissen über die Plattform.</p>", "introformat": 1, "attempts": 3, "grade": 100, "grademethod": 1}
+        },
+        {
+          "module": "forum",
+          "name": "Willkommensforum",
+          "section": 1,
+          "settings": {"intro": "<p>Stell dich kurz vor!</p>", "introformat": 1, "type": "news"}
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "Deutsch: Grammatik & Stil",
+      "shortname": "deu-gramm",
+      "category": 1,
+      "summary": "<p>Grammatik, Rechtschreibung und Stilübungen für die Mittel- und Oberstufe. Breite Kursseite mit mehreren Sektionen.</p>",
+      "questions": [
+        {
+          "category": "Deutsche Grammatik",
+          "items": [
+            {"name": "Genitiv Singular",    "questiontext": "<p>Was ist der Genitiv Singular von 'der Hund'?</p>",              "answer": "des Hundes",      "wrong": ["dem Hund", "den Hund", "die Hunde"]},
+            {"name": "Konjunktiv II",       "questiontext": "<p>Welche Form ist Konjunktiv II von 'gehen'?</p>",                "answer": "ginge",           "wrong": ["geht", "gehe", "gegangen"]},
+            {"name": "Aktiv vs. Passiv",    "questiontext": "<p>Wandle um: 'Er schreibt den Brief.' (Passiv)</p>",              "answer": "Der Brief wird geschrieben.", "wrong": ["Der Brief schreibt sich.", "Er wurde geschrieben.", "Er schreibt den Brief passiv."]},
+            {"name": "Komma-Regel",         "questiontext": "<p>Wann steht ein Komma vor 'dass'?</p>",                         "answer": "Immer — 'dass' leitet einen Nebensatz ein.",         "wrong": ["Nur bei Hauptsätzen", "Nur bei Aufzählungen", "Nie, 'dass' braucht kein Komma"]},
+            {"name": "Groß- oder Kleinschreibung", "questiontext": "<p>Wie schreibt man: '…das Beste, was…'?</p>",              "answer": "das Beste (großgeschrieben, da Nominalisierung)",     "wrong": ["das beste", "Das beste", "Das Beste — falsch, da Adjektiv"]},
+            {"name": "Trennbares Verb",     "questiontext": "<p>Welches Verb ist trennbar?</p>",                                "answer": "aufmachen",       "wrong": ["verstehen", "bekommen", "empfangen"]},
+            {"name": "Plusquamperfekt",     "questiontext": "<p>Welche Zeitform ist: 'Ich hatte gegessen'?</p>",                "answer": "Plusquamperfekt",  "wrong": ["Präteritum", "Perfekt", "Futur II"]},
+            {"name": "Dativ oder Akkusativ","questiontext": "<p>'Ich gebe <u>dem</u> Kind einen Ball.' — Der Unterstrichene ist…?</p>", "answer": "Dativ",  "wrong": ["Akkusativ", "Genitiv", "Nominativ"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "quiz",
+          "name": "Quiz: Deutsche Grammatik",
+          "section": 1,
+          "settings": {"intro": "<p>Teste deine Grammatikkenntnisse.</p>", "introformat": 1, "attempts": 0, "grade": 100, "grademethod": 3}
+        },
+        {
+          "module": "assign",
+          "name": "Aufsatz: Mein Alltag",
+          "section": 2,
+          "settings": {"intro": "<p>Schreibe einen kurzen Aufsatz (200–300 Wörter) über deinen Alltag.</p>", "introformat": 1, "submissiondrafts": 1, "maxbytes": 0}
+        },
+        {
+          "module": "forum",
+          "name": "Diskussion: Lieblingsromane",
+          "section": 2,
+          "settings": {"intro": "<p>Welche Romane habt ihr gelesen? Empfehlt euch gegenseitig Bücher.</p>", "introformat": 1, "type": "general"}
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "Mathematik: Analysis Grundkurs",
+      "shortname": "mathe-ana",
+      "category": 1,
+      "summary": "<p>Differenzial- und Integralrechnung für die Oberstufe. Testet komplexe Kursseiten mit vielen Aktivitäten.</p>",
+      "questions": [
+        {
+          "category": "Analysis",
+          "items": [
+            {"name": "Ableitung von x²",      "questiontext": "<p>Was ist die Ableitung von f(x) = x²?</p>",                    "answer": "f'(x) = 2x",         "wrong": ["f'(x) = x", "f'(x) = 2", "f'(x) = x²"]},
+            {"name": "Produktregel",          "questiontext": "<p>Wie lautet die Produktregel?</p>",                            "answer": "(u·v)' = u'·v + u·v'","wrong": ["(u·v)' = u'·v'", "(u·v)' = u'·v", "(u·v)' = u+v"]},
+            {"name": "Integral von x",        "questiontext": "<p>Was ergibt ∫x dx?</p>",                                      "answer": "x²/2 + C",           "wrong": ["x + C", "x² + C", "1/2 + C"]},
+            {"name": "Grenzwert",             "questiontext": "<p>Was ist lim(x→0) sin(x)/x?</p>",                             "answer": "1",                   "wrong": ["0", "∞", "unbestimmt"]},
+            {"name": "Kettenregel",           "questiontext": "<p>Was ist die Ableitung von f(g(x))?</p>",                     "answer": "f'(g(x)) · g'(x)",    "wrong": ["f'(x) · g'(x)", "f'(g(x))", "f(g'(x))"]},
+            {"name": "Nullstellen",           "questiontext": "<p>Was sind die Nullstellen von f(x) = x² - 4?</p>",           "answer": "x = 2 und x = -2",    "wrong": ["x = 4", "x = 2", "x = ±4"]},
+            {"name": "Extremwert-Bedingung",  "questiontext": "<p>Wann liegt ein Extremwert vor?</p>",                         "answer": "f'(x) = 0 und Vorzeichenwechsel von f'", "wrong": ["f(x) = 0", "f''(x) = 0", "f'(x) > 0"]},
+            {"name": "Flächenberechnung",     "questiontext": "<p>Wie berechnet man die Fläche unter einer Kurve?</p>",       "answer": "Mit dem bestimmten Integral", "wrong": ["Mit der Ableitung", "Mit der Produktregel", "Mit dem Differenzenquotienten"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "quiz",
+          "name": "Quiz: Ableitungsregeln",
+          "section": 1,
+          "settings": {"intro": "<p>Teste dein Wissen zu Ableitungsregeln.</p>", "introformat": 1, "attempts": 0, "timelimit": 1800, "grade": 100, "grademethod": 1}
+        },
+        {
+          "module": "quiz",
+          "name": "Quiz: Integralrechnung",
+          "section": 2,
+          "settings": {"intro": "<p>Aufgaben zur Integralrechnung.</p>", "introformat": 1, "attempts": 0, "grade": 100, "grademethod": 3}
+        },
+        {
+          "module": "assign",
+          "name": "Hausaufgabe: Extremwertprobleme",
+          "section": 3,
+          "settings": {"intro": "<p>Löse die drei Extremwertprobleme aus dem Skript.</p>", "introformat": 1, "submissiondrafts": 0, "maxbytes": 5242880}
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "Englisch: Business Communication",
+      "shortname": "eng-biz",
+      "category": 1,
+      "summary": "<p>Professional English für den Berufsalltag — E-Mails, Präsentationen, Meetings. Gut für das Testen des Kurs-Layouts mit englischsprachigen Inhalten.</p>",
+      "questions": [
+        {
+          "category": "Business English",
+          "items": [
+            {"name": "Formal email opening", "questiontext": "<p>Which is the correct formal email opening?</p>",          "answer": "Dear Mr Smith,",        "wrong": ["Hey Mr Smith!", "Hi there,", "To Whom It May Concern:"]},
+            {"name": "Meeting phrase",       "questiontext": "<p>How do you politely disagree in a meeting?</p>",          "answer": "I see your point, however…",  "wrong": ["You're wrong.", "That's not true.", "No."]},
+            {"name": "Presentation opener",  "questiontext": "<p>Which phrase opens a presentation professionally?</p>",   "answer": "Good morning, I'd like to present…", "wrong": ["So, I'm going to talk about…", "Hi, this is my thing.", "Let's start."]},
+            {"name": "Negotiation term",     "questiontext": "<p>What does 'ballpark figure' mean?</p>",                   "answer": "An approximate number",       "wrong": ["An exact quote", "A sports metaphor", "A financial term only"]},
+            {"name": "CC in email",          "questiontext": "<p>What does 'CC' in an email mean?</p>",                    "answer": "Carbon Copy — recipient visible to all", "wrong": ["Confidential Copy", "Courtesy Contact", "Copy Cancel"]},
+            {"name": "Agenda item",          "questiontext": "<p>What is an 'agenda' in a business context?</p>",         "answer": "A list of topics for a meeting", "wrong": ["A type of software", "A financial document", "An email format"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "quiz",
+          "name": "Quiz: Business Vocabulary",
+          "section": 1,
+          "settings": {"intro": "<p>Test your business English vocabulary.</p>", "introformat": 1, "attempts": 0, "grade": 100, "grademethod": 1}
+        },
+        {
+          "module": "assign",
+          "name": "Assignment: Write a formal email",
+          "section": 2,
+          "settings": {"intro": "<p>Write a professional email applying for a job position. Max 200 words.</p>", "introformat": 1, "submissiondrafts": 1, "maxbytes": 1048576}
+        },
+        {
+          "module": "forum",
+          "name": "Discussion: Interview tips",
+          "section": 2,
+          "settings": {"intro": "<p>Share your best tips for a successful job interview.</p>", "introformat": 1, "type": "general"}
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "Informatik: Grundlagen der Programmierung",
+      "shortname": "info-prog",
+      "category": 1,
+      "summary": "<p>Einstieg in Python, Algorithmen und Datenstrukturen. Für das Testen von langen Kurslisten und tiefer Navigation.</p>",
+      "questions": [
+        {
+          "category": "Programmierung",
+          "items": [
+            {"name": "Variable in Python",  "questiontext": "<p>Wie definiert man eine Variable in Python?</p>",           "answer": "x = 5",              "wrong": ["var x = 5;", "int x = 5;", "define x = 5"]},
+            {"name": "Liste erstellen",     "questiontext": "<p>Wie erstellt man eine Liste in Python?</p>",               "answer": "meine_liste = [1, 2, 3]", "wrong": ["meine_liste = {1,2,3}", "list meine_liste = (1,2,3)", "meine_liste = 1,2,3"]},
+            {"name": "For-Schleife",        "questiontext": "<p>Wie lautet eine korrekte For-Schleife in Python?</p>",    "answer": "for i in range(10):", "wrong": ["for i = 0; i < 10; i++", "foreach i in (0..10)", "loop i from 0 to 10"]},
+            {"name": "Funktion definieren", "questiontext": "<p>Wie definiert man eine Funktion in Python?</p>",           "answer": "def meine_funktion():", "wrong": ["function meine_funktion():", "void meine_funktion()", "func meine_funktion():"]},
+            {"name": "If-Bedingung",        "questiontext": "<p>Wie schreibt man eine If-Bedingung in Python?</p>",       "answer": "if x > 5:",          "wrong": ["if (x > 5)", "if x > 5 then", "if x > 5 {"]},
+            {"name": "String-Ausgabe",      "questiontext": "<p>Wie gibt man 'Hallo Welt' in Python aus?</p>",             "answer": "print('Hallo Welt')", "wrong": ["echo 'Hallo Welt'", "console.log('Hallo Welt')", "System.out.println('Hallo Welt')"]},
+            {"name": "Kommentar",           "questiontext": "<p>Wie schreibt man einen einzeiligen Kommentar in Python?</p>", "answer": "# Dies ist ein Kommentar", "wrong": ["// Dies ist ein Kommentar", "/* Kommentar */", "<!-- Kommentar -->"]},
+            {"name": "Dictionary",          "questiontext": "<p>Was ist ein Dictionary in Python?</p>",                   "answer": "Eine Datenstruktur mit Schlüssel-Wert-Paaren", "wrong": ["Eine Liste mit Nummern", "Eine Art Schleife", "Ein Operator"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "quiz",
+          "name": "Quiz: Python Grundlagen",
+          "section": 1,
+          "settings": {"intro": "<p>Teste dein Python-Basiswissen.</p>", "introformat": 1, "attempts": 0, "grade": 100, "grademethod": 1}
+        },
+        {
+          "module": "assign",
+          "name": "Aufgabe: Hello-World-Programm",
+          "section": 1,
+          "settings": {"intro": "<p>Schreibe dein erstes Python-Programm, das 'Hallo Welt' ausgibt, und lade es hier hoch.</p>", "introformat": 1, "submissiondrafts": 0, "maxbytes": 524288}
+        },
+        {
+          "module": "quiz",
+          "name": "Quiz: Datentypen & Strukturen",
+          "section": 2,
+          "settings": {"intro": "<p>Listen, Dictionaries und Tupel.</p>", "introformat": 1, "attempts": 0, "grade": 100, "grademethod": 1}
+        },
+        {
+          "module": "forum",
+          "name": "Hilfe-Forum: Codeprobleme",
+          "section": 3,
+          "settings": {"intro": "<p>Hier könnt ihr Probleme mit eurem Code diskutieren.</p>", "introformat": 1, "type": "general"}
+        }
+      ],
+      "enrol": "$all_users"
+    }
+  ]
+}
