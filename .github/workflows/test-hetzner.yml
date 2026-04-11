@@ -63,12 +63,23 @@ concurrency:
   group: test-hetzner
   cancel-in-progress: false
 
+# Each job publishes its test output to the ci/test-results branch
+# via .github/scripts/publish-test-result.sh so the Cowork sandbox
+# can fetch it over plain git (api.github.com is not reachable from
+# the sandbox, github.com is). Pushing to that branch needs write
+# access for the workflow's GITHUB_TOKEN.
+permissions:
+  contents: write
+
 jobs:
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
+      - name: Checkout (for publish script)
+        uses: actions/checkout@v4
+
       - name: Show trigger context
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -132,6 +143,7 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
 
       - name: Run PHPUnit over SSH
+        id: phpunit_run
         if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
         env:
           HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
@@ -140,7 +152,7 @@ jobs:
           COMPONENT: ${{ inputs.component }}
           REINIT: ${{ inputs.reinit }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
 
           CMD="lernhive-test --suite=phpunit"
 
@@ -161,12 +173,36 @@ jobs:
           echo "$CMD"
           echo "::endgroup::"
 
+          # Stream output to the Actions job log AND a tmp file so the
+          # publish step can commit the full log to ci/test-results.
+          # PIPESTATUS[0] is the ssh exit code (not tee's), which is
+          # what we want for the step's pass/fail and for SSH_RC.
+          set +e
           ssh \
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=15 \
             -o ServerAliveInterval=30 \
             "$HETZNER_USER@$HETZNER_HOST" \
-            "$CMD"
+            "$CMD" 2>&1 | tee /tmp/test-output-phpunit.log
+          SSH_RC=${PIPESTATUS[0]}
+          set -e
+
+          echo "SSH_RC=$SSH_RC" >> "$GITHUB_ENV"
+          exit "$SSH_RC"
+
+      - name: Publish PHPUnit result to ci/test-results
+        # always() runs even when the previous SSH step failed, so we
+        # also publish red runs — that's actually the most interesting
+        # signal for the sandbox reader.
+        if: always() && steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB: phpunit
+          # SSH_RC is passed via $GITHUB_ENV from the previous step;
+          # fall back to 255 if that step did not run at all.
+          SSH_RC: ${{ env.SSH_RC || '255' }}
+        run: |
+          bash .github/scripts/publish-test-result.sh
 
   behat:
     name: Behat
@@ -181,6 +217,9 @@ jobs:
     needs: phpunit
     if: always()
     steps:
+      - name: Checkout (for publish script)
+        uses: actions/checkout@v4
+
       - name: Show trigger context
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -240,6 +279,7 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
 
       - name: Run Behat over SSH
+        id: behat_run
         if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
         env:
           HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
@@ -249,7 +289,7 @@ jobs:
           TAGS: ${{ inputs.tags }}
           REINIT: ${{ inputs.reinit }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
 
           CMD="lernhive-test --suite=behat"
 
@@ -278,12 +318,29 @@ jobs:
           echo "$CMD"
           echo "::endgroup::"
 
+          # Same tee+PIPESTATUS pattern as phpunit — see comments
+          # above in the phpunit job for the reasoning.
+          set +e
           ssh \
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=15 \
             -o ServerAliveInterval=30 \
             "$HETZNER_USER@$HETZNER_HOST" \
-            "$CMD"
+            "$CMD" 2>&1 | tee /tmp/test-output-behat.log
+          SSH_RC=${PIPESTATUS[0]}
+          set -e
+
+          echo "SSH_RC=$SSH_RC" >> "$GITHUB_ENV"
+          exit "$SSH_RC"
+
+      - name: Publish Behat result to ci/test-results
+        if: always() && steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB: behat
+          SSH_RC: ${{ env.SSH_RC || '255' }}
+        run: |
+          bash .github/scripts/publish-test-result.sh
 
       - name: Failure hints
         if: failure()
