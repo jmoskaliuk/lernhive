@@ -98,16 +98,32 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 
 ## Architecture decision ADR-04 — Admin layout uses admin.php, not drawers.php (2026-04-11, shipped in 0.9.20)
 
-**Decision.** The `admin` layout in `config.php` uses `admin.php` + `admin.mustache` (standard Moodle secondary navigation including the admin settings category tree), not `drawers.php` (LernHive app-shell with sidebar).
+**Decision.** The `admin` layout in `config.php` uses `admin.php` + `admin.mustache` (same LernHive app-shell with sidebar, plus a dedicated admin page header and admin top-nav), not the bare `drawers.php` path.
 
-**Why.** Admin pages need the Moodle admin settings category tree for navigation. The LernHive sidebar only shows Home / Dashboard / My Courses / Site Admin — not the settings sub-tree. Switching layout file restores full admin navigation at zero risk to learner/trainer UX.
+**Why.** Admin pages need the Moodle admin settings category tree for navigation. The LernHive sidebar only shows Home / Dashboard / My Courses / Site Admin — not the settings sub-tree. A dedicated layout file keeps admin UX separate from learner/trainer UX without risking regressions.
 
 **Consequences.**
-- Admin pages have no LernHive block regions (no `content-top`, `content-bottom`, etc.).
-- Admin pages do not show the Context Dock (admin has its own native navigation tree).
-- `admin.mustache` uses `{{{ output.full_header }}}` which renders Moodle secondary navigation for admin context.
+- Admin pages have no LernHive block regions (no `content-top`, `content-bottom`, etc.) and no Context Dock.
+- Admin pages share `sidebar.mustache` for consistent left navigation.
+- `admin.mustache` renders a page header (same structure as drawers) plus a horizontal `lernhive-admin-topnav` tab-bar built from `admin_get_root()` — replaces the hidden Boost left-drawer admin settings tree.
+- `output.secondary_nav` is still included for sub-pages (admin/category.php shows tab bar when Moodle registers secondary nav for that page).
 
-**Status.** Accepted and shipped in 0.9.20.
+**Status.** Accepted and shipped in 0.9.20. Admin top-nav tab-bar added in 0.9.26.
+
+## Architecture decision ADR-05 — Page header owns Launcher, profile link, and language selector (2026-04-11, shipped in 0.9.26)
+
+**Decision.** The Launcher icon (9-dot grid) moves from the sidebar to the top-right page header, alongside a new profile avatar link and language selector. The Moodle `output.user_menu` dropdown is replaced by a custom user block that separates the avatar (direct profile link) from a small chevron dropdown (preferences, logout).
+
+**Why.** The sidebar is a navigation surface, not an action toolbar. Placing the Launcher and profile controls in the page header follows platform conventions (macOS, Google, GitHub) where app-level actions live at the top, context actions live in a floating Dock. Clicking the profile avatar directly to the profile page (without a dropdown) reduces friction for the most common action.
+
+**Consequences.**
+- `sidebar.mustache` no longer includes `{{> theme_lernhive/launcher }}`. The sidebar stays purely navigational.
+- `drawers.mustache` and `admin.mustache` page header actions now follow the order: `[notifications] [lang menu] [launcher] [user block]`.
+- The Launcher dropdown in header context is right-aligned and uses dark-on-white icon colors (not white-on-dark as in the sidebar).
+- Language selector wraps `$OUTPUT->lang_menu()` with a globe icon prefix; hidden when Moodle has only one language.
+- `lib.php` gains two helper functions: `theme_lernhive_get_header_user_context()` (shared by drawers.php and admin.php) and `theme_lernhive_get_admin_topnav()`.
+
+**Status.** Accepted and shipped in 0.9.26.
 
 ## Release scope
 

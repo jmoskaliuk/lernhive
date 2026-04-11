@@ -32,6 +32,43 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - course/incourse layouts provide chrome only (header, sidebar, footer, block regions) — course content rendering moves to course format plugins per ADR-01
 - short-form Snack presentation is **not** owned by the theme; planned `format_lernhive_snack` plugin will own snack templates (0.10.0)
 
+## Page header (since 0.9.26)
+
+The page header (`lernhive-page-header`) is a horizontal strip at the top of the content column (right of the sidebar). It contains the page title on the left and a cluster of action controls on the right.
+
+### Action control order (right-to-left reading: left-to-right in DOM)
+
+1. **Notifications / plugin output** — `{{{ output.navbar_plugin_output }}}` — messages, notifications, etc. from core plugins
+2. **Language selector** — `{{#haslangmenu}}<div class="lernhive-lang-menu">{{{ langmenu }}}</div>{{/haslangmenu}}` — globe icon prefix + `$OUTPUT->lang_menu()`; only visible when Moodle has more than one language installed
+3. **Launcher** — `<div class="lernhive-page-header__launcher">{{> theme_lernhive/launcher }}</div>` — 9-dot grid icon; dropdown right-aligned; dark-on-white colors in this context
+4. **User block** — custom avatar link + chevron dropdown replacing `output.user_menu`
+
+### User block
+The user block (`lernhive-user-block`) separates two distinct actions that `output.user_menu` combined in a single click:
+- **Avatar** (`lernhive-user-block__avatar`) — `<a href="{{ profileurl }}">` — direct link to `/user/profile.php?id=X`
+- **Chevron** (`lernhive-user-block__toggle`) — `<details>/<summary>` pattern — opens a dropdown with Profile / Preferences / Logout
+
+### Helper functions in lib.php
+
+| Function | Role |
+|---|---|
+| `theme_lernhive_get_header_user_context($OUTPUT)` | Returns array with `profileurl`, `useravatar`, `logouturl`, `prefsurl`, `langmenu`, `haslangmenu`, `isloggedin`. Shared by `drawers.php` and `admin.php` to avoid duplication. |
+| `theme_lernhive_get_admin_topnav($PAGE)` | Returns array of admin top-nav items from `admin_get_root()`. Used only in `admin.php`. |
+
+### Admin top navigation
+On admin pages, `theme_lernhive_get_admin_topnav($PAGE)` iterates `admin_get_root()->children`, filters hidden/inaccessible sections, and builds a `[{text, url, key, isactive}]` array. The template renders this as `lernhive-admin-topnav` — a horizontal scroll-able tab-bar between the page header and main content. Active state is derived from `$PAGE->url->get_param('category')`.
+
+### SCSS files
+| File | What it contains |
+|---|---|
+| `_navigation.scss` | `.lernhive-page-header__launcher` — header context styles for launcher toggle + dropdown; `.lernhive-user-block` — avatar link, chevron, dropdown; `.lernhive-lang-menu` — globe prefix + select/dropdown styling |
+| `_layout.scss` | `.lernhive-admin-topnav` — horizontal tab-bar; `.lernhive-page-header` — header shell (already present since 0.9.x) |
+
+### Design decisions
+- Sidebar removes the launcher (0.9.26): sidebar is now purely navigational (nav items + blocks). No action controls.
+- `output.user_menu` is dropped: the Moodle default dropdown mixed navigation and actions. The custom user block separates them explicitly.
+- Language selector is always wrapped: even if Moodle's `lang_menu()` changes its internal markup, the `.lernhive-lang-menu` container provides a stable styling hook.
+
 ## Context Dock (since 0.9.21)
 
 The Context Dock is a floating, fixed-position action strip for context-aware actions. It is rendered only by `drawers.php` / `drawers.mustache` — admin pages (`admin.php`) do not include it.

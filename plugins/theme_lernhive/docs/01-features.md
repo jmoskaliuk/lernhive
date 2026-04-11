@@ -16,6 +16,12 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
   - CSS-only tooltips with progressive disclosure after 3 page visits
   - Desktop: vertical pill at bottom of sidebar; Mobile: horizontal strip at bottom of screen
 - Admin layout using Moodle standard secondary navigation (admin.php, 0.9.20)
+- Admin settings top navigation: horizontal tab-bar built from `admin_get_root()`, above main content on all admin pages; replaces the hidden Boost left-drawer admin settings tree (0.9.26)
+- Page header redesign (0.9.26):
+  - Launcher (9-dot grid icon) moved from sidebar to page header top-right — sidebar stays purely navigational
+  - Profile avatar is a direct link to the user's own profile page (no dropdown required for the most common action)
+  - Small chevron next to avatar opens a user options dropdown: Profile / Preferences / Logout
+  - Language selector (globe icon + `output.lang_menu()`) between notifications and Launcher; hidden when only one language is installed
 
 ## Planned feature set
 - design tokens for color, typography, spacing, and surfaces
