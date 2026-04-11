@@ -70,42 +70,24 @@
                 </div>
             </div>
 
-            {{! Admin navigation — two-level horizontal tab-bars (0.9.27).
-                Level 1: top-level admin categories (Notifications, Users, Courses, …).
-                Level 2: sub-categories of the active level-1 entry (shown below). }}
-            {{#hasadmintopnav}}
-                <nav class="lernhive-admin-topnav" aria-label="{{#str}} administrationsite {{/str}}">
-                    <ul class="lernhive-admin-topnav__list">
-                        {{#admintopnav}}
-                            <li class="lernhive-admin-topnav__item">
-                                <a href="{{ url }}"
-                                   class="lernhive-admin-topnav__link{{#isactive}} lernhive-admin-topnav__link--active{{/isactive}}"
-                                   {{#isactive}}aria-current="page"{{/isactive}}>
-                                    {{ text }}
-                                </a>
-                            </li>
-                        {{/admintopnav}}
-                    </ul>
-                </nav>
-            {{/hasadmintopnav}}
-
-            {{! Level 2: sub-items of the active category }}
-            {{#hasadminsecondnav}}
-                <nav class="lernhive-admin-topnav lernhive-admin-topnav--secondary"
-                     aria-label="{{#str}} administrationsite {{/str}} — subcategories">
-                    <ul class="lernhive-admin-topnav__list">
-                        {{#adminsecondnav}}
-                            <li class="lernhive-admin-topnav__item">
-                                <a href="{{ url }}"
-                                   class="lernhive-admin-topnav__link{{#isactive}} lernhive-admin-topnav__link--active{{/isactive}}"
-                                   {{#isactive}}aria-current="page"{{/isactive}}>
-                                    {{ text }}
-                                </a>
-                            </li>
-                        {{/adminsecondnav}}
-                    </ul>
-                </nav>
-            {{/hasadminsecondnav}}
+            {{! Admin secondary navigation — rendered exactly like Boost's drawers.mustache.
+                0.9.34: delegates to Moodle core's moremenu partial so the admin
+                sees the canonical Boost admin tab bar (General | Users | Courses |
+                Grades | Plugins | Appearance | Server | Reports | Development, …).
+                The layout PHP builds `secondarymoremenu` from $PAGE->secondarynav
+                via \core\navigation\output\more_menu just like theme_boost does. }}
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation lernhive-secondary-navigation d-print-none">
+                    {{> core/moremenu }}
+                </div>
+            {{/secondarymoremenu}}
+            {{#overflow}}
+                <div class="container-fluid tertiary-navigation">
+                    <div class="navitem">
+                        {{> core/url_select }}
+                    </div>
+                </div>
+            {{/overflow}}
 
             <div id="page-content" class="lernhive-page-content">
                 <main id="region-main-box" class="lernhive-main">

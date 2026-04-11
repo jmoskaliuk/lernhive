@@ -371,6 +371,19 @@ $lh-bp-tablet:   768px;
     padding: 0;
 }
 
+// On plugin-shell pages the Zone A header already shows the page title —
+// hide the page-header __main area (breadcrumb / h1) so the nav icon row
+// sits flush at the very top without wasted space. Also align the remaining
+// icons to the right edge.
+.lernhive-page:has(.lh-plugin-header) {
+    .lernhive-page-header {
+        justify-content: flex-end;
+    }
+    .lernhive-page-header__main {
+        display: none;
+    }
+}
+
 @media (max-width: #{$lh-bp-tablet - 1px}) {
     .lernhive-main {
         padding: $lh-spacing-md;
@@ -383,95 +396,28 @@ $lh-bp-tablet:   768px;
     }
 }
 
-// --- Admin top navigation (0.9.26) -------------------------------------------
-// Horizontal tab-bar of admin sections (General | Users | Courses | …).
-// Replaces the Boost left-drawer admin settings tree on admin pages.
+// --- Admin secondary navigation (0.9.34) -------------------------------------
+// 0.9.34: delegates to Moodle core's secondary_navigation / moremenu pipeline —
+// the same one theme_boost uses — so admins see the canonical Boost admin
+// tab bar (General | Users | Courses | Grades | Plugins | Appearance | Server
+// | Reports | Development, …). Superseded the custom .lernhive-admin-topnav
+// two-level tab bar (0.9.26–0.9.33) which was visually drifting from Boost.
+//
+// We keep a thin LernHive wrapper so we can (a) pull the tab bar flush to the
+// left edge of the page column, matching the flush layout shell from 0.9.33,
+// and (b) give the tabs a bit of horizontal gutter so the first tab doesn't
+// collide with the sidebar.
 
-.lernhive-admin-topnav {
-    background: #fff;
-    border: 1px solid $lh-border;
-    border-radius: $lh-radius;
-    box-shadow: $lh-shadow;
-    padding: 0 $lh-spacing-md;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
+.lernhive-secondary-navigation {
+    padding: 0 $lh-spacing-lg;
+    margin-bottom: $lh-spacing-md;
 
-    &__list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 0;
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        padding: 0 $lh-spacing-md;
     }
 
-    &__item {
-        flex-shrink: 0;
-    }
-
-    &__link {
-        display: block;
-        padding: 0.75rem $lh-spacing-md;
-        color: $lh-text-secondary;
-        font-size: $lh-font-size-sm;
-        font-weight: 500;
-        text-decoration: none;
-        border-bottom: 2px solid transparent;
-        white-space: nowrap;
-        transition: color 0.15s ease, border-color 0.15s ease;
-
-        &:hover {
-            color: $lh-primary;
-            border-bottom-color: $lh-primary;
-            text-decoration: none;
-        }
-
-        &--active,
-        &[aria-current="page"] {
-            color: $lh-primary;
-            border-bottom-color: $lh-primary;
-            font-weight: 600;
-        }
-
-        &:focus-visible {
-            outline: 2px solid $lh-accent;
-            outline-offset: -2px;
-        }
-    }
-}
-
-// Level-2 secondary nav (0.9.27): sub-categories of the active top-level item.
-// Visually distinct: no bottom-border on individual items, uses accent underline,
-// slightly smaller text, and a quiet left-accent stripe on the container.
-
-.lernhive-admin-topnav--secondary {
-    background: $lh-bg;
-    border: 1px solid $lh-border;
-    border-top: 3px solid $lh-accent;  // orange stripe = "you are inside this section"
-    border-radius: 0 0 $lh-radius $lh-radius;
-    box-shadow: none;
-    margin-top: -$lh-radius; // visually connect to level-1 nav above
-    padding: 0 $lh-spacing-md;
-
-    .lernhive-admin-topnav__link {
-        font-size: $lh-font-size-xs;
-        color: $lh-text-secondary;
-        padding: 0.5rem $lh-spacing-sm;
-        border-bottom: 2px solid transparent;
-
-        &:hover {
-            color: $lh-accent-dark;
-            border-bottom-color: $lh-accent;
-        }
-
-        &--active,
-        &[aria-current="page"] {
-            color: $lh-accent-dark;
-            border-bottom-color: $lh-accent;
-            font-weight: 600;
-        }
+    @media (max-width: 374px) {
+        padding: 0 $lh-spacing-sm;
     }
 }
 

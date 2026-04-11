@@ -69,9 +69,24 @@ if (is_siteadmin()) {
 // User header context: avatar → profile link, language menu, logout.
 $userheaderctx = theme_lernhive_get_header_user_context($OUTPUT);
 
-// Admin top navigation — two-level horizontal tab-bars above main content.
-// Returns: admintopnav, hasadmintopnav, adminsecondnav, hasadminsecondnav.
-$adminnav = theme_lernhive_get_admin_topnav($PAGE);
+// Admin secondary navigation — render via the canonical Boost pipeline:
+//   more_menu($PAGE->secondarynav) → core/moremenu template partial.
+// This produces the standard admin category tab bar (General | Users |
+// Courses | Grades | Plugins | Appearance | Server | Reports | Development, …)
+// exactly like the Boost theme, so admins see a familiar navigation surface.
+// 0.9.34: replaces the custom theme_lernhive_get_admin_topnav() helper that
+// walked admin_get_root() directly and produced an L1/L2-mixed tab list.
+$secondarymoremenu = false;
+$overflow = '';
+if ($PAGE->has_secondary_navigation()) {
+    $tablistnav = $PAGE->has_tablist_secondary_navigation();
+    $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
+    $secondarymoremenu = $moremenu->export_for_template($OUTPUT);
+    $overflowdata = $PAGE->secondarynav->get_overflow_menu_data();
+    if (!is_null($overflowdata)) {
+        $overflow = $overflowdata->export_for_template($OUTPUT);
+    }
+}
 
 // Admin pages have no block regions — keep $blockregions empty rather than
 // calling theme_lernhive_get_block_regions_context() with regions that don't
@@ -87,6 +102,8 @@ $templatecontext = array_merge([
     'showlauncher'              => $showlauncher,
     'launcher'                  => $launchercontext,
     'navitems'                  => $navitems,
-], $userheaderctx, $adminnav);
+    'secondarymoremenu'         => $secondarymoremenu ?: false,
+    'overflow'                  => $overflow,
+], $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/admin', $templatecontext);

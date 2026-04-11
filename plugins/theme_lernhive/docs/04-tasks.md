@@ -22,6 +22,12 @@
   - Admin nav: two-level horizontal tab-bar — Level 1 top categories + Level 2 sub-items of active category — lib.php + admin.mustache + _layout.scss
   - Plugin Shell: new `_plugin-shell.scss` partial — 2-zone sticky page header for local plugins (Zone A header+tags, Zone B info/CTA, card grid with states, action buttons)
   - Mockup: `plugin-shell-concept.html` v0.2 (inline SVG sprite) + `plugin-shell-spec.md`
+- [x] 0.9.34 — Admin nav: delegate to core secondary_navigation (Johannes: "orientiere Dich komplett an der Boost Darstellung"):
+  - `layout/admin.php` — build `secondarymoremenu` via `\core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', …)` exactly like `theme_boost/layout/drawers.php`. Also forwards `overflow` via `$PAGE->secondarynav->get_overflow_menu_data()`.
+  - `templates/admin.mustache` — replaces the custom two-level `{{#hasadmintopnav}}…{{/hasadmintopnav}}` / `{{#hasadminsecondnav}}…{{/hasadminsecondnav}}` blocks with the canonical Boost pattern: `{{#secondarymoremenu}} … {{> core/moremenu}} {{/secondarymoremenu}}` wrapped in a thin `.lernhive-secondary-navigation` container. Also renders the `tertiary-navigation / url_select` overflow block when present.
+  - `lib.php` — `theme_lernhive_get_admin_topnav()` function deleted (no longer called; the custom `admin_get_root()` walk produced an L1/L2-mixed tab list on `/admin/index.php`).
+  - `scss/lernhive/_layout.scss` — `.lernhive-admin-topnav` + `.lernhive-admin-topnav--secondary` rules removed; replaced with a thin `.lernhive-secondary-navigation` wrapper that only handles horizontal gutter + bottom margin so the core `nav.nav-tabs` sits flush with the flush-layout shell from 0.9.33.
+  - Net: admins now see the exact same canonical tab bar as Boost (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development), including Moodle core's own overflow-menu handling.
 - [x] 0.9.33 — Layout shell flush edges (Johannes: "vollflächige Hintergründe, nur Kacheln als Abgrenzung"):
   - `.lernhive-page` — `padding: 0`, `gap: 0` (was `$lh-spacing-lg` + `$lh-spacing-md`); page column is now a flush full-width canvas
   - `.lernhive-page-header` — tile chrome dropped: `background: transparent`, `border: none`, `border-radius: 0`, `box-shadow: none`; pulled flush to viewport top + flush to sidebar right edge; internal padding preserved so icon cluster keeps breathing room
@@ -32,8 +38,9 @@
 
 ## Open — R1 scope
 
+- [ ] **Smoke-test 0.9.34** — on `/admin/index.php` verify the tab bar shows the canonical Boost sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development), active tab highlights correctly as you drill into categories, overflow menu renders when tabs don't fit
 - [ ] **Smoke-test 0.9.33** — verify on local Moodle: ContentHub page has no outer tile, top icon bar is flush to viewport, regular Moodle pages still render `.lernhive-main` as a centered tile with side gutters
-- [ ] **Smoke-test 0.9.27** — obsolete (superseded by 0.9.33 smoke-test above)
+- [ ] **Smoke-test 0.9.27** — obsolete (superseded by 0.9.33 + 0.9.34 smoke-tests above)
 - [ ] `regionmainsettingsmenu` must stay — Teachers use it to add blocks to courses (block positions still unclear after right-hand drawer removal). Keep until an explicit block-placement UX replaces it.
 - [ ] Student dock items: progress overview shortcut, continue-learning button (post-flavour integration)
 - [ ] Smoke-test steps 3–6 (Fresh Apply LXP, config key verification, override test, audit table)
