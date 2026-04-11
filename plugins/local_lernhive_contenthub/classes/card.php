@@ -78,12 +78,30 @@ final class card {
      * @return array
      */
     public function to_template_context(): array {
+        // Map card key → FontAwesome icon + colour variant for the Plugin Shell icon box.
+        $icon_fa = match($this->key) {
+            'copy'     => 'fa-copy',
+            'template' => 'fa-file-alt',
+            'library'  => 'fa-book',
+            'ai'       => 'fa-magic',
+            default    => 'fa-file',
+        };
+        $icon_color = match($this->key) {
+            'copy'     => 'course',
+            'template' => 'snack',
+            'library'  => 'community',
+            'ai'       => 'tour',
+            default    => '',
+        };
+
         return [
             'key'          => $this->key,
             'title'        => get_string($this->titlestring, 'local_lernhive_contenthub'),
             'description'  => get_string($this->descstring, 'local_lernhive_contenthub'),
             'cta'          => get_string($this->ctastring, 'local_lernhive_contenthub'),
             'icon'         => $this->icon,
+            'icon_fa'      => $icon_fa,
+            'icon_color'   => $icon_color,
             'url'          => $this->url ? $this->url->out(false) : '',
             'hasurl'       => $this->url !== null && $this->status === self::STATUS_AVAILABLE,
             'status'       => $this->status,

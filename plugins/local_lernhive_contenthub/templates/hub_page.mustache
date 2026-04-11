@@ -5,80 +5,137 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
-    Moodle is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
     @template local_lernhive_contenthub/hub_page
 
-    ContentHub entry page — one card per content path.
+    ContentHub entry page — Plugin Shell layout (0.1.2).
+    Two-zone sticky header + card grid directly on page background.
 
     Context:
     {
-        "heading": "How would you like to start?",
-        "intro": "Pick one of the content paths below.",
+        "backurl":          "/my/",
+        "tagline":          "Content Creation",
+        "subtitle":         "Choose a starting point for new course content.",
+        "available_count":  2,
         "cards": [
             {
-                "key": "copy",
-                "title": "Copy",
-                "description": "Reuse an existing course.",
-                "cta": "Copy a course",
-                "icon": "📄",
-                "url": "/local/lernhive_copy/index.php",
-                "hasurl": true,
-                "status": "available",
-                "available": true,
-                "coming_soon": false,
-                "unavailable": false,
-                "statuslabel": "Available"
+                "key":          "copy",
+                "title":        "Copy",
+                "description":  "Reuse an existing course.",
+                "cta":          "Open",
+                "icon_fa":      "fa-copy",
+                "icon_color":   "course",
+                "url":          "/local/lernhive_copy/index.php",
+                "hasurl":       true,
+                "available":    true,
+                "coming_soon":  false,
+                "unavailable":  false,
+                "statuslabel":  "Available"
             }
         ]
     }
 }}
-<div class="lh-contenthub-container">
-    <div class="lh-contenthub-intro">
-        <h2>{{heading}}</h2>
-        <p>{{intro}}</p>
+
+{{! ── Zone A: sticky page header ─────────────────────────────────────────── }}
+<div class="lh-plugin-header">
+    <div class="lh-plugin-header__row">
+
+        <a href="{{ backurl }}"
+           class="lh-plugin-header__nav-btn"
+           aria-label="{{#str}} backtodashboard, local_lernhive_contenthub {{/str}}">
+            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            {{#str}} backtodashboard, local_lernhive_contenthub {{/str}}
+        </a>
+
+        <div class="lh-plugin-header__title-block">
+            <div class="lh-plugin-header__name">
+                ContentHub
+                <span class="lh-plugin-header__sep" aria-hidden="true">|</span>
+                <span class="lh-plugin-header__tagline">{{ tagline }}</span>
+            </div>
+            <p class="lh-plugin-header__subtitle">{{ subtitle }}</p>
+            <div class="lh-plugin-header__tags" aria-label="{{#str}} tags {{/str}}">
+                <span class="lh-plugin-tag lh-plugin-tag--type">
+                    <i class="fa fa-th-large" aria-hidden="true"></i>
+                    {{#str}} tag_content_creation, local_lernhive_contenthub {{/str}}
+                </span>
+                <span class="lh-plugin-tag lh-plugin-tag--active">
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                    {{ available_count }}
+                    {{#str}} tag_paths_available, local_lernhive_contenthub {{/str}}
+                </span>
+            </div>
+        </div>
+
     </div>
+</div>
 
-    <div class="lh-contenthub-cards" role="list">
+{{! ── Zone B: info bar ───────────────────────────────────────────────────── }}
+<div class="lh-plugin-infobar">
+    <div class="lh-plugin-infobar__stats">
+        <span class="lh-plugin-infobar__stat">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            {{#str}} infobar_hint, local_lernhive_contenthub {{/str}}
+        </span>
+    </div>
+</div>
+
+{{! ── Card grid ──────────────────────────────────────────────────────────── }}
+<div class="container-fluid py-4">
+    <div class="lh-plugin-grid lh-plugin-grid--cols-2" role="list">
+
         {{#cards}}
-            <div class="lh-contenthub-card lh-contenthub-card--{{status}}"
-                 role="listitem"
-                 data-card-key="{{key}}">
+        <div class="lh-plugin-card{{#coming_soon}} lh-plugin-card--locked{{/coming_soon}}{{#unavailable}} lh-plugin-card--locked{{/unavailable}}"
+             role="listitem"
+             data-card-key="{{ key }}">
 
-                {{^available}}
-                    <span class="lh-contenthub-badge lh-contenthub-badge--{{status}}">
-                        {{statuslabel}}
-                    </span>
-                {{/available}}
+            <div class="lh-plugin-card__top">
+                <div class="lh-plugin-card__icon lh-plugin-card__icon--{{ icon_color }}" aria-hidden="true">
+                    <i class="fa {{ icon_fa }}"></i>
+                </div>
+                <div class="lh-plugin-card__meta">
+                    {{#coming_soon}}
+                        <div class="lh-plugin-card__kicker">
+                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                            {{ statuslabel }}
+                        </div>
+                    {{/coming_soon}}
+                    {{#unavailable}}
+                        <div class="lh-plugin-card__kicker">
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                            {{ statuslabel }}
+                        </div>
+                    {{/unavailable}}
+                    <div class="lh-plugin-card__title">{{ title }}</div>
+                </div>
+            </div>
 
-                <div class="lh-contenthub-icon" aria-hidden="true">{{icon}}</div>
-                <h3 class="lh-contenthub-title">{{title}}</h3>
-                <p class="lh-contenthub-desc">{{description}}</p>
+            <div class="lh-plugin-card__body">
+                {{ description }}
+            </div>
 
+            <div class="lh-plugin-card__actions">
                 {{#hasurl}}
-                    <a class="btn btn-primary lh-contenthub-cta" href="{{url}}">
-                        {{cta}}
+                    <a href="{{ url }}"
+                       class="lh-plugin-btn lh-plugin-btn--open">
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                        {{ cta }}
                     </a>
                 {{/hasurl}}
                 {{^hasurl}}
-                    <button
-                        type="button"
-                        class="btn btn-secondary lh-contenthub-cta disabled"
-                        disabled
-                        aria-disabled="true"
-                    >
-                        {{cta}}
+                    <button type="button"
+                            class="lh-plugin-btn lh-plugin-btn--ghost lh-plugin-btn--disabled"
+                            disabled
+                            aria-disabled="true">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        {{ cta }}
                     </button>
                 {{/hasurl}}
             </div>
+
+        </div>
         {{/cards}}
+
     </div>
 </div>

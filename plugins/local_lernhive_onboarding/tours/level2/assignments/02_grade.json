@@ -1,0 +1,53 @@
+{
+    "name": "LernHive: Abgaben bewerten",
+    "description": "Lerne, wie du eingereichte Abgaben ansiehst, bewertest und Feedback gibst.",
+    "lernhive_feature": "mod_assign.create",
+    "pathmatch": "/mod/assign/view.php%",
+    "enabled": 1,
+    "sortorder": 1,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Abgaben verwalten",
+            "content": "<p>Sobald Nutzer/innen etwas eingereicht haben, kannst du die Abgaben hier ansehen, herunterladen und bewerten. Das Bewerten passiert innerhalb der Aufgabe selbst — kein Umweg über das Gradebook.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Übersicht aller Abgaben",
+            "content": "<p>Oben auf der Seite siehst du eine kompakte Zusammenfassung: wie viele Nutzer/innen eingereicht haben, wie viele Abgaben noch offen sind, und wie viele bereits bewertet wurden.</p>",
+            "targettype": 2,
+            "targetvalue": ".submissionsummarytable, .generaltable",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Alle Abgaben anzeigen",
+            "content": "<p>Klick auf 'Alle Abgaben anzeigen', um in die Bewertungsübersicht zu kommen. Dort siehst du eine Liste aller Nutzer/innen mit Status, Abgabe-Datei und Notenfeld.</p>",
+            "targettype": 2,
+            "targetvalue": "a[href*=\"action=grading\"]",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Einzelne Abgabe bewerten",
+            "content": "<p>Über den Stift-Icon neben einer Abgabe öffnet sich der Bewertungsbildschirm. Hier kannst du die eingereichte Datei direkt im Browser ansehen, eine Note vergeben und ein Feedback schreiben.</p>",
+            "targettype": 2,
+            "targetvalue": "a[href*=\"action=grader\"]",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Note und Feedback speichern",
+            "content": "<p>Speichere die Bewertung mit 'Änderungen speichern'. Die Note wird automatisch ins Kursbewertungen übertragen — darum kümmerst du dich also später auf Level 4 separat.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 4,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

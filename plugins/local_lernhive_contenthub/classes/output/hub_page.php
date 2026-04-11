@@ -48,14 +48,26 @@ class hub_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output): array {
         $cards = [];
+        $available_count = 0;
         foreach (card_registry::get_cards() as $card) {
-            $cards[] = $card->to_template_context();
+            $ctx = $card->to_template_context();
+            $cards[] = $ctx;
+            if ($ctx['available']) {
+                $available_count++;
+            }
         }
 
         return [
-            'heading' => get_string('page_heading', 'local_lernhive_contenthub'),
-            'intro'   => get_string('page_intro', 'local_lernhive_contenthub'),
-            'cards'   => $cards,
+            // Plugin Shell Zone A.
+            'backurl'         => (new \moodle_url('/my/'))->out(false),
+            'tagline'         => get_string('shell_tagline', 'local_lernhive_contenthub'),
+            'subtitle'        => get_string('shell_subtitle', 'local_lernhive_contenthub'),
+            'available_count' => $available_count,
+            // Cards.
+            'cards'           => $cards,
+            // Legacy keys kept for backward compatibility.
+            'heading'         => get_string('page_heading', 'local_lernhive_contenthub'),
+            'intro'           => get_string('page_intro', 'local_lernhive_contenthub'),
         ];
     }
 }

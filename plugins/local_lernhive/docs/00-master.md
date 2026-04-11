@@ -72,4 +72,4 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 
 ### Status
 
-**Accepted.** Implementation begins in 0.3.0. Tracked as milestones `LH-CORE-FR-01` … `LH-CORE-FR-07` in `04-tasks.md`. Consumer work (tour migration, onboarding banner updates) lands in parallel in `local_lernhive_onboarding` 0.3.0.
+**Accepted 2026-04-11** (Johannes, review round 2 — inline sign-off in `local_lernhive_onboarding/docs/04-tasks.md`). Implementation begins in 0.3.0. Tracked as milestones `LH-CORE-FR-01` … `LH-CORE-FR-09` in `04-tasks.md`. Consumer work (tour migration, onboarding banner updates) lands in parallel in `local_lernhive_onboarding` 0.3.0 under `LH-ONB-FR-01` … `LH-ONB-FR-11`.

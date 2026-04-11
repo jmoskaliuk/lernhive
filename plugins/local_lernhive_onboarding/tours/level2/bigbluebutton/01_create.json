@@ -1,0 +1,61 @@
+{
+    "name": "LernHive: BigBlueButton-Raum anlegen",
+    "description": "Lerne, wie du einen BigBlueButton-Raum für Live-Sitzungen in deinem Kurs anlegst.",
+    "lernhive_feature": "mod_bigbluebuttonbn.create",
+    "pathmatch": "/course/modedit.php%",
+    "enabled": 1,
+    "sortorder": 0,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Live-Sitzungen im Kurs",
+            "content": "<p>BigBlueButton bringt synchrones Lernen in deinen Kurs: Webinare, Sprechstunden, Gruppenarbeit in Breakout-Räumen. Die Sitzungen laufen direkt im Browser, ohne zusätzliche Software.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Name des Raums",
+            "content": "<p>Gib dem Raum einen Namen, den deine Nutzer/innen im Kurs wiederfinden — zum Beispiel 'Wöchentliche Sprechstunde' oder 'Live-Webinar Modul 2'.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_name",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Instanztyp wählen",
+            "content": "<p>Du kannst zwischen 'Raum mit Aufzeichnungen', 'Nur Raum' und 'Nur Aufzeichnungen' wählen. Für den Start ist 'Raum mit Aufzeichnungen' der Standard — dann hast du beide Optionen in einer Aktivität.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_type",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Einstellungen für die Sitzung",
+            "content": "<p>Im Bereich 'Einstellungen für die Sitzung' legst du fest, ob Teilnehmer/innen auf den Moderator warten müssen, ob sie als Zuhörer/innen starten, und ob die Webcam-Freigabe eingeschränkt werden soll. Für die meisten Sitzungen reichen die Standardwerte.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_availabilityhdr, #id_participants, #id_permissions",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Zeitplan",
+            "content": "<p>Im Bereich 'Zeitplan' kannst du einen Beginn und ein Ende festlegen. Außerhalb dieses Fensters ist der Raum für Nutzer/innen nicht erreichbar — ideal für geplante Webinare.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_schedule",
+            "sortorder": 4,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Raum speichern",
+            "content": "<p>Mit 'Speichern und anzeigen' ist der Raum einsatzbereit. Beim Klick auf 'Sitzung beitreten' wird die Live-Session gestartet — du als Trainer/in bist automatisch Moderator/in.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 5,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

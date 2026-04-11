@@ -1,0 +1,53 @@
+{
+    "name": "LernHive: Aufgabe erstellen",
+    "description": "Lerne, wie du eine Aufgabe (Assignment) in deinem Kurs erstellst und konfigurierst.",
+    "lernhive_feature": "mod_assign.create",
+    "pathmatch": "/course/modedit.php%",
+    "enabled": 1,
+    "sortorder": 0,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Willkommen zur Aufgabenerstellung",
+            "content": "<p>Mit Aufgaben können deine Nutzer/innen Arbeiten einreichen, die du bewerten kannst. Das ist zentral für interaktives Lernen.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Aufgabenname eingeben",
+            "content": "<p>Gib einen klaren Namen für die Aufgabe ein. Dieser wird in der Kursliste und als Aktivitätstitel angezeigt.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_name",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Beschreibung und Anleitung",
+            "content": "<p>Schreibe eine ausführliche Beschreibung, damit Nutzer/innen verstehen, was sie tun müssen. Erkläre Anforderungen und Erwartungen deutlich.</p>",
+            "targettype": 2,
+            "targetvalue": "[data-fieldtype=\"editor\"]",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Abgabeeinstellungen",
+            "content": "<p>Stelle ein, wie Nutzer/innen abgeben können: Datei hochladen, Online-Text oder beides. Lege auch Abgabefristen fest.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submissiontypes",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Aufgabe speichern",
+            "content": "<p>Klick auf 'Speichern und anzeigen'. Die Aufgabe ist dann für deine Nutzer/innen sichtbar und einsatzbereit.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 4,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

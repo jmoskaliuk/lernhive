@@ -229,4 +229,77 @@ body.pagelayout-login {
 
     // Hide any cookie/alert banners on login — cleaner look.
     .alert-info { display: none; }
+
+    // ── "Access as a guest" — keep but style as secondary pill ──────────────────
+    .guestlogin,
+    .login-guestlogin {
+        margin-top: $lh-spacing-md;
+        text-align: center;
+
+        .btn, input[type="submit"] {
+            border-radius: $lh-radius-pill !important;
+            padding: 10px 28px !important;
+            font-weight: 600 !important;
+            background: rgba(25, 72, 102, 0.85) !important;
+            border-color: transparent !important;
+            color: #fff !important;
+            font-size: $lh-font-size-sm !important;
+            width: auto !important;
+
+            &:hover {
+                background: $lh-primary !important;
+            }
+        }
+    }
+
+    // ── Cookies notice → floating privacy icon (bottom-right) ───────────────────
+    // Moodle's tool_policy renders this in .loginpolicies after the guest section.
+    // We detach it from flow and fix it to the viewport bottom-right corner.
+    .loginpolicies,
+    #policyagreedbutton,
+    .policy-agreed-modal-trigger {
+        position: fixed !important;
+        bottom: 24px !important;
+        right: 24px !important;
+        z-index: 999 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+
+        button,
+        .btn,
+        a {
+            width: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            background: rgba(25, 72, 102, 0.82) !important;
+            border: none !important;
+            color: transparent !important;   // hide text
+            font-size: 0 !important;         // hide text
+            box-shadow: 0 3px 12px rgba(25, 72, 102, 0.25) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: background 0.15s ease, box-shadow 0.15s ease !important;
+
+            // Show shield icon via pseudo-element.
+            &::after {
+                content: '\f132';           // fa-shield
+                font-family: FontAwesome, sans-serif;
+                font-size: 1.125rem !important;
+                color: #fff !important;
+                display: block !important;
+                line-height: 1 !important;
+            }
+
+            &:hover {
+                background: $lh-primary !important;
+                box-shadow: 0 4px 16px rgba(25, 72, 102, 0.35) !important;
+                color: transparent !important;
+            }
+        }
+    }
 }

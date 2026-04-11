@@ -75,5 +75,13 @@ $string['status_unavailable'] = 'Unavailable — plugin not installed';
 // Errors & access.
 $string['err_no_access'] = 'You are not allowed to use ContentHub.';
 
+// Plugin Shell strings (0.1.2).
+$string['shell_tagline']         = 'Content Creation';
+$string['shell_subtitle']        = 'Choose a starting point for new course content.';
+$string['backtodashboard']       = 'Dashboard';
+$string['tag_content_creation']  = 'Content Creation';
+$string['tag_paths_available']   = 'paths available';
+$string['infobar_hint']          = 'ContentHub guides you to the right plugin — all actual work happens there.';
+
 // Privacy.
 $string['privacy:metadata'] = 'The LernHive ContentHub plugin does not store any personal data. It only renders a unified entry screen and delegates all actions to sibling plugins.';

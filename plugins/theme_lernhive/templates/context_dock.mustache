@@ -1,23 +1,7 @@
 {{!
     Context Dock — floating action strip for Teacher/Trainer and Student actions.
-
-    Rendered only when {{hasdockitems}} is truthy (built in drawers.php).
-    Position: fixed, bottom of sidebar column on desktop; bottom of screen on mobile.
-
-    Tooltip progressive disclosure:
-    Tooltips are CSS-only (always show on :hover). The optional JS snippet below
-    tracks page visits in localStorage and adds .lh-dock--experienced after 3 visits,
-    which hides all tooltips. Works without JS (tooltips always visible as fallback).
-
-    Template context (built by theme_lernhive_get_context_dock_items() in lib.php):
-      hasdockitems  boolean
-      dockitems[]
-        key       string  — stable id for localStorage tracking
-        icon      string  — FontAwesome icon name (without fa- prefix)
-        label     string  — human-readable action name (shown in tooltip)
-        url       string  — href
-        active    bool    — true when action is currently "on"
-        divider   bool    — render a separator line BEFORE this item
+    Rendered only when hasdockitems is truthy (built in drawers.php).
+    Context: hasdockitems bool, dockitems[]{key, icon, label, url, active, divider}.
 }}
 {{#hasdockitems}}
 <nav class="lh-dock"

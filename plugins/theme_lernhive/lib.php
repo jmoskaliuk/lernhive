@@ -387,23 +387,25 @@ function theme_lernhive_get_admin_topnav($PAGE): array {
         return $empty;
     }
 
-    // --- Determine which top-level category is currently active ---------------
+    // --- Strategy: "General + Major sections" grouping -------------------------
+    // In Moodle 5.x admin_get_root()->children is flat (Users, Courses, Grades,
+    // Plugins, Development, Appearance … all at the same depth). We group them:
+    //
+    //   Level 1 (4 tabs):
+    //     General  → synthetic, links to admin/index.php
+    //                covers all non-major children (Users, Courses, Grades …)
+    //     Plugins  → 'modules' category
+    //     Development → 'development' category
+    //     Appearance  → 'appearance' category
+    //
+    //   Level 2:  children of the active Level-1 tab.
+    //             Under General: the non-major admin_category children.
+    //             Under a major section: its own children.
+
+    $major_keys = ['modules', 'development', 'appearance', 'experimental'];
+
     $urlcategory = $PAGE->url->get_param('category') ?? '';
     $urlsection  = $PAGE->url->get_param('section')  ?? '';
-
-    // Helper: build one nav item array from an admin_* node.
-    $build_item = function($node, bool $isactive): array {
-        $name = $node->name ?? '';
-        if ($node instanceof admin_externalpage) {
-            $url = is_string($node->url) ? $node->url : $node->url->out(false);
-        } else {
-            $url = (new moodle_url('/admin/category.php', ['category' => $name]))->out(false);
-        }
-        $label = $node->visiblename instanceof lang_string
-            ? $node->visiblename->out()
-            : (string) $node->visiblename;
-        return ['text' => $label, 'url' => $url, 'key' => $name, 'isactive' => $isactive];
-    };
 
     // Helper: check if a node is visible and accessible.
     $is_visible = function($node): bool {
@@ -417,81 +419,124 @@ function theme_lernhive_get_admin_topnav($PAGE): array {
         }
     };
 
-    // --- Level 1: top-level admin_category children of admin_get_root() ------
-    // Only include proper admin_category nodes — individual settings pages
-    // (admin_externalpage, admin_settingpage) are skipped here and will appear
-    // as Level 2 items when their parent category is active.
-    $toplevel = [];
-    $activetopkey = '';
+    // Helper: get the visible display label of a node.
+    $node_label = function($node): string {
+        $name = $node->visiblename ?? '';
+        return $name instanceof lang_string ? $name->out() : (string) $name;
+    };
+
+    // Helper: build a nav item array manually.
+    $make_item = function(string $key, string $text, string $url, bool $isactive): array {
+        return ['key' => $key, 'text' => $text, 'url' => $url, 'isactive' => $isactive];
+    };
+
+    // --- Separate children into "general pool" and major sections --------------
+    $general_children = [];   // admin_category nodes NOT in major_keys
+    $major_nodes      = [];   // admin_category nodes in major_keys
 
     foreach ($adminroot->children as $section) {
-        if (!($section instanceof admin_category)) {
-            continue;  // Skip individual pages — only category groupings as L1.
-        }
-        if (!$is_visible($section)) {
+        if (!($section instanceof admin_category) || !$is_visible($section)) {
             continue;
         }
         $key = $section->name ?? '';
-
-        // Active if URL category matches this section directly.
-        $isactive = ($key !== '' && $key === $urlcategory);
-        $toplevel[$key] = ['node' => $section, 'isactive' => $isactive];
-        if ($isactive) {
-            $activetopkey = $key;
+        if (in_array($key, $major_keys, true)) {
+            $major_nodes[$key] = $section;
+        } else {
+            $general_children[$key] = $section;
         }
     }
 
-    // If no match on category param, try to find active via section param.
-    if ($activetopkey === '' && $urlsection !== '') {
-        foreach ($toplevel as $key => $info) {
-            $node = $info['node'];
-            if (!($node instanceof admin_category)) {
-                continue;
-            }
-            // Walk one level of children looking for the section name.
-            foreach ($node->children as $child) {
+    // --- Determine active L1 key -----------------------------------------------
+    // Rules (in priority order):
+    //   1. urlcategory is a major_key → that major section
+    //   2. urlcategory is a general child (Users, Courses …) → 'general'
+    //   3. urlsection found in a major section (1-2 levels deep) → that major section
+    //   4. everything else (admin/index.php, general settings pages) → 'general'
+
+    $activetopkey = 'general';  // default
+
+    if ($urlcategory !== '') {
+        if (in_array($urlcategory, $major_keys, true) && isset($major_nodes[$urlcategory])) {
+            $activetopkey = $urlcategory;
+        } else {
+            // urlcategory is a general child OR subcategory thereof → keep 'general'
+            $activetopkey = 'general';
+        }
+    } elseif ($urlsection !== '') {
+        // Walk major sections looking for the section.
+        foreach ($major_nodes as $mkey => $mnode) {
+            foreach ($mnode->children as $child) {
                 if (($child->name ?? '') === $urlsection) {
-                    $toplevel[$key]['isactive'] = true;
-                    $activetopkey = $key;
+                    $activetopkey = $mkey;
                     break 2;
                 }
-                // Two levels deep (subcategory → setting).
                 if ($child instanceof admin_category) {
                     foreach ($child->children as $grandchild) {
                         if (($grandchild->name ?? '') === $urlsection) {
-                            $toplevel[$key]['isactive'] = true;
-                            $activetopkey = $key;
+                            $activetopkey = $mkey;
                             break 3;
                         }
                     }
                 }
             }
         }
+        // If still 'general' after the loop, urlsection belongs to general area.
     }
+    // else: no params → admin/index.php → 'general' (default already set)
 
-    // Build level-1 result array.
+    // --- Build Level-1 nav array -----------------------------------------------
     $admintopnav = [];
-    foreach ($toplevel as $key => $info) {
-        $admintopnav[] = $build_item($info['node'], $info['isactive']);
+
+    // 1. Synthetic "General" tab — always first.
+    $admintopnav[] = $make_item(
+        'general',
+        get_string('general'),
+        (new moodle_url('/admin/index.php'))->out(false),
+        $activetopkey === 'general'
+    );
+
+    // 2. Major sections — in the order defined by $major_keys.
+    foreach ($major_keys as $mkey) {
+        if (!isset($major_nodes[$mkey])) {
+            continue;
+        }
+        $mnode = $major_nodes[$mkey];
+        $admintopnav[] = $make_item(
+            $mkey,
+            $node_label($mnode),
+            (new moodle_url('/admin/category.php', ['category' => $mkey]))->out(false),
+            $activetopkey === $mkey
+        );
     }
 
-    // --- Level 2: children of the active top-level category ------------------
+    // --- Build Level-2 nav array -----------------------------------------------
     $adminsecondnav = [];
 
-    if ($activetopkey !== '' && isset($toplevel[$activetopkey])) {
-        $activenode = $toplevel[$activetopkey]['node'];
-        if ($activenode instanceof admin_category && !empty($activenode->children)) {
-            foreach ($activenode->children as $child) {
-                if (!$is_visible($child)) {
-                    continue;
-                }
-                $childkey = $child->name ?? '';
-                $childactive = ($childkey !== '' && (
-                    $childkey === $urlcategory ||
-                    $childkey === $urlsection
-                ));
-                $adminsecondnav[] = $build_item($child, $childactive);
+    if ($activetopkey === 'general') {
+        // Show the non-major top-level categories (Users, Courses, Grades …).
+        foreach ($general_children as $gkey => $gnode) {
+            $childactive = ($gkey === $urlcategory || $gkey === $urlsection);
+            $adminsecondnav[] = $make_item(
+                $gkey,
+                $node_label($gnode),
+                (new moodle_url('/admin/category.php', ['category' => $gkey]))->out(false),
+                $childactive
+            );
+        }
+    } elseif (isset($major_nodes[$activetopkey])) {
+        $activenode = $major_nodes[$activetopkey];
+        foreach ($activenode->children as $child) {
+            if (!$is_visible($child)) {
+                continue;
             }
+            $childkey  = $child->name ?? '';
+            $childactive = ($childkey !== '' && (
+                $childkey === $urlcategory || $childkey === $urlsection
+            ));
+            $childurl = ($child instanceof admin_externalpage)
+                ? (is_string($child->url) ? $child->url : $child->url->out(false))
+                : (new moodle_url('/admin/category.php', ['category' => $childkey]))->out(false);
+            $adminsecondnav[] = $make_item($childkey, $node_label($child), $childurl, $childactive);
         }
     }
 

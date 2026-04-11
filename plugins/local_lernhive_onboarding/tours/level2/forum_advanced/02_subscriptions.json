@@ -1,0 +1,61 @@
+{
+    "name": "LernHive: Forum — Abos und Bewertungen",
+    "description": "Lerne, wie du Abos, Pflichteinträge und Bewertung in einem Forum einstellst.",
+    "lernhive_feature": "mod_forum.create.full",
+    "pathmatch": "/course/modedit.php%",
+    "enabled": 1,
+    "sortorder": 1,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
+    "steps": [
+        {
+            "title": "Foren steuern, nicht nur anlegen",
+            "content": "<p>Ein Forum lebt von der Aktivität der Nutzer/innen. Mit Abos, Pflichteinträgen und Bewertungen steuerst du, wie aktiv dein Forum wird und wie du Beiträge wertschätzt.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Abonnement-Modus",
+            "content": "<p>Das Abonnement bestimmt, ob Nutzer/innen automatisch E-Mail-Benachrichtigungen zu neuen Beiträgen bekommen. 'Automatisch' abonniert alle; 'Verpflichtend' lässt sich nicht abschalten. Für wichtige Diskussionen ist 'Automatisch' ein guter Default.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_forcesubscribe",
+            "sortorder": 1,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Lesekennzeichnung",
+            "content": "<p>Die Lesekennzeichnung zeigt Nutzer/innen, welche Beiträge sie noch nicht gesehen haben. Wenn du sie aktivierst, können sie gezielt auf Ungelesenes springen — spart Zeit und erhöht das Engagement.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_trackingtype",
+            "sortorder": 2,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Beiträge und Diskussionen begrenzen",
+            "content": "<p>Du kannst einstellen, wie viele Beiträge ein/e Nutzer/in innerhalb eines Zeitraums verfassen darf. Das schützt vor Spam und hilft, wenn du zum Beispiel eine Pflicht-Diskussion pro Woche erwartest.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_blockperiod",
+            "sortorder": 3,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Beiträge bewerten",
+            "content": "<p>Im Abschnitt 'Bewertungen' kannst du festlegen, dass Forumsbeiträge benotet werden können — entweder durch dich oder durch andere Nutzer/innen. Das macht das Forum zu einer echten Lernaktivität, nicht nur zu einem Nebenkanal.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_ratingheader, #id_modstandardelshdr",
+            "sortorder": 4,
+            "configdata": "{\"placement\":\"bottom\"}"
+        },
+        {
+            "title": "Einstellungen speichern",
+            "content": "<p>Mit 'Speichern und anzeigen' übernimmst du die Einstellungen. Du kannst sie jederzeit später anpassen — nur den Forum-Typ nicht.</p>",
+            "targettype": 2,
+            "targetvalue": "#id_submitbutton",
+            "sortorder": 5,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}
