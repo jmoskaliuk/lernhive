@@ -220,6 +220,45 @@ Until the format plugins ship, the theme's existing `snack_*.mustache` partials 
 - LernHive shared services as needed
 - theme integration only for styling, not for business logic
 
+## Layout pitfalls (hard-won)
+
+Small selector details around `#page` and the fixed sidebar have bitten us more than once — document them here so future edits don't step on the same rakes.
+
+### Moodle 5.x `#page` has no `.drawers` class
+
+Moodle core still ships a plain rule:
+
+```css
+#page { margin-top: 60px; }
+```
+
+to reserve space for the fixed Boost navbar. In older Moodle versions this was qualified as `#page.drawers`, and `post.scss` used to carry a matching `#page.drawers { ... }` reset. In Moodle 5.x the `.drawers` class is no longer applied — only the `#page` id is targeted — so any selector written as `#page.drawers` is a silent no-op. Always match via `.theme-lernhive-shell #page` (our wrapper class on `#page-wrapper`) when overriding core `#page` rules. Verify with DevTools: `document.getElementById('page').className` should be `"lernhive-page"` on drawers pages and `"lernhive-page lernhive-admin-page"` on admin pages — never `drawers`.
+
+### Never `!important`-override `margin-left` on `#page`
+
+`.lernhive-page { margin-left: $lh-sidebar-width; }` (in `_layout.scss`, desktop media query) is the single mechanism that pushes the content column past the 260 px fixed sidebar. If a later rule collapses that with `margin-left: 0 !important` on `#page`, the entire content column slides back to `x = 0` and hides under the sidebar. Visible symptoms:
+
+- Admin secondary-nav tabs (General | Users | Courses | …) render at `x ≈ 40–210` — inside the 0–260 sidebar band. They look visible but are unclickable because `elementFromPoint()` hits `.lernhive-sidebar` first (z-index 100 wins over a `position: static` content column).
+- `.lernhive-page-header` (z-index 1092, higher than the sidebar) stretches across the full viewport width and covers the top of the sidebar — including the LernHive brand link at `(16, 24)`. Hover / click on the brand silently hits the header instead.
+
+When adding resets, scope them to the specific properties you actually need. `margin-top: 0` is safe; `margin-left: 0` is almost never safe. `_sidepanel.scss` explains why the header has `z-index: 1092` — it needs to sit above the side-panel backdrop (1090) and panel (1091) — so bumping the header's z-index down isn't an option either.
+
+### `.lernhive-page-header` is `position: relative` — it only behaves if its parent is offset
+
+Because the page header has `z-index: 1092` but `position: relative`, it only looks correct *inside* a page column that already has `margin-left: $lh-sidebar-width`. Any layout or page where `#page.lernhive-page` ends up at `left: 0` will cause the header to visually overlap the sidebar regardless of the page-header's own padding. The fix is always on the parent (`#page` margin-left), never on the header itself.
+
+### Debugging layout bugs: live DevTools beats guessing
+
+For CSS / layout regressions the fastest path is:
+
+1. Navigate to the broken page on `dev.lernhive.de` (the Hetzner dev deploy is always close to main).
+2. Use DevTools / the Claude-in-Chrome `javascript_tool` to read `getComputedStyle()` on `#page`, `.lernhive-app-shell`, `.lernhive-page-header`, `.lernhive-sidebar`, and — critically — run `document.elementFromPoint(x, y)` at the suspect click coordinates. If a link's hit target isn't the link itself, the layout is wrong; if it is the link itself but clicks still don't fire, look at JS (pointer-events, overlapping form elements, or a missing `theme_boost/loader` require).
+3. Walk the matched style rules for the suspect property via `document.styleSheets` to find out *which* selector is winning. That's how the `#page.drawers` → `#page` mismatch from 0.9.41/0.9.43 was identified.
+
+### Don't forget Moodle's theme cache after SCSS changes
+
+Once the Hetzner pipeline deploys new SCSS, the compiled theme CSS on the server is still stale until the theme cache is purged. Run `admin/cli/purge_caches.php` or hit `/admin/purgecaches.php`. If the browser is also caching, append `?reload=1` to any page URL to force Moodle to rebuild the CSS bundle.
+
 ## Implementation notes
 - prefer Moodle region and renderer extension points over custom structural hacks
 - keep component names and tokens consistent so mockups can be translated into SCSS/templates later
