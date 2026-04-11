@@ -40,6 +40,7 @@ LernHive is built as a modular product on top of Moodle core.
 - Context Helper
 - ContentHub
 - Explore (LXP only)
+- **Findability contract owner** — Flavours pin the semantic slot-to-region mapping per page archetype (see `09-ux-navigation.md` → *Findability contract*). The theme stays findability-neutral; the Flavour is the latest point at which "Wo finde ich was" is decided.
 
 ### Layer 5 — SaaS / Delivery Layer
 - flavour-based setup
@@ -58,6 +59,7 @@ LernHive is built as a modular product on top of Moodle core.
 - notifications reuse Moodle core plus a LernHive digest layer
 - Audience builds on Moodle groups, cohorts, profile data, and activity data
 - Release 1 stays simple, guided, and explainable
+- **Findability is Flavour-owned**, not theme-owned. Theme block regions are neutral containers; the semantic question "what belongs in Priority / Progress / Explore / Action on this page?" is answered by the Flavour layer. Every new page added to LernHive must map cleanly onto a page archetype defined in `09-ux-navigation.md` before it ships.
 
 ## Main plugin boundaries
 
@@ -144,6 +146,26 @@ ADRs for individual plugins live inside that plugin's `docs/00-master.md`. Produ
 - Community is a course format because community lifecycle (enrolment, sections, completion, gradebook integration) aligns with Moodle course semantics; no separate "community" object is introduced.
 
 **Status.** Accepted. Implementation starts post-0.9.3.
+
+### ADR-P02 — Findability contract is Flavour-owned, regions stay neutral (2026-04-11)
+
+**Decision.** Theme block regions (`content-top`, `content-bottom`, `sidebar-bottom`, `footer-*`) stay technically neutral. The semantic question "what belongs where on this page?" is answered by the Flavour layer via `local_lernhive_flavour`, not by the theme. A Flavour pins a mapping from semantic slot (Priority / Progress / Explore / Action) to block region per page archetype, and this mapping is stable within that Flavour across all pages of that archetype.
+
+**Why.** After reviewing corporate-LMS market patterns (Cornerstone, Docebo, SAP SuccessFactors, 360Learning, time4you et al.) and the existing theme block-region model introduced in 0.9.3, two options existed:
+
+1. Make the theme regions semantic (e.g. rename to `priority`, `progress`, `explore`). This binds the theme to a single product opinion and blocks reuse on other themes, breaking the premise of ADR-P01.
+2. Keep the theme neutral and anchor the semantics one layer higher, where Flavours already own the setup-time opinion of the product.
+
+Option 2 preserves theme portability, lets School, LXP, Higher Education, Corporate Academy and Association each place the semantic slots where their lead role expects them, and leaves the theme free to evolve its visual chrome without breaking the findability promise to users.
+
+**Consequences.**
+- The findability matrix in `09-ux-navigation.md` is the authoritative contract for all Flavours — current and planned.
+- `local_lernhive_flavour` gains responsibility for the slot-to-region mapping and default block placement per archetype. Implementation lands in its own release cycle (not 0.9.x).
+- Course format plugins must honour the course-shell contract defined in the findability matrix; inside-course findability is delegated to the format plugin.
+- Every new page shipped in LernHive (theme layout, plugin view, format renderer) must declare which archetype it belongs to before merge — review gate added to `quality.md` level.
+- No new markdown documents are introduced for findability. The contract lives in `09-ux-navigation.md`; this ADR and `core design rules` anchor it architecturally.
+
+**Status.** Accepted. Implementation starts when `local_lernhive_flavour` is refactored for configuration state (post-0.9.x).
 
 ## Snack guardrails
 
