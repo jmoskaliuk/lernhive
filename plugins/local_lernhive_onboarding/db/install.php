@@ -29,8 +29,26 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Seeds default tour categories, imports Level 1 tours and provisions the
  * dedicated `lernhive_trainer` role used by the dashboard banner gate.
+ *
+ * Note on capability registration: Moodle's upgrade runner calls
+ * update_capabilities() for a plugin AFTER its db/install.php has
+ * finished. That is fine for the typical install hook, but
+ * trainer_role::ensure() calls assign_capability() on our own
+ * `local/lernhive_onboarding:receivelearningpath`, which is defined
+ * in db/access.php and therefore not yet present in the
+ * mdl_capabilities table when install.php runs. On upgrade the row
+ * already exists so it goes unnoticed — on a fresh install
+ * (e.g. phpunit init) assign_capability() raises a coding_exception
+ * "Capability ... was not found!".
+ *
+ * Fix: explicitly invoke update_capabilities() for this plugin first,
+ * which reads our db/access.php and inserts the row. The call is
+ * idempotent — it is a no-op if Moodle runs it again a few frames
+ * later during the normal upgrade flow.
  */
 function xmldb_local_lernhive_onboarding_install() {
+    update_capabilities('local_lernhive_onboarding');
+
     \local_lernhive_onboarding\tour_importer::seed_categories();
     \local_lernhive_onboarding\tour_importer::import_level(1);
     \local_lernhive_onboarding\trainer_role::ensure();
