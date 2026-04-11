@@ -156,6 +156,46 @@ final class card_registry_test extends advanced_testcase {
     }
 
     /**
+     * `has_available_cards()` is the public signal the launcher relies
+     * on to avoid a dead-end ContentHub entry. It must return true as
+     * soon as at least one card is AVAILABLE, and false when every
+     * card is either UNAVAILABLE or COMING_SOON.
+     */
+    public function test_has_available_cards_reflects_sibling_state(): void {
+        $this->resetAfterTest();
+
+        // No siblings at all → no click-through target → launcher hides entry.
+        $this->assertFalse(
+            card_registry::has_available_cards($this->fake_detector([]), false),
+            'With no sibling plugins installed, has_available_cards() must be false'
+        );
+
+        // Only library installed → one available card is enough.
+        $this->assertTrue(
+            card_registry::has_available_cards(
+                $this->fake_detector(['local_lernhive_library']),
+                false
+            ),
+            'A single available card must be enough to enable the launcher entry'
+        );
+
+        // AI card enabled but still no siblings → COMING_SOON does not
+        // count as available.
+        $this->assertFalse(
+            card_registry::has_available_cards($this->fake_detector([]), true),
+            'The coming-soon AI card must not be treated as a click-through target'
+        );
+
+        // Full happy path.
+        $this->assertTrue(
+            card_registry::has_available_cards(
+                $this->fake_detector(['local_lernhive_copy', 'local_lernhive_library']),
+                false
+            )
+        );
+    }
+
+    /**
      * Ordering is part of the contract (Copy → Template → Library → AI).
      * Product and mockup rely on this ordering.
      */

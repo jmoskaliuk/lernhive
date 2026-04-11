@@ -80,6 +80,38 @@ class card_registry {
     }
 
     /**
+     * Returns true when at least one hub card currently resolves to
+     * STATUS_AVAILABLE (i.e. a click-through path actually exists).
+     *
+     * This is the public signal callers outside of ContentHub — notably
+     * `local_lernhive_launcher` — should use to decide whether to expose
+     * a ContentHub entry. The hub page itself is intentionally more
+     * permissive (it still renders "unavailable" placeholders for
+     * missing sibling plugins so site admins can see the full picture),
+     * but a launcher entry pointing at an all-unavailable page would be
+     * a dead end, which the launcher master doc explicitly forbids.
+     *
+     * The COMING_SOON AI card never counts as "available" here because
+     * it has no click-through target in Release 1.
+     *
+     * @param callable|null $detector Optional plugin detector —
+     *        `fn(string $component): bool`. Defaults to a core_component
+     *        lookup. Pass your own in unit tests.
+     * @param bool|null $showaicard Override for the AI card toggle.
+     *        Accepted for parity with `get_cards()` but does not affect
+     *        the result because the AI card is never AVAILABLE in R1.
+     * @return bool
+     */
+    public static function has_available_cards(?callable $detector = null, ?bool $showaicard = null): bool {
+        foreach (self::get_cards($detector, $showaicard) as $card) {
+            if ($card->status === card::STATUS_AVAILABLE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Copy card — delegates to local_lernhive_copy when installed.
      *
      * @param callable $detector

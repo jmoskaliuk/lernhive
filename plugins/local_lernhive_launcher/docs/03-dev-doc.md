@@ -54,3 +54,57 @@ local_lernhive
 - no persistent personalization data required
 - no action analytics dependency required for initial rollout
 - no hard dependency on the LXP Flavour for the base launcher
+
+## Implemented visibility rules (0.1.1)
+
+The Release 1 action provider currently evaluates visibility in this
+order. Every action must return `null` from its builder rather than
+fall through to a rendered dead-end entry.
+
+### `Create course`
+1. `local_lernhive\course_manager` must exist and `::is_enabled()` must
+   return true.
+2. The current user must have a `level_manager` record — beginner
+   course creation is gated behind the existing LernHive level flow.
+3. URL is resolved via `course_manager::get_create_course_url($userid)`.
+
+### `ContentHub`
+1. `local_lernhive_contenthub` must be installed (detected via
+   `core_component`). The launcher does not declare a hard version
+   dependency on it — the action silently disappears when the plugin
+   is missing.
+2. The current user must hold the system-context capability
+   `local/lernhive_contenthub:view`. This mirrors the gate enforced
+   inside `local/lernhive_contenthub/index.php` and keeps the launcher
+   honest about who can actually enter the hub.
+3. At least one downstream card must report `STATUS_AVAILABLE`. The
+   launcher delegates this check to
+   `local_lernhive_contenthub\card_registry::has_available_cards()` so
+   the rule lives in the owning plugin. The method is guarded by
+   `method_exists()` for forward compatibility with older ContentHub
+   versions that predate the helper.
+4. The `level_manager` gate intentionally does **not** apply here:
+   `local/lernhive_contenthub:view` is cloned from
+   `moodle/course:create`, so course creators and teachers see the
+   launcher entry regardless of whether their level record has been
+   written yet.
+
+### `Create snack` / `Create community`
+- Hidden until a concrete creation route is exposed by the owning
+  discovery plugin. The current `resolve_local_plugin_url()` checks
+  only file existence and must be tightened once the Snack/Community
+  flows land.
+
+## Cross-plugin integration contract
+
+`local_lernhive_launcher` depends on the following public surface in
+sibling plugins. Any change to these signatures is a breaking change
+for the launcher and must be coordinated:
+
+| Sibling | Public symbol | Used by |
+|---|---|---|
+| `local_lernhive` | `course_manager::is_enabled()` | `build_create_course_action()` |
+| `local_lernhive` | `course_manager::get_create_course_url(int $userid)` | `build_create_course_action()` |
+| `local_lernhive` | `level_manager::get_level_record(int $userid)` | `build_create_course_action()` |
+| `local_lernhive_contenthub` | capability `local/lernhive_contenthub:view` | `build_contenthub_action()` |
+| `local_lernhive_contenthub` | `card_registry::has_available_cards()` | `build_contenthub_action()` |

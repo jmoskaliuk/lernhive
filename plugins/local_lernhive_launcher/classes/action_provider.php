@@ -26,6 +26,7 @@ namespace local_lernhive_launcher;
 
 use local_lernhive\course_manager;
 use local_lernhive\level_manager;
+use local_lernhive_contenthub\card_registry;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -80,13 +81,48 @@ class action_provider {
     }
 
     /**
-     * Build the ContentHub action when the owning plugin exists.
+     * Build the ContentHub action when the owning plugin exists, the
+     * current user is allowed to enter it, and at least one downstream
+     * content path is actually reachable.
+     *
+     * Visibility follows the rule documented in docs/00-master.md and
+     * docs/04-tasks.md (LH-LAUNCHER-02): hide when `local_lernhive_contenthub`
+     * is missing, when the user lacks `local/lernhive_contenthub:view`,
+     * or when `card_registry::has_available_cards()` reports no
+     * AVAILABLE card — a ContentHub entry that would land on an
+     * all-unavailable hub page is a dead end and must stay hidden.
+     *
+     * The level_manager gate intentionally does not apply here: the
+     * ContentHub access capability is cloned from `moodle/course:create`
+     * semantics, so course creators and teachers see it regardless of
+     * whether a LernHive level record has been written for them yet.
      *
      * @return action|null
      */
     protected static function build_contenthub_action(): ?action {
+        // 1. Owner plugin must be installed.
         $url = self::resolve_local_plugin_url('lernhive_contenthub');
         if (!$url) {
+            return null;
+        }
+
+        // 2. Capability check — mirrors ContentHub's own index.php gate
+        //    in system context. The downstream plugin enforces this for
+        //    security; the launcher enforces it for visibility.
+        $systemcontext = \core\context\system::instance();
+        if (!has_capability('local/lernhive_contenthub:view', $systemcontext)) {
+            return null;
+        }
+
+        // 3. At least one downstream content path must resolve to an
+        //    AVAILABLE card. The launcher delegates this decision to
+        //    ContentHub itself via the public helper so the rule stays
+        //    in one place. `method_exists()` keeps us safe against an
+        //    older ContentHub version that predates the helper.
+        if (!class_exists(card_registry::class)
+            || !method_exists(card_registry::class, 'has_available_cards')
+            || !card_registry::has_available_cards()
+        ) {
             return null;
         }
 

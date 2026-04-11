@@ -1,5 +1,35 @@
 # local_lernhive_launcher — Tasks
 
+## Implementation status (0.1.1 — 2026-04-11)
+
+| Ticket | Topic | Status | Notes |
+|---|---|---|---|
+| LH-LAUNCHER-01 | R1 action inventory | done | Decision locked: `Create course`, `ContentHub`, optional `Create snack`/`Create community`. |
+| LH-LAUNCHER-02 | Visibility & permissions | partial | `Create course` + `ContentHub` fully gated (plugin + capability + downstream availability). Snack/Community still rely on file-existence check only. |
+| LH-LAUNCHER-03 | Information architecture | done in design | Single compact flyout, ordering 10/20/30/40 encoded in `action_provider`. |
+| LH-LAUNCHER-04 | Strings & labels | done for R1 core | `actioncontenthub`/`actioncontenthubdesc` live in `local_lernhive_launcher` lang file. Theme prototype strings still need the follow-up cleanup noted below. |
+| LH-LAUNCHER-05 | Target routing map | partial | `Create course` → `course_manager::get_create_course_url()`. `ContentHub` → `/local/lernhive_contenthub/index.php`. Snack/Community still placeholder paths. |
+| LH-LAUNCHER-06 | UI shell ticket | open | Flyout wiring via theme integration + `launcher_manager::get_theme_context()` exists; focus management and a11y review still open. |
+| LH-LAUNCHER-07 | Backend provider ticket | done for R1 | `action_provider` + immutable `action` value object. Capability and downstream availability evaluated per request; no DB state, no ranking. |
+| LH-LAUNCHER-08 | QA ticket | open | No PHPUnit or Behat coverage for the action provider yet — see "Follow-up" below. |
+
+### Follow-up work called out by the 0.1.1 change
+
+- Tests: add a unit test for `action_provider::build_contenthub_action()`
+  covering the four failure modes (plugin missing, capability denied,
+  no available cards, older ContentHub without `has_available_cards`)
+  and the happy path. The ContentHub side already has
+  `card_registry_test::test_has_available_cards_reflects_sibling_state`.
+- Snack / Community: replace the current `resolve_local_plugin_url()`
+  stubs with real capability + route checks once the discovery plugin
+  exposes stable creation URLs (`LH-LAUNCHER-05` follow-up).
+- Theme prototype strings: the historical theme launcher still owns
+  a few duplicate ContentHub labels — align them with the canonical
+  launcher-owned strings (`LH-LAUNCHER-04` follow-up).
+- `level_manager` gate for `Create course`: confirm whether we want
+  the current hard gate ("must have a level record") or a softer
+  fallback once onboarding is wired up.
+
 ## Implementation-ready tickets
 
 ### LH-LAUNCHER-01 — Define Release 1 action inventory
