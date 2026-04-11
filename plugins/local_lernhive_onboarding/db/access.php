@@ -35,4 +35,16 @@ $capabilities = [
             'coursecreator' => CAP_ALLOW,
         ],
     ],
+
+    // Marks a user as a LernHive trainer who should see the learning-path
+    // dashboard banner. Intentionally NOT attached to any archetype so that
+    // the capability is only granted through the dedicated
+    // `lernhive_trainer` role that the install / upgrade step creates.
+    // This keeps trainer-visible onboarding opt-in and separate from the
+    // generic "has editing rights somewhere" signal.
+    'local/lernhive_onboarding:receivelearningpath' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => [],
+    ],
 ];

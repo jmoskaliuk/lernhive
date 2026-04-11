@@ -117,5 +117,13 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026040302, 'local', 'lernhive_onboarding');
     }
 
+    // 0.2.0 — Dedicated lernhive_trainer role + dashboard banner.
+    if ($oldversion < 2026041200) {
+        // Idempotent: creates the role if missing, re-asserts context + cap.
+        \local_lernhive_onboarding\trainer_role::ensure();
+
+        upgrade_plugin_savepoint(true, 2026041200, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }

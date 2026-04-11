@@ -31,6 +31,19 @@ $string['privacy:null_reason'] = 'This plugin does not store any user data. Tour
 
 // Capabilities.
 $string['lernhive_onboarding:viewtours'] = 'View onboarding tours';
+$string['lernhive_onboarding:receivelearningpath'] = 'See the Trainer learning-path dashboard banner';
+
+// Trainer role (created by install.php / upgrade.php).
+$string['trainer_role_name'] = 'LernHive Trainer';
+$string['trainer_role_description'] = 'Marks a user as a LernHive trainer who receives the guided Learning Path dashboard banner and onboarding tours.';
+
+// Dashboard banner.
+$string['banner_heading'] = 'Your Trainer Learning Path';
+$string['banner_intro_start'] = 'Start your step-by-step onboarding — guided tours walk you through every Level 1 skill.';
+$string['banner_intro_resume'] = 'Pick up where you left off — a few more tours and you\'ve completed Level 1.';
+$string['banner_cta_start'] = 'Start Learning Path';
+$string['banner_cta_resume'] = 'Continue Learning Path';
+$string['banner_progress_label'] = '{$a->done} of {$a->total} tours';
 
 // Tour overview (Onboarding).
 $string['tours_pagetitle'] = 'Your Onboarding';

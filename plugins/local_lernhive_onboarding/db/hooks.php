@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive Onboarding plugin installation hook.
+ * Hook callback registration for local_lernhive_onboarding.
  *
  * @package    local_lernhive_onboarding
  * @copyright  2026 LernHive.de
@@ -24,14 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * LernHive Onboarding plugin installation function.
- *
- * Seeds default tour categories, imports Level 1 tours and provisions the
- * dedicated `lernhive_trainer` role used by the dashboard banner gate.
- */
-function xmldb_local_lernhive_onboarding_install() {
-    \local_lernhive_onboarding\tour_importer::seed_categories();
-    \local_lernhive_onboarding\tour_importer::import_level(1);
-    \local_lernhive_onboarding\trainer_role::ensure();
-}
+$callbacks = [
+    [
+        'hook' => \core\hook\output\before_standard_top_of_body_html_generation::class,
+        'callback' => \local_lernhive_onboarding\hook_callbacks::class . '::inject_dashboard_banner',
+        // Run after local_lernhive (500) so the theme sidebar/level banner
+        // already exists when our trainer banner is appended below it.
+        'priority' => 400,
+    ],
+];

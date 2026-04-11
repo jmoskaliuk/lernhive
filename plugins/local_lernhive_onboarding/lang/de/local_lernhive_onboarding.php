@@ -31,6 +31,19 @@ $string['privacy:null_reason'] = 'Das Plugin speichert keine Benutzerdaten. Die 
 
 // Capabilities.
 $string['lernhive_onboarding:viewtours'] = 'Onboarding-Touren anzeigen';
+$string['lernhive_onboarding:receivelearningpath'] = 'Trainer-Lernpfad-Banner auf dem Dashboard sehen';
+
+// Trainer role (created by install.php / upgrade.php).
+$string['trainer_role_name'] = 'LernHive Trainer/in';
+$string['trainer_role_description'] = 'Kennzeichnet einen User als LernHive-Trainer/in — erhält den geführten Lernpfad auf dem Dashboard sowie die Onboarding-Touren.';
+
+// Dashboard banner.
+$string['banner_heading'] = 'Dein Trainer-Lernpfad';
+$string['banner_intro_start'] = 'Starte dein Schritt-für-Schritt-Onboarding — geführte Touren zeigen dir jede Level-1-Fähigkeit.';
+$string['banner_intro_resume'] = 'Mach da weiter, wo du aufgehört hast — noch ein paar Touren bis Level 1 abgeschlossen ist.';
+$string['banner_cta_start'] = 'Lernpfad starten';
+$string['banner_cta_resume'] = 'Lernpfad fortsetzen';
+$string['banner_progress_label'] = '{$a->done} von {$a->total} Touren';
 
 // Tour overview (Onboarding).
 $string['tours_pagetitle'] = 'Dein Onboarding';
