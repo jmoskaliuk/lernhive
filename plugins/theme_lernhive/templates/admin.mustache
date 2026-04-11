@@ -9,48 +9,49 @@
 {{> theme_boost/head }}
 <body {{{ bodyattributes }}}>
 {{> core/local/toast/wrapper}}
-<div id="page-wrapper" class="theme-lernhive-admin-shell">
+<div id="page-wrapper" class="theme-lernhive-shell theme-lernhive-admin-shell">
     {{{ output.standard_top_of_body_html }}}
     <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
 
-    <div id="page" class="container-fluid d-print-block">
-        <div id="page-content" class="row d-print-block">
-            <div id="region-main-box" class="col-12 {{#hassidepre}}col-lg-9{{/hassidepre}} d-print-block">
-                <section id="region-main" class="lernhive-admin-main d-print-block" aria-label="content">
-                    <div class="main-inner">
-                        <div class="lernhive-admin-navbar">
-                            {{{ output.navbar }}}
-                        </div>
+    <div class="lernhive-app-shell">
+        {{> theme_lernhive/sidebar }}
 
-                        <div class="lernhive-admin-header">
-                            <div class="lernhive-admin-header__main">
-                                {{{ output.full_header }}}
-                            </div>
-                            <div class="lernhive-admin-header__actions">
-                                {{{ output.navbar_plugin_output }}}
-                                {{{ output.user_menu }}}
-                            </div>
-                        </div>
-
-                        {{#hasregionmainsettingsmenu}}
-                            <div class="lernhive-settings-menu">
-                                {{{ regionmainsettingsmenu }}}
-                            </div>
-                        {{/hasregionmainsettingsmenu}}
-
-                        {{{ output.course_content_header }}}
-                        <div id="maincontent"></div>
-                        {{{ output.main_content }}}
-                        {{{ output.course_content_footer }}}
+        <div id="page" class="lernhive-page lernhive-admin-page">
+            <div class="lernhive-page-header lernhive-admin-header">
+                <div class="lernhive-page-header__main">
+                    <div class="lernhive-admin-navbar">
+                        {{{ output.navbar }}}
                     </div>
-                </section>
+                    {{{ output.full_header }}}
+                </div>
+                <div class="lernhive-page-header__actions">
+                    {{{ output.navbar_plugin_output }}}
+                    {{{ output.user_menu }}}
+                </div>
             </div>
 
-            {{#hassidepre}}
-                <aside class="col-12 col-lg-3 lernhive-admin-aside d-print-none" aria-label="Blocks">
-                    {{{ sidepreblocks }}}
-                </aside>
-            {{/hassidepre}}
+            <div id="page-content" class="lernhive-page-content lernhive-admin-content">
+                {{#hasregionmainsettingsmenu}}
+                    <div class="lernhive-settings-menu">
+                        {{{ regionmainsettingsmenu }}}
+                    </div>
+                {{/hasregionmainsettingsmenu}}
+
+                <main id="region-main-box" class="lernhive-main lernhive-admin-main">
+                    <section id="region-main" aria-label="content">
+                        <div id="maincontent"></div>
+                        {{{ output.course_content_header }}}
+                        {{{ output.main_content }}}
+                        {{{ output.course_content_footer }}}
+                    </section>
+                </main>
+
+                {{#hassidepre}}
+                    <aside class="lernhive-blocks lernhive-admin-aside d-print-none" aria-label="Blocks">
+                        {{{ sidepreblocks }}}
+                    </aside>
+                {{/hassidepre}}
+            </div>
         </div>
     </div>
 

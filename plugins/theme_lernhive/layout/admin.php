@@ -18,6 +18,12 @@ $sidepreblocks = $OUTPUT->blocks('side-pre');
 $hassidepre = (strpos($sidepreblocks, 'data-block=') !== false || !empty(trim($sidepreblocks)));
 $regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
 $hasregionmainsettingsmenu = !empty($regionmainsettingsmenu);
+$launcherstyle = get_config('theme_lernhive', 'launcherstyle') ?: 'base';
+$showlauncher = isloggedin() && !isguestuser();
+
+$launchercontext = theme_lernhive_get_launcher_context();
+$launchercontext['launcherisbase'] = $launcherstyle === 'base';
+$launchercontext['launcherisdock'] = $launcherstyle === 'dock';
 
 $templatecontext = [
     'sitename' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
@@ -27,6 +33,10 @@ $templatecontext = [
     'hassidepre' => $hassidepre,
     'hasregionmainsettingsmenu' => $hasregionmainsettingsmenu,
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
+    'launcherisbase' => $launcherstyle === 'base',
+    'launcherisdock' => $launcherstyle === 'dock',
+    'showlauncher' => $showlauncher,
+    'launcher' => $launchercontext,
 ];
 
 echo $OUTPUT->render_from_template('theme_lernhive/admin', $templatecontext);
