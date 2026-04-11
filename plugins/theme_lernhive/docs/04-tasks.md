@@ -22,10 +22,18 @@
   - Admin nav: two-level horizontal tab-bar — Level 1 top categories + Level 2 sub-items of active category — lib.php + admin.mustache + _layout.scss
   - Plugin Shell: new `_plugin-shell.scss` partial — 2-zone sticky page header for local plugins (Zone A header+tags, Zone B info/CTA, card grid with states, action buttons)
   - Mockup: `plugin-shell-concept.html` v0.2 (inline SVG sprite) + `plugin-shell-spec.md`
+- [x] 0.9.33 — Layout shell flush edges (Johannes: "vollflächige Hintergründe, nur Kacheln als Abgrenzung"):
+  - `.lernhive-page` — `padding: 0`, `gap: 0` (was `$lh-spacing-lg` + `$lh-spacing-md`); page column is now a flush full-width canvas
+  - `.lernhive-page-header` — tile chrome dropped: `background: transparent`, `border: none`, `border-radius: 0`, `box-shadow: none`; pulled flush to viewport top + flush to sidebar right edge; internal padding preserved so icon cluster keeps breathing room
+  - `.lernhive-page-content` — horizontal + bottom gutter added locally (`padding: 0 $lh-spacing-lg $lh-spacing-lg`) so regular Moodle pages still have breathing room around `.lernhive-main`; plugin-shell pages override this to `padding: 0` via `:has(.lh-plugin-header)` so Zone A sits edge-to-edge under the top header bar
+  - Small-screen responsive block rewired: `<375px` tightens `.lernhive-page-content` horizontal padding instead of the (now zero-padding) `.lernhive-page`
+  - No changes to `.lh-plugin-header` / `.lh-plugin-infobar` — the two strips (title + message) remain visually distinct as designed
+  - Applies to both `drawers.mustache` and `admin.mustache` because they share the same class hierarchy
 
 ## Open — R1 scope
 
-- [ ] **Smoke-test 0.9.27** — verify on local Moodle: user block icons render, admin two-level nav correct, no PHP errors
+- [ ] **Smoke-test 0.9.33** — verify on local Moodle: ContentHub page has no outer tile, top icon bar is flush to viewport, regular Moodle pages still render `.lernhive-main` as a centered tile with side gutters
+- [ ] **Smoke-test 0.9.27** — obsolete (superseded by 0.9.33 smoke-test above)
 - [ ] `regionmainsettingsmenu` must stay — Teachers use it to add blocks to courses (block positions still unclear after right-hand drawer removal). Keep until an explicit block-placement UX replaces it.
 - [ ] Student dock items: progress overview shortcut, continue-learning button (post-flavour integration)
 - [ ] Smoke-test steps 3–6 (Fresh Apply LXP, config key verification, override test, audit table)

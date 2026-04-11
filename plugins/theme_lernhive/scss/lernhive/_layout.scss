@@ -124,35 +124,35 @@ $lh-bp-tablet:   768px;
 }
 
 // --- Page (content column) ---------------------------------------------------
+// 0.9.30: zero padding + zero gap. The page column is a flush full-width canvas;
+// horizontal/bottom gutters are re-introduced by .lernhive-page-content so the
+// top user-header bar can sit flush against the viewport edge.
 
 .lernhive-page {
     flex: 1 1 auto;
     min-width: 0;
-    padding: $lh-spacing-sm $lh-spacing-md $lh-spacing-lg;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: $lh-spacing-md;
+    gap: 0;
 }
 
-@media (min-width: $lh-bp-desktop) {
-    .lernhive-page {
-        padding: $lh-spacing-lg;
-    }
-}
-
-// --- Page header (title bar inside content column) ---------------------------
-// Shows: page h1 / breadcrumb + user actions (notifications, user menu).
+// --- Page header (user actions bar at top of content column) ----------------
+// 0.9.30: Full-width horizontal strip, flush to the viewport top, flush to the
+// sidebar's right edge. No tile chrome (no background, border, radius, shadow).
+// Internal padding keeps the notification / launcher / user icons off the edge.
+// Shows: page h1 / breadcrumb (from full_header) + user actions.
 
 .lernhive-page-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: $lh-spacing-md;
-    padding: $lh-spacing-md $lh-spacing-lg;
-    background: #fff;
-    border: 1px solid $lh-border;
-    border-radius: $lh-radius;
-    box-shadow: $lh-shadow;
+    padding: $lh-spacing-sm $lh-spacing-lg;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
 
     &__main {
         flex: 1;
@@ -299,11 +299,21 @@ $lh-bp-tablet:   768px;
 }
 
 // --- Page content area -------------------------------------------------------
+// 0.9.30: restores horizontal + bottom gutter for regular Moodle pages (where
+// .lernhive-main is a white tile). Plugin-shell pages override this below to
+// render flush edge-to-edge.
 
 .lernhive-page-content {
     display: flex;
     flex-direction: column;
     gap: $lh-spacing-md;
+    padding: 0 $lh-spacing-lg $lh-spacing-lg;
+}
+
+@media (max-width: #{$lh-bp-tablet - 1px}) {
+    .lernhive-page-content {
+        padding: 0 $lh-spacing-md $lh-spacing-md;
+    }
 }
 
 // --- Main content ------------------------------------------------------------
@@ -337,10 +347,13 @@ $lh-bp-tablet:   768px;
     }
 }
 
-// Also remove the gap in .lernhive-page-content when a Plugin Shell is present
-// (avoids a gap between the sticky header and the page edge).
+// Plugin-shell pages fill edge-to-edge: no outer gutter, no gap between
+// sticky plugin header and the page. The plugin header + infobar handle
+// their own internal padding. Card content inside gets its own spacing via
+// .lh-plugin-grid / container-fluid utilities inside the plugin markup.
 .lernhive-page-content:has(.lh-plugin-header) {
     gap: 0;
+    padding: 0;
 }
 
 @media (max-width: #{$lh-bp-tablet - 1px}) {
@@ -465,11 +478,13 @@ $lh-bp-tablet:   768px;
 // --- Responsive page padding at very small sizes ----------------------------
 
 @media (max-width: 374px) {
-    .lernhive-page {
+    // 0.9.30: .lernhive-page has no padding — tighten .lernhive-page-content
+    // instead so the main tile keeps a small horizontal gutter on tiny screens.
+    .lernhive-page-content {
         padding-left: $lh-spacing-sm;
         padding-right: $lh-spacing-sm;
     }
     .lernhive-page-header {
-        padding: $lh-spacing-sm;
+        padding: $lh-spacing-xs $lh-spacing-sm;
     }
 }
