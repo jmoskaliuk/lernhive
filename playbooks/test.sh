@@ -406,16 +406,44 @@ run_behat() {
     fi
   fi
 
-  # Moodle generates a per-run Behat config at
-  # $CFG->behat_dataroot/behatrun/behat/behat.yml — use that. The php
-  # one-liner runs from MOODLE_REPO_ROOT so the relative require of
-  # config.php resolves correctly on both flat and public/-split
+  # Moodle generates a per-run Behat config under the behat dataroot.
+  # The exact layout depends on how config.php is written AND on what
+  # Moodle's setup.php does at load time:
+  #
+  #   Case A — config.php sets $CFG->behat_dataroot to the parent, and
+  #            Moodle's setup does NOT extend it:
+  #              $CFG->behat_dataroot = /var/www/moodledata_behat
+  #              → config file = $CFG->behat_dataroot/behatrun/behat/behat.yml
+  #
+  #   Case B — config.php already points at the /behatrun subdir, OR
+  #            Moodle's setup extends the parent with /behatrun:
+  #              $CFG->behat_dataroot = /var/www/moodledata_behat/behatrun
+  #              → config file = $CFG->behat_dataroot/behat/behat.yml
+  #
+  # Hetzner (Moodle 5.1, production-style config.php) is Case B and the
+  # local Docker stack has historically been Case A, so we can't hard-code
+  # either one. Probe both candidates in a single php -r call and return
+  # the one that exists on disk; fall back to Case A if neither exists
+  # yet (which only happens before behat has ever been initialised, and
+  # behat_diag_and_init above should have run by the time we get here).
+  #
+  # The php one-liner runs from MOODLE_REPO_ROOT so the relative require
+  # of config.php resolves correctly on both flat and public/-split
   # layouts (config.php always sits at MOODLE_REPO_ROOT).
   local configpath
   configpath="$(in_container_repo_root php -r '
     define("CLI_SCRIPT", true);
     require("config.php");
-    echo $CFG->behat_dataroot . "/behatrun/behat/behat.yml";
+    $base = rtrim($CFG->behat_dataroot, "/");
+    $candidates = [
+        $base . "/behat/behat.yml",          // Case B
+        $base . "/behatrun/behat/behat.yml", // Case A
+    ];
+    foreach ($candidates as $c) {
+        if (file_exists($c)) { echo $c; exit; }
+    }
+    // Neither file exists yet — return Case A as the canonical fallback.
+    echo $candidates[1];
   ' 2>/dev/null)"
 
   if [[ -z "$configpath" ]]; then
