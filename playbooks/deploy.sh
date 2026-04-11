@@ -222,6 +222,10 @@ run_moodle_upgrade() {
   if ! in_container php "$MOODLE_CLI_ROOT/admin/cli/upgrade.php" --non-interactive --no-cli-maintenance; then
     warn "upgrade.php returned non-zero (ok if no DB changes)"
   fi
+  # Clear the upgraderunning flag so Moodle doesn't show the web-upgrade screen
+  # to the first visitor after deploy (CLI upgrade doesn't always reset it).
+  log "Clearing upgraderunning flag..."
+  in_container php "$MOODLE_CLI_ROOT/admin/cli/cfg.php" --name=upgraderunning --set=0 2>/dev/null || true
 }
 
 run_purge_caches() {
