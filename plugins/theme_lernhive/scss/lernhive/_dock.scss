@@ -1,74 +1,103 @@
 // =============================================================================
-// _dock.scss — LernHive Context Dock (0.9.21)
+// _dock.scss — LernHive Context Dock (0.9.23)
 //
-// Floating action bar for context-aware Teacher / Student actions.
-// Desktop : vertical pill anchored at bottom of the sidebar column (fixed).
-// Mobile  : horizontal strip at bottom of screen.
+// Floating action strip for context-aware Teacher / Student actions.
 //
-// Progressive disclosure for tooltips:
-//   - Tooltips always appear on :hover (CSS-only, no JS needed for baseline).
-//   - To enable JS-driven "fade-after-N-visits" add class .lh-dock--experienced
-//     to the dock element via AMD module (optional, future enhancement).
+// Design: freestanding circular icon buttons — each icon is its own elevated
+// circle with a drop shadow. No rectangular button-bar container.
+//
+// Desktop : vertical column of circles anchored at bottom of sidebar column.
+// Mobile  : horizontal row at bottom of screen (macOS Dock style).
+//
+// Tooltip progressive disclosure (CSS-only baseline):
+//   Tooltips appear on hover, sliding in from the left.
+//   JS IIFE in template adds .lh-dock--experienced after 3 visits → hidden.
 // =============================================================================
 
 // --- Dock container -----------------------------------------------------------
+// Transparent on desktop — the circular icons float directly over the sidebar.
+// On mobile a solid strip anchors them at the screen bottom.
 
 .lh-dock {
     position: fixed;
     left: $lh-spacing-md;
-    bottom: 5.5rem;   // clears sidebar bottom notes / potential footer chrome
+    bottom: 5.5rem;
     width: calc(#{$lh-sidebar-width} - (#{$lh-spacing-md} * 2));
-    z-index: 200;     // above page content, below Moodle modals (z 1050)
+    z-index: 200;
 
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
+    align-items: center;
+    gap: $lh-spacing-sm;          // 8px between circles
+    padding: $lh-spacing-xs 0;
 
-    background: rgba(darken(#194866, 6%), 0.96);  // darker than sidebar
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: $lh-radius;
-    padding: $lh-spacing-xs;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: none;             // no pill / no container background
+    border: none;
+    box-shadow: none;
 
-    // Mobile: horizontal Dock at bottom of screen, full width
     @media (max-width: #{$lh-bp-desktop - 1px}) {
         left: 0;
         right: 0;
         bottom: 0;
         width: 100%;
         border-radius: 0;
-        border: none;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
         flex-direction: row;
         justify-content: center;
-        gap: 0;
-        padding: 0.375rem $lh-spacing-sm;
-        background: rgba(#0f2b3d, 0.97);
+        align-items: center;
+        gap: $lh-spacing-md;
+        padding: 0.625rem $lh-spacing-md;
+        background: rgba($lh-primary-dark, 0.96);
+        border-top: 1px solid rgba(255, 255, 255, 0.10);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     }
 }
 
-// --- Dock items ---------------------------------------------------------------
+// --- Circular icon button -----------------------------------------------------
 
 .lh-dock__item {
     position: relative;
+
+    // Freestanding circle — 44 × 44 (WCAG 2.5.5 minimum touch target)
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 50%;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 44px;  // WCAG 2.5.5 touch target
-    border-radius: $lh-radius-sm;
-    color: rgba(255, 255, 255, 0.65);
+
+    // Elevated dark-blue circle — slightly darker than the sidebar
+    // so it reads as "in front of" the sidebar surface
+    background: $lh-primary-dark;   // #0f2b3d
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+        0 2px 6px  rgba(0, 0, 0, 0.30),
+        0 4px 16px rgba(0, 0, 0, 0.20);
+
+    color: rgba(255, 255, 255, 0.72);
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
     -webkit-tap-highlight-color: transparent;
 
+    transition:
+        transform     0.15s ease,
+        box-shadow    0.18s ease,
+        background    0.15s ease,
+        color         0.15s ease,
+        border-color  0.15s ease;
+
+    // Hover: subtle zoom + stronger shadow → feels "lifted"
     &:hover,
     &:focus-visible {
-        background: rgba(255, 255, 255, 0.10);
-        color: rgba(255, 255, 255, 0.95);
+        transform: scale(1.10) translateX(3px);  // zoom + nudge right toward content
+        background: lighten($lh-primary-dark, 6%);
+        border-color: rgba(255, 255, 255, 0.28);
+        box-shadow:
+            0 4px 12px  rgba(0, 0, 0, 0.38),
+            0 8px 28px  rgba(0, 0, 0, 0.22);
+        color: #fff;
         text-decoration: none;
 
         .lh-dock__tooltip {
@@ -80,64 +109,73 @@
 
     &:focus-visible {
         outline: 2px solid $lh-accent;
-        outline-offset: 1px;
+        outline-offset: 3px;
     }
 
-    // Active state — action is currently "on" (e.g. edit mode ON)
+    // Active state — action is currently "on"
     &--active {
-        background: rgba($lh-accent, 0.18);
-        color: $lh-accent;
+        background: $lh-accent;        // orange
+        border-color: rgba($lh-accent, 0.40);
+        box-shadow:
+            0 2px 8px  rgba($lh-accent, 0.45),
+            0 4px 18px rgba(0, 0, 0, 0.22);
+        color: #fff;
 
-        &:hover {
-            background: rgba($lh-accent, 0.26);
-            color: lighten($lh-accent, 8%);
+        &:hover,
+        &:focus-visible {
+            background: darken($lh-accent, 5%);
+            box-shadow:
+                0 4px 14px rgba($lh-accent, 0.55),
+                0 6px 24px rgba(0, 0, 0, 0.25);
         }
     }
 
-    // Mobile: fixed width, horizontal layout
+    // Mobile: larger touch circles, no translateX nudge
     @media (max-width: #{$lh-bp-desktop - 1px}) {
-        width: 52px;
-        height: 52px;
-        flex-shrink: 0;
-        border-radius: $lh-radius-sm;
+        width: 48px;
+        height: 48px;
+
+        &:hover,
+        &:focus-visible {
+            transform: scale(1.08) translateX(0);  // no horizontal nudge on mobile
+        }
     }
 }
 
-// --- Icon shell ---------------------------------------------------------------
+// --- Icon -------------------------------------------------------------------
 
 .lh-dock__icon {
     width: 44px;
     height: 44px;
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .fa {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         line-height: 1;
     }
 
     @media (max-width: #{$lh-bp-desktop - 1px}) {
-        width: 52px;
-        height: 52px;
+        width: 48px;
+        height: 48px;
 
-        .fa { font-size: 1.2rem; }
+        .fa { font-size: 1.15rem; }
     }
 }
 
-// --- Tooltip ------------------------------------------------------------------
-// Appears to the RIGHT of the icon on desktop, ABOVE on mobile.
-// Progressive disclosure: add .lh-dock--experienced to .lh-dock to hide.
+// --- Tooltip ----------------------------------------------------------------
+// Appears to the RIGHT of the circle on desktop, ABOVE on mobile.
+// Slides in from a small leftward offset on hover.
 
 .lh-dock__tooltip {
     position: absolute;
-    left: calc(100% + 0.75rem);
+    left: calc(100% + 0.75rem);     // right of the 44px circle
     top: 50%;
-    transform: translateY(-50%) translateX(-6px);  // slides in from left
-    white-space: nowrap;
+    transform: translateY(-50%) translateX(-8px);   // start slightly left, slides right
 
-    background: rgba(#0f2b3d, 0.96);
+    white-space: nowrap;
+    background: rgba($lh-primary-dark, 0.95);
     color: #fff;
     font-size: $lh-font-size-xs;
     font-weight: 500;
@@ -145,18 +183,16 @@
     padding: 0.375rem 0.625rem;
     border-radius: $lh-radius-pill;
     border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
 
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease, transform 0.15s ease;
     z-index: 250;
 
-    // Progressive disclosure: class added by JS after N page loads
-    .lh-dock--experienced & {
-        display: none;
-    }
+    // Progressive disclosure
+    .lh-dock--experienced & { display: none; }
 
-    // Mobile: tooltip pops UP above the icon
     @media (max-width: #{$lh-bp-desktop - 1px}) {
         left: 50%;
         top: auto;
@@ -169,18 +205,19 @@
     }
 }
 
-// --- Divider ------------------------------------------------------------------
+// --- Spacer between item groups (replaces line divider) ---------------------
+// A small invisible gap between semantic groups of icons.
+// More appropriate than a horizontal line between floating circles.
 
 .lh-dock__divider {
-    height: 1px;
-    margin: 0.1875rem $lh-spacing-xs;
-    background: rgba(255, 255, 255, 0.12);
+    height: 6px;
+    width: 100%;
+    background: none;
     flex-shrink: 0;
+    pointer-events: none;
 
     @media (max-width: #{$lh-bp-desktop - 1px}) {
-        width: 1px;
-        height: 28px;
-        margin: auto 0.25rem;
-        align-self: center;
+        width: 12px;
+        height: 100%;
     }
 }

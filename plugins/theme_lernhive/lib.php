@@ -291,7 +291,7 @@ function theme_lernhive_get_context_dock_items(): array {
         ]);
         $items[] = [
             'key'     => 'block_editing',
-            'icon'    => $editingon ? 'th' : 'th-large',
+            'icon'    => 'pen-to-square',
             'label'   => $editingon
                     ? get_string('dockblocksoff', 'theme_lernhive')
                     : get_string('dockblockson', 'theme_lernhive'),
