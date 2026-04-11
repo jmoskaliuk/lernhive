@@ -47,6 +47,7 @@ SUITE="all"             # all | phpunit | behat
 COMPONENT_FILTER=""     # frankenstyle, e.g. local_lernhive_contenthub
 BEHAT_TAGS=""           # e.g. @local_lernhive_contenthub
 FORCE_REINIT=0
+FULL=0                  # run Moodle core tests too, not just LernHive plugins
 
 usage() {
   cat <<EOF
@@ -61,12 +62,16 @@ Options:
   --tags=TAGS          Behat tag expression (overrides --component for Behat).
   --reinit             Force re-init of the test environment before running.
                        Useful when fixtures or DB schema changed.
+  --full               Opt-in: run ALL testsuites, including Moodle core
+                       (~29k PHPUnit tests, very slow). Without this flag,
+                       the default is to run only LernHive plugin testsuites.
   -h, --help           Show this help and exit.
 
 Examples:
   playbooks/test.sh --target=hetzner
   playbooks/test.sh --target=hetzner --suite=phpunit --component=local_lernhive_contenthub
   playbooks/test.sh --target=hetzner --suite=behat --tags=@javascript
+  playbooks/test.sh --target=hetzner --full         # includes Moodle core
 EOF
 }
 
@@ -77,6 +82,7 @@ for arg in "$@"; do
     --component=*) COMPONENT_FILTER="${arg#--component=}" ;;
     --tags=*)      BEHAT_TAGS="${arg#--tags=}" ;;
     --reinit)      FORCE_REINIT=1 ;;
+    --full)        FULL=1 ;;
     -h|--help)     usage; exit 0 ;;
     *)             echo "Unknown argument: $arg" >&2; usage; exit 1 ;;
   esac
@@ -155,6 +161,63 @@ component_testsuite() {
   echo "${1}_testsuite"
 }
 
+# Enumerate LernHive plugin directories under $ROOT/plugins that have a
+# tests/ subdir and emit a comma-separated list of Moodle PHPUnit
+# testsuite names (each "<plugin>_testsuite"). Used as the default
+# PHPUnit filter so `lernhive-test --suite=phpunit` never accidentally
+# runs the full ~29k Moodle core suite.
+#
+# Rule: plugin directory name equals the frankenstyle component name.
+# This holds in our workspace (plugins/local_lernhive_contenthub →
+# deployed as local/lernhive_contenthub → component
+# local_lernhive_contenthub), so a simple dirname-based mapping is
+# sufficient. Plugins without a tests/ directory are skipped to avoid
+# passing non-existent testsuite names to phpunit.
+lernhive_plugin_components() {
+  local d name
+  for d in "$ROOT"/plugins/*/; do
+    [[ -d "$d" ]] || continue
+    name="$(basename "$d")"
+    [[ -d "$d/tests" ]] || continue
+    echo "$name"
+  done
+}
+
+lernhive_testsuite_list() {
+  local names=()
+  local c
+  while IFS= read -r c; do
+    [[ -n "$c" ]] && names+=("${c}_testsuite")
+  done < <(lernhive_plugin_components)
+  local IFS=','
+  echo "${names[*]}"
+}
+
+# Build a Behat tag expression matching any LernHive plugin:
+# "@local_lernhive_contenthub||@local_lernhive_copy||…". Returns the
+# empty string if no plugins are discovered, in which case the caller
+# should not pass a --tags filter.
+lernhive_behat_tags() {
+  local tags=()
+  local c
+  while IFS= read -r c; do
+    [[ -n "$c" ]] && tags+=("@$c")
+  done < <(lernhive_plugin_components)
+  local IFS='||'
+  # Bash joins array with first char of IFS; use a manual join instead
+  # so we get the literal "||" separator Behat expects.
+  if [[ ${#tags[@]} -eq 0 ]]; then
+    echo ""
+    return
+  fi
+  local out="${tags[0]}"
+  local i
+  for ((i = 1; i < ${#tags[@]}; i++)); do
+    out="${out}||${tags[i]}"
+  done
+  echo "$out"
+}
+
 # ---------------------------------------------------------------------------
 # PHPUnit.
 # ---------------------------------------------------------------------------
@@ -198,12 +261,33 @@ phpunit_diag_and_init() {
 run_phpunit() {
   phpunit_diag_and_init
 
+  # Testsuite selection:
+  #   1. Explicit --component → single testsuite for that plugin.
+  #   2. --full              → no filter (runs Moodle core + all plugins,
+  #                            ~29k tests, opt-in only).
+  #   3. Default             → comma-separated list of LernHive plugin
+  #                            testsuites (only those under plugins/
+  #                            with a tests/ dir). This is what prevents
+  #                            a plain `lernhive-test --suite=phpunit`
+  #                            from blowing up into a 29k-test run.
   local args=()
   if [[ -n "$COMPONENT_FILTER" ]]; then
     args+=(--testsuite "$(component_testsuite "$COMPONENT_FILTER")")
+    log "PHPUnit: filter → $(component_testsuite "$COMPONENT_FILTER") (from --component)"
+  elif [[ "$FULL" -eq 1 ]]; then
+    log "PHPUnit: --full → running ALL testsuites (Moodle core + plugins)"
+  else
+    local default_suites
+    default_suites="$(lernhive_testsuite_list)"
+    if [[ -z "$default_suites" ]]; then
+      warn "PHPUnit: no LernHive plugins with tests/ found under $ROOT/plugins — falling back to full suite"
+    else
+      args+=(--testsuite "$default_suites")
+      log "PHPUnit: default filter → $default_suites"
+    fi
   fi
 
-  log "PHPUnit: running ${args[*]:-<full suite>}"
+  log "PHPUnit: running ${args[*]:-<unfiltered>}"
   # Memory limit bumped — Moodle's PHPUnit run can exceed the default
   # 128M on larger components. XDEBUG is disabled in the container by
   # default; if it's on, this flag is a no-op.
@@ -297,12 +381,29 @@ run_behat() {
   behat_diag_and_init
 
   # Determine tag expression:
-  #   explicit --tags beats --component
+  #   1. Explicit --tags      → use as-is.
+  #   2. --component          → @<component>.
+  #   3. --full               → no filter (all Behat features on the site).
+  #   4. Default              → OR-expression of all LernHive plugin tags
+  #                             (@local_lernhive_contenthub||@local_lernhive_copy||…).
+  # Reason: same mistake-avoidance as run_phpunit — we don't want a plain
+  # `lernhive-test --suite=behat` to run every Behat feature in Moodle
+  # core, which would take hours on the small Hetzner VM.
   local tags=""
   if [[ -n "$BEHAT_TAGS" ]]; then
     tags="$BEHAT_TAGS"
   elif [[ -n "$COMPONENT_FILTER" ]]; then
     tags="@$COMPONENT_FILTER"
+  elif [[ "$FULL" -eq 1 ]]; then
+    tags=""
+    log "Behat: --full → running ALL features (no tag filter)"
+  else
+    tags="$(lernhive_behat_tags)"
+    if [[ -z "$tags" ]]; then
+      warn "Behat: no LernHive plugins with tests/ found — running without tag filter"
+    else
+      log "Behat: default filter → $tags"
+    fi
   fi
 
   # Moodle generates a per-run Behat config at
@@ -342,7 +443,7 @@ run_behat() {
 # ---------------------------------------------------------------------------
 # Main.
 # ---------------------------------------------------------------------------
-log "target=$TARGET  container=$CONTAINER  suite=$SUITE  component=${COMPONENT_FILTER:-<all>}  reinit=$FORCE_REINIT"
+log "target=$TARGET  container=$CONTAINER  suite=$SUITE  component=${COMPONENT_FILTER:-<default: lernhive plugins>}  full=$FULL  reinit=$FORCE_REINIT"
 container_check
 
 FAIL=0
