@@ -771,27 +771,60 @@ function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
     // still empty the user can View Source and report exactly what the
     // render path saw — course id, format, uses_course_index() verdict,
     // HTML length. No more blind fix attempts.
+    global $COURSE;
     $courseindexhtml = '';
     $diag = [
-        'courseid'      => 'none',
-        'formatname'    => 'none',
-        'usescourseidx' => 'n/a',
-        'rendererclass' => 'n/a',
-        'drawerlen'     => 0,
-        'status'        => 'skipped',
+        'pagelayout'     => $page->pagelayout ?? 'n/a',
+        'page_course_t'  => 'n/a',
+        'page_course_id' => 'n/a',
+        'global_course'  => isset($COURSE) && !empty($COURSE->id) ? (string) $COURSE->id : 'none',
+        'formatname'     => 'none',
+        'usescourseidx'  => 'n/a',
+        'rendererclass'  => 'n/a',
+        'drawerlen'      => 0,
+        'status'         => 'skipped',
     ];
-    if (!empty($page->course) && $page->course->id > SITEID) {
-        $diag['courseid'] = (string) $page->course->id;
+    // Describe whatever $page->course actually is — null vs stdClass vs
+    // something else — so we stop guessing.
+    if (!isset($page->course)) {
+        $diag['page_course_t'] = 'unset';
+    } else if ($page->course === null) {
+        $diag['page_course_t'] = 'null';
+    } else if (is_object($page->course)) {
+        $diag['page_course_t']  = 'object';
+        $diag['page_course_id'] = (string) ($page->course->id ?? 'noid');
+    } else {
+        $diag['page_course_t'] = gettype($page->course);
+    }
+
+    // Relaxed guard: pick the best course object we can — prefer $page->course
+    // if it has id > SITEID, fall back to $COURSE global if that has id >
+    // SITEID. This handles layouts where $page->course is still the site
+    // course at template render time but $COURSE has already been set by
+    // require_login().
+    $course = null;
+    if (!empty($page->course) && is_object($page->course) && !empty($page->course->id) && $page->course->id > SITEID) {
+        $course = $page->course;
+    } else if (isset($COURSE) && is_object($COURSE) && !empty($COURSE->id) && $COURSE->id > SITEID) {
+        $course = $COURSE;
+        $diag['status'] = 'using-global-course';
+    }
+
+    if ($course !== null) {
         try {
-            $format = course_get_format($page->course);
-            $diag['formatname'] = $format->get_format();
+            $format = course_get_format($course);
+            $diag['formatname']    = $format->get_format();
             $diag['usescourseidx'] = $format->uses_course_index() ? 'yes' : 'no';
             $renderer = $format->get_renderer($page);
             $diag['rendererclass'] = get_class($renderer);
             if (method_exists($renderer, 'course_index_drawer')) {
                 $courseindexhtml = (string) $renderer->course_index_drawer($format);
                 $diag['drawerlen'] = strlen($courseindexhtml);
-                $diag['status']    = $courseindexhtml !== '' ? 'rendered' : 'empty';
+                if ($courseindexhtml !== '') {
+                    $diag['status'] = 'rendered';
+                } else if ($diag['status'] === 'skipped') {
+                    $diag['status'] = 'empty';
+                }
             } else {
                 $diag['status'] = 'no-method';
             }
@@ -806,11 +839,13 @@ function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
     }
 
     // Diagnostic HTML comment — safe to leave in for alpha, remove once
-    // course index is stable. Keys use s_ prefix + clean()-safe values so
-    // the comment cannot break HTML parsing even if a format name contains
-    // something surprising.
+    // course index is stable. Values are normalised so the comment cannot
+    // break HTML parsing even if a class name contains something surprising.
     $diagcomment = "\n<!-- lernhive-course-idx-diag: "
-        . 'courseid=' . clean_param($diag['courseid'], PARAM_ALPHANUMEXT)
+        . 'pagelayout=' . clean_param($diag['pagelayout'], PARAM_ALPHANUMEXT)
+        . ' pcourse_t=' . clean_param($diag['page_course_t'], PARAM_ALPHANUMEXT)
+        . ' pcourse_id=' . clean_param($diag['page_course_id'], PARAM_ALPHANUMEXT)
+        . ' gcourse=' . clean_param($diag['global_course'], PARAM_ALPHANUMEXT)
         . ' format=' . clean_param($diag['formatname'], PARAM_ALPHANUMEXT)
         . ' uses=' . clean_param($diag['usescourseidx'], PARAM_ALPHANUMEXT)
         . ' renderer=' . clean_param(str_replace('\\', '_', $diag['rendererclass']), PARAM_ALPHANUMEXT)
