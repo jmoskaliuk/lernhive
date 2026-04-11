@@ -2,7 +2,16 @@
 
 ## Done (shipped)
 
-- [x] 0.9.3 — Six fixed block regions (content-top, content-bottom, sidebar-bottom, footer-left/center/right); remove side-pre drawer
+- [x] 0.9.40 — Icon taxonomy: add Type 4 `.lh-icon-info` (2026-04-11):
+  - `scss/lernhive/_icons.scss` — file-header comment rewritten from a three-type to a four-type taxonomy (Navigation / Artifact / Action / **Information**). The new Type 4 documents intent explicitly: "passive signal — does NOT navigate, does NOT classify content, does NOT trigger a function; communicates state, help, warning, or error".
+  - New `.lh-icon-info` class: 28 × 28 px rounded square (6 px radius), `cursor: help`, NO transform/scale/lift on hover, NO box-shadow on hover — visually distinct from both `.lh-icon-action` (circle, grows) and `.lh-icon-artifact` (9 px tile, metadata). A subtle background-tint deepen is the only hover feedback.
+  - Semantic modifiers: `--locked`, `--complete`, `--new`, `--pending` (status), `--help`, `--warning`, `--error`, `--success`, `--info` (form/alert signals). All modifiers use existing `$lh-*-light` / accent palette — no new brand tokens.
+  - Size variants: `--sm` (20 × 20, borderless — inline use in body copy + table cells), `--lg` (36 × 36, for alert banners + empty states).
+  - `mockups/icon-matrix.md` — four-type taxonomy documented as a canonical section with the per-type Lucide mapping for the Information scope (`lock`, `check`, `clock`, `circle-help`, `triangle-alert`, `circle-x`, `info`, …). Explicit "do NOT use Information for" list to prevent future regressions where a card-action "info" button gets misfiled as Information.
+  - First template rewire: `local_lernhive_onboarding/tours.php` + `templates/tour_overview.mustache` — category status pill (not_started / in_progress / completed) now renders as `.lh-icon-info--sm` chip + visible text label. Hard-coded Google-ish pill colours (`#f5f6f8`, `#e8f0fe`, `#e6f4ea`) are removed and replaced with theme-token-driven SCSS. Status → visual mapping (`not_started → locked/circle-dot`, `in_progress → pending/clock`, `completed → complete/check`) lives in `tours.php` so the template stays declarative.
+  - Not yet rewired: help marks in admin settings forms, alert icons in form-validation surfaces, the content-locked icons on card grids outside of onboarding. Each surface comes in a separate commit so it can be smoke-tested individually.
+
+
 - [x] 0.9.9 — Fix login form invisible (#maincontent height:1px trap); add lernhive-skip-anchor
 - [x] 0.9.18 — drawers.mustache admin navigation: add Site Admin link to sidebar for siteadmin users
 - [x] 0.9.19 — Fix #maincontent in drawers.mustache: move skip-anchor out of content section wrapper

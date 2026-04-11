@@ -17,6 +17,52 @@ Reference family:
 - prefer activity-type icons over decorative icons
 - use orange emphasis only for highlighted or active states such as Follow
 
+## Semantic icon taxonomy — four types
+
+Every icon in LernHive belongs to exactly one of four semantic categories. The category is not just a colour decision — it decides shape, hover behaviour, and whether the icon is a control or a passive signal. Mixing categories on one control is what makes a UI feel arbitrary, so this rule is enforced in the theme CSS (`theme_lernhive/scss/lernhive/_icons.scss`).
+
+| Type | Class | Shape | Intent | Hover |
+| --- | --- | --- | --- | --- |
+| 1. Navigation | `.lh-icon-nav` | 36×36, 8 px radius, transparent | takes the user somewhere | subtle tint, no grow |
+| 2. Artifact | `.lh-icon-artifact` | 38×38, 9 px radius, colour-coded | classifies a content object (Course, Snack, Community, …) | none — it's metadata |
+| 3. Action | `.lh-icon-action` | 36×36, circle | triggers a function (Edit, Delete, Start, Save) | circle grows + lifts |
+| 4. Information | `.lh-icon-info` | 28×28, 6 px radius, `cursor: help` | passive signal (status, help, warning, error) | only a background tint deepen — no grow, no lift |
+
+### Type 1 — Navigation
+
+Rectangle with small radius. A link that moves you to a destination. Pure wayfinding: Home, Dashboard, My Courses, Notifications bell, Launcher. The hover tint is subtle because the icon is usually inside a larger nav context (sidebar, page header) that already communicates "these are nav items".
+
+### Type 2 — Artifact
+
+Colour-coded rounded square. Classifies a content object by its type so the user can scan a card grid and recognise Course vs Snack vs Community at a glance. It is NOT a control — if the surrounding card is clickable, the card handles the hover, not the icon. Colour is part of the meaning (blue = Course, orange = Snack, purple = Community), so designers must not recolour an Artifact icon to match a surface.
+
+### Type 3 — Action
+
+Circle. The distinct shape is what makes the "tap me" affordance learnable across the product. Hover grows the circle slightly and adds a soft lift shadow. Primary actions (Start, Confirm) get the orange `--primary` modifier, destructive actions (Delete, Revoke) get `--danger`, context-specific actions (Edit, Settings in admin) get `--nav`. Labels are mandatory where meaning isn't already clear from context.
+
+### Type 4 — Information
+
+Soft rounded square, slightly smaller than Action. The defining property is `cursor: help` and the total absence of click-like feedback: no grow, no lift, no transform, no box-shadow change. This tells the user "I explain, I don't act". Use it for:
+
+| Scope | Suggested Lucide | LernHive modifier |
+| --- | --- | --- |
+| Locked / not yet available | `lock` | `.lh-icon-info--locked` |
+| Completed | `check` or `circle-check` | `.lh-icon-info--complete` |
+| New / unseen | `sparkles` or `dot` | `.lh-icon-info--new` |
+| Pending / in progress | `clock` | `.lh-icon-info--pending` |
+| Help / contextual explanation | `circle-help` | `.lh-icon-info--help` |
+| Warning inline | `triangle-alert` | `.lh-icon-info--warning` |
+| Error inline | `circle-x` | `.lh-icon-info--error` |
+| Success confirmation | `circle-check` | `.lh-icon-info--success` |
+| Neutral info banner | `info` | `.lh-icon-info--info` |
+
+**Do NOT use Information for:**
+- card action bar "info" buttons that open a detail popover — those are Actions (`.lh-icon-action`)
+- content-type badges on cards — those are Artifacts (`.lh-icon-artifact`)
+- clickable notification bells — those are Navigation (`.lh-icon-nav`)
+
+If an icon currently looks like "info but also clickable", it's an Action, not Information. The shape (circle vs rounded square) and cursor (`pointer` vs `help`) must match the intent.
+
 ## Activity icons
 
 | LernHive use | Preferred icon direction | Suggested Lucide name |

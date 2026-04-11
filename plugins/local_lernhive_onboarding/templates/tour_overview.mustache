@@ -91,8 +91,14 @@
                             {{progress_str}}
                         </span>
                     </div>
-                    <span class="badge lh-tours-status-badge lh-tours-status--{{status}}">
-                        {{status_str}}
+                    {{! Status chip — Information icon (Type 4, theme_lernhive icon taxonomy).
+                        Passive signal: cursor:help + visible text label for a11y; the
+                        .lh-icon-info class owns the visual signature (no hover grow). }}
+                    <span class="lh-tours-status" title="{{status_str}}">
+                        <span class="lh-icon-info lh-icon-info--sm lh-icon-info--{{status_info_variant}}" aria-hidden="true">
+                            <i class="fa fa-{{status_info_icon}} fa-fw"></i>
+                        </span>
+                        <span class="lh-tours-status__label">{{status_str}}</span>
                     </span>
                 </div>
             </div>
@@ -198,10 +204,11 @@
 .lh-tours-card-title { font-size: 0.95rem; font-weight: 600; }
 .lh-tours-card-desc { font-size: 0.78rem; line-height: 1.4; }
 
-.lh-tours-status-badge { font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; }
-.lh-tours-status--not_started { background: #f5f6f8; color: #80868b; }
-.lh-tours-status--in_progress { background: #e8f0fe; color: #1a73e8; }
-.lh-tours-status--completed { background: #e6f4ea; color: #137333; }
+/* Status chip layout — icon (.lh-icon-info) + text label side by side.
+   Colour/shape of the icon come from theme_lernhive/_icons.scss. This wrapper
+   only handles alignment + the text-label typography. */
+.lh-tours-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 600; color: #5f6368; }
+.lh-tours-status__label { white-space: nowrap; }
 
 .lh-tours-detail { border-top: 1px solid #e0e0e0; }
 

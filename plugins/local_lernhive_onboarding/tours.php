@@ -61,6 +61,17 @@ $colormap = [
     'communication'     => 'red',
 ];
 
+// Status → visual mapping for the .lh-icon-info (Type 4 "Information") chip in
+// theme_lernhive. Keep values in sync with _icons.scss modifier names.
+//   not_started → locked  (neutral grey, fa-circle-dot)
+//   in_progress → pending (blue, fa-clock)
+//   completed   → complete (green, fa-check)
+$statusinfomap = [
+    'not_started' => ['variant' => 'locked',   'icon' => 'circle-dot'],
+    'in_progress' => ['variant' => 'pending',  'icon' => 'clock'],
+    'completed'   => ['variant' => 'complete', 'icon' => 'check'],
+];
+
 foreach ($progress['categories'] as $cat) {
     $p = $cat->progress;
     $status = 'not_started';
@@ -103,6 +114,8 @@ foreach ($progress['categories'] as $cat) {
         'done' => $p['done'],
         'status' => $status,
         'status_str' => get_string('tours_status_' . $status, 'local_lernhive_onboarding'),
+        'status_info_variant' => $statusinfomap[$status]['variant'],
+        'status_info_icon' => $statusinfomap[$status]['icon'],
         'progress_str' => get_string($totalstr, 'local_lernhive_onboarding', (object) [
             'done' => $p['completed'],
             'total' => $p['total'],
