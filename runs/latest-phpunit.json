@@ -1,18 +1,18 @@
 {
   "job": "phpunit",
-  "status": "error",
-  "exit_code": 143,
+  "status": "failed",
+  "exit_code": 3,
   "has_warnings": false,
-  "run_id": "24284495594",
-  "run_number": 21,
-  "sha": "9227151bfaf6ddfc4ce13990687007d64b7f5763",
-  "short_sha": "9227151b",
+  "run_id": "24284584040",
+  "run_number": 22,
+  "sha": "f0e54e63efb5cb4166884be01504394f43d5f02a",
+  "short_sha": "f0e54e63",
   "ref": "main",
   "actor": "jmoskaliuk",
   "event": "workflow_dispatch",
-  "timestamp": "20260411T142732Z",
+  "timestamp": "20260411T143304Z",
   "log_path": "runs/latest-phpunit.log",
-  "archive_path": "runs/archive/20260411T142732Z-9227151b-phpunit.log",
-  "tests": null,
-  "assertions": null
+  "archive_path": "runs/archive/20260411T143304Z-f0e54e63-phpunit.log",
+  "tests": 66,
+  "assertions": 180
 }
