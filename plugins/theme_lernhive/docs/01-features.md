@@ -23,6 +23,11 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
   - Two explicit icon buttons next to the avatar: gear → preferences, sign-out → logout (red hover). No dropdown — each action is a direct link. Replaced the short-lived 0.9.26 `<details>/<summary>` chevron dropdown in 0.9.27.
   - Language selector (globe icon + `output.lang_menu()`) between notifications and Launcher; hidden when only one language is installed
   - Sticky top bar (0.9.53): the whole `.lernhive-page-header` row sticks to the viewport top while scrolling, so profile / settings / logout / notifications / launcher / language picker remain one click away on long pages
+- Course-page sidebar (0.9.45, render-guard fix 0.9.51, visual polish 0.9.52, placeholder-flash fix 0.9.54):
+  - On the `course` pagelayout the theme swaps `sidebar.mustache` for `sidebar_course.mustache`: a reduced primary nav (Dashboard / My Courses / Explore only), a `<hr>` divider with `role="separator"`, then a dedicated course-navigation region that renders the core Moodle course index (sections + activities) via `course_get_format($course)->get_renderer($page)->course_index_drawer($format)`
+  - The course-index chrome is re-skinned for the LernHive dark palette: no `text-transform: uppercase` on the "Course navigation" heading, `fa-sitemap` icon prefix on the heading, all `.courseindex*` backgrounds / borders / shadows reset to transparent inside `.lernhive-course-index__body`, active section gets a soft `$lh-accent` tint + a `2 px` inset left rail, chevrons become borderless `1.25 rem` inline-flex boxes, and Boost's "current" pill (`.current-badge`) is hidden because the accent treatment already signals the active item
+  - No more skeleton flash: the core placeholder loader (`#course-index-placeholder` / `.placeholders` — four grey pulse rows shipped in `core_courseformat/local/courseindex/placeholders.mustache`) is `display: none !important` inside the sidebar, so the ~50–300 ms gap between first paint and the `core_courseformat/courseeditor` AMD hydration shows an empty region instead of mangled-for-light-mode grey boxes
+  - Graceful fail: if AMD hydration ever fails the sidebar degrades to just the heading, never leaks back the light-palette skeleton
 
 ## Planned feature set
 - design tokens for color, typography, spacing, and surfaces

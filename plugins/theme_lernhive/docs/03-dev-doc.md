@@ -173,6 +173,150 @@ If the action-icon row grows (e.g. a new dock button pushes height past ~48 px),
 - Avatar hover is strictly circular (`border-radius: 50%`) — the generic `.nav-link` hover rule uses `$lh-radius-sm` (rectangle), so `.lernhive-user-block__avatar` must explicitly set `border-radius: 50%` to win.
 - Language selector is always wrapped: `.lernhive-lang-menu` provides a stable styling hook regardless of Moodle's internal `lang_menu()` markup changes.
 
+## Course-page sidebar (since 0.9.45)
+
+On the `course` pagelayout the theme swaps `sidebar.mustache` for a dedicated `sidebar_course.mustache` partial. The goal is to keep the global navigation cognitively available while foregrounding the course-specific section/activity tree — the same split Boost's drawer achieves, but without the right-hand collapsible drawer and inside the LernHive dark palette.
+
+### Files
+
+| File | Role |
+|---|---|
+| `lib.php` → `theme_lernhive_get_course_sidebar_context(\moodle_page $page)` | Builds the sidebar context: whitelisted primary-nav items + pre-rendered course-index HTML + aria labels. Shared by `layout/course.php`. |
+| `templates/sidebar_course.mustache` | Renders the reduced primary nav (`.lernhive-nav--reduced`), the separator `<hr class="lernhive-nav__divider" role="separator">`, and the course-index nav region with a heading + body. Also renders the shared `sidebar-bottom` block region. |
+| `scss/lernhive/_navigation.scss` | All styling — reduced nav, divider, `.lernhive-course-index` heading + icon, and the full scoped reset of the core `.courseindex*` chrome inside `.lernhive-course-index__body`. |
+| `layout/course.php` | Calls the helper and forwards `coursesidebar` + `hassidebarbottom` / `sidebarbottom` into the template context. |
+
+### Reduced primary nav (whitelist)
+
+`theme_lernhive_get_course_sidebar_context()` walks the same primary-nav source as `sidebar.mustache` but filters down to a fixed set of nav keys — `home`, `myhome`, `courses` (standard Moodle site nav, named `Dashboard`, `My Courses`, `Explore` in the LernHive language pack). Any other nav item is dropped for the course layout. The whitelist is enforced in PHP so a later core navigation refactor can add or rename keys without breaking the sidebar.
+
+### The `$PAGE->course` vs `$COURSE` divergence (fixed 0.9.51)
+
+On the `course` pagelayout, a naive `$page->course->id > SITEID` guard inside the helper short-circuits because `$PAGE->course` reports as SITE (`id = 1`) even though `require_login($course)` has already run upstream. Diagnostic HTML-comment instrumentation in 0.9.48 captured this directly: `courseid=none status=skipped`, in a context where the course *obviously* existed.
+
+**Why.** Moodle only hydrates `$PAGE->course` with the real course record when the course format's own renderer runs, which happens *after* the layout template has built its sidebar context. By contrast, `$COURSE` is set by `require_login($course)` at the very start of the request, so it is reliably populated by the time the layout helper executes.
+
+**The fix (0.9.51).** The guard reads both sources and prefers `$PAGE->course` when it looks valid, then falls back to `$COURSE`:
+
+```php
+global $COURSE;
+$course = null;
+if (!empty($page->course) && is_object($page->course)
+        && !empty($page->course->id) && $page->course->id > SITEID) {
+    $course = $page->course;
+} else if (isset($COURSE) && is_object($COURSE)
+        && !empty($COURSE->id) && $COURSE->id > SITEID) {
+    $course = $COURSE;
+}
+if ($course !== null) {
+    try {
+        $format   = course_get_format($course);
+        $renderer = $format->get_renderer($page);
+        if (method_exists($renderer, 'course_index_drawer')) {
+            $courseindexhtml = (string) $renderer->course_index_drawer($format);
+        }
+    } catch (\Throwable $e) {
+        debugging('theme_lernhive: course index render failed — ' . $e->getMessage(), DEBUG_DEVELOPER);
+        $courseindexhtml = '';
+    }
+}
+```
+
+**Rule for future theme helpers:** inside a layout helper that runs during template context assembly, always consult `$COURSE` (global) as the secondary source of truth for the active course. Do not rely on `$PAGE->course` alone — it is not populated yet for the `course` pagelayout.
+
+### How the course-index HTML is produced
+
+The helper calls `course_get_format($course)->get_renderer($page)->course_index_drawer($format)` — the same canonical path `theme_boost/layout/drawers.php` takes via `core_course_drawer()`. This function returns a `<nav id="courseindex">` scaffold plus the `core_courseformat/local/courseindex/placeholders.mustache` skeleton, and — importantly — registers the `core_courseformat/courseeditor` AMD module on `$PAGE->requires` via `include_course_editor()`. After first paint, the AMD module hits the `core_course_get_state` webservice and hydrates the placeholder into the real sections + activities DOM.
+
+**Do not try to "pre-render" the course index server-side.** The sections/activities are not in the returned HTML at all — they arrive via JS. Any attempt to walk `$format->get_sections()` yourself and build custom markup will fight the AMD hydration and end up either double-rendered or empty.
+
+### Core courseindex chrome reset (0.9.52)
+
+The core `.courseindex*` selectors ship with a Boost-tailored light palette: `$gray-100` for the active section background, `$gray-300` borders, rectangular chevron buttons, a `.current-badge` pill on the active section. Dropped into the LernHive dark sidebar that reads as grey "buttons" with visible borders floating over the dark background — completely wrong.
+
+The fix lives entirely in `_navigation.scss` inside the `.lernhive-course-index__body` scope, so core pages (`/course/view.php` when rendered without the LernHive sidebar) are unaffected:
+
+```scss
+.lernhive-course-index__body {
+    // Strip all Boost chrome from every nested courseindex element.
+    .courseindex,
+    .courseindex-section,
+    .courseindex-item,
+    .courseindex-link,
+    .courseindex-chevron,
+    .icons-collapse-expand,
+    .courseindex-sectioncontent {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        padding: 0;
+        margin: 0;
+    }
+
+    .courseindex-sectioncontent { padding-left: 1.5rem; }
+
+    // Chevron: 1.25rem inline-flex, 0.75rem icon, no button chrome.
+    .courseindex-chevron,
+    .icons-collapse-expand {
+        width: 1.25rem;
+        height: 1.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        .icon { font-size: 0.75rem; }
+    }
+
+    // Section title = emphasis, activity = body.
+    .courseindex-section-title .courseindex-link {
+        color: rgba(#fff, 0.9);
+        font-weight: 600;
+        &:hover { background: rgba(#fff, 0.08); }
+    }
+    .courseindex-item .courseindex-link {
+        color: rgba(#fff, 0.72);
+        font-weight: 400;
+    }
+
+    // Active / current item → accent tint + left rail.
+    .courseindex-item.pageitem,
+    .courseindex-item.active,
+    .courseindex-item[aria-current="page"] {
+        background: rgba($lh-accent, 0.18);
+        box-shadow: inset 2px 0 0 $lh-accent;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    // "Current" pill is redundant with the accent treatment.
+    .current-badge { display: none !important; }
+}
+```
+
+Heading treatment (`_navigation.scss`, `.lernhive-course-index__heading`): `display: flex; gap`, `$lh-font-size-sm`, weight 600, `rgba(#fff, 0.78)`, **no `text-transform: uppercase`**. The icon (`.lernhive-course-index__heading-icon`, `fa-sitemap`) is `$lh-accent` at 0.95em, opacity 0.9 — an explicit visual cue that this region is the course navigation, not a generic link list.
+
+### Skeleton placeholder hide (0.9.54)
+
+`core_courseformat/local/courseindex/placeholders.mustache` renders a 4-row grey-pulse skeleton (`#course-index-placeholder[data-region="loading-placeholder-content"]` wrapping `ul.placeholders` with `.bg-pulse-grey` children) that is visible for ~50–300 ms between first paint and AMD hydration. Against the dark LernHive sidebar, those light-palette grey rounded rectangles read as a layout bug.
+
+All three selectors are hidden inside `.lernhive-course-index__body`:
+
+```scss
+#course-index-placeholder,
+[data-region="loading-placeholder-content"],
+.placeholders {
+    display: none !important;
+}
+```
+
+**Graceful-fail rationale.** If the AMD hydration ever fails (JS disabled, require error, web service 500), the sidebar will show an empty course-nav region with just the heading instead of falling back to the placeholder. This matches the rest of LernHive's progressive-enhancement posture — a silently empty region is better than a styled-for-light-mode skeleton leaking through.
+
+### Design decisions
+
+- **The reduced nav whitelist lives in PHP**, not in the template. Mustache can't conditionally drop nav items based on stable keys without a helper, and doing it in the template would also make the whitelist invisible to `grep`. Keeping it in `lib.php` means any future renaming is caught by PHPUnit / lint.
+- **The heading is a real `<h2>`, not a styled `<div>`**, so assistive tech picks it up as a landmark boundary between the primary nav and the course index.
+- **The divider is a real `<hr role="separator" aria-orientation="horizontal">`**, not a CSS border on one of the nav items, so it is announced as a section boundary between the two nav regions.
+- **`course_index_drawer()` is the canonical integration point**; we do not re-implement the course-index renderable. This keeps us auto-compatible with future core refactors of the courseindex model (Moodle 5.2 has already moved pieces around).
+
 ## Context Dock (since 0.9.21)
 
 The Context Dock is a floating, fixed-position action strip for context-aware actions. It is rendered only by `drawers.php` / `drawers.mustache` — admin pages (`admin.php`) do not include it.
@@ -196,7 +340,7 @@ Each item is a PHP associative array with keys: `key` (string), `icon` (FA4 clas
 | `$PAGE->user_can_edit_blocks()` is true | Block editing toggle (any page, including dashboard) |
 | `is_siteadmin()` + layout ≠ admin | Site admin shortcut (with separator) |
 
-### Positioning (since 0.9.51)
+### Positioning (since 0.9.50)
 Desktop: the Dock is anchored to the viewport's bottom-right corner via `position: fixed; right: 1.5rem; bottom: 1.5rem; left: auto; width: auto; max-width: calc(100vw - 3rem)`. `justify-content: flex-end` pins the right-most icon to the right edge, so added items grow the strip leftward — there is no fixed width container to blow out. The `max-width` guard prevents overflow on narrow desktop windows before the mobile breakpoint kicks in. Mobile (`@media (max-width: $lh-bp-desktop - 1px)`): full-width strip at the screen bottom with `justify-content: center` explicitly re-applied so the desktop flex-end rule does not leak through.
 
 ### Tooltip progressive disclosure

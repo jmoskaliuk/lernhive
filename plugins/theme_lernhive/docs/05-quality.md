@@ -34,3 +34,14 @@
   - opening a Header Dock side panel (Messages / Notifications / AI / Help) while scrolled mid-page: the panel must anchor flush under the stuck header (its top edge equals `getBoundingClientRect().bottom` of the header) and the backdrop must sit below the header so dock icons stay clickable for quick panel switching
   - the launcher dropdown and any user-menu dropdown open above the main content while the header is stuck (no clipping)
   - the fixed sidebar (z-index 100) still covers the left edge — the sticky header must not paint into the sidebar column
+- verify the course-page sidebar (since 0.9.45, render-guard fix 0.9.51, visual polish 0.9.52, placeholder-flash fix 0.9.54):
+  - log in as a user enrolled in a course, navigate to `/course/view.php?id=<courseid>` with a `topics` or `weeks` format course
+  - the sidebar shows a reduced primary nav with exactly three items — Dashboard, My Courses, Explore — followed by a horizontal divider
+  - below the divider, a "Course navigation" heading appears with an `fa-sitemap` icon prefix (icon is `$lh-accent` coloured, heading text is sentence-case — **not** `COURSE NAVIGATION`)
+  - below the heading, the core Moodle course index renders the course's sections and activities; collapsing/expanding a section works (chevron rotates, content shows/hides)
+  - clicking an activity navigates to it; the currently-active section/activity in the sidebar gets a soft `$lh-accent` background tint + a 2 px inset left rail in `$lh-accent`, text in white-bold — no grey "button box" from Boost defaults
+  - no `.current-badge` pill is visible next to the active section (hidden by `display: none`)
+  - chevrons on section headers are small (~`1.25 rem`), borderless, inline-flex — not Boost's rectangular button chrome
+  - hard-reload the page: there must be **no visible grey skeleton flash** before the course index hydrates. If JS is disabled or breaks, the region degrades to just the heading — never to the core 4-row placeholder template
+  - regression check for the `$COURSE` fallback: the diagnostic HTML comment from 0.9.48 (`<!-- lernhive-course-idx-diag: courseid=X … -->`) is no longer in the DOM; an HTML-comment diag in the shipped theme would indicate the 0.9.52 scaffolding cleanup did not land
+  - inspect `getComputedStyle(...)`: `.courseindex-item.pageitem` should have `background-color: rgba(22, 163, 74, 0.18)` (or equivalent from `$lh-accent`), `box-shadow: inset 2px 0 0 …`, and `background-color` explicitly not `rgb(240, 240, 240)` (Boost `$gray-100` leakage)

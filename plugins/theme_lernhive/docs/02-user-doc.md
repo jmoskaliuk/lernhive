@@ -13,6 +13,7 @@ The theme makes LernHive feel calmer, clearer, and easier to navigate without ch
 - navigation feels left-oriented and predictable
 - top navigation shows only a few important actions
 - top navigation stays anchored to the viewport while scrolling — profile, settings, logout, notifications, launcher, and language picker remain reachable without scrolling back to the top
+- on a course page, the left sidebar shows a focused "Course navigation" section (with a small sitemap icon) under the primary nav — listing the course sections and activities with the current activity gently highlighted; no skeleton flash on page load, no uppercase labels, no stray rectangular buttons
 - Launcher feels like a quick action surface, not a second menu system
 - Launcher starts from a single icon-like trigger and opens a compact action flyout
 - cards, lists, and forms feel calmer and easier to scan than standard Moodle
