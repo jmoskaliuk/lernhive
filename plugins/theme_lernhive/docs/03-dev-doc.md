@@ -41,7 +41,7 @@ The page header (`lernhive-page-header`) is a horizontal strip at the top of the
 1. **Notifications / plugin output** — `{{{ output.navbar_plugin_output }}}` — messages, notifications, etc. from core plugins
 2. **Language selector** — `{{#haslangmenu}}<div class="lernhive-lang-menu">{{{ langmenu }}}</div>{{/haslangmenu}}` — globe icon prefix + `$OUTPUT->lang_menu()`; only visible when Moodle has more than one language installed
 3. **Launcher** — `<div class="lernhive-page-header__launcher">{{> theme_lernhive/launcher }}</div>` — 9-dot grid icon; dropdown right-aligned; dark-on-white colors in this context
-4. **User block** — custom avatar link + chevron dropdown replacing `output.user_menu`
+4. **User block** — custom avatar link + two direct-action icon buttons (preferences, logout) replacing `output.user_menu`. See the _User block_ section below for details.
 
 ### User block (current — since 0.9.27, restyled 0.9.37)
 

@@ -16,11 +16,11 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
   - CSS-only tooltips with progressive disclosure after 3 page visits
   - Desktop: vertical pill at bottom of sidebar; Mobile: horizontal strip at bottom of screen
 - Admin layout using Moodle standard secondary navigation (admin.php, 0.9.20)
-- Admin settings top navigation: horizontal tab-bar built from `admin_get_root()`, above main content on all admin pages; replaces the hidden Boost left-drawer admin settings tree (0.9.26)
-- Page header redesign (0.9.26):
+- Admin settings top navigation (0.9.34, visibility fix 0.9.36): horizontal tab-bar delegating to Moodle's `core\navigation\output\more_menu` via `$PAGE->secondarynav` — produces the canonical 9-tab sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development) with core overflow handling, replacing the hidden Boost left-drawer admin settings tree. (Superseded the 0.9.26 custom `admin_get_root()` walker, which produced a mixed L1/L2 tab list on `/admin/index.php` — see ADR-06 in `00-master.md`.)
+- Page header redesign (0.9.26, user-block restyled 0.9.27 + 0.9.37):
   - Launcher (9-dot grid icon) moved from sidebar to page header top-right — sidebar stays purely navigational
-  - Profile avatar is a direct link to the user's own profile page (no dropdown required for the most common action)
-  - Small chevron next to avatar opens a user options dropdown: Profile / Preferences / Logout
+  - Profile avatar is a direct, circular link to the user's own profile page (no dropdown required for the most common action)
+  - Two explicit icon buttons next to the avatar: gear → preferences, sign-out → logout (red hover). No dropdown — each action is a direct link. Replaced the short-lived 0.9.26 `<details>/<summary>` chevron dropdown in 0.9.27.
   - Language selector (globe icon + `output.lang_menu()`) between notifications and Launcher; hidden when only one language is installed
 
 ## Planned feature set
