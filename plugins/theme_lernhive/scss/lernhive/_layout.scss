@@ -163,7 +163,12 @@ $lh-bp-tablet:   768px;
     align-items: flex-start;     // icons pin to top of header, not vertically centred
     justify-content: space-between;
     gap: $lh-spacing-md;
-    padding: $lh-spacing-xs $lh-spacing-lg;  // 4px top (was 8px) — icons closer to viewport edge
+    // 0.9.41: flush to the viewport top. The previous 4px top padding plus the
+    // 60px navbar-offset on `#page.drawers` created a noticeable empty strip
+    // above the user action icons. `#page.drawers` margin-top is reset in
+    // post.scss; here we just trim the header's own top padding to 0 so the
+    // icons visually sit at the top of the page column.
+    padding: 0 $lh-spacing-lg $lh-spacing-xs;
     background: transparent;
     border: none;
     border-radius: 0;
@@ -190,7 +195,7 @@ $lh-bp-tablet:   768px;
         align-items: center;
         gap: $lh-spacing-sm;
         flex-shrink: 0;
-        padding-top: $lh-spacing-xs;  // 4px — slight visual lift so icons clear the edge
+        // 0.9.41: no extra top padding — header itself sits flush at the top now.
 
         // Moodle notification + message icons — neutral on white bg
         .nav-link,
@@ -407,7 +412,9 @@ $lh-bp-tablet:   768px;
 
 @media (max-width: #{$lh-bp-tablet - 1px}) {
     .lernhive-page-header {
-        padding: $lh-spacing-sm $lh-spacing-md;
+        // Match the desktop "flush at top" behaviour on mobile — icons hug the
+        // viewport edge, content below handles its own horizontal padding.
+        padding: 0 $lh-spacing-md $lh-spacing-xs;
 
         &__main h1 {
             font-size: $lh-font-size-lg;
@@ -548,6 +555,6 @@ $lh-bp-tablet:   768px;
         padding-right: $lh-spacing-sm;
     }
     .lernhive-page-header {
-        padding: $lh-spacing-xs $lh-spacing-sm;
+        padding: 0 $lh-spacing-sm $lh-spacing-xs;
     }
 }
