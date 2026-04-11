@@ -18,28 +18,25 @@
 }
 
 .lernhive-brand__link {
-    color: #fff;
-    font-size: $lh-font-size-xl;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
     display: block;
-    line-height: 1.2;
+    text-decoration: none;
+    line-height: 1;
 
-    &:hover {
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: none;
-    }
+    &:hover { opacity: 0.88; }
+    &:focus-visible { outline: 2px solid $lh-accent; outline-offset: 3px; border-radius: 4px; }
 }
 
-.lernhive-brand__meta {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: $lh-font-size-xs;
-    margin: 0.125rem 0 0;
-    white-space: nowrap;
+// SVG logo — white-tinted so it reads on the dark sidebar.
+// The SVG uses navy + orange fills; we invert to white via CSS filter on dark bg.
+.lernhive-brand__logo {
+    display: block;
+    width: 148px;
+    height: 30px;
+    // logo-sidebar.svg already has white "Lern" + orange "Hive" — no filter needed.
 
     @media (max-width: #{$lh-bp-desktop - 1px}) {
-        display: none;
+        width: 120px;
+        height: 24px;
     }
 }
 
