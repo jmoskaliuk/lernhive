@@ -3,6 +3,20 @@
 ## Feature summary
 LernHive visual layer and design system for a calm, guided Moodle experience.
 
+## Shipped features (current)
+- design tokens (color, typography, spacing, surfaces) — shipped 0.9.x
+- responsive left-oriented navigation (sidebar, horizontal nav on mobile) — shipped 0.9.x
+- six fixed block regions replacing the right-hand drawer — shipped 0.9.3
+- Launcher compact flyout (context-dependent quick-action grid) — shipped 0.9.x
+- Context Dock (floating action strip for Teacher/Trainer + Admin, fixed position) — shipped 0.9.21
+  - Course edit mode toggle (course pages, teacher role)
+  - Block editing toggle (all pages where user can edit blocks, 0.9.22)
+  - Participants / Gradebook / Course settings (course pages, teacher role)
+  - Site admin shortcut (non-admin pages, siteadmin role)
+  - CSS-only tooltips with progressive disclosure after 3 page visits
+  - Desktop: vertical pill at bottom of sidebar; Mobile: horizontal strip at bottom of screen
+- Admin layout using Moodle standard secondary navigation (admin.php, 0.9.20)
+
 ## Planned feature set
 - design tokens for color, typography, spacing, and surfaces
 - responsive layout with a left-oriented navigation model
@@ -38,6 +52,15 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
 - Launcher panel and action grouping
 - ContentHub entry screen
 - reporting tiles and calm dashboard treatment
+
+## Context Dock — persona scope
+
+| Persona | Release | Dock actions |
+|---|---|---|
+| Teacher/Trainer | R1 (current) | Edit mode, block editing, participants, gradebook, course settings |
+| Admin | R1 (current) | Site admin shortcut |
+| Student | Post-R1 | Progress overview, continue-learning shortcut |
+| Manager | Later | Course management, user enrolment, reporting |
 
 ## Acceptance direction
 - feature behaviour should be explicit and understandable

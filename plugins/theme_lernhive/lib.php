@@ -226,13 +226,14 @@ function theme_lernhive_get_context_dock_items(): array {
     $items = [];
     $layout = $PAGE->pagelayout;
 
+    $editingon = $PAGE->user_is_editing();
+
     // Course-scope actions — only when inside an actual course (id > 1).
     if ($COURSE->id > 1 && in_array($layout, ['course', 'incourse', 'report'], true)) {
         $coursecontext = context_course::instance($COURSE->id);
 
         if (has_capability('moodle/course:manageactivities', $coursecontext)) {
-            // Edit-mode toggle.
-            $editingon = $PAGE->user_is_editing();
+            // Course edit-mode toggle (activities + resources).
             $items[] = [
                 'key'     => 'edit_mode',
                 'icon'    => $editingon ? 'check' : 'pencil',
@@ -276,6 +277,28 @@ function theme_lernhive_get_context_dock_items(): array {
                 'divider' => false,
             ];
         }
+    }
+
+    // Block editing toggle — shown on any page where blocks can be edited
+    // (dashboard, frontpage, course pages, etc.). Separate from course edit mode
+    // because blocks exist in non-course contexts (e.g. /my/ dashboard) where
+    // there are no activities to edit. Both use $PAGE->user_is_editing() state
+    // because Moodle's edit preference covers both activity and block editing.
+    if ($PAGE->user_can_edit_blocks()) {
+        $blockediturl = new moodle_url($PAGE->url, [
+            'sesskey' => sesskey(),
+            'edit'    => $editingon ? 'off' : 'on',
+        ]);
+        $items[] = [
+            'key'     => 'block_editing',
+            'icon'    => $editingon ? 'th' : 'th-large',
+            'label'   => $editingon
+                    ? get_string('dockblocksoff', 'theme_lernhive')
+                    : get_string('dockblockson', 'theme_lernhive'),
+            'url'     => $blockediturl->out(false),
+            'active'  => $editingon,
+            'divider' => false,
+        ];
     }
 
     // Site-admin shortcut — only on non-admin pages so admins can jump quickly.

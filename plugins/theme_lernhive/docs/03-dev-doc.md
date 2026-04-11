@@ -32,6 +32,43 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - course/incourse layouts provide chrome only (header, sidebar, footer, block regions) — course content rendering moves to course format plugins per ADR-01
 - short-form Snack presentation is **not** owned by the theme; planned `format_lernhive_snack` plugin will own snack templates (0.10.0)
 
+## Context Dock (since 0.9.21)
+
+The Context Dock is a floating, fixed-position action strip for context-aware actions. It is rendered only by `drawers.php` / `drawers.mustache` — admin pages (`admin.php`) do not include it.
+
+### Files
+| File | Role |
+|---|---|
+| `lib.php` → `theme_lernhive_get_context_dock_items()` | Builds the dock items array from page context + user capabilities |
+| `layout/drawers.php` | Calls the function, passes `dockitems` + `hasdockitems` into template context |
+| `templates/context_dock.mustache` | Renders the dock; includes inline JS IIFE for progressive disclosure |
+| `scss/lernhive/_dock.scss` | All dock styles; registered in `get_extra_scss()` partials list |
+| `lang/en/theme_lernhive.php` | `contextdock`, `dockblockson`, `dockblocksoff` strings |
+
+### Dock items model
+Each item is a PHP associative array with keys: `key` (string), `icon` (FA4 class suffix), `label` (string), `url` (string), `active` (bool), `divider` (bool — adds separator line BEFORE this item).
+
+### Item decision table
+| Condition | Item(s) added |
+|---|---|
+| Course page + `moodle/course:manageactivities` | Edit mode toggle, Participants, Gradebook, Course settings |
+| `$PAGE->user_can_edit_blocks()` is true | Block editing toggle (any page, including dashboard) |
+| `is_siteadmin()` + layout ≠ admin | Site admin shortcut (with separator) |
+
+### Tooltip progressive disclosure
+Inline JS IIFE in `context_dock.mustache` increments `lh_dock_v1` in localStorage on each page load. After `MAX = 3` loads, adds class `.lh-dock--experienced` to the dock element, which hides all `.lh-dock__tooltip` elements via CSS. Safe fallback: if localStorage is blocked, tooltips remain always visible.
+
+### Future Dock items (deferred)
+- Student progress shortcut — requires progress data from `local_lernhive_flavour` or similar
+- Manager shortcuts — requires manager capability checks not yet defined
+- "Continue learning" button — requires tracking of last-accessed activity per user
+
+### Block editing vs. course edit mode
+Both "course edit mode" and "block editing" share the same Moodle user preference (`$USER->editing`, reflected by `$PAGE->user_is_editing()`). The dock shows them as distinct icons because:
+1. Block editing makes sense in non-course contexts (dashboard, frontpage) where there are no activities.
+2. Teachers benefit from a visual separation between "I am editing course content" and "I am editing block layout".
+The URLs use different base paths: course edit uses `/course/view.php?edit=on/off`, block editing uses `$PAGE->url?edit=on/off` (generic, works on any page).
+
 ## Block regions (since 0.9.3)
 
 The theme defines six fixed block regions on all content-bearing layouts (standard, course, incourse, frontpage, admin, mydashboard, report):
@@ -48,7 +85,7 @@ The theme defines six fixed block regions on all content-bearing layouts (standa
 **Legacy `side-pre` (right-hand collapsible drawer) has been removed** as of 0.9.3. Any blocks that were assigned to `side-pre` will become orphaned on upgrade — acceptable while LernHive stays in alpha.
 
 ### How the regions are wired
-- `config.php` declares the regions in `$THEME->layouts` via a shared `$lhregions` array, so every content-bearing layout gets the same set — no drift between `drawers`, `course`, and `admin`.
+- `config.php` declares the regions in `$THEME->layouts` via a shared `$lhregions` array, so every content-bearing layout gets the same set — no drift between `drawers`, `course`, and `report`. Admin pages use `admin.php` layout with no block regions (see ADR-04).
 - `lib.php` → `theme_lernhive_get_block_regions_context($OUTPUT)` renders each region's block HTML and builds has-flags in camel-lite keys (`contenttop`, `hascontenttop`, …, `hasfooterblocks`).
 - Each layout PHP file merges the region context into its template context via `array_merge`. This keeps the layout files focused on layout-specific context (launcher style, page header flags, body attributes).
 - Templates reference regions as `{{#hascontenttop}}…{{{ contenttop }}}…{{/hascontenttop}}`. A dedicated `theme_lernhive/footer` partial renders the footer row so drawers, course, and admin all share the same footer markup.

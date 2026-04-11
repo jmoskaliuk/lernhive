@@ -27,6 +27,7 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 - calm, touch-friendly page layouts
 - Launcher and helper surfaces as action-oriented UI
 - six predictable block regions (content-top, content-bottom, sidebar-bottom, footer-left/center/right) — no right-hand collapsible drawer
+- Context Dock — floating action strip for Teacher/Trainer and Admin contextual actions
 
 ## Out of scope — things the theme must NOT own
 - course content rendering (belongs in course format plugins — see Architecture decision ADR-01 below)
@@ -61,6 +62,52 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 - The course page no longer ships a hardcoded "Course helpers" aside; that space is now a standard `content-bottom` region that any plugin can populate via Moodle blocks.
 
 **Status.** Accepted and shipped in 0.9.3.
+
+## Architecture decision ADR-03 — Context Dock as the central action layer for Teacher/Trainer (2026-04-11, shipped in 0.9.21)
+
+**Decision.** Introduce a floating `Context Dock` — a fixed-position icon strip anchored at the bottom of the sidebar column on desktop, and a horizontal strip at the bottom of the screen on mobile. The Dock is the single surface for context-aware page actions. Initial scope covers Teacher/Trainer and Admin; Student and Manager come later.
+
+**Why.** Moodle's default "Blocks editing on" and page-action buttons appear as large text buttons at arbitrary positions in the page header or content area. This breaks reading flow and makes it hard to discover actions. A fixed, predictable action surface gives teachers a stable "home base" for actions regardless of which page they are on, and keeps the page header clean.
+
+**Actions in scope for 0.9.21–0.9.22:**
+
+| Context | Icon | Action |
+|---|---|---|
+| Course page (teacher) | pencil / ✓ | Course edit mode on/off |
+| Any page (edit capable) | th / th-large | Block editing on/off |
+| Course page (teacher) | users | Participants list |
+| Course page (teacher) | bar-chart | Gradebook |
+| Course page (teacher) | cog | Course settings |
+| Any non-admin page (admin) | shield | Site admin shortcut |
+
+**Actions deferred (Student, post-R1):** progress overview, continue-learning shortcut.
+**Actions deferred (Manager, later):** course management, user enrolment, reporting shortcuts.
+
+**Design rules.**
+- Dock is dark-themed (darker than sidebar) with backdrop-blur.
+- Tooltips appear on hover via CSS only — no JS required for baseline.
+- Progressive disclosure: JS IIFE counts page visits in localStorage; after 3 visits, tooltips are hidden (class `.lh-dock--experienced`). Reset on cache clear. Safe fallback when localStorage blocked.
+- Dock is NOT shown on admin pages (those use `admin.php` layout with full Moodle admin tree navigation).
+- Mobile: horizontal strip at bottom of screen, tooltip appears above the icon.
+
+**Consequences.**
+- The `regionmainsettingsmenu` (which currently renders "Blocks editing on" as a text button above page content) can be hidden in a follow-up once teachers confirm the Dock covers the same function.
+- The theme must not absorb business logic via the Dock — all items are simple URL links or toggle URLs, never custom AJAX handlers.
+
+**Status.** Accepted. Core shipped in 0.9.21 (Teacher course actions + Admin shortcut). Block editing added in 0.9.22.
+
+## Architecture decision ADR-04 — Admin layout uses admin.php, not drawers.php (2026-04-11, shipped in 0.9.20)
+
+**Decision.** The `admin` layout in `config.php` uses `admin.php` + `admin.mustache` (standard Moodle secondary navigation including the admin settings category tree), not `drawers.php` (LernHive app-shell with sidebar).
+
+**Why.** Admin pages need the Moodle admin settings category tree for navigation. The LernHive sidebar only shows Home / Dashboard / My Courses / Site Admin — not the settings sub-tree. Switching layout file restores full admin navigation at zero risk to learner/trainer UX.
+
+**Consequences.**
+- Admin pages have no LernHive block regions (no `content-top`, `content-bottom`, etc.).
+- Admin pages do not show the Context Dock (admin has its own native navigation tree).
+- `admin.mustache` uses `{{{ output.full_header }}}` which renders Moodle secondary navigation for admin context.
+
+**Status.** Accepted and shipped in 0.9.20.
 
 ## Release scope
 

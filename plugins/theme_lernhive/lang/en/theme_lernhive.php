@@ -42,8 +42,10 @@ $string['region-footer'] = 'Footer';
 $string['layoutoption_limitedwidth'] = 'Limited width';
 $string['privacy:metadata'] = 'The LernHive theme does not store any personal data.';
 
-// Context Dock (0.9.21) — floating action strip for contextual page actions.
-$string['contextdock'] = 'Context actions';
+// Context Dock (0.9.21+) — floating action strip for contextual page actions.
+$string['contextdock']  = 'Context actions';
+$string['dockblockson']  = 'Turn block editing on';
+$string['dockblocksoff'] = 'Turn block editing off';
 
 $string['launcher'] = 'Launcher';
 $string['launcherdesc'] = 'Quick actions for creating and managing content.';
