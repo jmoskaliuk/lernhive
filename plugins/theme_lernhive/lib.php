@@ -382,6 +382,14 @@ function theme_lernhive_get_admin_topnav($PAGE): array {
         return $empty;
     }
 
+    // Only render on actual admin pages (/admin/ URL path).
+    // Plugins registered as admin_externalpage (e.g. ContentHub) still use
+    // the admin layout but live under /local/ — they don't need the admin nav.
+    $pagepath = parse_url($PAGE->url->out(false), PHP_URL_PATH) ?? '';
+    if (strpos($pagepath, '/admin/') === false) {
+        return $empty;
+    }
+
     $adminroot = admin_get_root(false, false);
     if (!$adminroot) {
         return $empty;

@@ -324,12 +324,34 @@ $lh-bp-tablet:   768px;
         background: transparent;
         box-shadow: none;
     }
+
+    // Plugin Shell pages — strip the outer card so Zone A / Zone B sit
+    // directly on the page background. No "card in card".
+    // The :has() selector is supported in all evergreen browsers.
+    &:has(.lh-plugin-header) {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+    }
+}
+
+// Also remove the gap in .lernhive-page-content when a Plugin Shell is present
+// (avoids a gap between the sticky header and the page edge).
+.lernhive-page-content:has(.lh-plugin-header) {
+    gap: 0;
 }
 
 @media (max-width: #{$lh-bp-tablet - 1px}) {
     .lernhive-main {
         padding: $lh-spacing-md;
         border-radius: $lh-radius-sm;
+    }
+
+    .lernhive-main:has(.lh-plugin-header) {
+        padding: 0;
+        border-radius: 0;
     }
 }
 
