@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/testdata/db" VERSION="20241201" COMMENT="XMLDB file for local_testdata plugin">
+  <TABLES>
+    <TABLE NAME="local_testdata_sets" COMMENT="Tracking of generated test data sets">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="ID"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Dataset name"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" COMMENT="Dataset description"/>
+        <FIELD NAME="configjson" TYPE="text" NOTNULL="true" COMMENT="JSON configuration used"/>
+        <FIELD NAME="itemcount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Number of items in set"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Timestamp created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="name_idx" TYPE="unique" FIELDS="name"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="local_testdata_items" COMMENT="Individual items created by test data generator">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="ID"/>
+        <FIELD NAME="dataset" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Dataset name"/>
+        <FIELD NAME="entitytype" TYPE="char" LENGTH="50" NOTNULL="true" COMMENT="Entity type (course, user, question, etc.)"/>
+        <FIELD NAME="entityid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Moodle entity ID"/>
+        <FIELD NAME="entityname" TYPE="char" LENGTH="255" NOTNULL="false" COMMENT="Human-readable name"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Timestamp created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="dataset_idx" UNIQUE="false" FIELDS="dataset"/>
+        <INDEX NAME="entitytype_idx" UNIQUE="false" FIELDS="entitytype"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

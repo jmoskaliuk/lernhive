@@ -1,0 +1,178 @@
+{
+  "dataset": "leitnerflow_demo",
+  "description": "Demo-Daten für LeitnerFlow-Tests: 4 Kurse, 20 Teilnehmer, Fragen und Aktivitäten",
+  "users": [
+    {"username": "max.mueller", "firstname": "Max", "lastname": "Müller", "password": "Test1234!"},
+    {"username": "anna.schmidt", "firstname": "Anna", "lastname": "Schmidt", "password": "Test1234!"},
+    {"username": "lukas.weber", "firstname": "Lukas", "lastname": "Weber", "password": "Test1234!"},
+    {"username": "sophie.fischer", "firstname": "Sophie", "lastname": "Fischer", "password": "Test1234!"},
+    {"username": "leon.wagner", "firstname": "Leon", "lastname": "Wagner", "password": "Test1234!"},
+    {"username": "emma.becker", "firstname": "Emma", "lastname": "Becker", "password": "Test1234!"},
+    {"username": "felix.hoffmann", "firstname": "Felix", "lastname": "Hoffmann", "password": "Test1234!"},
+    {"username": "mia.schaefer", "firstname": "Mia", "lastname": "Schäfer", "password": "Test1234!"},
+    {"username": "paul.koch", "firstname": "Paul", "lastname": "Koch", "password": "Test1234!"},
+    {"username": "lena.bauer", "firstname": "Lena", "lastname": "Bauer", "password": "Test1234!"},
+    {"username": "tim.richter", "firstname": "Tim", "lastname": "Richter", "password": "Test1234!"},
+    {"username": "laura.klein", "firstname": "Laura", "lastname": "Klein", "password": "Test1234!"},
+    {"username": "jonas.wolf", "firstname": "Jonas", "lastname": "Wolf", "password": "Test1234!"},
+    {"username": "hannah.schroeder", "firstname": "Hannah", "lastname": "Schröder", "password": "Test1234!"},
+    {"username": "ben.neumann", "firstname": "Ben", "lastname": "Neumann", "password": "Test1234!"},
+    {"username": "lea.schwarz", "firstname": "Lea", "lastname": "Schwarz", "password": "Test1234!"},
+    {"username": "finn.braun", "firstname": "Finn", "lastname": "Braun", "password": "Test1234!"},
+    {"username": "marie.zimmermann", "firstname": "Marie", "lastname": "Zimmermann", "password": "Test1234!"},
+    {"username": "elias.hartmann", "firstname": "Elias", "lastname": "Hartmann", "password": "Test1234!"},
+    {"username": "clara.krueger", "firstname": "Clara", "lastname": "Krüger", "password": "Test1234!"}
+  ],
+  "courses": [
+    {
+      "fullname": "Mathematik Grundkurs",
+      "shortname": "mathe-gk",
+      "questions": [
+        {
+          "category": "Mathe Grundlagen",
+          "items": [
+            {"name": "Was ist 7 × 8?", "questiontext": "<p>Was ist 7 × 8?</p>", "answer": "56", "wrong": ["48", "54", "64"]},
+            {"name": "Quadratwurzel von 144", "questiontext": "<p>Was ist die Quadratwurzel von 144?</p>", "answer": "12", "wrong": ["11", "13", "14"]},
+            {"name": "15% von 200", "questiontext": "<p>Wie viel ist 15% von 200?</p>", "answer": "30", "wrong": ["20", "25", "35"]},
+            {"name": "3² + 4²", "questiontext": "<p>Was ergibt 3² + 4²?</p>", "answer": "25", "wrong": ["12", "14", "7"]},
+            {"name": "Kreisumfang-Formel", "questiontext": "<p>Wie lautet die Formel für den Kreisumfang?</p>", "answer": "2πr", "wrong": ["πr²", "2r", "πd²"]},
+            {"name": "GGT von 12 und 18", "questiontext": "<p>Was ist der GGT von 12 und 18?</p>", "answer": "6", "wrong": ["3", "9", "12"]},
+            {"name": "Rechter Winkel", "questiontext": "<p>Wie viele Grad hat ein rechter Winkel?</p>", "answer": "90", "wrong": ["45", "60", "180"]},
+            {"name": "(-3) × (-4)", "questiontext": "<p>Was ergibt (-3) × (-4)?</p>", "answer": "12", "wrong": ["-12", "-7", "7"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "leitnerflow",
+          "name": "LeitnerFlow: Mathe Grundlagen",
+          "section": 1,
+          "settings": {
+            "questioncategoryid": "$auto",
+            "sessionsize": 5,
+            "boxcount": 3,
+            "correcttolearn": 2,
+            "wrongbehavior": 0,
+            "questionrotation": 1,
+            "prioritystrategy": 0,
+            "grade": 100,
+            "grademethod": 1
+          }
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "Englisch Vokabeltrainer",
+      "shortname": "eng-vokab",
+      "questions": [
+        {
+          "category": "Englisch Vokabeln",
+          "items": [
+            {"name": "Schmetterling", "questiontext": "<p>What is \"Schmetterling\" in English?</p>", "answer": "butterfly", "wrong": ["dragonfly", "moth", "beetle"]},
+            {"name": "Kühlschrank", "questiontext": "<p>What is \"Kühlschrank\" in English?</p>", "answer": "refrigerator", "wrong": ["freezer", "microwave", "dishwasher"]},
+            {"name": "Wissenschaft", "questiontext": "<p>What is \"Wissenschaft\" in English?</p>", "answer": "science", "wrong": ["knowledge", "research", "wisdom"]},
+            {"name": "Krankenhaus", "questiontext": "<p>What is \"Krankenhaus\" in English?</p>", "answer": "hospital", "wrong": ["clinic", "pharmacy", "ambulance"]},
+            {"name": "Geschwindigkeit", "questiontext": "<p>What is \"Geschwindigkeit\" in English?</p>", "answer": "speed", "wrong": ["history", "story", "velocity"]},
+            {"name": "Umwelt", "questiontext": "<p>What is \"Umwelt\" in English?</p>", "answer": "environment", "wrong": ["surroundings", "nature", "world"]},
+            {"name": "Gleichung", "questiontext": "<p>What is \"Gleichung\" in English?</p>", "answer": "equation", "wrong": ["equality", "balance", "formula"]},
+            {"name": "Tastatur", "questiontext": "<p>What is \"Tastatur\" in English?</p>", "answer": "keyboard", "wrong": ["mouse", "monitor", "printer"]},
+            {"name": "Aufgabe", "questiontext": "<p>What is \"Aufgabe\" in English?</p>", "answer": "task", "wrong": ["gift", "question", "exam"]},
+            {"name": "Ergebnis", "questiontext": "<p>What is \"Ergebnis\" in English?</p>", "answer": "result", "wrong": ["event", "experience", "effort"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "leitnerflow",
+          "name": "LeitnerFlow: Englisch Vokabeln",
+          "section": 1,
+          "settings": {
+            "questioncategoryid": "$auto",
+            "sessionsize": 5,
+            "boxcount": 3,
+            "correcttolearn": 2,
+            "wrongbehavior": 1,
+            "questionrotation": 1,
+            "prioritystrategy": 1,
+            "grade": 100,
+            "grademethod": 1
+          }
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "Biologie Zellkunde",
+      "shortname": "bio-zelle",
+      "questions": [
+        {
+          "category": "Zellbiologie",
+          "items": [
+            {"name": "Kraftwerk der Zelle", "questiontext": "<p>Welches Organell ist das \"Kraftwerk\" der Zelle?</p>", "answer": "Mitochondrium", "wrong": ["Ribosom", "Zellkern", "Golgi-Apparat"]},
+            {"name": "Funktion Ribosomen", "questiontext": "<p>Was ist die Funktion der Ribosomen?</p>", "answer": "Proteinbiosynthese", "wrong": ["Zellatmung", "Fotosynthese", "DNA-Replikation"]},
+            {"name": "Kernmembran", "questiontext": "<p>Welche Struktur umgibt den Zellkern?</p>", "answer": "Kernmembran", "wrong": ["Zellwand", "Zellmembran", "Vakuole"]},
+            {"name": "DNA-Speicher", "questiontext": "<p>Was speichert die DNA?</p>", "answer": "Erbinformation", "wrong": ["Energie", "Proteine", "Wasser"]},
+            {"name": "Fotosynthese-Ort", "questiontext": "<p>In welchem Organell findet die Fotosynthese statt?</p>", "answer": "Chloroplast", "wrong": ["Mitochondrium", "Ribosom", "Lysosom"]},
+            {"name": "Vakuole-Funktion", "questiontext": "<p>Was ist die Hauptfunktion der Vakuole in Pflanzenzellen?</p>", "answer": "Speicherung", "wrong": ["Zellteilung", "Energieproduktion", "Bewegung"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "leitnerflow",
+          "name": "LeitnerFlow: Zellbiologie",
+          "section": 1,
+          "settings": {
+            "questioncategoryid": "$auto",
+            "sessionsize": 5,
+            "boxcount": 4,
+            "correcttolearn": 3,
+            "wrongbehavior": 0,
+            "questionrotation": 1,
+            "prioritystrategy": 0,
+            "grade": 100,
+            "grademethod": 1
+          }
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "Geschichte Moderne",
+      "shortname": "gesch-mod",
+      "questions": [
+        {
+          "category": "Moderne Geschichte",
+          "items": [
+            {"name": "Berliner Mauer", "questiontext": "<p>In welchem Jahr fiel die Berliner Mauer?</p>", "answer": "1989", "wrong": ["1987", "1990", "1991"]},
+            {"name": "Erster Bundeskanzler", "questiontext": "<p>Wer war der erste Bundeskanzler der BRD?</p>", "answer": "Konrad Adenauer", "wrong": ["Willy Brandt", "Ludwig Erhard", "Helmut Schmidt"]},
+            {"name": "EU-Gründung", "questiontext": "<p>Wann wurde die EU gegründet (Maastricht)?</p>", "answer": "1992", "wrong": ["1990", "1995", "1989"]},
+            {"name": "Erster Weltkrieg", "questiontext": "<p>Wann begann der Erste Weltkrieg?</p>", "answer": "1914", "wrong": ["1912", "1916", "1918"]},
+            {"name": "Ende Zweiter Weltkrieg", "questiontext": "<p>Wann endete der Zweite Weltkrieg in Europa?</p>", "answer": "1945", "wrong": ["1944", "1946", "1943"]},
+            {"name": "Ich bin ein Berliner", "questiontext": "<p>Wer hielt die Rede \"Ich bin ein Berliner\"?</p>", "answer": "John F. Kennedy", "wrong": ["Ronald Reagan", "Winston Churchill", "Willy Brandt"]}
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "leitnerflow",
+          "name": "LeitnerFlow: Moderne Geschichte",
+          "section": 1,
+          "settings": {
+            "questioncategoryid": "$auto",
+            "sessionsize": 5,
+            "boxcount": 3,
+            "correcttolearn": 2,
+            "wrongbehavior": 2,
+            "questionrotation": 1,
+            "prioritystrategy": 0,
+            "grade": 100,
+            "grademethod": 1
+          }
+        }
+      ],
+      "enrol": "$all_users"
+    }
+  ]
+}

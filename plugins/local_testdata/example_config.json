@@ -1,0 +1,98 @@
+{
+  "dataset": "demo_2024",
+  "description": "Demo dataset with sample courses and questions",
+  "users": [
+    {
+      "username": "max.mueller",
+      "firstname": "Max",
+      "lastname": "Müller",
+      "email": "max@example.com",
+      "password": "Test1234!"
+    },
+    {
+      "username": "anna.schmidt",
+      "firstname": "Anna",
+      "lastname": "Schmidt",
+      "email": "anna@example.com",
+      "password": "Test1234!"
+    },
+    {
+      "username": "thomas.weber",
+      "firstname": "Thomas",
+      "lastname": "Weber",
+      "email": "thomas@example.com",
+      "password": "Test1234!"
+    }
+  ],
+  "courses": [
+    {
+      "fullname": "Mathematik Grundkurs",
+      "shortname": "mathe-gk",
+      "category": 1,
+      "summary": "Introductory mathematics course with basic concepts and exercises",
+      "questions": [
+        {
+          "category": "Mathe Fragen",
+          "items": [
+            {
+              "name": "Simple Multiplication",
+              "questiontext": "<p>What is 7 × 8?</p>",
+              "answer": "56",
+              "wrong": ["48", "54", "64"]
+            },
+            {
+              "name": "Simple Division",
+              "questiontext": "<p>What is 100 ÷ 5?</p>",
+              "answer": "20",
+              "wrong": ["15", "25", "30"]
+            }
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "module": "quiz",
+          "name": "Math Quiz: Basics",
+          "section": 1,
+          "settings": {
+            "intro": "Test your basic math skills",
+            "introformat": 1,
+            "timeopen": 0,
+            "timeclose": 0,
+            "timelimit": 0,
+            "attempts": 0,
+            "grademethod": 1,
+            "grade": 100
+          }
+        }
+      ],
+      "enrol": "$all_users"
+    },
+    {
+      "fullname": "English Language Skills",
+      "shortname": "english-101",
+      "category": 1,
+      "summary": "Comprehensive English course covering vocabulary, grammar, and comprehension",
+      "questions": [
+        {
+          "category": "English Questions",
+          "items": [
+            {
+              "name": "Verb Tense",
+              "questiontext": "<p>Choose the correct form: 'I _____ to the store yesterday.'</p>",
+              "answer": "went",
+              "wrong": ["go", "goes", "going"]
+            },
+            {
+              "name": "Vocabulary",
+              "questiontext": "<p>What does 'benevolent' mean?</p>",
+              "answer": "Kind and generous",
+              "wrong": ["Angry and cruel", "Tall and strong", "Quick and smart"]
+            }
+          ]
+        }
+      ],
+      "enrol": "$all_users"
+    }
+  ]
+}
