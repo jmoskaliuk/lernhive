@@ -10,10 +10,10 @@
         {{/launcher}}
     {{/showlauncher}}
 
-    {{! Primary navigation — Dashboard, My Courses, Site admin, etc.
-        Moodle 5.x provides this via primary_nav(); flat_navigation is gone. }}
+    {{! Primary navigation — computed in drawers.php, passed as variable.
+        Never call output.primary_nav directly in Mustache — it can fail silently. }}
     <nav class="lernhive-nav" aria-label="{{#str}} primarynavigation, theme_lernhive {{/str}}">
-        {{{ output.primary_nav }}}
+        {{{ primarynav }}}
     </nav>
 
     {{! User menu — always visible so logged-in users can navigate and log out. }}

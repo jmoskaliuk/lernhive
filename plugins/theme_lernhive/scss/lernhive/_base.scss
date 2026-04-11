@@ -81,13 +81,12 @@ img {
 // they don't use the LernHive app-shell at all (see admin.mustache).
 
 // On non-admin pages: hide Moodle chrome that the LernHive shell replaces.
-// The primary-navigation is rendered INSIDE .lernhive-sidebar via primary_nav()
-// — so we un-hide it there with the rule below, while hiding it everywhere else.
+// NOTE: use simple specificity overrides — scssphp (Moodle's SCSS compiler)
+// does NOT support CSS Level 4 complex :not() selectors.
 
 body:not(.pagelayout-admin):not(.pagelayout-admincompact) {
-    // Hide the standalone primary-navigation Moodle renders outside our sidebar.
-    // The copy inside .lernhive-sidebar is un-hidden below.
-    .primary-navigation:not(.lernhive-sidebar .primary-navigation),
+    // Primary navigation — hidden globally; sidebar copy re-enabled below.
+    .primary-navigation,
     nav.moremenu {
         display: none !important;
     }
@@ -111,10 +110,10 @@ body:not(.pagelayout-admin):not(.pagelayout-admincompact) {
     }
 }
 
-// Un-hide primary-navigation when it lives inside the LernHive sidebar.
+// Un-hide primary-navigation inside the sidebar.
+// Higher specificity (0,2,0) beats the global hide rule (0,1,0) — no :not() needed.
 .lernhive-sidebar .primary-navigation {
     display: block !important;
-    // Remove Boost's default horizontal-tab styling.
     background: transparent;
     border: none;
     padding: 0;

@@ -22,9 +22,19 @@ $plainmaincontent = trim(str_replace(['&nbsp;', "\xc2\xa0"], '', html_entity_dec
 $hasmaincontent = $plainmaincontent !== '';
 $isfrontpage = $PAGE->pagelayout === 'frontpage';
 $showlauncher = isloggedin() && !isguestuser();
-// Always show the page header so breadcrumb/context-title is visible.
-// User menu is now in the sidebar (always accessible).
 $showpageheader = true;
+
+// Primary navigation — computed in PHP so the Mustache partial never calls
+// output.primary_nav directly (avoids silent failures if method signature changes).
+$primarynav = '';
+try {
+    if (method_exists($OUTPUT, 'primary_nav')) {
+        $primarynav = $OUTPUT->primary_nav();
+    }
+} catch (Throwable $e) {
+    // Navigation not available — sidebar still renders without it.
+    $primarynav = '';
+}
 
 $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
@@ -46,6 +56,8 @@ $templatecontext = array_merge([
     'maincontent' => $maincontent,
     'hasmaincontent' => $hasmaincontent,
     'isfrontpage' => $isfrontpage,
+    'primarynav' => $primarynav,
+    'hasprimarynav' => !empty(trim(strip_tags($primarynav))),
 ], $blockregions);
 
 echo $OUTPUT->render_from_template('theme_lernhive/drawers', $templatecontext);
