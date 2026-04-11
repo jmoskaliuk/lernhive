@@ -15,35 +15,44 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy provider for local_lernhive_contenthub.
+ * Catalog source for local_lernhive_library.
  *
- * ContentHub is a stateless entry UI. It does not store any personal
- * data at all — not in the DB, not in user preferences, not in files.
- * We therefore implement the Moodle null_provider which simply tells
- * the Privacy API that there is nothing to export or delete.
- *
- * @package    local_lernhive_contenthub
+ * @package    local_lernhive_library
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_lernhive_contenthub\privacy;
+namespace local_lernhive_library;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Null privacy provider.
+ * Placeholder catalog provider.
+ *
+ * Release 1 does not yet connect to eLeDia's managed catalog backend;
+ * this class returns an empty list so the page renders the empty
+ * state. Tests can inject fake entries via the constructor, which
+ * keeps `catalog_page` testable without touching the network.
  */
-class provider implements
-    \core_privacy\local\metadata\null_provider {
+class catalog {
 
     /**
-     * Get the language string identifier that describes why this plugin
-     * stores no personal data.
-     *
-     * @return string
+     * @param catalog_entry[] $entries Optional seed list (for tests).
      */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
+    public function __construct(private readonly array $entries = []) {
+    }
+
+    /**
+     * @return catalog_entry[]
+     */
+    public function all(): array {
+        return $this->entries;
+    }
+
+    /**
+     * @return bool
+     */
+    public function is_empty(): bool {
+        return empty($this->entries);
     }
 }

@@ -1,0 +1,62 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_lernhive_copy/wizard_page
+
+    Copy wizard entry page — two mode tiles plus a placeholder notice.
+
+    Context:
+    {
+        "istemplate": false,
+        "heading": "Copy a course",
+        "intro": "Pick an existing course.",
+        "mode_simple": "Simple",
+        "mode_simple_desc": "Copy structure only.",
+        "mode_expert": "Expert",
+        "mode_expert_desc": "Full backup/restore flow.",
+        "cta_simple": "Start simple copy",
+        "cta_expert": "Open expert mode",
+        "notice": "Under construction."
+    }
+}}
+<div class="lh-copy-container{{#istemplate}} lh-copy-container--template{{/istemplate}}">
+    <div class="lh-copy-intro">
+        <h2>{{heading}}</h2>
+        <p>{{intro}}</p>
+    </div>
+
+    <div class="lh-copy-modes" role="list">
+        <div class="lh-copy-mode lh-copy-mode--simple" role="listitem">
+            <h3 class="lh-copy-mode-title">{{mode_simple}}</h3>
+            <p class="lh-copy-mode-desc">{{mode_simple_desc}}</p>
+            <button type="button" class="btn btn-primary disabled" disabled aria-disabled="true">
+                {{cta_simple}}
+            </button>
+        </div>
+        <div class="lh-copy-mode lh-copy-mode--expert" role="listitem">
+            <h3 class="lh-copy-mode-title">{{mode_expert}}</h3>
+            <p class="lh-copy-mode-desc">{{mode_expert_desc}}</p>
+            <button type="button" class="btn btn-secondary disabled" disabled aria-disabled="true">
+                {{cta_expert}}
+            </button>
+        </div>
+    </div>
+
+    <div class="lh-copy-notice" role="note">
+        {{notice}}
+    </div>
+</div>

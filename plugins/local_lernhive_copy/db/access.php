@@ -15,24 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ContentHub plugin version and dependencies.
+ * Capability definitions for local_lernhive_copy.
  *
- * ContentHub is the unified entry UI for content creation. It orchestrates
- * copy, template, library and (later) AI-backed creation — but contains
- * no business logic of its own. Each card delegates to a sibling plugin.
+ * Whoever can create a course should also be able to use the copy
+ * wizard — the underlying backup/restore operations still enforce
+ * Moodle's own fine-grained capabilities on top.
  *
- * @package    local_lernhive_contenthub
+ * @package    local_lernhive_copy
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_contenthub';
-$plugin->version   = 2026041000;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = [
-    'local_lernhive' => 2026040901,
+$capabilities = [
+    'local/lernhive_copy:use' => [
+        'riskbitmask'  => RISK_SPAM,
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes'   => [
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator'  => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
+        ],
+        'clonepermissionsfrom' => 'moodle/course:create',
+    ],
 ];

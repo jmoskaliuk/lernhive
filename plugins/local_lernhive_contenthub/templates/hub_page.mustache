@@ -1,0 +1,84 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_lernhive_contenthub/hub_page
+
+    ContentHub entry page — one card per content path.
+
+    Context:
+    {
+        "heading": "How would you like to start?",
+        "intro": "Pick one of the content paths below.",
+        "cards": [
+            {
+                "key": "copy",
+                "title": "Copy",
+                "description": "Reuse an existing course.",
+                "cta": "Copy a course",
+                "icon": "📄",
+                "url": "/local/lernhive_copy/index.php",
+                "hasurl": true,
+                "status": "available",
+                "available": true,
+                "coming_soon": false,
+                "unavailable": false,
+                "statuslabel": "Available"
+            }
+        ]
+    }
+}}
+<div class="lh-contenthub-container">
+    <div class="lh-contenthub-intro">
+        <h2>{{heading}}</h2>
+        <p>{{intro}}</p>
+    </div>
+
+    <div class="lh-contenthub-cards" role="list">
+        {{#cards}}
+            <div class="lh-contenthub-card lh-contenthub-card--{{status}}"
+                 role="listitem"
+                 data-card-key="{{key}}">
+
+                {{^available}}
+                    <span class="lh-contenthub-badge lh-contenthub-badge--{{status}}">
+                        {{statuslabel}}
+                    </span>
+                {{/available}}
+
+                <div class="lh-contenthub-icon" aria-hidden="true">{{icon}}</div>
+                <h3 class="lh-contenthub-title">{{title}}</h3>
+                <p class="lh-contenthub-desc">{{description}}</p>
+
+                {{#hasurl}}
+                    <a class="btn btn-primary lh-contenthub-cta" href="{{url}}">
+                        {{cta}}
+                    </a>
+                {{/hasurl}}
+                {{^hasurl}}
+                    <button
+                        type="button"
+                        class="btn btn-secondary lh-contenthub-cta disabled"
+                        disabled
+                        aria-disabled="true"
+                    >
+                        {{cta}}
+                    </button>
+                {{/hasurl}}
+            </div>
+        {{/cards}}
+    </div>
+</div>

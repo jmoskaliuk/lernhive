@@ -15,7 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive ContentHub library.
+ * ContentHub plugin library.
+ *
+ * Intentionally almost empty: ContentHub is orchestration only, and
+ * all rendering goes through the output renderer. Any future Moodle
+ * callback hooks (e.g. navigation extension) belong here.
  *
  * @package    local_lernhive_contenthub
  * @copyright  2026 LernHive.de
@@ -23,4 +27,3 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-

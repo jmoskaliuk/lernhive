@@ -15,24 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ContentHub plugin version and dependencies.
+ * Plugin-specific Behat step definitions — reserved placeholder.
  *
- * ContentHub is the unified entry UI for content creation. It orchestrates
- * copy, template, library and (later) AI-backed creation — but contains
- * no business logic of its own. Each card delegates to a sibling plugin.
+ * ContentHub's R1 Behat feature only uses core navigation steps, so
+ * no plugin-specific definitions are needed yet. The class exists as
+ * an anchor point for future helpers (e.g. once the launcher plugin
+ * lets a non-admin reach the hub directly and we need a page resolver).
  *
  * @package    local_lernhive_contenthub
+ * @category   test
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
-$plugin->component = 'local_lernhive_contenthub';
-$plugin->version   = 2026041000;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = [
-    'local_lernhive' => 2026040901,
-];
+/**
+ * Reserved placeholder — intentionally empty, extends behat_base so
+ * Moodle's Behat loader is happy without contributing new steps.
+ */
+class behat_local_lernhive_contenthub extends behat_base {
+}

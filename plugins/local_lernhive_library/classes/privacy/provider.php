@@ -15,24 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * ContentHub plugin version and dependencies.
+ * Privacy provider for local_lernhive_library.
  *
- * ContentHub is the unified entry UI for content creation. It orchestrates
- * copy, template, library and (later) AI-backed creation — but contains
- * no business logic of its own. Each card delegates to a sibling plugin.
- *
- * @package    local_lernhive_contenthub
+ * @package    local_lernhive_library
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_lernhive_library\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_contenthub';
-$plugin->version   = 2026041000;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.0';
-$plugin->dependencies = [
-    'local_lernhive' => 2026040901,
-];
+/**
+ * Null privacy provider — the plugin stores no personal data in R1.
+ *
+ * When per-user catalog favourites or "recently imported" history
+ * land in R2, replace this with a real metadata provider BEFORE the
+ * data-touching code ships.
+ */
+class provider implements
+    \core_privacy\local\metadata\null_provider {
+
+    /**
+     * @return string
+     */
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}

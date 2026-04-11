@@ -15,7 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * English language strings for LernHive ContentHub.
+ * English strings for local_lernhive_contenthub.
+ *
+ * String policy (see AGENTS.md "String rules"):
+ *   - reuse Moodle core strings when semantically correct
+ *   - only add plugin-specific strings for LernHive product terms
+ *     (ContentHub, Snack, Template, Library, ...)
+ *   - the plugin's labels are intentionally English-first
  *
  * @package    local_lernhive_contenthub
  * @copyright  2026 LernHive.de
@@ -24,23 +30,50 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'ContentHub';
-$string['privacy:null_reason'] = 'The LernHive ContentHub plugin does not store personal data.';
+// Plugin identity.
+$string['pluginname'] = 'LernHive ContentHub';
 
-$string['tileseparate'] = 'Separate responsibility';
-$string['tiletemplatetag'] = 'Separate concept';
-$string['tilelibrarytag'] = 'Managed import';
+// Capabilities (db/access.php).
+$string['lernhive_contenthub:view'] = 'View the LernHive ContentHub entry page';
 
-$string['tilecopytitle'] = 'Copy';
-$string['tilecopysummary'] = 'Reuse an existing course from the current Moodle system with a simple guided flow.';
-$string['tilecopyaction'] = 'Open copy flow';
+// Admin tree.
+$string['open_hub'] = 'Open ContentHub';
+$string['settings_title'] = 'ContentHub settings';
+$string['setting_show_ai_card'] = 'Show AI card';
+$string['setting_show_ai_card_desc'] = 'Show the AI draft card on the ContentHub entry page. The card is always rendered as "Coming soon" in Release 1 — enable it to preview the R2 direction or disable it to keep the hub focused on the three shipping paths.';
 
-$string['tiletemplatetitle'] = 'Template';
-$string['tiletemplatesummary'] = 'Start from a predefined structure. Templates remain conceptually different from managed Library content.';
-$string['tiletemplateaction'] = 'Choose template';
+// Page.
+$string['page_title'] = 'ContentHub';
+$string['page_heading'] = 'How would you like to start?';
+$string['page_intro'] = 'Pick one of the content paths below. ContentHub only guides you to the right starting point — the actual work happens in the matching LernHive plugin.';
 
-$string['tilelibrarytitle'] = 'Library';
-$string['tilelibrarysummary'] = 'Import managed .mbz content. Release 1 does not require a complex end-user library management interface.';
-$string['tilelibrarynote'] = 'Version visibility matters, but Release 1 keeps it limited and practical.';
-$string['tilelibraryaction'] = 'Import from library';
+// Card: Copy.
+$string['card_copy_title'] = 'Copy';
+$string['card_copy_desc'] = 'Reuse an existing course from your site as a starting point.';
+$string['card_copy_cta'] = 'Copy a course';
 
+// Card: Template.
+$string['card_template_title'] = 'Template';
+$string['card_template_desc'] = 'Start from a predefined course structure curated for your flavour.';
+$string['card_template_cta'] = 'Use a template';
+
+// Card: Library.
+$string['card_library_title'] = 'Library';
+$string['card_library_desc'] = 'Import a ready-to-use course from the managed LernHive library.';
+$string['card_library_cta'] = 'Open the library';
+
+// Card: AI.
+$string['card_ai_title'] = 'AI draft';
+$string['card_ai_desc'] = 'Generate a first draft with AI assistance. This path arrives in a later release.';
+$string['card_ai_cta'] = 'Preview AI path';
+
+// Card status.
+$string['status_available'] = 'Available';
+$string['status_coming_soon'] = 'Coming soon';
+$string['status_unavailable'] = 'Unavailable — plugin not installed';
+
+// Errors & access.
+$string['err_no_access'] = 'You are not allowed to use ContentHub.';
+
+// Privacy.
+$string['privacy:metadata'] = 'The LernHive ContentHub plugin does not store any personal data. It only renders a unified entry screen and delegates all actions to sibling plugins.';

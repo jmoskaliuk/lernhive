@@ -15,7 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Minimal ContentHub entry page for Release 1.
+ * ContentHub entry page.
+ *
+ * Dual-mode access:
+ *   - Site admins reach it as an admin_externalpage registered in
+ *     settings.php (shows inside the admin tree with the full breadcrumb).
+ *   - Non-admin users (teachers, course creators) reach it directly and
+ *     see it as a standalone site page.
  *
  * @package    local_lernhive_contenthub
  * @copyright  2026 LernHive.de
@@ -23,20 +29,31 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->libdir . '/adminlib.php');
 
-require_login();
+use local_lernhive_contenthub\output\hub_page;
 
-$systemcontext = context_system::instance();
-$PAGE->set_context($systemcontext);
-$PAGE->set_url(new moodle_url('/local/lernhive_contenthub/index.php'));
-$PAGE->set_pagelayout('standard');
-$PAGE->set_title(get_string('pluginname', 'local_lernhive_contenthub'));
-$PAGE->set_heading(get_string('pluginname', 'local_lernhive_contenthub'));
+$context = \core\context\system::instance();
 
-$contenthub = new \local_lernhive_contenthub\output\contenthub();
+// Non-admins don't go through admin_externalpage_setup — they'd be
+// bounced. We route admins through the admin tree and everyone else
+// through a direct page so the hub is reachable from the launcher too.
+if (is_siteadmin()) {
+    admin_externalpage_setup('local_lernhive_contenthub_hub');
+} else {
+    require_login();
+    require_capability('local/lernhive_contenthub:view', $context);
+
+    $PAGE->set_context($context);
+    $PAGE->set_url(new moodle_url('/local/lernhive_contenthub/index.php'));
+    $PAGE->set_pagelayout('standard');
+    $PAGE->set_title(get_string('page_title', 'local_lernhive_contenthub'));
+    $PAGE->set_heading(get_string('page_title', 'local_lernhive_contenthub'));
+}
+
+/** @var \local_lernhive_contenthub\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('local_lernhive_contenthub');
 
 echo $OUTPUT->header();
-echo $renderer->render_contenthub($contenthub);
+echo $renderer->render_hub_page(new hub_page());
 echo $OUTPUT->footer();
-

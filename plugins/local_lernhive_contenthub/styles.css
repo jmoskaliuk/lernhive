@@ -1,0 +1,132 @@
+/*
+ * This file is part of Moodle - http://moodle.org/
+ *
+ * Moodle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moodle is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+/*
+ * LernHive ContentHub — entry page styles.
+ *
+ * All rules are scoped to .lh-contenthub-* so the plugin cannot leak
+ * styling into theme components. Business logic stays in PHP; CSS
+ * only handles layout and visual states.
+ */
+
+.lh-contenthub-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+
+.lh-contenthub-intro {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.lh-contenthub-intro h2 {
+    margin-bottom: 12px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.lh-contenthub-intro p {
+    color: #555;
+    font-size: 16px;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.lh-contenthub-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.lh-contenthub-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .06);
+    display: flex;
+    flex-direction: column;
+    min-height: 240px;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.lh-contenthub-card--available:hover,
+.lh-contenthub-card--available:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .09);
+}
+
+.lh-contenthub-card--coming_soon,
+.lh-contenthub-card--unavailable {
+    opacity: .72;
+}
+
+.lh-contenthub-icon {
+    font-size: 40px;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.lh-contenthub-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.lh-contenthub-desc {
+    margin: 0 0 20px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+.lh-contenthub-cta {
+    align-self: flex-start;
+}
+
+.lh-contenthub-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.lh-contenthub-badge--coming_soon {
+    background: #fff4d6;
+    color: #8a6200;
+}
+
+.lh-contenthub-badge--unavailable {
+    background: #fde2e2;
+    color: #8a1a1a;
+}
+
+/* Mobile: stack cards, tighter spacing. */
+@media (max-width: 600px) {
+    .lh-contenthub-container {
+        margin: 16px auto;
+    }
+    .lh-contenthub-card {
+        min-height: auto;
+        padding: 20px;
+    }
+}
