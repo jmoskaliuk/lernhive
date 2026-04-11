@@ -8,10 +8,10 @@
   which sibling plugins are installed in the test environment
 - built the renderable + renderer + mustache template
 - wired the entry page (dual admin / standard layout)
-- added `.github/workflows/moodle-plugin-ci.yml` so every push / PR
-  touching the plugin runs the full moodle-plugin-ci matrix
-- the existing repo-wide `deploy-hetzner.yml` already picks the plugin
-  up via its `plugins/**` path filter on merge to `main`
+- the existing repo-wide `deploy-hetzner.yml` picks the plugin up
+  via its `plugins/**` path filter on merge to `main` and runs the
+  Moodle upgrade + cache purge inside the container; for R1 this is
+  the canonical CI gate
 - PHPUnit tests: `card_test.php` (value object shape + interactivity
   gating) and `card_registry_test.php` (install-detection matrix,
   AI card toggle, stable ordering) — all via the injected detector
@@ -24,7 +24,20 @@
 - scaffolded `local_lernhive_copy` and `local_lernhive_library` as
   sibling plugins (stub + R1 skeleton) so the Copy, Template, and
   Library cards resolve to a real page instead of "Unavailable"
-- extended the CI workflow matrix to cover all three plugins
+
+## Done (2026-04-11)
+- shipped commit `9475cf5` with the full R1 hub page, sibling
+  scaffolds and version metadata
+- follow-up commit `2ab4cbf`:
+  - bumped `contenthub/version.php` to `2026041002` after discovering
+    that the rewrite in `9475cf5` had accidentally downgraded the
+    version from `2026041001` → `2026041000`, blocking upgrade
+  - bumped `copy` and `library` to the same version and synced their
+    `$plugin->dependencies['local_lernhive_contenthub']` reference
+  - removed `.github/workflows/moodle-plugin-ci.yml`: the dedicated
+    moodle-plugin-ci matrix would block R1 iteration with warnings
+    that are not worth fixing before the plugin has stabilised.
+    `deploy-hetzner.yml` stays as the sole automated gate.
 
 ## Confirmed decisions (2026-04-10)
 - **Copy plugin entry URL**: `/local/lernhive_copy/index.php` (default)

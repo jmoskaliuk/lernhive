@@ -79,10 +79,14 @@ telemetry or personalization), the provider must be upgraded to a
 real metadata provider **before** the tracking code ships.
 
 ## CI & deployment
-- `.github/workflows/moodle-plugin-ci.yml` runs moodle-plugin-ci
-  against this plugin on every push / PR touching
-  `plugins/local_lernhive_contenthub/**`.
-- `.github/workflows/deploy-hetzner.yml` (existing, repo-wide) deploys
-  the plugin to the Hetzner staging server on push to `main`.
-- There is intentionally no local Docker / Orb deploy step for this
-  plugin — GitHub Actions is the canonical deploy path.
+- `.github/workflows/deploy-hetzner.yml` (repo-wide) deploys all
+  plugins to `dev.lernhive.de` on every push to `main` that touches
+  `plugins/**`. It rsyncs into the container, runs
+  `admin/cli/upgrade.php` and `admin/cli/purge_caches.php`, and fails
+  the run if either exits non-zero. This is the R1 CI gate.
+- Local deployment to the OrbStack dev Moodle is done via the
+  `moodle-deploy` skill / `playbooks/deploy.sh` (see `01-workflow` in
+  the framework docs).
+- A dedicated `moodle-plugin-ci` matrix (phpcs, phpunit, behat) is
+  deliberately deferred until the plugin stabilises — see
+  `05-quality.md` for the rationale.
