@@ -28,57 +28,17 @@ $showlauncher = isloggedin() && !isguestuser();
 // already anchors the identity; a header bar here just looks empty.
 $showpageheader = !$isfrontpage;
 
-// Note: primary navigation is rendered via a manual navitems array (see below)
-// rather than output.primary_nav, which returned empty in Moodle 5.x for unknown
-// reasons. This approach gives full control over items and active states.
+// Note: primary navigation is rendered via a manual navitems array rather than
+// output.primary_nav, which returned empty in Moodle 5.x for unknown reasons.
+// The canonical builder lives in lib.php as theme_lernhive_get_primary_navitems()
+// so all layouts share the exact same list (see 0.9.43 DRY refactor).
 
 $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
 $launchercontext['launcherisdock'] = $launcherstyle === 'dock';
 
-// Build primary navigation items manually.
-// Moodle's output.primary_nav() returned empty in our layout context — bypassing
-// by constructing items directly from Moodle URL helpers.
-$navitems = [];
-
-// Home — always visible.
-$navitems[] = [
-    'url'      => (new moodle_url('/'))->out(false),
-    'text'     => get_string('home'),
-    'key'      => 'home',
-    'isactive' => ($PAGE->pagelayout === 'frontpage'),
-    'faicon'   => 'home',
-];
-
-if (isloggedin() && !isguestuser()) {
-    // Dashboard.
-    $navitems[] = [
-        'url'      => (new moodle_url('/my/'))->out(false),
-        'text'     => get_string('myhome'),
-        'key'      => 'myhome',
-        'isactive' => ($PAGE->pagelayout === 'mydashboard'),
-        'faicon'   => 'tachometer',
-    ];
-    // My Courses.
-    $navitems[] = [
-        'url'      => (new moodle_url('/my/courses.php'))->out(false),
-        'text'     => get_string('mycourses'),
-        'key'      => 'mycourses',
-        'isactive' => ($PAGE->pagelayout === 'mycourses'),
-        'faicon'   => 'graduation-cap',
-    ];
-}
-
-if (is_siteadmin()) {
-    // Site Administration.
-    $navitems[] = [
-        'url'      => (new moodle_url('/admin/index.php'))->out(false),
-        'text'     => get_string('administrationsite'),
-        'key'      => 'siteadmin',
-        'isactive' => ($PAGE->pagelayout === 'admin'),
-        'faicon'   => 'cog',
-    ];
-}
+// Primary navigation — single source of truth in lib.php.
+$navitems = theme_lernhive_get_primary_navitems($PAGE);
 
 $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
 

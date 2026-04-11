@@ -59,6 +59,7 @@ $string['launcherpending'] = 'Launcher routes will become interactive when the o
 
 $string['exploreoptional'] = 'Explore replaces Dashboard only in the optional LXP Flavour.';
 $string['primarynavigation'] = 'Primary navigation';
+$string['coursenavigation'] = 'Course navigation';
 $string['flavourpriority'] = 'Priority Flavours';
 $string['flavourprioritydesc'] = 'School and the optional LXP Flavour are the current priority starting points.';
 $string['exploreranking'] = 'Explore ranking principles';

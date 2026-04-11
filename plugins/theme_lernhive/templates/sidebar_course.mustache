@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    @template theme_lernhive/sidebar_course
+
+    Course-page sidebar variant. Renders a reduced primary navigation
+    ("Standard-Kürzel": Dashboard, My Courses, Explore) followed by a divider
+    and the core Moodle course index (sections + activities). See
+    theme_lernhive_get_course_sidebar_context() in lib.php for the context
+    builder and the whitelist of primary-nav keys that survive on course pages.
+
+    Context variables required for this template:
+    * config.wwwroot       — for the brand link
+    * coursesidebar        — context returned by the helper:
+        * reducednavitems  — array of {url, text, key, isactive, faicon}
+        * hascourseindex   — bool
+        * courseindex      — pre-rendered HTML string
+        * primarynavlabel  — aria-label for the reduced primary nav
+        * coursenavlabel   — aria-label for the course navigation region
+    * hassidebarbottom / sidebarbottom — shared sidebar block region
+}}
+<aside class="lernhive-sidebar lernhive-sidebar--course">
+    <div class="lernhive-brand">
+        <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link" aria-label="LernHive — Home">
+            <img src="{{{ config.wwwroot }}}/theme/lernhive/pix/logo-sidebar.svg"
+                 alt="LernHive"
+                 class="lernhive-brand__logo"
+                 width="148"
+                 height="30">
+        </a>
+    </div>
+
+    {{! Reduced primary navigation — Standard-Kürzel (Dashboard, My Courses, Explore). }}
+    <nav class="lernhive-nav lernhive-nav--reduced" aria-label="{{ coursesidebar.primarynavlabel }}">
+        <ul class="lernhive-nav__list">
+            {{#coursesidebar.reducednavitems}}
+            <li class="lernhive-nav__item">
+                <a class="lernhive-nav__link{{#isactive}} lernhive-nav__link--active{{/isactive}}"
+                   href="{{ url }}"{{#isactive}} aria-current="page"{{/isactive}}>
+                    <i class="fa fa-{{ faicon }}" aria-hidden="true"></i>
+                    <span class="lernhive-nav__text">{{ text }}</span>
+                </a>
+            </li>
+            {{/coursesidebar.reducednavitems}}
+        </ul>
+    </nav>
+
+    {{#coursesidebar.hascourseindex}}
+        {{! Divider between primary nav and course navigation. role=separator
+            so assistive tech announces the boundary between the two nav surfaces. }}
+        <hr class="lernhive-nav__divider" role="separator" aria-orientation="horizontal">
+
+        <nav class="lernhive-course-index" aria-label="{{ coursesidebar.coursenavlabel }}">
+            <h2 class="lernhive-course-index__heading">{{ coursesidebar.coursenavlabel }}</h2>
+            <div class="lernhive-course-index__body">
+                {{{ coursesidebar.courseindex }}}
+            </div>
+        </nav>
+    {{/coursesidebar.hascourseindex}}
+
+    {{#hassidebarbottom}}
+        <div class="lernhive-sidebar__blocks" data-region="sidebar-bottom" aria-label="{{#str}} region-sidebar-bottom, theme_lernhive {{/str}}">
+            {{{ sidebarbottom }}}
+        </div>
+    {{/hassidebarbottom}}
+</aside>

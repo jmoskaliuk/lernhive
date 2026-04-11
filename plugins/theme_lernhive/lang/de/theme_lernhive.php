@@ -60,6 +60,7 @@ $string['launcherpending'] = 'Launcher-Ziele werden interaktiv, sobald die zugeh
 // Explore.
 $string['exploreoptional'] = 'Explore ersetzt das Dashboard nur im optionalen LXP-Flavour.';
 $string['primarynavigation'] = 'Hauptnavigation';
+$string['coursenavigation'] = 'Kursnavigation';
 $string['flavourpriority'] = 'Priorisierte Flavours';
 $string['flavourprioritydesc'] = 'School und das optionale LXP-Flavour sind aktuell die wichtigsten Startpunkte.';
 $string['exploreranking'] = 'Explore-Ranking-Prinzipien';

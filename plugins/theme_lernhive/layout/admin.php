@@ -28,43 +28,10 @@ $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
 $launchercontext['launcherisdock'] = $launcherstyle === 'dock';
 
-// Build primary navigation items (same logic as drawers.php).
-$navitems = [];
-
-$navitems[] = [
-    'url'      => (new moodle_url('/'))->out(false),
-    'text'     => get_string('home'),
-    'key'      => 'home',
-    'isactive' => false,
-    'faicon'   => 'home',
-];
-
-if (isloggedin() && !isguestuser()) {
-    $navitems[] = [
-        'url'      => (new moodle_url('/my/'))->out(false),
-        'text'     => get_string('myhome'),
-        'key'      => 'myhome',
-        'isactive' => false,
-        'faicon'   => 'tachometer',
-    ];
-    $navitems[] = [
-        'url'      => (new moodle_url('/my/courses.php'))->out(false),
-        'text'     => get_string('mycourses'),
-        'key'      => 'mycourses',
-        'isactive' => false,
-        'faicon'   => 'graduation-cap',
-    ];
-}
-
-if (is_siteadmin()) {
-    $navitems[] = [
-        'url'      => (new moodle_url('/admin/index.php'))->out(false),
-        'text'     => get_string('administrationsite'),
-        'key'      => 'siteadmin',
-        'isactive' => true,   // always active on admin pages
-        'faicon'   => 'cog',
-    ];
-}
+// Primary navigation — single source of truth in lib.php.
+// theme_lernhive_get_primary_navitems() uses $PAGE->pagelayout for the
+// active-state, so the admin item lights up on any page with layout=admin.
+$navitems = theme_lernhive_get_primary_navitems($PAGE);
 
 // User header context: avatar → profile link, language menu, logout.
 $userheaderctx = theme_lernhive_get_header_user_context($OUTPUT);

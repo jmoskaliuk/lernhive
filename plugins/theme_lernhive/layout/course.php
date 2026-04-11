@@ -28,6 +28,21 @@ $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
 // Header Dock — unified side-panel system (0.9.36).
 $sidepanelitems = theme_lernhive_get_sidepanel_items();
 
+// User header context (avatar → profile, language menu, logout) — same helper
+// drawers.php uses, shared across layouts for consistent header chrome.
+$userheaderctx = theme_lernhive_get_header_user_context($OUTPUT);
+
+// Primary navigation — shared helper. On course pages we render the reduced
+// "Standard-Kürzel" variant via sidebar_course.mustache, but we still need the
+// full $navitems array for template parts that expect it (none today, but
+// keeping it for symmetry with drawers.php + future partials).
+$navitems = theme_lernhive_get_primary_navitems($PAGE);
+
+// Reduced nav + course index for the course-specific sidebar variant.
+// See theme_lernhive_get_course_sidebar_context() for the whitelist and the
+// core course-index render path.
+$coursesidebar = theme_lernhive_get_course_sidebar_context($PAGE);
+
 $templatecontext = array_merge([
     'sitename' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output' => $OUTPUT,
@@ -38,8 +53,10 @@ $templatecontext = array_merge([
     'launcherisdock' => $launcherstyle === 'dock',
     'showlauncher' => $showlauncher,
     'launcher' => $launchercontext,
+    'navitems' => $navitems,
+    'coursesidebar' => $coursesidebar,
     'sidepanelitems' => $sidepanelitems,
     'hassidepanel' => !empty($sidepanelitems),
-], $blockregions);
+], $blockregions, $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/course', $templatecontext);

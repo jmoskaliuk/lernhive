@@ -637,3 +637,141 @@ function theme_lernhive_get_plugin_shell_context(\moodle_page $page): ?array {
         'hastags'  => !empty($tags),
     ];
 }
+
+/**
+ * Build the LernHive primary navigation items ($navitems) used by all layouts
+ * that render the left sidebar.
+ *
+ * This is the single source of truth for the primary nav — previously duplicated
+ * in drawers.php and admin.php. Adding or removing items here updates every
+ * layout at once, including the reduced course-sidebar variant which filters
+ * this same list by key.
+ *
+ * Each item is an associative array consumed by sidebar.mustache:
+ *   url, text, key, isactive, faicon
+ *
+ * @param moodle_page $page Current $PAGE (for pagelayout-aware active states).
+ * @return array<int, array<string, mixed>>
+ */
+function theme_lernhive_get_primary_navitems(\moodle_page $page): array {
+    $items = [];
+
+    // Home — always visible.
+    $items[] = [
+        'url'      => (new moodle_url('/'))->out(false),
+        'text'     => get_string('home'),
+        'key'      => 'home',
+        'isactive' => ($page->pagelayout === 'frontpage'),
+        'faicon'   => 'home',
+    ];
+
+    if (isloggedin() && !isguestuser()) {
+        // Dashboard.
+        $items[] = [
+            'url'      => (new moodle_url('/my/'))->out(false),
+            'text'     => get_string('myhome'),
+            'key'      => 'myhome',
+            'isactive' => ($page->pagelayout === 'mydashboard'),
+            'faicon'   => 'tachometer',
+        ];
+        // My Courses.
+        $items[] = [
+            'url'      => (new moodle_url('/my/courses.php'))->out(false),
+            'text'     => get_string('mycourses'),
+            'key'      => 'mycourses',
+            'isactive' => ($page->pagelayout === 'mycourses'),
+            'faicon'   => 'graduation-cap',
+        ];
+        // Explore (Discovery) — only when the local plugin is installed.
+        // Guard with class_exists so the theme stays usable on sites where the
+        // plugin has not been deployed yet (e.g. fresh upstream clones).
+        if (get_string_manager()->string_exists('pluginname', 'local_lernhive_discovery')) {
+            $items[] = [
+                'url'      => (new moodle_url('/local/lernhive_discovery/index.php'))->out(false),
+                'text'     => get_string('pluginname', 'local_lernhive_discovery'),
+                'key'      => 'explore',
+                'isactive' => (strpos($page->pagetype ?? '', 'local-lernhive_discovery') === 0),
+                'faicon'   => 'compass',
+            ];
+        }
+    }
+
+    if (is_siteadmin()) {
+        // Site Administration.
+        $items[] = [
+            'url'      => (new moodle_url('/admin/index.php'))->out(false),
+            'text'     => get_string('administrationsite'),
+            'key'      => 'siteadmin',
+            'isactive' => ($page->pagelayout === 'admin'),
+            'faicon'   => 'cog',
+        ];
+    }
+
+    return $items;
+}
+
+/**
+ * Build the reduced course-sidebar context — a whitelisted subset of primary
+ * navigation plus a divider-separated course navigation pulled from the core
+ * course renderer.
+ *
+ * The whitelist keeps the reading flow tight on course pages: only the items
+ * a learner realistically needs while *inside* a course (jumping back to
+ * Dashboard, the course list, or Explore) survive. Everything else is already
+ * reachable via Header Dock / launcher, so we do not sacrifice navigation
+ * density for focus.
+ *
+ * The course navigation itself is the core `courseindex_drawer` renderable —
+ * the same structure Boost renders into its left-hand drawer. We render it
+ * inline inside our fixed sidebar rather than in a toggleable drawer (see
+ * Variant A decision in theme_lernhive docs/ADR-01).
+ *
+ * @param moodle_page $page Current $PAGE.
+ * @return array<string, mixed> Context keys: reducednavitems, hascourseindex,
+ *   courseindex (HTML string), coursenavlabel, primarynavlabel.
+ */
+function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
+    // Whitelist of primary-nav keys that survive on course pages. This is the
+    // "Standard-Kürzel" variant chosen 2026-04-11: Dashboard + My Courses +
+    // Explore — enough to escape the course cleanly, not enough to distract.
+    $keep = ['myhome', 'mycourses', 'explore'];
+
+    $allitems = theme_lernhive_get_primary_navitems($page);
+    $reduced = array_values(array_filter($allitems, static function ($item) use ($keep) {
+        return in_array($item['key'] ?? '', $keep, true);
+    }));
+
+    // Render the core course index (sections + activities). We use the
+    // canonical core_course_drawer() helper from /course/lib.php — the exact
+    // same function Boost calls when building its drawer content. This keeps
+    // us fully compatible with any course format that implements the
+    // courseindex output (format_topics, format_grid, format_singleactivity,
+    // future format_lernhive_* plugins, etc.) without us having to know the
+    // renderable class name per format.
+    $courseindexhtml = '';
+    if (!empty($page->course) && $page->course->id > SITEID) {
+        try {
+            if (!function_exists('core_course_drawer')) {
+                require_once($GLOBALS['CFG']->dirroot . '/course/lib.php');
+            }
+            $courseindexhtml = core_course_drawer();
+        } catch (\Throwable $e) {
+            // Fail soft — an empty course index is always better than a fatal
+            // course page. The divider is suppressed downstream via
+            // hascourseindex when this happens.
+            debugging(
+                'theme_lernhive: course index render failed — ' . $e->getMessage(),
+                DEBUG_DEVELOPER
+            );
+            $courseindexhtml = '';
+        }
+    }
+
+    return [
+        'reducednavitems' => $reduced,
+        'courseindex'     => $courseindexhtml,
+        'hascourseindex'  => trim($courseindexhtml) !== '',
+        'primarynavlabel' => get_string('primarynavigation', 'theme_lernhive'),
+        'coursenavlabel'  => get_string('coursenavigation', 'theme_lernhive'),
+    ];
+}

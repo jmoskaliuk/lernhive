@@ -462,6 +462,121 @@
     }
 }
 
+// --- Course sidebar variant (sidebar_course.mustache) -----------------------
+// Reduced primary nav + divider + course index. Only rendered on course pages
+// via layout/course.php and theme_lernhive_get_course_sidebar_context().
+
+.lernhive-sidebar--course {
+    // On narrow viewports the course index pushes the whole sidebar too tall,
+    // so let it scroll internally rather than the whole page.
+    @media (min-width: $lh-bp-desktop) {
+        overflow-y: auto;
+    }
+}
+
+.lernhive-nav--reduced {
+    // Tighter spacing under the reduced primary nav so the divider sits close.
+    margin-bottom: $lh-spacing-xs;
+}
+
+.lernhive-nav__divider {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    margin: $lh-spacing-sm 0.25rem;
+
+    @media (max-width: #{$lh-bp-desktop - 1px}) {
+        // On mobile the sidebar is a horizontal strip — divider becomes a
+        // vertical hairline between the reduced nav and the course index.
+        border-top: 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.16);
+        margin: 0 $lh-spacing-sm;
+        width: 1px;
+        align-self: stretch;
+    }
+}
+
+.lernhive-course-index {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+    color: rgba(255, 255, 255, 0.85);
+
+    @media (max-width: #{$lh-bp-desktop - 1px}) {
+        // Keep the full course index off the mobile strip — it is reachable
+        // via the normal Moodle course index drawer on small screens.
+        display: none;
+    }
+}
+
+.lernhive-course-index__heading {
+    font-size: $lh-font-size-xs;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 $lh-spacing-xs 0.25rem;
+}
+
+.lernhive-course-index__body {
+    // The core course index ships with its own drawer chrome, borders, and
+    // background. We strip those so it blends into our dark sidebar.
+    font-size: $lh-font-size-sm;
+
+    .courseindex,
+    .courseindex-item,
+    .courseindex-section,
+    .courseindex-link {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .courseindex-section {
+        margin-bottom: 0.375rem;
+    }
+
+    .courseindex-link,
+    .courseindex-item a {
+        color: rgba(255, 255, 255, 0.82);
+        padding: 0.3125rem 0.625rem;
+        border-radius: $lh-radius-sm;
+        display: block;
+        text-decoration: none;
+        line-height: 1.35;
+        transition: background 0.15s ease, color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 1px;
+        }
+    }
+
+    // Active section / module — pick up the page-current element Moodle sets.
+    .courseindex-section.current > .courseindex-link,
+    .courseindex-item.pageitem > a,
+    [aria-current="page"] {
+        background: rgba(255, 255, 255, 0.16);
+        color: #fff;
+        font-weight: 600;
+    }
+
+    // Collapse/expand chevrons and completion dots keep their native sizing
+    // but need contrast on the dark background.
+    .icon,
+    .fa {
+        color: inherit;
+        opacity: 0.85;
+    }
+}
+
 // --- Sidebar blocks region --------------------------------------------------
 
 .lernhive-sidebar__blocks {
