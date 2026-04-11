@@ -179,6 +179,22 @@
   margin-top: 1rem;
 }
 
+body.pagelayout-frontpage .lernhive-page-header {
+  display: none;
+}
+
+body.pagelayout-frontpage .lernhive-page-content {
+  margin-top: 0;
+}
+
+body.pagelayout-frontpage .lernhive-main {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
 .lernhive-admin-layout {
   display: grid;
   gap: 1rem;
