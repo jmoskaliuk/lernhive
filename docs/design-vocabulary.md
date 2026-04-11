@@ -176,6 +176,85 @@ Karten zeigen immer Inhalte (Kurse, Snacks, Pfade). Nie als Layout-Container.
 
 ---
 
+## Icon Taxonomy
+
+Jedes Icon im LernHive UI gehört zu genau einer der drei Kategorien. Die Form kodiert die Absicht — kein Raten nötig.
+
+```
+Navigation    Artifact      Action
+  [  fa  ]   [■ fa ■]     ( fa )
+ transparent  colored box  circle
+ hover: tint  no hover     hover: grows
+```
+
+### Typ 1: Navigation Icon
+
+Zeigt ein **Ziel** an — der Nutzer navigiert irgendwohin.
+
+| Eigenschaft | Regel |
+|-------------|-------|
+| Hintergrund | Transparent (kein Hintergrund) |
+| Hover | Leichter Farbtint (hell: `rgba(primary, 0.08)` / dunkel: `rgba(white, 0.10)`) |
+| Form | Abgerundetes Rechteck (kein Kreis) |
+| CSS-Klasse | `.lh-icon-nav` |
+| Modifier | `.lh-icon-nav--on-dark` (Sidebar), `.lh-icon-nav--active` |
+
+Beispiele: Home, Dashboard, My Courses, Notifications Bell, Launcher-Grid, Sprach-Menü
+
+### Typ 2: Artifact Icon
+
+Repräsentiert ein **Inhaltsobjekt mit Typ** — der Nutzer sieht, was das Objekt ist.
+
+| Eigenschaft | Regel |
+|-------------|-------|
+| Hintergrund | Farbiger Kasten (Farbe = Inhaltstyp) |
+| Hover | Kein eigener Hover (Eltern-Element übernimmt Hover) |
+| Form | Abgerundetes Quadrat (border-radius 9px) |
+| CSS-Klasse | `.lh-icon-artifact` |
+| Modifier | `--course` `--snack` `--community` `--tour` `--generic` `--lock` |
+| Größen | `--sm` (24px) · Standard (38px) · `--lg` (48px) |
+
+Beispiele: Card Icon im Plugin Shell, Kurs-Icon in Kurslisten, Template, Library, User Tour
+
+#### Artifact Icon Farben
+
+| Modifier | Hintergrund | Farbe | Bedeutung |
+|----------|-------------|-------|-----------|
+| `--course` | Blau hell `#dbeafe` | Navy `#1e4d8c` | Kurs-Inhalt |
+| `--snack` | Orange hell | Orange dunkel | Snack-Inhalt |
+| `--community` | Lila hell `#ede9fb` | Lila `#5b3fa6` | Community-Inhalt |
+| `--tour` | Grün hell `#dcfce7` | Grün `#166534` | Tour-Schritt |
+| `--generic` | Blau-Grau `#e2edf2` | Blau-Grau `#3d6b80` | Kein Typ zugewiesen |
+| `--lock` | Grau | Grau | Gesperrter Inhalt |
+
+### Typ 3: Action Icon
+
+**Löst eine Funktion aus** — der Nutzer tut etwas (oft nicht umkehrbar).
+
+| Eigenschaft | Regel |
+|-------------|-------|
+| Hintergrund | Kreis |
+| Hover | Kreis wächst (`scale(1.10)`) + leichter Schatten |
+| Form | Vollkreis (`border-radius: 50%`) |
+| CSS-Klasse | `.lh-icon-action` |
+| Modifier | `--primary` (orange) `--nav` (navy) `--danger` (lila) `--on-dark` `--active` |
+| Größen | Standard (36px) · `--lg` (44px, WCAG 2.5.5 Touch Target) |
+
+Beispiele: Edit (Pencil), Delete, Start, Logout, Turn Editing On, Cookie Shield, Context Dock Items
+
+### Grenzfälle & Entscheidungsregeln
+
+| Frage | Antwort |
+|-------|---------|
+| Settings-Gear im User Block? | **Action** — öffnet Einstellungen für das aktuelle Objekt |
+| Logout-Button? | **Action** — löst eine Funktion aus (Abmelden) |
+| Back-Button in Zone A? | **Navigation** — navigiert zurück (`.lh-plugin-header__nav-btn`, kein `.lh-icon-nav` da eigene Stile) |
+| Benachrichtigungs-Bell? | **Navigation** — öffnet eine Übersicht (kein Action, es wird nichts ausgelöst) |
+| Kurs-Icon in der Sidebar-Nav? | **Navigation** — zeigt Ziel "My Courses" |
+| Card Icon (Kurs/Snack/…)? | **Artifact** — zeigt den Inhaltstyp der Karte |
+
+---
+
 ## Login Page
 
 | Begriff | Beschreibung |

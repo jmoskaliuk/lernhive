@@ -88,6 +88,7 @@ function theme_lernhive_get_extra_scss($theme) {
         '_login.scss',
         '_dock.scss',        // 0.9.21: Context Dock — floating action strip
         '_plugin-shell.scss', // 0.9.27: Plugin Shell — 2-zone page header for local plugins
+        '_icons.scss',       // 0.9.32: Icon Taxonomy — nav / artifact / action classes
     ];
 
     foreach ($partials as $partial) {

@@ -361,6 +361,8 @@
         &--community { background: #ede9fb; color: #5b3fa6; }
         &--tour      { background: #dcfce7; color: #166534; }
         &--lock      { background: $lh-bg; color: $lh-text-secondary; }
+        // Generic fallback — neutral blue-gray; "has a type, type not yet assigned"
+        &--generic   { background: #e2edf2; color: #3d6b80; }
     }
 
     &__meta     { flex: 1; min-width: 0; }

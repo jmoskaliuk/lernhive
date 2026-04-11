@@ -91,7 +91,7 @@ final class card {
             'template' => 'snack',
             'library'  => 'community',
             'ai'       => 'tour',
-            default    => '',
+            default    => 'generic',
         };
 
         return [

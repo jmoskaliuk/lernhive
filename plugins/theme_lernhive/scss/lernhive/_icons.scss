@@ -1,0 +1,267 @@
+// =============================================================================
+// _icons.scss — LernHive Icon Taxonomy (0.9.32)
+//
+// Three semantic icon types. Every icon in the LernHive UI belongs to exactly
+// one category. The category communicates intent — not just colour.
+//
+// ─── Type 1: Navigation Icons (.lh-icon-nav) ─────────────────────────────────
+// Represent a destination: Home, Dashboard, My Courses, Notifications bell.
+// No background at rest; subtle tint on hover on light surfaces.
+// On dark surfaces (sidebar): same rule — the sidebar provides the context.
+//
+// ─── Type 2: Artifact Icons (.lh-icon-artifact) ──────────────────────────────
+// Represent a content object with a type: Course, Snack, Community, Activity,
+// Template, Library, User Tour. Always shown in a coloured square/rounded box.
+// The colour encodes the content type (blue=Course, orange=Snack, …).
+// No hover transform — they are metadata, not controls.
+//
+// ─── Type 3: Action Icons (.lh-icon-action) ──────────────────────────────────
+// Trigger a function: Edit, Delete, Start, Logout, Turn Editing On, Shield.
+// Always in a circle. Hover: circle grows slightly (scale) + lifts.
+// Communicates affordance: "tap me to do something irreversible-ish".
+//
+// Usage:
+//   <a class="lh-icon-nav" href="..."><i class="fa fa-home"></i></a>
+//   <span class="lh-icon-artifact lh-icon-artifact--course"><i class="fa fa-graduation-cap"></i></span>
+//   <button class="lh-icon-action"><i class="fa fa-pencil"></i></button>
+//
+// Colour modifiers on .lh-icon-artifact mirror the card icon colour system:
+//   --course --snack --community --tour --generic
+//   (defined alongside .lh-plugin-card__icon in _plugin-shell.scss)
+// =============================================================================
+
+// ─── Type 1: Navigation Icon ─────────────────────────────────────────────────
+
+.lh-icon-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: $lh-radius-sm;
+    background: transparent;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    .fa { font-size: 1rem; line-height: 1; }
+
+    // Light surface hover (page area, white cards)
+    &:hover,
+    &:focus-visible {
+        background: rgba($lh-primary, 0.08);
+        color: $lh-primary;
+        text-decoration: none;
+    }
+
+    // Dark surface variant (sidebar) — tint stays light
+    &--on-dark {
+        color: rgba(255, 255, 255, 0.72);
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(255, 255, 255, 0.10);
+            color: #fff;
+        }
+    }
+
+    // Active / current destination
+    &--active {
+        background: rgba($lh-accent, 0.12);
+        color: $lh-accent;
+
+        &.lh-icon-nav--on-dark {
+            background: rgba($lh-accent, 0.20);
+            color: $lh-accent;
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+}
+
+// ─── Type 2: Artifact Icon ───────────────────────────────────────────────────
+// Sized to match .lh-plugin-card__icon (38×38, border-radius 9px).
+// Colour variants are intentionally identical to the card icon colours —
+// one source of truth in _plugin-shell.scss; modifiers repeated here for
+// standalone use (e.g. course list rows, search results).
+
+.lh-icon-artifact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    font-size: 1.125rem;
+    // Base (no modifier): generic blue-gray fallback
+    background: #e2edf2;
+    color: #3d6b80;
+    // No hover transform — it's metadata, not a button.
+    // It can be wrapped in a link: the link handles hover, not the icon.
+
+    .fa { font-size: 1.1rem; line-height: 1; }
+
+    // Content-type colour variants (must stay in sync with _plugin-shell.scss)
+    &--course    { background: #dbeafe; color: #1e4d8c; }
+    &--snack     { background: $lh-accent-light; color: $lh-accent-dark; }
+    &--community { background: #ede9fb; color: #5b3fa6; }
+    &--tour      { background: #dcfce7; color: #166534; }
+    &--lock      { background: $lh-bg; color: $lh-text-secondary; }
+    &--generic   { background: #e2edf2; color: #3d6b80; }
+
+    // Small size variant (24×24, for inline use, e.g. lists, breadcrumbs)
+    &--sm {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        .fa { font-size: 0.75rem; }
+    }
+
+    // Large size variant (48×48, hero cards)
+    &--lg {
+        width: 48px;
+        height: 48px;
+        border-radius: 11px;
+        font-size: 1.375rem;
+        .fa { font-size: 1.375rem; }
+    }
+}
+
+// ─── Type 3: Action Icon ─────────────────────────────────────────────────────
+// Circle (border-radius: 50%) — hover grows + lifts, communicating affordance.
+// Base is a neutral circle; colour modifiers for intent (danger, primary, etc.).
+
+.lh-icon-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    text-decoration: none;
+
+    // Base: neutral circle — suitable for secondary/contextual actions
+    background: $lh-bg;
+    color: $lh-text-secondary;
+    border: 1px solid $lh-border;
+
+    .fa { font-size: 0.9375rem; line-height: 1; }
+
+    transition:
+        transform   0.15s ease,
+        box-shadow  0.18s ease,
+        background  0.15s ease,
+        color       0.15s ease,
+        border-color 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+        transform: scale(1.10);
+        background: $lh-border;
+        color: $lh-primary;
+        border-color: $lh-secondary-dark;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba($lh-primary, 0.15);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 3px;
+    }
+
+    // Primary action — orange fill (Start, Confirm)
+    &--primary {
+        background: $lh-accent;
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 2px 6px rgba($lh-accent, 0.30);
+
+        &:hover,
+        &:focus-visible {
+            background: $lh-accent-dark;
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba($lh-accent, 0.45);
+        }
+    }
+
+    // Nav-blue — for edit / settings type actions in admin context
+    &--nav {
+        background: $lh-primary;
+        color: #fff;
+        border-color: transparent;
+
+        &:hover,
+        &:focus-visible {
+            background: $lh-primary-dark;
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba($lh-primary, 0.30);
+        }
+    }
+
+    // Danger — destructive actions (Delete, Revoke)
+    &--danger {
+        background: transparent;
+        color: $lh-danger;
+        border-color: $lh-border;
+
+        &:hover,
+        &:focus-visible {
+            background: $lh-danger-light;
+            color: darken($lh-danger, 5%);
+            border-color: lighten($lh-danger, 20%);
+            box-shadow: 0 2px 8px rgba($lh-danger, 0.15);
+        }
+    }
+
+    // On-dark variant — for use in the Context Dock (dark background)
+    &--on-dark {
+        background: $lh-primary-dark;
+        color: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.30), 0 4px 16px rgba(0, 0, 0, 0.20);
+
+        &:hover,
+        &:focus-visible {
+            transform: scale(1.10) translateY(-2px);
+            background: lighten($lh-primary-dark, 6%);
+            border-color: rgba(255, 255, 255, 0.28);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.38), 0 8px 28px rgba(0, 0, 0, 0.22);
+        }
+    }
+
+    // Active state (action currently "on", e.g. editing mode enabled)
+    &--active {
+        background: $lh-accent;
+        border-color: rgba($lh-accent, 0.40);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba($lh-accent, 0.45), 0 4px 18px rgba(0, 0, 0, 0.22);
+
+        &:hover,
+        &:focus-visible {
+            background: darken($lh-accent, 5%);
+            box-shadow: 0 4px 14px rgba($lh-accent, 0.55), 0 6px 24px rgba(0, 0, 0, 0.25);
+        }
+    }
+
+    // Large touch target (44×44 — WCAG 2.5.5 minimum for standalone controls)
+    &--lg {
+        width: 44px;
+        height: 44px;
+        .fa { font-size: 1.05rem; }
+    }
+}
