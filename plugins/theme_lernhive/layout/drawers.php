@@ -15,10 +15,15 @@ defined('MOODLE_INTERNAL') || die();
 
 $bodyattributes = $OUTPUT->body_attributes(['theme-lernhive']);
 $sidepreblocks = $OUTPUT->blocks('side-pre');
-$hassidepre = (strpos($sidepreblocks, 'data-block=') !== false || !empty(trim($sidepreblocks)));
+$hassidepre = strpos($sidepreblocks, 'data-block=') !== false;
 $regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
 $hasregionmainsettingsmenu = !empty($regionmainsettingsmenu);
 $launcherstyle = get_config('theme_lernhive', 'launcherstyle') ?: 'base';
+$maincontent = $OUTPUT->main_content();
+$plainmaincontent = trim(str_replace(['&nbsp;', "\xc2\xa0"], '', html_entity_decode(strip_tags($maincontent))));
+$hasmaincontent = $plainmaincontent !== '';
+$isfrontpage = $PAGE->pagelayout === 'frontpage';
+$showlauncher = isloggedin() && !isguestuser();
 
 $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
@@ -34,7 +39,11 @@ $templatecontext = [
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'launcherisbase' => $launcherstyle === 'base',
     'launcherisdock' => $launcherstyle === 'dock',
+    'showlauncher' => $showlauncher,
     'launcher' => $launchercontext,
+    'maincontent' => $maincontent,
+    'hasmaincontent' => $hasmaincontent,
+    'isfrontpage' => $isfrontpage,
 ];
 
 echo $OUTPUT->render_from_template('theme_lernhive/drawers', $templatecontext);

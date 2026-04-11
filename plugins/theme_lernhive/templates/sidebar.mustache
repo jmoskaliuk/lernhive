@@ -4,9 +4,11 @@
         <p class="lernhive-brand__meta">{{#str}} exploreoptional, theme_lernhive {{/str}}</p>
     </div>
 
-    {{#launcher}}
-        {{> theme_lernhive/launcher }}
-    {{/launcher}}
+    {{#showlauncher}}
+        {{#launcher}}
+            {{> theme_lernhive/launcher }}
+        {{/launcher}}
+    {{/showlauncher}}
 
     <nav class="lernhive-nav" aria-label="{{#str}} primarynavigation, theme_lernhive {{/str}}">
         {{{ output.flat_navigation }}}

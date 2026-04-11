@@ -34,15 +34,17 @@
                     </div>
                 {{/hasregionmainsettingsmenu}}
 
-                <main id="region-main-box" class="lernhive-main">
-                    <section id="maincontent" aria-label="content">
-                        <div id="region-main">
-                        {{{ output.course_content_header }}}
-                        {{{ output.main_content }}}
-                        {{{ output.course_content_footer }}}
-                        </div>
-                    </section>
-                </main>
+                {{#hasmaincontent}}
+                    <main id="region-main-box" class="lernhive-main">
+                        <section id="maincontent" aria-label="content">
+                            <div id="region-main">
+                            {{{ output.course_content_header }}}
+                            {{{ maincontent }}}
+                            {{{ output.course_content_footer }}}
+                            </div>
+                        </section>
+                    </main>
+                {{/hasmaincontent}}
 
                 {{#hassidepre}}
                     <aside class="lernhive-blocks" aria-label="Blocks">
