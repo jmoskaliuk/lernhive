@@ -46,7 +46,13 @@
                     $OUTPUT->main_content() in the PHP layout file runs before the page
                     content is buffered and returns empty. Mustache renders at the right time. }}
                 <main id="region-main-box" class="lernhive-main">
-                    <section id="maincontent" aria-label="content">
+                    {{! #maincontent MUST be a separate empty element — never the content
+                        wrapper. Moodle core CSS (Boost) sets:
+                            #maincontent { height: 1px; overflow: clip; }
+                        to use this as a skip-link anchor only. Putting real content inside
+                        it makes everything invisible. See session memory "hard-won knowledge". }}
+                    <span id="maincontent" class="lernhive-skip-anchor"></span>
+                    <section class="lernhive-main-section" aria-label="content">
                         <div id="region-main">
                         {{{ output.course_content_header }}}
                         {{{ output.main_content }}}

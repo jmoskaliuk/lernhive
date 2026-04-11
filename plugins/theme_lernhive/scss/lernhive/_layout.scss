@@ -14,6 +14,21 @@
 $lh-bp-desktop: 1024px;
 $lh-bp-tablet:   768px;
 
+// --- Skip-link anchor (maincontent) ------------------------------------------
+//
+// Moodle core (Boost) sets: #maincontent { height: 1px; overflow: clip; }
+// so that it serves as a keyboard skip-link target without affecting layout.
+// Our drawers.mustache used to put real content *inside* #maincontent which
+// clipped everything to 1px. Fixed by keeping #maincontent as a separate empty
+// element and using .lernhive-skip-anchor as the CSS class for it.
+// The core `#maincontent` rule already handles the height — we just keep the
+// class for documentation / future overrides.
+.lernhive-skip-anchor {
+    display: block;
+    height: 0;
+    overflow: hidden;
+}
+
 // --- Skip link ---------------------------------------------------------------
 
 .lernhive-skip-link {
