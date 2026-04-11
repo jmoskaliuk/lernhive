@@ -14,11 +14,14 @@
     <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
 
     <main id="page" class="lernhive-login__page">
+        {{! #maincontent is Moodle's skip-link target — core CSS forces it to
+            height:1px; overflow:clip. Never put real content inside it. }}
+        <div id="maincontent" tabindex="-1" aria-hidden="true"></div>
         <section class="lernhive-login__panel">
             <div class="lernhive-login__brand">
                 <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link">{{ sitename }}</a>
             </div>
-            <div id="maincontent" class="lernhive-login__content">
+            <div class="lernhive-login__content">
                 {{{ output.main_content }}}
             </div>
         </section>

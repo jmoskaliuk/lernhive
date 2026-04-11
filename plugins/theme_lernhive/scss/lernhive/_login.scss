@@ -37,6 +37,9 @@ body.pagelayout-login {
         min-height: 100dvh !important;
         background: transparent !important;
         padding: $lh-spacing-lg $lh-spacing-md !important;
+        // Moodle core CSS sets margin-top:60px on #page to account for the
+        // fixed navbar. We hide the navbar on login, so reset this.
+        margin-top: 0 !important;
     }
 
     #page-content { background: transparent !important; }
