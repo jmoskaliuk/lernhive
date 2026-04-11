@@ -100,7 +100,7 @@ $THEME->layouts = [
         ],
     ],
     'maintenance' => [
-        'file' => 'login.php',
+        'file' => 'admin.php',
         'regions' => [],
     ],
     'report' => [
