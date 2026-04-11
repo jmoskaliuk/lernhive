@@ -105,7 +105,7 @@ body.pagelayout-mydashboard {
 
 // --- LernHive Level Bar (injected by plugin) ---
 .lernhive-level-bar {
-    background: linear-gradient(135deg, $lh-primary, darken($lh-primary, 12%)) !important;
+    background: linear-gradient(135deg, $lh-primary, $lh-primary-dark) !important;
     border-radius: $lh-radius-lg !important;
     padding: $lh-spacing-lg $lh-spacing-xl;
     color: #fff;

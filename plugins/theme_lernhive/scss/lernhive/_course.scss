@@ -15,7 +15,7 @@ body .page-header-headings {
 
 // --- Course Page Header with subtle gradient accent ---
 body.path-course-view #page-header {
-    background: linear-gradient(135deg, $lh-primary 0%, darken($lh-primary, 12%) 100%);
+    background: linear-gradient(135deg, $lh-primary 0%, $lh-primary-dark 100%);
     border-radius: 0;
     padding: $lh-spacing-lg $lh-spacing-xl !important;
     margin-bottom: 0;
@@ -144,7 +144,7 @@ body .activity {
     &:hover {
         border-color: $lh-primary;
         box-shadow: $lh-shadow;
-        background: lighten($lh-primary-light, 2%) !important;
+        background: #f6f8fa !important;
     }
 
     .activity-item {
