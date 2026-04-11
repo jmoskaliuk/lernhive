@@ -24,6 +24,7 @@ $plainmaincontent = trim(str_replace(['&nbsp;', "\xc2\xa0"], '', html_entity_dec
 $hasmaincontent = $plainmaincontent !== '';
 $isfrontpage = $PAGE->pagelayout === 'frontpage';
 $showlauncher = isloggedin() && !isguestuser();
+$showpageheader = !$isfrontpage || !isloggedin() || isguestuser();
 
 $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
@@ -40,6 +41,7 @@ $templatecontext = [
     'launcherisbase' => $launcherstyle === 'base',
     'launcherisdock' => $launcherstyle === 'dock',
     'showlauncher' => $showlauncher,
+    'showpageheader' => $showpageheader,
     'launcher' => $launchercontext,
     'maincontent' => $maincontent,
     'hasmaincontent' => $hasmaincontent,
