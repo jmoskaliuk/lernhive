@@ -2,6 +2,11 @@
 
 ## Done (shipped)
 
+- [x] 0.9.51 — Context Dock moved from sidebar column to bottom-right viewport corner (2026-04-11):
+  - `scss/lernhive/_dock.scss` — desktop rule switched from `left: 0; width: $lh-sidebar-width; justify-content: center` to `right: 1.5rem; bottom: 1.5rem; left: auto; width: auto; max-width: calc(100vw - 3rem); justify-content: flex-end`. Dock now hugs its contents and grows leftward as items are added, with a consistent 1.5 rem breathing distance from the viewport's right edge. The `max-width` guard covers narrow desktop windows before the mobile breakpoint takes over.
+  - Mobile `@media` branch re-asserts `justify-content: center` explicitly so the desktop flex-end rule does not leak into the full-width strip layout.
+  - Motivation: with 6+ icons (Teacher course actions + block edit + admin shortcut) the rightmost icon visually spilled into the main content area, and anchoring the Dock to a fixed sidebar width tied an action surface to an unrelated navigation width. Bottom-right anchoring matches the conventional FAB position and scales cleanly to 5+ items.
+  - ADR-03 updated with a 0.9.51 follow-up note documenting the decision flip. `03-dev-doc.md` gained a new "Positioning" paragraph in the Context Dock section.
 - [x] 0.9.42 — Plugin Shell injected into core Moodle pages + theme_boost/loader bootstrap (2026-04-11):
   - `templates/drawers.mustache` + `templates/admin.mustache` — trailing `{{#js}} require(['theme_boost/loader'], …) {{/js}}` block added so `Aria.tabElementFix()`, Bootstrap Tab/Collapse/Dropdown/Tooltip/Popover keyboard nav, and tab-remembering all register on LernHive pages. Boost's upstream `drawers.mustache` has this same block; we were missing it entirely, which is why `/admin/search.php` secondary-nav tabs weren't switching panels despite the correct markup from 0.9.34/0.9.36.
   - **Main course of 0.9.42 — Plugin Shell on core pages:**

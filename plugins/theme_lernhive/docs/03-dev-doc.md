@@ -161,6 +161,9 @@ Each item is a PHP associative array with keys: `key` (string), `icon` (FA4 clas
 | `$PAGE->user_can_edit_blocks()` is true | Block editing toggle (any page, including dashboard) |
 | `is_siteadmin()` + layout ≠ admin | Site admin shortcut (with separator) |
 
+### Positioning (since 0.9.51)
+Desktop: the Dock is anchored to the viewport's bottom-right corner via `position: fixed; right: 1.5rem; bottom: 1.5rem; left: auto; width: auto; max-width: calc(100vw - 3rem)`. `justify-content: flex-end` pins the right-most icon to the right edge, so added items grow the strip leftward — there is no fixed width container to blow out. The `max-width` guard prevents overflow on narrow desktop windows before the mobile breakpoint kicks in. Mobile (`@media (max-width: $lh-bp-desktop - 1px)`): full-width strip at the screen bottom with `justify-content: center` explicitly re-applied so the desktop flex-end rule does not leak through.
+
 ### Tooltip progressive disclosure
 Inline JS IIFE in `context_dock.mustache` increments `lh_dock_v1` in localStorage on each page load. After `MAX = 3` loads, adds class `.lh-dock--experienced` to the dock element, which hides all `.lh-dock__tooltip` elements via CSS. Safe fallback: if localStorage is blocked, tooltips remain always visible.
 

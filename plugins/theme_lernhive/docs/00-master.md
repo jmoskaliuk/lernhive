@@ -65,7 +65,7 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 
 ## Architecture decision ADR-03 — Context Dock as the central action layer for Teacher/Trainer (2026-04-11, shipped in 0.9.21)
 
-**Decision.** Introduce a floating `Context Dock` — a fixed-position icon strip anchored at the bottom of the sidebar column on desktop, and a horizontal strip at the bottom of the screen on mobile. The Dock is the single surface for context-aware page actions. Initial scope covers Teacher/Trainer and Admin; Student and Manager come later.
+**Decision.** Introduce a floating `Context Dock` — a fixed-position, horizontal icon strip anchored at the bottom-right corner of the viewport on desktop, and a full-width strip at the bottom of the screen on mobile. The Dock is the single surface for context-aware page actions. Initial scope covers Teacher/Trainer and Admin; Student and Manager come later.
 
 **Why.** Moodle's default "Blocks editing on" and page-action buttons appear as large text buttons at arbitrary positions in the page header or content area. This breaks reading flow and makes it hard to discover actions. A fixed, predictable action surface gives teachers a stable "home base" for actions regardless of which page they are on, and keeps the page header clean.
 
@@ -94,7 +94,9 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 - The `regionmainsettingsmenu` (which currently renders "Blocks editing on" as a text button above page content) can be hidden in a follow-up once teachers confirm the Dock covers the same function.
 - The theme must not absorb business logic via the Dock — all items are simple URL links or toggle URLs, never custom AJAX handlers.
 
-**Status.** Accepted. Core shipped in 0.9.21 (Teacher course actions + Admin shortcut). Block editing added in 0.9.22.
+**Status.** Accepted. Core shipped in 0.9.21 (Teacher course actions + Admin shortcut). Block editing added in 0.9.22. Dock repositioned from sidebar-column to bottom-right viewport corner in 0.9.51 (see follow-up below).
+
+**Follow-up (0.9.51) — Dock moved from sidebar column to bottom-right corner.** Between 0.9.21 and 0.9.50 the Dock was anchored inside the left sidebar column (`left: 0; width: $lh-sidebar-width; justify-content: center`). Visually the rightmost icons spilled into the main content area as soon as a 6th icon was added, and the sidebar anchor tied the Dock's width to a navigation surface it has no semantic relationship with. In 0.9.51 `_dock.scss` switches the desktop rule to `right: 1.5rem; bottom: 1.5rem; left: auto; width: auto; max-width: calc(100vw - 3rem); justify-content: flex-end` so the Dock hugs its contents, grows leftward when new items are added, and keeps a consistent 1.5 rem breathing distance from the viewport's right edge. The mobile `@media` branch (full-width strip at the screen bottom) is unchanged except for an explicit `justify-content: center` override to shield it from the new desktop flex-end rule.
 
 ## Architecture decision ADR-04 — Admin layout uses admin.php, not drawers.php (2026-04-11, shipped in 0.9.20)
 
