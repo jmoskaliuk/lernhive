@@ -20,31 +20,35 @@
  * Release 1 renders an empty catalog state — the real catalog source
  * arrives with a later milestone (see docs/04-tasks.md).
  *
+ * Library is a content creation tool, not a site configuration page —
+ * it always renders as a `standard` page with the LernHive Plugin
+ * Shell, regardless of whether the visitor is a siteadmin or a
+ * teacher. The plugin still registers itself in the admin tree via
+ * settings.php so admins can discover it via the site-admin search,
+ * but the page does NOT call admin_externalpage_setup() — that
+ * would force pagelayout='admin' and layer the admin tab bar on top
+ * of the Plugin Shell, which owns its own navigation.
+ *
  * @package    local_lernhive_library
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../config.php');
-require_once($CFG->libdir . '/adminlib.php');
 
 use local_lernhive_library\catalog;
 use local_lernhive_library\output\catalog_page;
 
 $context = \core\context\system::instance();
 
-if (is_siteadmin()) {
-    admin_externalpage_setup('local_lernhive_library_catalog');
-} else {
-    require_login();
-    require_capability('local/lernhive_library:import', $context);
+require_login();
+require_capability('local/lernhive_library:import', $context);
 
-    $PAGE->set_context($context);
-    $PAGE->set_url(new moodle_url('/local/lernhive_library/index.php'));
-    $PAGE->set_pagelayout('standard');
-    $PAGE->set_title(get_string('pluginname', 'local_lernhive_library'));
-    $PAGE->set_heading(get_string('pluginname', 'local_lernhive_library'));
-}
+$PAGE->set_context($context);
+$PAGE->set_url(new moodle_url('/local/lernhive_library/index.php'));
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('pluginname', 'local_lernhive_library'));
+$PAGE->set_heading(get_string('pluginname', 'local_lernhive_library'));
 
 /** @var \local_lernhive_library\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('local_lernhive_library');

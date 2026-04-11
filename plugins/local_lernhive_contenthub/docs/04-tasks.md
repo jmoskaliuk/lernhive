@@ -2,6 +2,7 @@
 
 ## Done (0.1.3 — 2026-04-11)
 
+- **LH-HUB-LAYOUT-01** — `index.php`: drop `if (is_siteadmin()) { admin_externalpage_setup(...) }` dual-mode branch. ContentHub is a content creation tool, not a site configuration page, so it must always render with the `standard` pagelayout and the LernHive Plugin Shell — regardless of whether the visitor is a siteadmin or a course creator. `admin_externalpage_setup()` would force `pagelayout='admin'`, which (since `theme_lernhive` 0.9.34 / 0.9.36) layers the Moodle admin secondary tab bar (General | Users | Courses | …) on top of the ContentHub card grid. The plugin still registers itself in the admin tree via `settings.php` (under Local plugins → LernHive ContentHub) so admins can discover it via the site-admin search, but the page itself is unconditionally `standard` layout. Removed now-unused `require_once($CFG->libdir . '/adminlib.php')`.
 - **LH-HUB-SHELL-01** — `templates/hub_page.mustache` refined for plugin-shell consistency:
   - Removed `← Dashboard` back button (redundant with sidebar; would appear on every plugin page)
   - Container changed from `<div class="container-fluid py-4">` → `<div class="lh-plugin-content-area">` (picks up the 24/32 px responsive horizontal gutter defined in `theme_lernhive/_plugin-shell.scss`)

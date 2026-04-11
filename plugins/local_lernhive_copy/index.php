@@ -29,13 +29,21 @@
  * Template source keeps the R1 stub — curated templates need a
  * separate catalogue integration tracked in `docs/04-tasks.md`.
  *
+ * Copy is a content creation tool, not a site configuration page —
+ * it always renders as a `standard` page with the LernHive Plugin
+ * Shell, regardless of whether the visitor is a siteadmin or a
+ * teacher. The plugin still registers itself in the admin tree via
+ * settings.php so admins can discover it via the site-admin search,
+ * but the page does NOT call admin_externalpage_setup() — that
+ * would force pagelayout='admin' and layer the admin tab bar on top
+ * of the Plugin Shell, which owns its own navigation.
+ *
  * @package    local_lernhive_copy
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../config.php');
-require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 require_once($CFG->dirroot . '/backup/util/helper/copy_helper.class.php');
@@ -54,21 +62,14 @@ $pageurl = new moodle_url(
     $source->is_template() ? ['source' => 'template'] : []
 );
 
-if (is_siteadmin()) {
-    admin_externalpage_setup('local_lernhive_copy_wizard');
-    // admin_externalpage_setup sets $PAGE->set_url() without our query
-    // param, so re-apply it here to keep the form action stable.
-    $PAGE->set_url($pageurl);
-} else {
-    require_login();
-    require_capability('local/lernhive_copy:use', $context);
+require_login();
+require_capability('local/lernhive_copy:use', $context);
 
-    $PAGE->set_context($context);
-    $PAGE->set_url($pageurl);
-    $PAGE->set_pagelayout('standard');
-    $PAGE->set_title(get_string('pluginname', 'local_lernhive_copy'));
-    $PAGE->set_heading(get_string('pluginname', 'local_lernhive_copy'));
-}
+$PAGE->set_context($context);
+$PAGE->set_url($pageurl);
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('pluginname', 'local_lernhive_copy'));
+$PAGE->set_heading(get_string('pluginname', 'local_lernhive_copy'));
 
 // The Simple copy flow only applies to the course source for R2.0 —
 // template copy reuses the R1 stub until the catalogue source is wired
