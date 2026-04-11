@@ -147,6 +147,20 @@
         return document.getElementById('lh-hdock-btn-' + key);
     }
 
+    // Measure the page header and publish its bottom edge as a CSS custom
+    // property so the panel + backdrop sit BELOW it. This keeps the Header
+    // Dock icons visible and clickable while a panel is open, so the user
+    // can switch between panels without closing first.
+    function syncHeaderOffset() {
+        var header = document.querySelector('.lernhive-page-header');
+        var offset = 0;
+        if (header) {
+            var rect = header.getBoundingClientRect();
+            offset = Math.max(0, Math.round(rect.bottom));
+        }
+        document.documentElement.style.setProperty('--lh-sidepanel-top', offset + 'px');
+    }
+
     function getFocusables() {
         return panel.querySelectorAll(
             'a[href], button:not([disabled]), textarea:not([disabled]), ' +
@@ -164,6 +178,11 @@
             closePanel();
             return;
         }
+
+        // Recompute header offset — header height can change based on the
+        // page's h1 / breadcrumb, and the panel must sit below whatever's
+        // currently in the page header.
+        syncHeaderOffset();
 
         // If another panel is open, silently swap: reset its trigger state first.
         if (currentKey) {
@@ -243,12 +262,19 @@
         }, 280);
     }
 
-    // Dock button clicks → open / toggle panel.
+    // Dock button clicks → open / toggle panel (also swaps between panels
+    // without closing first, since the dock stays visible above the panel).
     dock.addEventListener('click', function (e) {
         var btn = e.target.closest('[data-lh-sidepanel-trigger]');
         if (!btn) { return; }
         e.preventDefault();
         openPanel(btn.getAttribute('data-lh-sidepanel-trigger'));
+    });
+
+    // Keep the header offset accurate if the viewport resizes while a panel
+    // is open (e.g. device rotation, window resize, zoom).
+    window.addEventListener('resize', function () {
+        if (currentKey) { syncHeaderOffset(); }
     });
 
     // Backdrop click → close.

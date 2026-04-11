@@ -18,6 +18,15 @@
 
 
 // --- Header Dock (lives in .lernhive-page-header__actions) -------------------
+//
+// When a side panel is open the backdrop (z-index 1090) would otherwise sit
+// on top of the page header; we lift the header into its own stacking
+// context so dock clicks still register and the user can swap between
+// panels without closing first.
+.lernhive-page-header {
+    position: relative;
+    z-index: 1092; // above .lh-sidepanel-backdrop (1090) and .lh-sidepanel (1091)
+}
 
 .lh-hdock {
     display: inline-flex;
@@ -106,10 +115,19 @@
 
 
 // --- Side Panel backdrop -----------------------------------------------------
+//
+// The backdrop (and the panel itself) start BELOW the page header so the
+// Header Dock icons remain visible AND clickable while a panel is open.
+// JS measures `.lernhive-page-header` at open-time and sets the custom
+// property `--lh-sidepanel-top` on :root; the mobile media query overrides
+// this to keep the bottom-sheet behaviour intact on narrow viewports.
 
 .lh-sidepanel-backdrop {
     position: fixed;
-    inset: 0;
+    top: var(--lh-sidepanel-top, 0);
+    right: 0;
+    bottom: 0;
+    left: 0;
     background: rgba(#0e1d2c, 0.28);
     opacity: 0;
     pointer-events: none;
@@ -127,13 +145,15 @@
 
 .lh-sidepanel {
     position: fixed;
-    top: 0;
+    top: var(--lh-sidepanel-top, 0);
     right: 0;
     bottom: 0;
     width: 380px;
     max-width: 92vw;
     background: $lh-bg-white;
     border-left: 1px solid $lh-border;
+    border-top: 1px solid $lh-border;
+    border-top-left-radius: 0.75rem; // soft corner where panel meets header
     box-shadow: -0.375rem 0 1.5rem rgba(#0e1d2c, 0.12),
                 -0.125rem 0 0.375rem rgba(#0e1d2c, 0.06);
     transform: translateX(100%);
@@ -141,6 +161,7 @@
     z-index: 1091;
     display: flex;
     flex-direction: column;
+    overflow: hidden; // clip the header's border-radius corner
 
     &.lh-sidepanel--open {
         transform: translateX(0);
@@ -439,6 +460,12 @@
     .lh-hdock__btn {
         width: 2rem;
         height: 2rem;
+    }
+
+    // Mobile bottom-sheet: backdrop covers the full viewport again
+    // (no dock-preservation offset since there's no room for both).
+    .lh-sidepanel-backdrop {
+        top: 0;
     }
 }
 
