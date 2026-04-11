@@ -153,6 +153,108 @@ container_check() {
   fi
 }
 
+# ---------------------------------------------------------------------------
+# Pre-flight cleanup.
+#
+# Why this exists:
+#   When a previous test run is aborted from the caller side (Ctrl-C in
+#   Cowork, GH Actions cancel cascade, SSH drop, ...), the `docker exec`
+#   client dies but the PHP process INSIDE the container keeps running.
+#   It is reparented to PID 1 inside the container, holds Moodle's
+#   test lock via flock() on the phpunit/behat dataroot, and leaves
+#   behind orphan `phpu_*` / `behat_*` tables. The next test run then
+#   either blocks forever on "Waiting for other test execution to
+#   complete..." or crashes in init.php with ddlexecuteerror on a
+#   leftover table / index.
+#
+#   Since test-hetzner.yml now runs on schedule + workflow_dispatch
+#   only (no push trigger), every run that gets here is intentional
+#   and can safely wipe any stale state. We do this as the FIRST
+#   action after container_check().
+#
+# What it does:
+#   1. SIGTERM any lingering phpunit / behat / util.php processes
+#      owned by the Moodle user (so flock() handles get released
+#      cleanly by the PHP runtime).
+#   2. Short grace period.
+#   3. SIGKILL anything still alive (CPU-bound 29k full-core runs
+#      typically need the hard kill).
+#   4. DROP TABLE every `phpu_*` and `behat_*` table via a PHP
+#      round-trip that talks to Moodle's own $DB. We can't use the
+#      psql CLI because the DB credentials are only reachable via
+#      config.php. Using $DB->execute() also keeps us on whatever
+#      driver the target is configured for (Postgres on Hetzner,
+#      MariaDB on local OrbStack).
+#
+# See: feedback memory "docker exec abort leaves PHP zombies"
+#      (/sessions/.../feedback_docker_exec_abort.md).
+# ---------------------------------------------------------------------------
+preflight_cleanup() {
+  log "preflight: killing stale phpunit/behat processes (if any)"
+
+  # Graceful first — PHP gets to release flock() handles on exit.
+  # pkill returns 1 when no processes match, which is the common case
+  # and must not trip `set -e`.
+  in_container bash -c "pkill -TERM -u '$MOODLE_USER' -f 'phpunit|behat|admin/tool/phpunit/cli|admin/tool/behat/cli' || true"
+  sleep 2
+  # Hard-kill whatever is still running.
+  in_container bash -c "pkill -KILL -u '$MOODLE_USER' -f 'phpunit|behat|admin/tool/phpunit/cli|admin/tool/behat/cli' || true"
+
+  log "preflight: dropping leftover phpu_* and behat_* tables"
+  # Nested heredoc: OUTER is delivered to bash -s as the command body,
+  # and PHPSCRIPT is delivered to `php --` as the PHP source. Both use
+  # single-quoted heredoc markers so no $-expansion or backslash
+  # escaping happens at any layer. This is the same pattern that
+  # successfully cleared 259 orphan tables by hand on 2026-04-11.
+  in_container_repo_root bash -s <<'OUTER'
+set -e
+php -- <<'PHPSCRIPT'
+<?php
+define('CLI_SCRIPT', true);
+require(__DIR__ . '/config.php');
+
+// Fetch every table name from the live Moodle DB and filter to the
+// two test prefixes. Using the DB driver keeps this portable across
+// pgsql / mariadb / mysqli.
+$tables = $DB->get_tables(false);
+$targets = [];
+foreach ($tables as $t) {
+    if (strpos($t, 'phpu_') === 0 || strpos($t, 'behat_') === 0) {
+        $targets[] = $t;
+    }
+}
+
+if (empty($targets)) {
+    echo "[preflight] no leftover phpu_/behat_ tables\n";
+    exit(0);
+}
+
+echo "[preflight] dropping " . count($targets) . " leftover test tables\n";
+$dropped = 0;
+$failed  = 0;
+foreach ($targets as $t) {
+    try {
+        // CASCADE is Postgres-specific but harmless on MySQL/MariaDB
+        // where it is not supported — we catch the error and retry
+        // without CASCADE so this function stays driver-agnostic.
+        try {
+            $DB->execute("DROP TABLE IF EXISTS \"{$t}\" CASCADE");
+        } catch (Throwable $e) {
+            $DB->execute("DROP TABLE IF EXISTS `{$t}`");
+        }
+        $dropped++;
+    } catch (Throwable $e) {
+        echo "[preflight] could not drop {$t}: " . $e->getMessage() . "\n";
+        $failed++;
+    }
+}
+echo "[preflight] dropped={$dropped} failed={$failed}\n";
+PHPSCRIPT
+OUTER
+
+  ok "preflight: container is clean"
+}
+
 # Map a frankenstyle component to a Moodle testsuite name.
 # Convention: Moodle registers a PHPUnit testsuite named exactly like
 # the component (e.g. local_lernhive_contenthub_testsuite) after
@@ -473,6 +575,12 @@ run_behat() {
 # ---------------------------------------------------------------------------
 log "target=$TARGET  container=$CONTAINER  suite=$SUITE  component=${COMPONENT_FILTER:-<default: lernhive plugins>}  full=$FULL  reinit=$FORCE_REINIT"
 container_check
+
+# Always wipe stale phpunit/behat state before running. This makes
+# every intentional test run (manual or nightly schedule) self-heal
+# from an aborted previous run — see preflight_cleanup() for the
+# full reasoning.
+preflight_cleanup
 
 FAIL=0
 

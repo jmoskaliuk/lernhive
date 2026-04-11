@@ -6,28 +6,37 @@ name: Test on Hetzner
 # independent failure modes in the Actions graph, and a red test run
 # should not block a subsequent deploy (or vice versa).
 #
-# Triggers:
-#   A) Auto on push to main when plugin code, test logic, or Moodle
-#      core composer state changes. Kept in sync with deploy-hetzner.yml
-#      so every deploy is followed by a test run.
+# Triggers (2026-04-11 onward):
+#   A) schedule — nightly at 02:00 UTC Mon–Fri. Gives us a daily
+#      signal on main without coupling to deploys. Weekend skipped
+#      because the Hetzner container has nothing new to test then.
 #   B) workflow_dispatch with filters — the "run one suite on one
-#      plugin" button.
+#      plugin" button, also used manually after a deploy when we
+#      actually want verification right now.
+#
+# Why no push trigger anymore:
+#   The Hetzner container is a single-tenant test host. Push bursts
+#   (multiple commits during an iteration) caused the GH Actions
+#   concurrency group to cancel pending runs while leaving their
+#   in-container PHP processes alive (docker-exec signal propagation
+#   does not reach the container). That produced zombie phpunit
+#   processes holding Moodle's test lock, which the next run hung on
+#   for 25 minutes. Moving to manual + nightly makes every run
+#   intentional. See feedback memory "docker exec abort leaves PHP
+#   zombies" and playbooks/test.sh → preflight_cleanup().
 #
 # Both triggers invoke `lernhive-test` on Hetzner via SSH. That wrapper
-# updates the workspace from git and hands off to playbooks/test.sh.
+# updates the workspace from git and hands off to playbooks/test.sh,
+# which now always runs a pre-flight cleanup as its first action.
 #
 # The workflow relies on the same four repo secrets as deploy-hetzner.yml:
 #   HETZNER_HOST / HETZNER_USER / HETZNER_SSH_KEY / HETZNER_KNOWN_HOSTS
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'plugins/**'
-      - 'playbooks/test.sh'
-      - 'playbooks/test.hetzner.env'
-      - 'playbooks/server-test.sh'
-      - '.github/workflows/test-hetzner.yml'
+  schedule:
+    # 02:00 UTC Mon–Fri. Avoid 00:00 because that is the busiest
+    # cron slot on GH-hosted runners and often queues for minutes.
+    - cron: '0 2 * * 1-5'
   workflow_dispatch:
     inputs:
       suite:
