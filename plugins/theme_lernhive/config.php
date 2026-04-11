@@ -43,6 +43,12 @@ $THEME->undeletableblocktypes = [];
 $THEME->requiredblocks = '';
 $THEME->usefallback = true;
 
+// Enable Moodle's core course index drawer. Without this, core_course_drawer()
+// in /course/lib.php short-circuits and returns an empty string, which in turn
+// makes theme_lernhive_get_course_sidebar_context()->hascourseindex false, so
+// the course-sidebar's divider and course navigation never render.
+$THEME->usescourseindex = true;
+
 // LernHive block regions (since 0.9.3):
 //  - content-top        : full-width strip above the main content area
 //  - content-bottom     : full-width strip below the main content area (default region for new blocks)

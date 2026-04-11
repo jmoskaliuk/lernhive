@@ -17,43 +17,60 @@
         {{> theme_lernhive/sidebar_course }}
 
         <div id="page" class="lernhive-page lernhive-page--course">
-            <header id="page-header" class="lernhive-course-header">
-                <div class="lernhive-course-header__main">
-                    <div class="lernhive-course-header__eyebrow">{{#str}} courserowlabel, theme_lernhive {{/str}}</div>
-                    <div class="lernhive-course-header__content">
+            {{! Standard LernHive page header — same chrome as drawers.mustache.
+                Brings the user block (avatar → profile, prefs, logout), the
+                Header Dock (messages, notifications, AI, help), the language
+                menu, and the app launcher back to course pages. 0.9.46
+                replaces the short-lived bespoke lernhive-course-header card
+                that shipped in 0.9.45 and hid all of the above. }}
+            {{#showpageheader}}
+                <div class="lernhive-page-header">
+                    <div class="lernhive-page-header__main">
                         {{{ output.full_header }}}
                     </div>
-                </div>
-                <div class="lernhive-course-header__actions">
-                    {{! Header Dock — unified side-panel system (0.9.36). }}
-                    {{#hassidepanel}}
-                        {{> theme_lernhive/sidepanel }}
-                    {{/hassidepanel}}
-                    <div class="lernhive-course-header__utilities" aria-label="{{#str}} courseheadertools, theme_lernhive {{/str}}">
-                        <button class="lernhive-course-header__tool" type="button" aria-label="{{#str}} coursedownload, theme_lernhive {{/str}}" title="{{#str}} coursedownload, theme_lernhive {{/str}}">
-                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                                <path d="M12 3v12"></path>
-                                <path d="m7 10 5 5 5-5"></path>
-                                <path d="M5 21h14"></path>
-                            </svg>
-                        </button>
-                        <button class="lernhive-course-header__tool" type="button" aria-label="{{#str}} courseprint, theme_lernhive {{/str}}" title="{{#str}} courseprint, theme_lernhive {{/str}}">
-                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                                <path d="M6 9V4h12v5"></path>
-                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                                <path d="M6 14h12v6H6z"></path>
-                            </svg>
-                        </button>
-                        <button class="lernhive-course-header__tool" type="button" aria-label="{{#str}} coursemore, theme_lernhive {{/str}}" title="{{#str}} coursemore, theme_lernhive {{/str}}">
-                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                                <circle cx="5" cy="12" r="1.7"></circle>
-                                <circle cx="12" cy="12" r="1.7"></circle>
-                                <circle cx="19" cy="12" r="1.7"></circle>
-                            </svg>
-                        </button>
+                    <div class="lernhive-page-header__actions">
+                        {{#hassidepanel}}
+                            {{> theme_lernhive/sidepanel }}
+                        {{/hassidepanel}}
+
+                        {{#haslangmenu}}
+                            <div class="lernhive-lang-menu">
+                                {{{ langmenu }}}
+                            </div>
+                        {{/haslangmenu}}
+
+                        {{#showlauncher}}
+                            {{#launcher}}
+                                <div class="lernhive-page-header__launcher">
+                                    {{> theme_lernhive/launcher }}
+                                </div>
+                            {{/launcher}}
+                        {{/showlauncher}}
+
+                        {{#isloggedin}}
+                            <div class="lernhive-user-block">
+                                <a href="{{ profileurl }}"
+                                   class="lernhive-user-block__avatar"
+                                   title="{{#str}} viewprofile {{/str}}">
+                                    {{{ useravatar }}}
+                                </a>
+                                <a href="{{ prefsurl }}"
+                                   class="lernhive-user-block__action"
+                                   title="{{#str}} preferences {{/str}}"
+                                   aria-label="{{#str}} preferences {{/str}}">
+                                    <i class="fa fa-cog" aria-hidden="true"></i>
+                                </a>
+                                <a href="{{ logouturl }}"
+                                   class="lernhive-user-block__action lernhive-user-block__action--danger"
+                                   title="{{#str}} logout {{/str}}"
+                                   aria-label="{{#str}} logout {{/str}}">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        {{/isloggedin}}
                     </div>
                 </div>
-            </header>
+            {{/showpageheader}}
 
             <div id="page-content" class="lernhive-course-layout">
                 {{#hasregionmainsettingsmenu}}
@@ -69,10 +86,14 @@
                 {{/hascontenttop}}
 
                 <main id="region-main-box" class="lernhive-course-main">
-                    <section class="lernhive-course-surface" aria-labelledby="maincontent">
+                    {{! #maincontent must be a SEPARATE empty element (skip-link
+                        anchor only). Moodle core CSS gives it height: 1px with
+                        overflow: clip, so wrapping real content inside it hides
+                        everything. See theme_lernhive session memory. }}
+                    <span id="maincontent" class="lernhive-skip-anchor"></span>
+                    <section class="lernhive-course-surface" aria-label="content">
                         <div id="region-main">
                             {{{ output.course_content_header }}}
-                            <div id="maincontent"></div>
                             {{{ output.main_content }}}
                             {{{ output.course_content_footer }}}
                         </div>
@@ -89,6 +110,8 @@
             {{> theme_lernhive/footer }}
         </div>
     </div>
+
+    {{> theme_lernhive/context_dock }}
 
     {{{ output.standard_after_main_region_html }}}
     {{{ output.standard_end_of_body_html }}}

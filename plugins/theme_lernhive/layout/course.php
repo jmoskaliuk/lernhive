@@ -23,7 +23,17 @@ $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
 $launchercontext['launcherisdock'] = $launcherstyle === 'dock';
 
+// Course pages always show the page header (user block, dock, launcher).
+// The flag exists to let the frontpage suppress it — we never want to suppress
+// it on a course.
+$showpageheader = true;
+
 $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
+
+// Context Dock — floating action strip (Teacher/Trainer actions per page).
+// Matches drawers.php so course pages render the same context dock as all
+// other learner-facing pages.
+$dockitems = theme_lernhive_get_context_dock_items();
 
 // Header Dock — unified side-panel system (0.9.36).
 $sidepanelitems = theme_lernhive_get_sidepanel_items();
@@ -52,11 +62,14 @@ $templatecontext = array_merge([
     'launcherisbase' => $launcherstyle === 'base',
     'launcherisdock' => $launcherstyle === 'dock',
     'showlauncher' => $showlauncher,
+    'showpageheader' => $showpageheader,
     'launcher' => $launchercontext,
     'navitems' => $navitems,
     'coursesidebar' => $coursesidebar,
     'sidepanelitems' => $sidepanelitems,
     'hassidepanel' => !empty($sidepanelitems),
+    'dockitems' => $dockitems,
+    'hasdockitems' => !empty($dockitems),
 ], $blockregions, $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/course', $templatecontext);
