@@ -77,15 +77,12 @@ img {
 
 // --- Moodle chrome overrides -------------------------------------------------
 // Hide Moodle UI elements that conflict with the LernHive shell.
-// EXCEPTION: admin pagelayouts keep the full standard Moodle navigation —
-// they don't use the LernHive app-shell at all (see admin.mustache).
+// These rules apply to ALL LernHive pages (including admin) because admin
+// pages now also use the LernHive app-shell with our own sidebar.
+// Scope by .theme-lernhive-shell to avoid affecting non-theme pages.
 
-// On non-admin pages: hide Moodle chrome that the LernHive shell replaces.
-// NOTE: use simple specificity overrides — scssphp (Moodle's SCSS compiler)
-// does NOT support CSS Level 4 complex :not() selectors.
-
-body:not(.pagelayout-admin):not(.pagelayout-admincompact) {
-    // Primary navigation — hidden globally; sidebar copy re-enabled below.
+.theme-lernhive-shell {
+    // Primary navigation — hidden globally; LernHive sidebar replaces it.
     .primary-navigation,
     nav.moremenu {
         display: none !important;
@@ -104,19 +101,17 @@ body:not(.pagelayout-admin):not(.pagelayout-admincompact) {
         display: none !important;
     }
 
-    // Page header (Moodle core) — we render our own via lernhive-page-header.
+    // Page header (Moodle core) — we render our own.
     #page-header {
         display: none !important;
     }
-}
 
-// Un-hide primary-navigation inside the sidebar.
-// Higher specificity (0,2,0) beats the global hide rule (0,1,0) — no :not() needed.
-.lernhive-sidebar .primary-navigation {
-    display: block !important;
-    background: transparent;
-    border: none;
-    padding: 0;
+    // Secondary navigation — keep visible. On admin pages this is the
+    // admin settings category tab bar (General | Users | Courses | …).
+    // On other pages it holds breadcrumbs / course secondary nav.
+    .secondary-navigation {
+        display: block;
+    }
 }
 
 // User menu inside sidebar — always visible, light text on dark bg.
@@ -146,17 +141,11 @@ body:not(.pagelayout-admin):not(.pagelayout-admincompact) {
     background: transparent;
 }
 
-// Admin pages: clean up body background so Boost can render normally.
+// Admin pages: constrain content width for readability.
+// (Admin pages now use the LernHive app-shell, not a separate Moodle layout.)
 body.pagelayout-admin,
 body.pagelayout-admincompact {
     background: $lh-bg;
-
-    // Constrain admin content width for readability.
-    .lernhive-admin-page {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: $lh-spacing-md;
-    }
 }
 
 // Breadcrumb — let it render but with our styling.

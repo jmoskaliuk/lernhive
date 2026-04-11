@@ -1,9 +1,12 @@
 {{!
-    Admin layout — LernHive app-shell (sidebar) + Moodle full_header (admin nav tree).
+    Admin layout — LernHive app-shell (sidebar) + Moodle secondary navigation
+    (admin settings category tab bar) + main content.
 
-    The sidebar provides consistent top-level navigation (Home / Dashboard /
-    MyCourses / SiteAdmin). full_header renders Moodle's secondary navigation
-    which includes the admin settings category tree on admin pages.
+    Structure:
+    - LernHive sidebar: consistent top-level nav (Home/Dashboard/MyCourses/SiteAdmin)
+    - output.secondary_nav: Moodle admin settings category tabs
+      (General | Users | Courses | Grades | Plugins | Server | Reports | …)
+    - output.main_content: the actual admin page content (overview, settings forms, etc.)
 
     No block regions, no Context Dock on admin pages.
 }}
@@ -15,20 +18,21 @@
     <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
 
     <div class="lernhive-app-shell">
-        {{! LernHive sidebar — same as drawers.mustache }}
+        {{! LernHive sidebar — identical to drawers.mustache }}
         {{> theme_lernhive/sidebar }}
 
         <div id="page" class="lernhive-page lernhive-admin-page">
-            {{! full_header outputs the primary nav bar + Moodle secondary nav
-                (admin settings category tree) for admin pagelayout pages. }}
-            <div class="lernhive-admin-header">
-                {{{ output.full_header }}}
-            </div>
+
+            {{! Secondary navigation: rendered by Moodle for admin pages as the
+                admin category tab bar (General | Users | Courses | …).
+                _base.scss explicitly keeps .secondary-navigation visible even
+                though other Moodle chrome is hidden within .theme-lernhive-shell. }}
+            {{{ output.secondary_nav }}}
 
             <div id="page-content" class="lernhive-page-content">
                 <main id="region-main-box" class="lernhive-main">
                     <span id="maincontent" class="lernhive-skip-anchor"></span>
-                    <div id="region-main" class="lernhive-main-section lernhive-admin-content">
+                    <div id="region-main">
                         {{#hasregionmainsettingsmenu}}
                             <div class="lernhive-settings-menu">
                                 {{{ regionmainsettingsmenu }}}
