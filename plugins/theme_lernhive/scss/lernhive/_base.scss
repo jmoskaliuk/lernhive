@@ -76,35 +76,52 @@ img {
 }
 
 // --- Moodle chrome overrides -------------------------------------------------
-// Hide or neutralise Moodle UI elements that conflict with the LernHive shell.
+// Hide Moodle UI elements that conflict with the LernHive shell.
+// EXCEPTION: admin pagelayouts keep the full standard Moodle navigation —
+// they don't use the LernHive app-shell at all (see admin.mustache).
 
-// Primary navigation tabs — replaced by sidebar.
-.primary-navigation,
-nav.moremenu {
-    display: none !important;
-}
+:not(body.pagelayout-admin):not(body.pagelayout-admincompact) {
+    // Primary navigation tabs — replaced by LernHive sidebar.
+    .primary-navigation,
+    nav.moremenu {
+        display: none !important;
+    }
 
-// Boost-era drawers — we use our own sidebar.
-.drawer.drawer-left,
-#theme_boost-drawers-courseindex,
-.drawer-toggler {
-    display: none !important;
-}
+    // Boost-era drawers — we use our own sidebar.
+    .drawer.drawer-left,
+    #theme_boost-drawers-courseindex,
+    .drawer-toggler {
+        display: none !important;
+    }
 
-// Moodle's default Boost navbar — replaced by our page header.
-#page-navbar,
-.navbar {
-    display: none !important;
-}
+    // Moodle's default Boost navbar — replaced by our page header.
+    #page-navbar,
+    .navbar {
+        display: none !important;
+    }
 
-// Page header (Moodle core) — we render our own via lernhive-page-header.
-#page-header {
-    display: none !important;
+    // Page header (Moodle core) — we render our own via lernhive-page-header.
+    #page-header {
+        display: none !important;
+    }
 }
 
 // Remove default Moodle body background overrides.
 #page-wrapper {
     background: transparent;
+}
+
+// Admin pages: clean up body background so Boost can render normally.
+body.pagelayout-admin,
+body.pagelayout-admincompact {
+    background: $lh-bg;
+
+    // Constrain admin content width for readability.
+    .lernhive-admin-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: $lh-spacing-md;
+    }
 }
 
 // Breadcrumb — let it render but with our styling.
