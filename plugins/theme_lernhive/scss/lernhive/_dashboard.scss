@@ -897,22 +897,16 @@ body .progress {
     }
 }
 
-// --- LernHive Sidebar Navigation (dashboard only) ---
-.lernhive-sidebar {
-    position: fixed;
-    top: $lh-header-height;
-    left: 0;
-    bottom: 0;
-    width: $lh-sidebar-width;
-    background: $lh-bg-white;
-    border-right: 1px solid $lh-border;
-    padding: $lh-spacing-md 12px;
-    overflow-y: auto;
-    z-index: 90;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
+// --- LernHive Sidebar Navigation ---
+// Note: The legacy .lernhive-sidebar { position: fixed; ... } block that
+// lived here was designed for the pre-0.9.3 layout where the sidebar sat
+// on top of Moodle's default #page.drawers. Since the 0.9.3 block-region
+// refactor, the sidebar is a first-class in-flow grid child inside
+// .lernhive-app-shell (see post.scss .lernhive-app-shell rule). The
+// visual styling of the sidebar container (blue gradient background,
+// padding, border-radius) now lives in post.scss .lernhive-sidebar.
+// This file keeps only the interior nav-section / nav-item / nav-label
+// rules which still apply.
 
 .lernhive-nav-section {
     display: flex;
@@ -997,7 +991,12 @@ body .progress {
     }
 }
 
-// --- Dashboard layout offset for sidebar ---
+// --- Dashboard-specific layout tweaks ---
+// The 0.9.3 block-region refactor replaced Moodle's #page.drawers wrapper
+// with .lernhive-app-shell, so the old margin-left offset for the sidebar
+// is obsolete (the sidebar is now an in-flow grid child, not a fixed
+// overlay). What remains dashboard-specific is hiding Moodle core chrome
+// that we replace with our own surfaces.
 body.pagelayout-mydashboard {
     // Hide Moodle's primary navigation (tabs) — replaced by sidebar.
     .primary-navigation,
@@ -1011,35 +1010,20 @@ body.pagelayout-mydashboard {
         display: none !important;
     }
 
-    // Offset main content area by sidebar width.
-    #page.drawers {
-        margin-left: $lh-sidebar-width !important;
-    }
-
-    // Also offset the navbar so search bar aligns correctly.
-    // (Don't offset navbar — it should span full width with logo in sidebar area.)
-
-    // Ensure content does not overlap sidebar.
-    #page-content,
-    #topofscroll {
-        margin-left: 0 !important;
-    }
-
     // Remove #page-header (hidden by JS but also by CSS as fallback).
     #page-header {
         display: none !important;
     }
 }
 
-// Responsive: hide sidebar on mobile, remove offset.
+// Responsive: collapse sidebar visually on narrow viewports.
+// Actual grid collapse is handled by post.scss @media (max-width: 991px)
+// .lernhive-app-shell { grid-template-columns: 1fr } — which turns the
+// sidebar into a full-width row above the main content instead of hiding
+// it. We only need to ensure the old `display: none` behaviour from the
+// fixed-overlay era is not re-introduced.
 @media (max-width: 768px) {
-    .lernhive-sidebar {
-        display: none;
-    }
-
-    body.pagelayout-mydashboard #page.drawers {
-        margin-left: 0 !important;
-    }
+    // Intentionally empty — legacy rule removed.
 }
 
 // --- Legacy Level Bar (on course pages, kept for backwards compat) ---

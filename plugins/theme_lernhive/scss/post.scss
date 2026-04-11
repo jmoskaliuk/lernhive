@@ -37,6 +37,15 @@
 }
 
 .lernhive-sidebar {
+  // Explicit static positioning — defends against any cascade regression
+  // from partials that may still define position:fixed (see 0.9.4 hotfix
+  // for _dashboard.scss legacy block).
+  position: static;
+  top: auto;
+  left: auto;
+  bottom: auto;
+  width: auto;
+  z-index: auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
