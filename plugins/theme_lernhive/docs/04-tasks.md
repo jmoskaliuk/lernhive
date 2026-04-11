@@ -22,6 +22,12 @@
   - Admin nav: two-level horizontal tab-bar — Level 1 top categories + Level 2 sub-items of active category — lib.php + admin.mustache + _layout.scss
   - Plugin Shell: new `_plugin-shell.scss` partial — 2-zone sticky page header for local plugins (Zone A header+tags, Zone B info/CTA, card grid with states, action buttons)
   - Mockup: `plugin-shell-concept.html` v0.2 (inline SVG sprite) + `plugin-shell-spec.md`
+- [x] 0.9.36 — Admin tab bar visibility fix (Johannes: Screenshot Boost-Referenz `/admin/search.php` zeigt `Allgemein | Nutzer/innen [active] | Kurse | …`, LernHive produziert das HTML aber rendert nichts):
+  - `scss/lernhive/_base.scss` — remove the too-broad `nav.moremenu { display: none !important }` selector. Root cause: Boost's `core/moremenu` partial renders BOTH the primary navbar and the secondary admin tab bar as `<nav class="moremenu navigation">`, so the broad hide that was meant to suppress the primary navbar also killed the admin tab bar that 0.9.34 builds via `{{> core/moremenu }}`. The `.secondary-navigation { display: block }` override from 0.9.26 only un-hid the wrapper div; the `<nav>` element inside stayed `display: none !important`. Scoped the hide rule to `.primary-navigation` only, which cleanly suppresses the Boost primary navbar wrapper without affecting the `.secondary-navigation` wrapper used by the admin tab bar.
+  - Net: admin tab bar now actually renders on screen — canonical Boost 9-tab sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development) is visible as originally intended in 0.9.34.
+- [x] 0.9.35 — Plugin shell card grid + ContentHub refinements (Johannes, commit 74a76a8):
+  - `scss/lernhive/_plugin-shell.scss` — `.lh-plugin-grid` gap 8→16px; new `.lh-plugin-content-area` wrapper with responsive horizontal gutter (24/32px desktop, 16px tablet, 8px mobile)
+  - `local_lernhive_contenthub/templates/hub_page.mustache` — remove redundant ← Dashboard back button, switch grid from `--cols-2` to `--cols-3`, replace `container-fluid py-4` with `lh-plugin-content-area` for consistency across plugin shell pages
 - [x] 0.9.34 — Admin nav: delegate to core secondary_navigation (Johannes: "orientiere Dich komplett an der Boost Darstellung"):
   - `layout/admin.php` — build `secondarymoremenu` via `\core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', …)` exactly like `theme_boost/layout/drawers.php`. Also forwards `overflow` via `$PAGE->secondarynav->get_overflow_menu_data()`.
   - `templates/admin.mustache` — replaces the custom two-level `{{#hasadmintopnav}}…{{/hasadmintopnav}}` / `{{#hasadminsecondnav}}…{{/hasadminsecondnav}}` blocks with the canonical Boost pattern: `{{#secondarymoremenu}} … {{> core/moremenu}} {{/secondarymoremenu}}` wrapped in a thin `.lernhive-secondary-navigation` container. Also renders the `tertiary-navigation / url_select` overflow block when present.
@@ -38,7 +44,8 @@
 
 ## Open — R1 scope
 
-- [ ] **Smoke-test 0.9.34** — on `/admin/index.php` verify the tab bar shows the canonical Boost sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development), active tab highlights correctly as you drill into categories, overflow menu renders when tabs don't fit
+- [ ] **Smoke-test 0.9.36** — on `/admin/index.php` + `/admin/search.php` verify the tab bar is actually VISIBLE and shows the canonical Boost sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development); active tab highlights correctly as you drill into categories; overflow menu renders when tabs don't fit; verify primary navbar is still suppressed (no duplicate nav bars)
+- [ ] **Smoke-test 0.9.34** — superseded by 0.9.36 (tab bar was built correctly but hidden by CSS; 0.9.36 un-hides it)
 - [ ] **Smoke-test 0.9.33** — verify on local Moodle: ContentHub page has no outer tile, top icon bar is flush to viewport, regular Moodle pages still render `.lernhive-main` as a centered tile with side gutters
 - [ ] **Smoke-test 0.9.27** — obsolete (superseded by 0.9.33 + 0.9.34 smoke-tests above)
 - [ ] `regionmainsettingsmenu` must stay — Teachers use it to add blocks to courses (block positions still unclear after right-hand drawer removal). Keep until an explicit block-placement UX replaces it.

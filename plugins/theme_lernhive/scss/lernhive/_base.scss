@@ -83,8 +83,15 @@ img {
 
 .theme-lernhive-shell {
     // Primary navigation — hidden globally; LernHive sidebar replaces it.
-    .primary-navigation,
-    nav.moremenu {
+    // IMPORTANT: scope this to the .primary-navigation wrapper only — do NOT
+    // hide `nav.moremenu` broadly. Boost's `core/moremenu` partial renders
+    // BOTH the primary nav bar AND the secondary/admin tab bar as
+    // `<nav class="moremenu navigation">`, so a global `nav.moremenu` hide
+    // also kills the admin settings tab bar that 0.9.34 renders via
+    // core/moremenu in admin.mustache. The secondary nav wrapper is
+    // `.secondary-navigation`, not `.primary-navigation`, so this selector
+    // cleanly hides only the primary navbar.
+    .primary-navigation {
         display: none !important;
     }
 
