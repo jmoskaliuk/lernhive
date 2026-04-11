@@ -34,7 +34,14 @@ $string['customcss'] = 'Eigenes CSS';
 $string['customcss_desc'] = 'Eigene CSS-Regeln, die nach allen anderen Styles angewendet werden. Nutze dies für schnelle Anpassungen.';
 
 // Layout-Optionen.
-$string['region-side-pre'] = 'Rechts';
+// Block-Regionen (seit 0.9.3 — der frühere rechte Block-Drawer 'side-pre' wurde entfernt).
+$string['region-content-top'] = 'Inhalt oben';
+$string['region-content-bottom'] = 'Inhalt unten';
+$string['region-sidebar-bottom'] = 'Seitenleiste unten';
+$string['region-footer-left'] = 'Fußzeile links';
+$string['region-footer-center'] = 'Fußzeile Mitte';
+$string['region-footer-right'] = 'Fußzeile rechts';
+$string['region-footer'] = 'Fußzeile';
 $string['layoutoption_limitedwidth'] = 'Begrenzte Breite';
 
 // Datenschutz.

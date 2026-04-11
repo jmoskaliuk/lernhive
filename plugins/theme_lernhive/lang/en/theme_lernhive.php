@@ -31,7 +31,14 @@ $string['configtitle'] = 'LernHive Settings';
 $string['customcss'] = 'Custom CSS';
 $string['customcss_desc'] = 'Add custom CSS rules that will be applied after all other styles. Use this for quick overrides.';
 
-$string['region-side-pre'] = 'Right';
+// Block region labels (since 0.9.3 — legacy right-hand drawer 'side-pre' has been removed).
+$string['region-content-top'] = 'Content top';
+$string['region-content-bottom'] = 'Content bottom';
+$string['region-sidebar-bottom'] = 'Sidebar bottom';
+$string['region-footer-left'] = 'Footer left';
+$string['region-footer-center'] = 'Footer center';
+$string['region-footer-right'] = 'Footer right';
+$string['region-footer'] = 'Footer';
 $string['layoutoption_limitedwidth'] = 'Limited width';
 $string['privacy:metadata'] = 'The LernHive theme does not store any personal data.';
 

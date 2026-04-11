@@ -19,12 +19,19 @@ LernHive is built as a modular product on top of Moodle core.
 - product-specific rules
 - no dependency on theme for business logic
 
+### Layer 2a — LernHive Course Formats
+- `format_lernhive_snack` — short-form 10–30 min learning (planned 0.10.0)
+- `format_lernhive_community` — community feed rendering (planned 0.11.0)
+- `format_lernhive_classic` — optional, only if `format_topics` proves insufficient
+- Course format plugins own course-content rendering. The theme stays format-agnostic.
+
 ### Layer 3 — LernHive UX Layer
 - `theme_lernhive`
 - UI patterns
 - visual consistency
 - touch-friendly, responsive navigation
 - English-first terminology and string usage
+- **does not render course content** — that is a course format responsibility (ADR-01)
 
 ### Layer 4 — Experience Layer
 - Flavours
@@ -109,6 +116,34 @@ Everything remains technically based on Moodle objects, mainly courses, but gets
 - optional Event-like usage pattern
 
 The user should see the experience type, not the technical Moodle object.
+
+### Technical mapping: experience type → course format plugin
+
+| Experience type | Course format           | Status       | Target release |
+|-----------------|-------------------------|--------------|----------------|
+| Classic Course  | `format_topics` (core)  | shipped      | —              |
+| Snack           | `format_lernhive_snack` | planned      | 0.10.0         |
+| Community       | `format_lernhive_community` | planned  | 0.11.0         |
+
+**Why course formats, not theme partials?** Moodle's canonical separation places course-content rendering in course format plugins, not in themes. During 0.8.x–0.9.x the Snack surface was prototyped as `theme_lernhive/templates/snack_*.mustache`. That prototype proved the UX direction but violates Moodle's separation of concerns — it blocks per-course customization, prevents LernHive from running on other themes, and couples presentation to visual design decisions that should be independent. Post-0.9.3 these templates and their SCSS rules migrate to dedicated course format plugins (see ADR-01 in `plugins/theme_lernhive/docs/00-master.md`).
+
+## Architecture decisions (ADRs)
+
+ADRs for individual plugins live inside that plugin's `docs/00-master.md`. Product-level decisions live here.
+
+### ADR-P01 — Course-specific rendering belongs to course format plugins (2026-04-11)
+
+**Decision.** LernHive's experience types (Course, Snack, Community) are implemented as Moodle course format plugins. The theme provides chrome and blocks; course formats render the course content.
+
+**Why.** Moodle core already treats course-format plugins as the place where course-content rendering lives (see `format_topics`, `format_grid`, `format_tiles`). Building the same capability inside a theme fights the grain: it prevents per-course customization, makes the theme non-portable, and tangles business-shaped presentation with site-wide chrome.
+
+**Consequences.**
+- Plugin map grows by 2–3 `format_lernhive_*` plugins (Layer 2a above).
+- `theme_lernhive` becomes smaller and reusable — any Moodle theme will eventually host LernHive courses.
+- Release 0.9.3 ships block regions and marks the current Snack partials as deprecated; removal happens in 0.10.0 when `format_lernhive_snack` lands.
+- Community is a course format because community lifecycle (enrolment, sections, completion, gradebook integration) aligns with Moodle course semantics; no separate "community" object is introduced.
+
+**Status.** Accepted. Implementation starts post-0.9.3.
 
 ## Snack guardrails
 

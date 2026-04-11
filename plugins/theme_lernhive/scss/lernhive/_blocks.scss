@@ -1,0 +1,152 @@
+// -----------------------------------------------------------------------------
+// LernHive block regions
+//
+// Introduced in 0.9.3. Replaces the previous single right-hand block drawer
+// ('side-pre') with six explicit, predictable regions:
+//
+//   content-top      — full-width strip above main content
+//   content-bottom   — full-width strip below main content (default region)
+//   sidebar-bottom   — inside the left sidebar, below primary navigation
+//   footer-left      — three-column footer, left slot
+//   footer-center    — three-column footer, center slot
+//   footer-right     — three-column footer, right slot
+//
+// Every region is an empty container when no blocks are assigned — the PHP
+// layout checks has<region> before emitting anything, so there is no "empty
+// drawer" space eating the page.
+// -----------------------------------------------------------------------------
+
+.theme-lernhive {
+    // ---- Content-adjacent regions -----------------------------------------
+    .lernhive-blocks {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 1.25rem 0;
+        padding: 0;
+
+        // Blocks rendered by Moodle core come with their own spacing — keep
+        // the region container minimal so core block chrome stays intact.
+        > section.block,
+        > .block {
+            margin: 0;
+        }
+
+        &--content-top {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        &--content-bottom {
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    // ---- Sidebar-bottom region --------------------------------------------
+    // Lives inside .lernhive-sidebar; needs to stay compact so it does not
+    // push the primary nav out of view on short viewports.
+    .lernhive-sidebar__blocks {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem 0;
+        margin-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+        > .block {
+            margin: 0;
+            // Blocks inside the dark sidebar should not inherit Moodle's
+            // default card chrome — tone them down visually.
+            background: transparent;
+            border: 0;
+            color: inherit;
+
+            .card-body,
+            .content {
+                padding: 0.25rem 0;
+            }
+        }
+    }
+
+    // ---- Footer ------------------------------------------------------------
+    .lernhive-footer {
+        margin-top: 2rem;
+        padding: 1.5rem 1.5rem 2rem;
+        background: #f6f8fa;
+        border-top: 1px solid #e9e9e9;
+        color: #353535;
+        font-size: 0.9375rem;
+
+        &__inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+
+        &__col {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+
+            > .block {
+                margin: 0;
+                background: transparent;
+                border: 0;
+                box-shadow: none;
+
+                .card-body,
+                .content {
+                    padding: 0;
+                }
+            }
+
+            &--center {
+                text-align: center;
+            }
+
+            &--right {
+                text-align: right;
+            }
+        }
+
+        // Graceful fallback when only one or two footer columns have content:
+        // flex the remaining columns so the footer still looks balanced.
+        &__col:only-child {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+    }
+
+    // ---- Responsive --------------------------------------------------------
+    @media (max-width: 768px) {
+        .lernhive-footer {
+            padding: 1.25rem 1rem 1.5rem;
+
+            &__inner {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            &__col--center,
+            &__col--right {
+                text-align: left;
+            }
+        }
+
+        .lernhive-blocks {
+            margin: 1rem 0;
+        }
+    }
+
+    @media print {
+        .lernhive-blocks--content-bottom,
+        .lernhive-footer,
+        .lernhive-sidebar__blocks {
+            display: none !important;
+        }
+    }
+}

@@ -1,0 +1,46 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+}}
+{{!
+    LernHive theme footer partial.
+
+    Renders a three-column footer driven by the block regions
+    footer-left, footer-center, footer-right. The whole footer is only
+    emitted when at least one of those regions has blocks placed in it,
+    so pages without footer blocks stay clean.
+
+    Expected context (populated by theme_lernhive_get_block_regions_context):
+      hasfooterblocks  bool   — any footer-* region has blocks
+      hasfooterleft    bool
+      hasfootercenter  bool
+      hasfooterright   bool
+      footerleft       string — rendered block HTML
+      footercenter     string
+      footerright      string
+}}
+{{#hasfooterblocks}}
+    <footer class="lernhive-footer" role="contentinfo" aria-label="{{#str}} region-footer, theme_lernhive {{/str}}">
+        <div class="lernhive-footer__inner">
+            {{#hasfooterleft}}
+                <div class="lernhive-footer__col lernhive-footer__col--left" data-region="footer-left">
+                    {{{ footerleft }}}
+                </div>
+            {{/hasfooterleft}}
+            {{#hasfootercenter}}
+                <div class="lernhive-footer__col lernhive-footer__col--center" data-region="footer-center">
+                    {{{ footercenter }}}
+                </div>
+            {{/hasfootercenter}}
+            {{#hasfooterright}}
+                <div class="lernhive-footer__col lernhive-footer__col--right" data-region="footer-right">
+                    {{{ footerright }}}
+                </div>
+            {{/hasfooterright}}
+        </div>
+    </footer>
+{{/hasfooterblocks}}

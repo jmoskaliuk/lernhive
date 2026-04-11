@@ -14,6 +14,12 @@
         {{{ output.flat_navigation }}}
     </nav>
 
+    {{#hassidebarbottom}}
+        <div class="lernhive-sidebar__blocks" data-region="sidebar-bottom" aria-label="{{#str}} region-sidebar-bottom, theme_lernhive {{/str}}">
+            {{{ sidebarbottom }}}
+        </div>
+    {{/hassidebarbottom}}
+
     <div class="lernhive-sidebar__notes">
         <p class="lernhive-sidebar__note"><strong>{{#str}} flavourpriority, theme_lernhive {{/str}}</strong></p>
         <p class="lernhive-sidebar__note">{{#str}} flavourprioritydesc, theme_lernhive {{/str}}</p>

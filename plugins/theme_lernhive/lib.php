@@ -74,6 +74,7 @@ function theme_lernhive_get_extra_scss($theme) {
         '_buttons.scss',
         '_cards.scss',
         '_navigation.scss',
+        '_blocks.scss',
         '_course.scss',
         '_dashboard.scss',
         '_login.scss',
@@ -195,4 +196,50 @@ function theme_lernhive_get_launcher_context(): array {
     } catch (\Throwable $e) {
         return $fallbackcontext;
     }
+}
+
+/**
+ * Build the rendered block HTML and has-flags for every LernHive block region.
+ *
+ * Returns an array that can be merged into the Mustache template context, e.g.:
+ *   [
+ *     'contenttop'          => '<section ...>...</section>',
+ *     'hascontenttop'       => true,
+ *     'contentbottom'       => '',
+ *     'hascontentbottom'    => false,
+ *     ...
+ *     'hasfooterblocks'     => true,  // any footer-* region has content
+ *   ]
+ *
+ * Region keys intentionally use camel-lite (no dashes) so Mustache tags like
+ * {{{ contenttop }}} / {{#hascontenttop}} work cleanly.
+ *
+ * @param core_renderer $output The theme's core_renderer (usually $OUTPUT).
+ * @return array<string, mixed>
+ */
+function theme_lernhive_get_block_regions_context($output): array {
+    $regions = [
+        'content-top'     => 'contenttop',
+        'content-bottom'  => 'contentbottom',
+        'sidebar-bottom'  => 'sidebarbottom',
+        'footer-left'     => 'footerleft',
+        'footer-center'   => 'footercenter',
+        'footer-right'    => 'footerright',
+    ];
+
+    $context = [];
+    $hasfooter = false;
+
+    foreach ($regions as $region => $key) {
+        $html = $output->blocks($region);
+        $hasblocks = (strpos($html, 'data-block=') !== false);
+        $context[$key] = $html;
+        $context['has' . $key] = $hasblocks;
+        if ($hasblocks && strpos($region, 'footer-') === 0) {
+            $hasfooter = true;
+        }
+    }
+
+    $context['hasfooterblocks'] = $hasfooter;
+    return $context;
 }

@@ -29,8 +29,42 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - Launcher base pattern implemented in the theme as a compact flyout with an optional dock-style enhancement
 - Explore shell components in the theme should remain generic enough for `local_lernhive_discovery` to supply the actual block content
 - ContentHub shell components in the theme should support orchestration UI only and avoid absorbing Copy or Library logic
-- course and incourse layouts should use a dedicated shell so the course page can be tuned separately from generic Moodle pages
-- short-form Snack presentation should be prepared through reusable header and step-flow partials, not by hardcoding business rules into the course layout
+- course/incourse layouts provide chrome only (header, sidebar, footer, block regions) — course content rendering moves to course format plugins per ADR-01
+- short-form Snack presentation is **not** owned by the theme; planned `format_lernhive_snack` plugin will own snack templates (0.10.0)
+
+## Block regions (since 0.9.3)
+
+The theme defines six fixed block regions on all content-bearing layouts (standard, course, incourse, frontpage, admin, mydashboard, report):
+
+| Region         | Position                                              | Default? |
+|----------------|-------------------------------------------------------|----------|
+| content-top    | Full-width, above main content                        | no       |
+| content-bottom | Full-width, below main content                        | **yes**  |
+| sidebar-bottom | Inside left sidebar, below flat navigation            | no       |
+| footer-left    | Three-column footer, left slot                        | no       |
+| footer-center  | Three-column footer, center slot                      | no       |
+| footer-right   | Three-column footer, right slot                       | no       |
+
+**Legacy `side-pre` (right-hand collapsible drawer) has been removed** as of 0.9.3. Any blocks that were assigned to `side-pre` will become orphaned on upgrade — acceptable while LernHive stays in alpha.
+
+### How the regions are wired
+- `config.php` declares the regions in `$THEME->layouts` via a shared `$lhregions` array, so every content-bearing layout gets the same set — no drift between `drawers`, `course`, and `admin`.
+- `lib.php` → `theme_lernhive_get_block_regions_context($OUTPUT)` renders each region's block HTML and builds has-flags in camel-lite keys (`contenttop`, `hascontenttop`, …, `hasfooterblocks`).
+- Each layout PHP file merges the region context into its template context via `array_merge`. This keeps the layout files focused on layout-specific context (launcher style, page header flags, body attributes).
+- Templates reference regions as `{{#hascontenttop}}…{{{ contenttop }}}…{{/hascontenttop}}`. A dedicated `theme_lernhive/footer` partial renders the footer row so drawers, course, and admin all share the same footer markup.
+- SCSS for the regions lives in `scss/lernhive/_blocks.scss` and is registered in the `$partials` array inside `theme_lernhive_get_extra_scss`.
+
+### When to add a block region
+Don't, unless a product requirement cannot be satisfied with the current six. Adding a new region means touching `config.php`, `lib.php`, every content-bearing layout PHP file, every content-bearing Mustache template, both lang files, and `_blocks.scss`. Prefer placing existing regions differently in CSS over adding new ones.
+
+## Course format migration (post-0.9.3)
+Per ADR-01, course-specific rendering leaves the theme. The migration order is:
+1. **0.9.3 (this release)** — block regions in place; theme chrome is format-agnostic.
+2. **0.10.0** — scaffold `format_lernhive_snack`, move `snack_*.mustache` out of the theme, drop snack-specific rules from `_course.scss`.
+3. **0.11.0** — scaffold `format_lernhive_community` for community feeds.
+4. **Later** — decide whether `format_lernhive_classic` is needed or if `format_topics` covers the baseline.
+
+Until the format plugins ship, the theme's existing `snack_*.mustache` partials and `_course.scss` rules remain in place as dead code gated by the current `course.mustache` — they will be removed in 0.10.0.
 
 ## Current dependencies
 - Moodle theme APIs

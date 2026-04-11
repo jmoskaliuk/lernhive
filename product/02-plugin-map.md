@@ -25,6 +25,14 @@ All plugins listed below are documented in this repository. Release labels indic
 | `local_lernhive_reporting` | local | R1 | simplified report dashboards |
 | `local_lernhive_skills` | local | R2 | UX layer for competencies and learning plans |
 
+## Planned course format plugins (per ADR-P01 in 01-architecture.md)
+
+| Plugin | Type | Release | Purpose |
+|---|---|---:|---|
+| `format_lernhive_snack` | format | 0.10.0 | Snack experience rendering (10–30 min short form); migrates from `theme_lernhive/templates/snack_*.mustache` |
+| `format_lernhive_community` | format | 0.11.0 | Community feed rendering as a Moodle course format (LXP) |
+| `format_lernhive_classic` | format | optional | Fallback classic-course format only if `format_topics` proves insufficient |
+
 ## Dependencies
 
 - `theme_lernhive` should remain independently usable

@@ -37,6 +37,12 @@
                     </div>
                 {{/hasregionmainsettingsmenu}}
 
+                {{#hascontenttop}}
+                    <section class="lernhive-blocks lernhive-blocks--content-top" data-region="content-top" aria-label="{{#str}} region-content-top, theme_lernhive {{/str}}">
+                        {{{ contenttop }}}
+                    </section>
+                {{/hascontenttop}}
+
                 <main id="region-main-box" class="lernhive-main lernhive-admin-main">
                     <section id="region-main" aria-label="content">
                         <div id="maincontent"></div>
@@ -46,12 +52,14 @@
                     </section>
                 </main>
 
-                {{#hassidepre}}
-                    <aside class="lernhive-blocks lernhive-admin-aside d-print-none" aria-label="Blocks">
-                        {{{ sidepreblocks }}}
-                    </aside>
-                {{/hassidepre}}
+                {{#hascontentbottom}}
+                    <section class="lernhive-blocks lernhive-blocks--content-bottom d-print-none" data-region="content-bottom" aria-label="{{#str}} region-content-bottom, theme_lernhive {{/str}}">
+                        {{{ contentbottom }}}
+                    </section>
+                {{/hascontentbottom}}
             </div>
+
+            {{> theme_lernhive/footer }}
         </div>
     </div>
 

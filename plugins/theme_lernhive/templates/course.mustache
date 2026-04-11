@@ -54,19 +54,20 @@
             </header>
 
             <div id="page-content" class="lernhive-course-layout">
+                {{#hasregionmainsettingsmenu}}
+                    <div class="lernhive-settings-menu">
+                        {{{ regionmainsettingsmenu }}}
+                    </div>
+                {{/hasregionmainsettingsmenu}}
+
+                {{#hascontenttop}}
+                    <section class="lernhive-blocks lernhive-blocks--content-top" data-region="content-top" aria-label="{{#str}} region-content-top, theme_lernhive {{/str}}">
+                        {{{ contenttop }}}
+                    </section>
+                {{/hascontenttop}}
+
                 <main id="region-main-box" class="lernhive-course-main">
-                    {{#hasregionmainsettingsmenu}}
-                        <div class="lernhive-settings-menu">
-                            {{{ regionmainsettingsmenu }}}
-                        </div>
-                    {{/hasregionmainsettingsmenu}}
-
                     <section class="lernhive-course-surface" aria-labelledby="maincontent">
-                        <div class="lernhive-course-surface__note">
-                            <strong>{{#str}} coursenotetitle, theme_lernhive {{/str}}</strong>
-                            <span>{{#str}} coursenotecopy, theme_lernhive {{/str}}</span>
-                        </div>
-
                         <div id="region-main">
                             {{{ output.course_content_header }}}
                             <div id="maincontent"></div>
@@ -76,18 +77,14 @@
                     </section>
                 </main>
 
-                {{#hassidepre}}
-                    <aside class="lernhive-course-aside" aria-label="{{#str}} coursehelpers, theme_lernhive {{/str}}">
-                        <div class="lernhive-course-aside__panel">
-                            <h2 class="lernhive-course-aside__title">{{#str}} coursehelpertitle, theme_lernhive {{/str}}</h2>
-                            <p class="lernhive-course-aside__copy">{{#str}} coursehelpercopy, theme_lernhive {{/str}}</p>
-                        </div>
-                        <div class="lernhive-course-aside__blocks">
-                            {{{ sidepreblocks }}}
-                        </div>
-                    </aside>
-                {{/hassidepre}}
+                {{#hascontentbottom}}
+                    <section class="lernhive-blocks lernhive-blocks--content-bottom" data-region="content-bottom" aria-label="{{#str}} region-content-bottom, theme_lernhive {{/str}}">
+                        {{{ contentbottom }}}
+                    </section>
+                {{/hascontentbottom}}
             </div>
+
+            {{> theme_lernhive/footer }}
         </div>
     </div>
 

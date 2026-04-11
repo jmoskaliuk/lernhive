@@ -14,8 +14,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $bodyattributes = $OUTPUT->body_attributes(['theme-lernhive', 'theme-lernhive-admin']);
-$sidepreblocks = $OUTPUT->blocks('side-pre');
-$hassidepre = (strpos($sidepreblocks, 'data-block=') !== false || !empty(trim($sidepreblocks)));
 $regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
 $hasregionmainsettingsmenu = !empty($regionmainsettingsmenu);
 $launcherstyle = get_config('theme_lernhive', 'launcherstyle') ?: 'base';
@@ -25,18 +23,18 @@ $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
 $launchercontext['launcherisdock'] = $launcherstyle === 'dock';
 
-$templatecontext = [
+$blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
+
+$templatecontext = array_merge([
     'sitename' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes,
-    'sidepreblocks' => $sidepreblocks,
-    'hassidepre' => $hassidepre,
     'hasregionmainsettingsmenu' => $hasregionmainsettingsmenu,
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
     'launcherisbase' => $launcherstyle === 'base',
     'launcherisdock' => $launcherstyle === 'dock',
     'showlauncher' => $showlauncher,
     'launcher' => $launchercontext,
-];
+], $blockregions);
 
 echo $OUTPUT->render_from_template('theme_lernhive/admin', $templatecontext);

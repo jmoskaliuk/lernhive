@@ -43,6 +43,25 @@ $THEME->undeletableblocktypes = [];
 $THEME->requiredblocks = '';
 $THEME->usefallback = true;
 
+// LernHive block regions (since 0.9.3):
+//  - content-top        : full-width strip above the main content area
+//  - content-bottom     : full-width strip below the main content area (default region for new blocks)
+//  - sidebar-bottom     : inside the left sidebar, below the primary navigation
+//  - footer-left        : three-column footer, left slot
+//  - footer-center      : three-column footer, center slot
+//  - footer-right       : three-column footer, right slot
+// The legacy right-hand block drawer ('side-pre') has been removed. Blocks still
+// exist as a concept — they now live in clearly scoped, predictable regions.
+$lhregions = [
+    'content-top',
+    'content-bottom',
+    'sidebar-bottom',
+    'footer-left',
+    'footer-center',
+    'footer-right',
+];
+$lhdefaultregion = 'content-bottom';
+
 $THEME->layouts = [
     'base' => [
         'file' => 'drawers.php',
@@ -50,35 +69,35 @@ $THEME->layouts = [
     ],
     'standard' => [
         'file' => 'drawers.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
     ],
     'course' => [
         'file' => 'course.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
         'options' => ['langmenu' => true],
     ],
     'incourse' => [
         'file' => 'course.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
     ],
     'frontpage' => [
         'file' => 'drawers.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
         'options' => ['nonavbar' => true],
     ],
     'admin' => [
         'file' => 'admin.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
     ],
     'mydashboard' => [
         'file' => 'admin.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
         'options' => ['langmenu' => true],
     ],
     'login' => [
@@ -105,7 +124,9 @@ $THEME->layouts = [
     ],
     'report' => [
         'file' => 'drawers.php',
-        'regions' => ['side-pre'],
-        'defaultregion' => 'side-pre',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
     ],
 ];
+
+unset($lhregions, $lhdefaultregion);
