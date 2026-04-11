@@ -78,6 +78,53 @@ Do **not** add CSS targeting `img.defaultuserpic` — that element no longer exi
 
 Admin pages render the secondary nav via `secondarymoremenu` / `{{> core/moremenu}}` — the same mechanism Boost uses. This produces the canonical 9-tab sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development) with correct overflow handling. The earlier custom `theme_lernhive_get_admin_topnav()` + two-level `lernhive-admin-topnav` approach was removed in 0.9.34 because it produced a mixed L1/L2 list on `/admin/index.php`.
 
+## Layout JS bootstrap contract (since 0.9.42)
+
+**Rule.** Every layout Mustache template in `theme_lernhive/templates/` that hosts interactive Moodle/Boost UI — tabs, dropdowns, popovers, tooltips, collapsibles, anything wired via Bootstrap 5 data attributes — **must** include a trailing `{{#js}} require(['theme_boost/loader'], …) {{/js}}` block. Boost's upstream `drawers.mustache`, `columns1.mustache`, `columns2.mustache`, and `login.mustache` all ship this block for a reason: it is the single entry point that kicks off `theme_boost/loader.js`, which in turn calls `Aria.init()`, `rememberTabs()`, `enablePopovers()`, `enableTooltips()`, and a handful of other Moodle-wide JS bootstraps. Without it, the DOM is correct but no JS is wired up.
+
+### The standard block
+
+Place at the very end of the template, **after** `</html>`:
+
+```mustache
+{{!
+    Bootstrap theme_boost/loader so Aria fixes, tab remembering,
+    popovers, tooltips, dropdown keyboard nav and collapse interactions
+    all register. Boost's upstream layout templates all have this block.
+}}
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}
+```
+
+### What breaks silently if you forget it
+
+| Surface | Symptom |
+|---|---|
+| `/admin/search.php` secondary-nav tabs | Markup is correct (`role="tablist"`, `data-bs-toggle="tab"`, `#linkX`). Clicks update `location.hash` and even toggle the active `.nav-link`, but `theme_boost/aria.js` never installed `Aria.tabElementFix()`, so `bootstrap.Tab.show()` is never called and the visible `.tab-pane.active.show` stays on `linkroot`. |
+| Any `.dropdown-toggle` with keyboard interaction | Mouse click may still work via Bootstrap's own inline handler; arrow-key navigation is dead. |
+| `data-bs-toggle="popover"` / `data-bs-toggle="tooltip"` | No pop-up ever appears. Popovers and tooltips require `enablePopovers()` / `enableTooltips()` from `loader.js`. |
+| `data-bs-toggle="collapse"` | Click may visually toggle the `.show` class but related Aria attributes don't update, and Moodle's keyboard collapse handlers don't fire. |
+| Tab-remembering across page reloads | `rememberTabs()` never runs — reloading a page with `#linkusers` in the URL falls back to the first tab instead of restoring `linkusers`. |
+
+### How to detect the bug
+
+1. Open DevTools on the affected page and run `M.util.pending_js`. If you see `['init', 'core/first', …]` without a completed `theme_boost/loader` entry — or if `loader` is never even requested — the bootstrap is missing.
+2. `grep -l "theme_boost/loader" theme_lernhive/templates/*.mustache` — any layout template that should have interactive UI but is missing from the list is suspect.
+3. On the rendered page: `typeof require !== 'undefined'` should be `true` (that's RequireJS itself), but `typeof bootstrap` being `undefined` is normal — Bootstrap is pulled in through AMD modules, not as a global. The right thing to check is whether the page has the loader's side-effects, e.g. `document.querySelectorAll('[role="tablist"] [data-bs-toggle="tab"]')[0].onclick` — it stays `null` either way (the handler is delegated on `document`), but `M.util.pending_js` is the reliable source of truth.
+
+### When the rule does NOT apply
+
+- `columns1.mustache` (popup layout) and `login.mustache` — these pages currently have no Bootstrap tabs, popovers, tooltips, or dropdowns that require the loader. They have been intentionally left without the require block in 0.9.42. If you add any interactive Moodle component to these layouts in the future, add the loader block at the same time.
+- Partials (`sidebar.mustache`, `footer.mustache`, `sidepanel.mustache`, etc.) — only the top-level *layout* template triggers the `{{#js}}` block. Partials have their JS requirements fulfilled via the surrounding layout's loader.
+
+### Historical note
+
+Between 0.9.34 (admin tab bar delegation) and 0.9.42 (this fix), admin tabs looked correct but never actually switched panels on click. The bug survived multiple styling passes (0.9.36 CSS scoping fix, 0.9.37 header dock rewire) because everyone — including Claude — read the symptom as "CSS still wrong" or "wrong data attribute on the tabs". The real cause was zero JS running. Diagnosing it required going all the way to `theme_boost/aria.js` source and noticing that its `document.addEventListener('click', …)` handler is only installed when `theme_boost/loader` is `require()`d — which our templates never did.
+
 ### SCSS files
 | File | What it contains |
 |---|---|
