@@ -43,6 +43,215 @@
     }
 }
 
+// --- Sidebar user bar --------------------------------------------------------
+// Flex row: user_menu (left, grows) + launcher toggle button (right, shrinks).
+// Appears below the brand, above the nav links.
+
+.lernhive-sidebar__user-bar {
+    display: flex;
+    align-items: center;
+    gap: $lh-spacing-xs;
+    width: 100%;
+    flex-shrink: 0;
+
+    @media (max-width: #{$lh-bp-desktop - 1px}) {
+        display: none; // on mobile the user bar is inside the horizontal scroll area only
+    }
+}
+
+.lernhive-sidebar__user-info {
+    flex: 1;
+    min-width: 0;
+
+    // Moodle's user_menu renders a Bootstrap dropdown.
+    // Tighten it to fit the dark sidebar.
+    .usermenu,
+    .nav-link.dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        padding: 0.375rem 0.5rem;
+        border-radius: $lh-radius-sm;
+        font-size: $lh-font-size-sm;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.15s ease;
+        white-space: nowrap;
+        overflow: hidden;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .avatar, img.userpicture {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    // Bootstrap dropdown menu — keep it white/light to contrast with dark sidebar.
+    .dropdown-menu {
+        background: #fff;
+        border: 1px solid $lh-border;
+        box-shadow: $lh-shadow-lg;
+        border-radius: $lh-radius;
+        min-width: 14rem;
+
+        .dropdown-item {
+            color: $lh-text;
+            font-size: $lh-font-size-sm;
+            padding: 0.5rem 1rem;
+
+            &:hover, &:focus {
+                background: $lh-primary-light;
+                color: $lh-primary;
+            }
+        }
+
+        .dropdown-divider {
+            border-color: $lh-border;
+        }
+    }
+}
+
+// --- Launcher ----------------------------------------------------------------
+// Compact icon-button trigger + icon-grid dropdown.
+// Anchored in .lernhive-sidebar__user-bar, right-aligned.
+
+.lernhive-launcher {
+    flex-shrink: 0;
+    position: relative;
+
+    &[open] .lernhive-launcher__toggle {
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+    }
+}
+
+.lernhive-launcher__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: $lh-radius-sm;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    list-style: none; // remove <summary> triangle
+    transition: background 0.15s ease, color 0.15s ease;
+
+    // Remove default marker in all browsers
+    &::-webkit-details-marker { display: none; }
+    &::marker { display: none; }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+}
+
+.lernhive-launcher__toggle-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    fill: currentColor;
+    stroke: none;
+}
+
+.lernhive-launcher__dropdown {
+    position: absolute;
+    top: calc(100% + 0.375rem);
+    left: 0;
+    z-index: 1050;
+    background: #fff;
+    border: 1px solid $lh-border;
+    box-shadow: $lh-shadow-lg;
+    border-radius: $lh-radius;
+    padding: $lh-spacing-sm;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $lh-spacing-sm;
+    min-width: 12rem;
+}
+
+.lernhive-launcher__empty {
+    color: $lh-text-secondary;
+    font-size: $lh-font-size-sm;
+    padding: $lh-spacing-xs $lh-spacing-sm;
+    margin: 0;
+}
+
+.lernhive-launcher__action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    padding: $lh-spacing-sm;
+    border-radius: $lh-radius-sm;
+    text-decoration: none;
+    color: $lh-text;
+    transition: background 0.15s ease, color 0.15s ease;
+    width: 5rem;
+    text-align: center;
+
+    &:hover {
+        background: $lh-primary-light;
+        color: $lh-primary;
+        text-decoration: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+}
+
+.lernhive-launcher__action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: $lh-radius-sm;
+    background: $lh-primary-light;
+    color: $lh-primary;
+    transition: background 0.15s ease;
+
+    .lernhive-launcher__action:hover & {
+        background: $lh-primary;
+        color: #fff;
+    }
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.75;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.lernhive-launcher__action-label {
+    font-size: $lh-font-size-xs;
+    font-weight: 500;
+    line-height: 1.2;
+    color: inherit;
+}
+
 // --- Navigation container ---------------------------------------------------
 
 .lernhive-nav {

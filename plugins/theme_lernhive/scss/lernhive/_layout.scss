@@ -51,9 +51,10 @@ $lh-bp-tablet:   768px;
     .lernhive-app-shell {
         display: grid;
         grid-template-columns: $lh-sidebar-width 1fr;
-        align-items: start;
-        gap: $lh-spacing-lg;
-        padding: $lh-spacing-lg;
+        align-items: stretch;
+        gap: 0;          // sidebar is flush — no gap between sidebar and content
+        padding: 0;      // sidebar touches viewport edges; content column has its own padding
+        min-height: 100dvh;
         box-sizing: border-box;
     }
 }
@@ -85,24 +86,25 @@ $lh-bp-tablet:   768px;
 
 @media (min-width: $lh-bp-desktop) {
     .lernhive-sidebar {
-        // Restore vertical layout for desktop
+        // Vertical layout
         flex-direction: column;
         align-items: stretch;
         flex-wrap: nowrap;
         width: auto; // fills grid column
-        // Sticky scroll
+        // Flat continuous surface — sticky full-height column
         position: sticky;
-        top: $lh-spacing-lg;
+        top: 0;
         align-self: start;
-        max-height: calc(100dvh - #{$lh-spacing-lg} * 2);
+        height: 100dvh;
+        max-height: 100dvh;
         overflow-x: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-        // Visual
+        // Visual — no border-radius, flush to edges
         padding: $lh-spacing-lg $lh-spacing-md;
         gap: $lh-spacing-md;
-        border-radius: 1.5rem;
+        border-radius: 0;
     }
 }
 
@@ -119,7 +121,7 @@ $lh-bp-tablet:   768px;
 
 @media (min-width: $lh-bp-desktop) {
     .lernhive-page {
-        padding: 0;
+        padding: $lh-spacing-lg;
     }
 }
 

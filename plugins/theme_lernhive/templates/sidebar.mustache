@@ -4,11 +4,17 @@
         <p class="lernhive-brand__meta">{{#str}} exploreoptional, theme_lernhive {{/str}}</p>
     </div>
 
-    {{#showlauncher}}
-        {{#launcher}}
-            {{> theme_lernhive/launcher }}
-        {{/launcher}}
-    {{/showlauncher}}
+    {{! User bar: user menu + launcher trigger side by side. }}
+    <div class="lernhive-sidebar__user-bar">
+        <div class="lernhive-sidebar__user-info">
+            {{{ output.user_menu }}}
+        </div>
+        {{#showlauncher}}
+            {{#launcher}}
+                {{> theme_lernhive/launcher }}
+            {{/launcher}}
+        {{/showlauncher}}
+    </div>
 
     {{! Primary navigation — rendered directly so Moodle's nav tree is
         fully initialised at render time. output.primary_nav is stable in
@@ -16,11 +22,6 @@
     <nav class="lernhive-nav" aria-label="{{#str}} primarynavigation, theme_lernhive {{/str}}">
         {{{ output.primary_nav }}}
     </nav>
-
-    {{! User menu — always visible so logged-in users can navigate and log out. }}
-    <div class="lernhive-sidebar__usermenu">
-        {{{ output.user_menu }}}
-    </div>
 
     {{#hassidebarbottom}}
         <div class="lernhive-sidebar__blocks" data-region="sidebar-bottom" aria-label="{{#str}} region-sidebar-bottom, theme_lernhive {{/str}}">

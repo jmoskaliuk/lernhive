@@ -1,103 +1,61 @@
-<section class="lernhive-launcher" aria-labelledby="lernhive-launcher-title">
-    <details class="lernhive-launcher__panel {{#launcherisdock}}is-dock{{/launcherisdock}}">
-        <summary class="lernhive-launcher__header">
-            <span class="lernhive-launcher__trigger">
-                <span class="lernhive-launcher__trigger-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M12 5v14"></path>
-                        <path d="M5 12h14"></path>
-                    </svg>
+{{! Launcher: compact icon-button trigger + icon-grid dropdown.
+    Sits next to the user menu in .lernhive-sidebar__user-bar.
+    Uses native <details>/<summary> for zero-JS accessible disclosure. }}
+<details class="lernhive-launcher">
+    <summary class="lernhive-launcher__toggle" title="{{#str}} launcher, theme_lernhive {{/str}}" aria-label="{{#str}} launcher, theme_lernhive {{/str}}">
+        {{! Grid icon (3×3 dots) — universally understood as "app launcher". }}
+        <svg class="lernhive-launcher__toggle-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <circle cx="5"  cy="5"  r="1.5"></circle>
+            <circle cx="12" cy="5"  r="1.5"></circle>
+            <circle cx="19" cy="5"  r="1.5"></circle>
+            <circle cx="5"  cy="12" r="1.5"></circle>
+            <circle cx="12" cy="12" r="1.5"></circle>
+            <circle cx="19" cy="12" r="1.5"></circle>
+            <circle cx="5"  cy="19" r="1.5"></circle>
+            <circle cx="12" cy="19" r="1.5"></circle>
+            <circle cx="19" cy="19" r="1.5"></circle>
+        </svg>
+    </summary>
+
+    <div class="lernhive-launcher__dropdown" role="navigation" aria-label="{{#str}} launcher, theme_lernhive {{/str}}">
+        {{#empty}}
+            <p class="lernhive-launcher__empty">{{ emptytext }}</p>
+        {{/empty}}
+        {{#actions}}
+            <a class="lernhive-launcher__action" href="{{ url }}" title="{{ label }}" data-actionid="{{ id }}">
+                <span class="lernhive-launcher__action-icon" aria-hidden="true">
+                    {{#iscreatecourse}}
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M12 7v14"></path>
+                            <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
+                            <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
+                        </svg>
+                    {{/iscreatecourse}}
+                    {{#iscontenthub}}
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <rect x="3" y="3" width="8" height="8" rx="2"></rect>
+                            <rect x="13" y="3" width="8" height="8" rx="2"></rect>
+                            <rect x="3" y="13" width="8" height="8" rx="2"></rect>
+                            <rect x="13" y="13" width="8" height="8" rx="2"></rect>
+                        </svg>
+                    {{/iscontenthub}}
+                    {{#iscreatesnack}}
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="m10 8 6 4-6 4Z"></path>
+                        </svg>
+                    {{/iscreatesnack}}
+                    {{#iscreatecommunity}}
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    {{/iscreatecommunity}}
                 </span>
-                <span class="lernhive-sr-only">{{#str}} launcher, theme_lernhive {{/str}}</span>
-            </span>
-            <span class="lernhive-launcher__copy">
-                <span id="lernhive-launcher-title" class="lernhive-launcher__title">{{ title }}</span>
-                <span class="lernhive-launcher__description">{{ description }}</span>
-            </span>
-        </summary>
-
-        <div class="lernhive-launcher__flyout" role="navigation" aria-label="{{#str}} launcher, theme_lernhive {{/str}}">
-            {{#empty}}
-                <p class="lernhive-launcher__empty">{{ emptytext }}</p>
-            {{/empty}}
-            {{#actions}}
-                <a class="lernhive-launcher__action" href="{{ url }}" data-actionid="{{ id }}">
-                    <span class="lernhive-launcher__action-icon" aria-hidden="true">
-                        {{#iscreatecourse}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <path d="M12 7v14"></path>
-                                <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
-                                <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
-                            </svg>
-                        {{/iscreatecourse}}
-                        {{#iscontenthub}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <rect x="3" y="3" width="8" height="8" rx="2"></rect>
-                                <rect x="13" y="3" width="8" height="8" rx="2"></rect>
-                                <rect x="3" y="13" width="8" height="8" rx="2"></rect>
-                                <rect x="13" y="13" width="8" height="8" rx="2"></rect>
-                            </svg>
-                        {{/iscontenthub}}
-                        {{#iscreatesnack}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <circle cx="12" cy="12" r="9"></circle>
-                                <path d="m10 8 6 4-6 4Z"></path>
-                            </svg>
-                        {{/iscreatesnack}}
-                        {{#iscreatecommunity}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                        {{/iscreatecommunity}}
-                    </span>
-                    <span class="lernhive-launcher__action-copy">
-                        <strong>{{ label }}</strong>
-                        <span>{{ description }}</span>
-                    </span>
-                </a>
-            {{/actions}}
-        </div>
-
-        {{#launcherisdock}}
-            <div class="lernhive-launcher__dock" aria-label="{{#str}} launcherstyle, theme_lernhive {{/str}}">
-                {{#actions}}
-                    <a class="lernhive-launcher__dock-item" href="{{ url }}" aria-label="{{ label }}" title="{{ label }}">
-                        {{#iscreatecourse}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <path d="M12 7v14"></path>
-                                <path d="M3 18.5c0-1.7 1.3-3 3-3h6v-11H6c-1.7 0-3 1.3-3 3z"></path>
-                                <path d="M21 18.5c0-1.7-1.3-3-3-3h-6v-11h6c1.7 0 3 1.3 3 3z"></path>
-                            </svg>
-                        {{/iscreatecourse}}
-                        {{#iscontenthub}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <rect x="3" y="3" width="8" height="8" rx="2"></rect>
-                                <rect x="13" y="3" width="8" height="8" rx="2"></rect>
-                                <rect x="3" y="13" width="8" height="8" rx="2"></rect>
-                                <rect x="13" y="13" width="8" height="8" rx="2"></rect>
-                            </svg>
-                        {{/iscontenthub}}
-                        {{#iscreatesnack}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <circle cx="12" cy="12" r="9"></circle>
-                                <path d="m10 8 6 4-6 4Z"></path>
-                            </svg>
-                        {{/iscreatesnack}}
-                        {{#iscreatecommunity}}
-                            <svg viewBox="0 0 24 24" focusable="false">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                        {{/iscreatecommunity}}
-                        <span class="lernhive-sr-only">{{ label }}</span>
-                    </a>
-                {{/actions}}
-            </div>
-        {{/launcherisdock}}
-    </details>
-</section>
+                <span class="lernhive-launcher__action-label">{{ label }}</span>
+            </a>
+        {{/actions}}
+    </div>
+</details>
