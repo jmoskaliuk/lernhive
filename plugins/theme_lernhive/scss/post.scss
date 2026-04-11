@@ -28,11 +28,14 @@
 }
 
 // Moodle's .drawers page layout adds negative margin on #page — undo it.
-// Moodle core (Boost) also applies `margin-top: $navbar-height` on `#page.drawers`
-// to clear the fixed navbar. We hide that navbar and render our own header
-// inside `.lernhive-page-header`, so the top margin is pure wasted space that
-// pushed the user action icons far down the page. Reset it.
-#page.drawers {
+// Moodle core also applies a plain `#page { margin-top: 60px }` rule to
+// clear the fixed Boost navbar. We hide that navbar and render our own
+// header inside `.lernhive-page-header`, so the 60px offset is pure wasted
+// space that pushed the user action icons far below the CTA strip. Reset
+// both — use `.theme-lernhive-shell #page` (the wrapper class on
+// `#page-wrapper`) because the `.drawers` class on `#page` is not set in
+// Moodle 5.x any more; only the `#page` id is targeted by the core rule.
+.theme-lernhive-shell #page {
     margin-top: 0 !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
