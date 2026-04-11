@@ -23,8 +23,9 @@
                         {{{ output.full_header }}}
                     </div>
                     <div class="lernhive-page-header__actions">
+                        {{! user_menu lives in the sidebar (sidebar.mustache). }}
+                        {{! Keep notification/messaging icons here via navbar_plugin_output. }}
                         {{{ output.navbar_plugin_output }}}
-                        {{{ output.user_menu }}}
                     </div>
                 </div>
             {{/showpageheader}}

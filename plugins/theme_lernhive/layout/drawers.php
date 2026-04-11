@@ -22,7 +22,9 @@ $plainmaincontent = trim(str_replace(['&nbsp;', "\xc2\xa0"], '', html_entity_dec
 $hasmaincontent = $plainmaincontent !== '';
 $isfrontpage = $PAGE->pagelayout === 'frontpage';
 $showlauncher = isloggedin() && !isguestuser();
-$showpageheader = true;
+// Suppress the page-header card on the frontpage — the site brand in the
+// sidebar already anchors the identity; a header card here just looks empty.
+$showpageheader = !$isfrontpage;
 
 // Note: primary navigation is rendered via {{{ output.primary_nav }}} directly
 // in sidebar.mustache so Moodle's nav tree is fully initialised at render time.

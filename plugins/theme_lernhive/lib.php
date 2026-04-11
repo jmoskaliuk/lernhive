@@ -239,7 +239,10 @@ function theme_lernhive_get_block_regions_context($output): array {
 
     foreach ($regions as $region => $key) {
         $html = $output->blocks($region);
-        $hasblocks = (strpos($html, 'data-block=') !== false);
+        // data-block="_add_block" is the edit-mode "Add a block" button — it must
+        // NOT count as "has blocks" or empty regions show as white cards in edit mode.
+        // We only count real block instances (value never starts with underscore).
+        $hasblocks = (bool) preg_match('/data-block="(?!_)[^"]/i', $html);
         $context[$key] = $html;
         $context['has' . $key] = $hasblocks;
         if ($hasblocks && strpos($region, 'footer-') === 0) {
