@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'theme_lernhive';
-$plugin->version = 2026041117;
+$plugin->version = 2026041118;
 $plugin->requires = 2024100700;
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.9.17';
+$plugin->release = '0.9.18';

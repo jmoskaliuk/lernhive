@@ -23,9 +23,8 @@
                         {{{ output.full_header }}}
                     </div>
                     <div class="lernhive-page-header__actions">
-                        {{! user_menu lives in the sidebar (sidebar.mustache). }}
-                        {{! Keep notification/messaging icons here via navbar_plugin_output. }}
                         {{{ output.navbar_plugin_output }}}
+                        {{{ output.user_menu }}}
                     </div>
                 </div>
             {{/showpageheader}}
@@ -43,17 +42,18 @@
                     </section>
                 {{/hascontenttop}}
 
-                {{#hasmaincontent}}
-                    <main id="region-main-box" class="lernhive-main">
-                        <section id="maincontent" aria-label="content">
-                            <div id="region-main">
-                            {{{ output.course_content_header }}}
-                            {{{ maincontent }}}
-                            {{{ output.course_content_footer }}}
-                            </div>
-                        </section>
-                    </main>
-                {{/hasmaincontent}}
+                {{! output.main_content must be called here in Mustache — calling
+                    $OUTPUT->main_content() in the PHP layout file runs before the page
+                    content is buffered and returns empty. Mustache renders at the right time. }}
+                <main id="region-main-box" class="lernhive-main">
+                    <section id="maincontent" aria-label="content">
+                        <div id="region-main">
+                        {{{ output.course_content_header }}}
+                        {{{ output.main_content }}}
+                        {{{ output.course_content_footer }}}
+                        </div>
+                    </section>
+                </main>
 
                 {{#hascontentbottom}}
                     <section class="lernhive-blocks lernhive-blocks--content-bottom" data-region="content-bottom" aria-label="{{#str}} region-content-bottom, theme_lernhive {{/str}}">

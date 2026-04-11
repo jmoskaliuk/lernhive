@@ -408,3 +408,56 @@
         padding: 0 0.25rem;
     }
 }
+
+// --- Cookie / Policy notice --------------------------------------------------
+// Moodle's tool_policy renders a "Cookies notice" button via
+// [data-region="policy-notice"]. We collapse it to a compact icon badge
+// fixed at bottom-right so it stays accessible but doesn't clutter the UI.
+
+[data-region="policy-notice"] {
+    position: fixed !important;
+    bottom: 1.25rem !important;
+    right: 1.25rem !important;
+    z-index: 1040 !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    // The button/link Moodle renders inside
+    .btn,
+    a.btn {
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        font-size: 0 !important;       // hide "Cookies notice" text
+        background: $lh-primary !important;
+        border-color: $lh-primary !important;
+        color: #fff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: $lh-shadow-md !important;
+        transition: background 0.15s ease, transform 0.15s ease !important;
+
+        // Lucide "cookie" icon via FontAwesome (fa-cookie available in FA 5 Free)
+        &::before {
+            content: "\f563";          // fa-cookie
+            font-family: "Font Awesome 5 Free", "FontAwesome";
+            font-weight: 900;
+            font-size: 1rem !important;
+            line-height: 1;
+        }
+
+        &:hover {
+            background: darken($lh-primary, 8%) !important;
+            transform: scale(1.08);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 3px;
+        }
+    }
+}
