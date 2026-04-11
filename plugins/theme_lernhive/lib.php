@@ -741,24 +741,32 @@ function theme_lernhive_get_course_sidebar_context(\moodle_page $page): array {
         return in_array($item['key'] ?? '', $keep, true);
     }));
 
-    // Render the core course index (sections + activities). We use the
-    // canonical core_course_drawer() helper from /course/lib.php — the exact
-    // same function Boost calls when building its drawer content. This keeps
-    // us fully compatible with any course format that implements the
-    // courseindex output (format_topics, format_grid, format_singleactivity,
-    // future format_lernhive_* plugins, etc.) without us having to know the
-    // renderable class name per format.
+    // Render the core course index (sections + activities) directly via the
+    // canonical course format renderable. We deliberately do NOT go through
+    // core_course_drawer() in /course/lib.php because that helper short-
+    // circuits to an empty string in several conditions we can't influence
+    // from a theme (drawer preferences, page layout name, etc.), and 0.9.46's
+    // attempt to go via that helper left the course sidebar empty even with
+    // $THEME->usescourseindex = true set.
+    //
+    // The path below is the exact pattern core_course_renderer::course_index_
+    // drawer() uses internally — instantiate \core_courseformat\output\local\
+    // content\courseindex\courseindex for the current format, render via the
+    // format's own renderer. Works for every core course format and for
+    // future format_lernhive_* plugins because they all inherit the courseindex
+    // output from core_courseformat.
     $courseindexhtml = '';
     if (!empty($page->course) && $page->course->id > SITEID) {
         try {
-            if (!function_exists('core_course_drawer')) {
-                require_once($GLOBALS['CFG']->dirroot . '/course/lib.php');
-            }
-            $courseindexhtml = core_course_drawer();
+            $format = course_get_format($page->course);
+            $renderer = $format->get_renderer($page);
+            $courseindex = new \core_courseformat\output\local\content\courseindex\courseindex($format);
+            $courseindexhtml = $renderer->render($courseindex);
         } catch (\Throwable $e) {
             // Fail soft — an empty course index is always better than a fatal
             // course page. The divider is suppressed downstream via
-            // hascourseindex when this happens.
+            // hascourseindex when this happens. The debugging() output lands
+            // in Moodle's debug log when developer debug is on.
             debugging(
                 'theme_lernhive: course index render failed — ' . $e->getMessage(),
                 DEBUG_DEVELOPER
