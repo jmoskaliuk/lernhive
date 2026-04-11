@@ -294,6 +294,175 @@
     }
 }
 
+// ─── CTA Strip (Contextual Action Notices) ────────────────────────────────────
+// Reusable component for contextual notices that require user action.
+// Examples: Onboarding Banner, Pending Tasks, Announcements.
+//
+// Design rules:
+// - border-radius: 0 (sharp corners = "official notice", not content)
+// - Top border accent = 3px colored stripe signals priority / type
+// - Always inside the content column — never spans the sidebar
+// - At most one CTA strip visible at a time per page
+// - Icon: Artifact Icon style (square, branded color)
+// - CTA button: Action Button style (pill, accent orange)
+//
+// HTML structure:
+//   <aside class="lh-cta-strip lh-cta-strip--{variant}">
+//     <div class="lh-cta-strip__icon"><i class="fa fa-..."></i></div>
+//     <div class="lh-cta-strip__body">
+//       <h2 class="lh-cta-strip__title">...</h2>
+//       <p class="lh-cta-strip__intro">...</p>
+//       <!-- optional: --><div class="lh-cta-strip__progress">...</div>
+//     </div>
+//     <a class="lh-cta-strip__cta">... <i class="fa fa-arrow-right"></i></a>
+//   </aside>
+
+.lh-cta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $lh-spacing-md;
+    padding: $lh-spacing-md $lh-spacing-lg;
+    background: linear-gradient(
+        to right,
+        rgba($lh-secondary-light, 0.35) 0%,
+        $lh-bg-white 70%
+    );
+    border-top: 3px solid $lh-primary;  // default accent = primary blue
+    border-radius: 0;                    // sharp corners — "official notice"
+    border-bottom: 1px solid $lh-border;
+
+    // Colour variants
+    &--trainer  { border-top-color: $lh-primary; }
+    &--warning  {
+        background: linear-gradient(to right, $lh-accent-light 0%, $lh-bg-white 70%);
+        border-top-color: $lh-accent;
+    }
+    &--success  {
+        background: linear-gradient(to right, #dcfce7 0%, $lh-bg-white 70%);
+        border-top-color: $lh-green;
+    }
+
+    // Icon — artifact style: coloured square, no radius (matches strip)
+    &__icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 0;
+        background: $lh-primary;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.125rem;
+        flex-shrink: 0;
+
+        .lh-cta-strip--warning & { background: $lh-accent; }
+        .lh-cta-strip--success & { background: $lh-green; }
+    }
+
+    // Body: heading + intro text + optional progress
+    &__body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__title {
+        font-size: $lh-font-size-base;
+        font-weight: 700;
+        color: $lh-primary;
+        margin: 0 0 0.125rem;
+        line-height: 1.3;
+    }
+
+    &__intro {
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+        margin: 0;
+        line-height: 1.45;
+    }
+
+    // Progress row (optional, e.g. X of N tours completed)
+    &__progress {
+        display: flex;
+        align-items: center;
+        gap: $lh-spacing-sm;
+        margin-top: $lh-spacing-sm;
+    }
+
+    &__progress-track {
+        flex: 1;
+        max-width: 240px;
+        height: 6px;
+        background: $lh-border;
+        border-radius: 0;  // sharp, consistent with strip
+        overflow: hidden;
+    }
+
+    &__progress-fill {
+        height: 100%;
+        background: $lh-primary;
+        transition: width 0.4s ease;
+    }
+
+    &__progress-text {
+        font-size: $lh-font-size-xs;
+        font-weight: 600;
+        color: $lh-text-secondary;
+        white-space: nowrap;
+    }
+
+    // CTA — action icon treatment: pill button, accent orange, hover lifts
+    &__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px $lh-spacing-md;
+        border-radius: $lh-radius-pill;
+        background: $lh-accent;
+        color: #fff;
+        font-size: $lh-font-size-sm;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        flex-shrink: 0;
+        white-space: nowrap;
+        box-shadow: 0 2px 6px rgba($lh-accent, 0.30);
+        transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.13s ease;
+
+        .fa { font-size: 0.875rem; }
+
+        &:hover {
+            background: $lh-primary;
+            box-shadow: 0 3px 10px rgba($lh-primary, 0.28);
+            color: #fff;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+    }
+
+    // Mobile: stack CTA below body
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        padding: $lh-spacing-sm $lh-spacing-md;
+
+        &__icon {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+        }
+
+        &__cta {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+}
+
 // --- Moodle dashboard-specific chrome overrides ----------------------------
 
 body.pagelayout-mydashboard {

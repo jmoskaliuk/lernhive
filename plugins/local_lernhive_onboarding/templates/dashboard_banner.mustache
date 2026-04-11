@@ -1,9 +1,14 @@
 {{!
     @template  local_lernhive_onboarding/dashboard_banner
 
-    LernHive trainer learning-path banner shown at the top of the `/my/`
+    LernHive trainer learning-path CTA strip shown at the top of the `/my/`
     dashboard for users holding the `lernhive_trainer` role while Level 1
     is not yet complete. Routes to the tour overview page.
+
+    Rendered via the before_standard_top_of_body_html_generation hook, which
+    places this HTML BEFORE the .lernhive-app-shell grid. On desktop, the theme
+    adds margin-left: 260px (.lh-cta-strip rule in _layout.scss) so the strip
+    sits in the content column and does not overlap the fixed sidebar.
 
     Context variables required for this template:
     * toursurl (string)      absolute URL to /local/lernhive_onboarding/tours.php
@@ -29,86 +34,32 @@
         "hasprogress": false, "nothingyet": true
     }
 }}
-<aside class="lh-onboarding-banner card mb-3" aria-labelledby="lh-onboarding-banner-title">
-    <div class="card-body d-flex flex-wrap align-items-center gap-3">
-        <div class="lh-onboarding-banner__icon" aria-hidden="true">
-            <i class="fa fa-compass fa-fw"></i>
-        </div>
-        <div class="lh-onboarding-banner__body flex-grow-1">
-            <h2 id="lh-onboarding-banner-title" class="lh-onboarding-banner__title h5 mb-1">
-                {{heading}}
-            </h2>
-            <p class="lh-onboarding-banner__intro text-muted mb-2">{{intro}}</p>
-            {{#hasprogress}}
-                <div class="lh-onboarding-banner__progress d-flex align-items-center gap-2">
-                    <div class="progress flex-grow-1" style="height: 8px;">
-                        <div class="progress-bar lh-onboarding-banner__bar"
-                             role="progressbar"
-                             style="width: {{percent}}%;"
-                             aria-valuenow="{{percent}}"
-                             aria-valuemin="0"
-                             aria-valuemax="100"
-                             aria-label="{{progresslabel}}">
-                        </div>
-                    </div>
-                    <span class="lh-onboarding-banner__progress-text small text-muted">
-                        {{progresslabel}}
-                    </span>
-                </div>
-            {{/hasprogress}}
-        </div>
-        <a href="{{toursurl}}" class="btn btn-primary lh-onboarding-banner__cta">
-            {{cta}} <i class="fa fa-arrow-right fa-fw ms-1" aria-hidden="true"></i>
-        </a>
+<aside class="lh-cta-strip lh-cta-strip--trainer" aria-labelledby="lh-onboarding-banner-title">
+    <div class="lh-cta-strip__icon" aria-hidden="true">
+        <i class="fa fa-compass fa-fw"></i>
     </div>
+    <div class="lh-cta-strip__body">
+        <h2 id="lh-onboarding-banner-title" class="lh-cta-strip__title">
+            {{heading}}
+        </h2>
+        <p class="lh-cta-strip__intro">{{intro}}</p>
+        {{#hasprogress}}
+        <div class="lh-cta-strip__progress">
+            <div class="lh-cta-strip__progress-track">
+                <div class="lh-cta-strip__progress-fill"
+                     style="width: {{percent}}%;"
+                     role="progressbar"
+                     aria-valuenow="{{percent}}"
+                     aria-valuemin="0"
+                     aria-valuemax="100"
+                     aria-label="{{progresslabel}}">
+                </div>
+            </div>
+            <span class="lh-cta-strip__progress-text">{{progresslabel}}</span>
+        </div>
+        {{/hasprogress}}
+    </div>
+    <a href="{{toursurl}}" class="lh-cta-strip__cta">
+        {{cta}} <i class="fa fa-arrow-right fa-fw ms-1" aria-hidden="true"></i>
+    </a>
 </aside>
-
-<style>
-.lh-onboarding-banner {
-    border: 1px solid var(--lernhive-blue-superlight, #a9cbd5);
-    border-radius: 12px;
-    background: linear-gradient(
-        135deg,
-        var(--lernhive-blue-superlight, #e8f0fe) 0%,
-        #ffffff 60%
-    );
-    box-shadow: 0 2px 8px rgba(15, 43, 61, 0.06);
-}
-.lh-onboarding-banner__icon {
-    width: 52px;
-    height: 52px;
-    flex-shrink: 0;
-    border-radius: 12px;
-    background: var(--lernhive-blue-dark, #0f2b3d);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-}
-.lh-onboarding-banner__title {
-    color: var(--lernhive-blue-dark, #0f2b3d);
-    font-weight: 600;
-}
-.lh-onboarding-banner__intro {
-    font-size: 0.9rem;
-    margin-bottom: 0;
-}
-.lh-onboarding-banner__bar {
-    background: var(--lernhive-orange-dark, #c25b00);
-}
-.lh-onboarding-banner__cta {
-    background: var(--lernhive-orange-dark, #c25b00);
-    border-color: var(--lernhive-orange-dark, #c25b00);
-    color: #ffffff;
-    font-weight: 600;
-    border-radius: 999px;
-    padding: 0.5rem 1.25rem;
-}
-.lh-onboarding-banner__cta:hover,
-.lh-onboarding-banner__cta:focus {
-    background: var(--lernhive-blue-dark, #0f2b3d);
-    border-color: var(--lernhive-blue-dark, #0f2b3d);
-    color: #ffffff;
-}
-</style>

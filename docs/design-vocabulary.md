@@ -176,6 +176,49 @@ Karten zeigen immer Inhalte (Kurse, Snacks, Pfade). Nie als Layout-Container.
 
 ---
 
+## CTA Strip (Contextual Action Notice)
+
+Kontextbezogene Hinweise, die den Nutzer zu einer Aktion auffordern. Kein Card-Element — ein flacher Streifen.
+
+```
+┌──────────────────────────────────────────────────────────────────┐  ← 3px Akzentlinie (oben)
+│ [■]  Heading                                    [Aktion →]      │
+│      Subtitle / Intro-Text                                       │
+│      ████████░░░░  4 of 12 tours               (optional)       │
+└──────────────────────────────────────────────────────────────────┘  ← 1px Border (unten)
+```
+
+| Eigenschaft | Regel |
+|-------------|-------|
+| `border-radius` | **0** — scharfe Ecken, keine Rundung |
+| Top-Border | 3px farbige Akzentlinie (Typ-Signal) |
+| Position | Immer in der Content Column — nie über die Sidebar hinaus |
+| Max. Anzahl | Eine pro Seite |
+| Icon | Artifact Icon Style (farbiges Quadrat, kein Radius) |
+| CTA Button | Action Button Style (Pill, orange) |
+| CSS-Klasse | `.lh-cta-strip` |
+
+### CTA Strip Varianten
+
+| Modifier | Akzentfarbe | Verwendung |
+|----------|-------------|-----------|
+| `--trainer` | Navy `$lh-primary` | Onboarding, Trainer-Aufgaben |
+| `--warning` | Orange `$lh-accent` | Ausstehende Aktionen, Deadlines |
+| `--success` | Grün `$lh-green` | Erfolge, Abschlüsse |
+
+### CTA Strip vs. andere Elemente
+
+| Element | border-radius | Position | Zweck |
+|---------|-------------|---------|-------|
+| **CTA Strip** | 0 | Content Column (pre-header) | Aufforderung zu Aktion |
+| **Zone B / Info Bar** | 0 | Plugin Shell (Zone B) | Kontext-Info + CTA im Plugin |
+| **Card** | 12px | Content Grid | Inhalts-Objekt (Kurs, Snack) |
+| **Tag / Badge** | Pill | Inline | Metadata-Label |
+
+**Technische Besonderheit:** CTA Strips werden über den Moodle-Hook `before_standard_top_of_body_html_generation` injiziert — sie erscheinen im DOM VOR der `.lernhive-app-shell`. Das Theme setzt `margin-left: $lh-sidebar-width` auf Desktop, damit der Strip nur in der Content Column erscheint. Die Sidebar ist `position: fixed` (nicht sticky), damit sie unabhängig davon immer sichtbar bleibt.
+
+---
+
 ## Icon Taxonomy
 
 Jedes Icon im LernHive UI gehört zu genau einer der drei Kategorien. Die Form kodiert die Absicht — kein Raten nötig.

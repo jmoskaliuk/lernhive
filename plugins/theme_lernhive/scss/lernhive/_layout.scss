@@ -63,12 +63,11 @@ $lh-bp-tablet:   768px;
 }
 
 @media (min-width: $lh-bp-desktop) {
+    // 0.9.33: App shell becomes a plain block — sidebar is positioned fixed so
+    // it always starts at the viewport top regardless of what precedes it in the
+    // DOM (e.g. CTA strips injected via before_standard_top_of_body_html hooks).
     .lernhive-app-shell {
-        display: grid;
-        grid-template-columns: $lh-sidebar-width 1fr;
-        align-items: stretch;
-        gap: 0;          // sidebar is flush — no gap between sidebar and content
-        padding: 0;      // sidebar touches viewport edges; content column has its own padding
+        display: block;
         min-height: 100dvh;
         box-sizing: border-box;
     }
@@ -101,17 +100,21 @@ $lh-bp-tablet:   768px;
 
 @media (min-width: $lh-bp-desktop) {
     .lernhive-sidebar {
+        // 0.9.33: Fixed — always visible at viewport top-left.
+        // Replaces sticky positioning: fixed doesn't depend on its DOM
+        // position, so the sidebar stays put even when CTA strips or other
+        // before-grid elements push the app-shell down the page.
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 100;
+        width: $lh-sidebar-width;
+        height: 100dvh;
+        max-height: 100dvh;
         // Vertical layout
         flex-direction: column;
         align-items: stretch;
         flex-wrap: nowrap;
-        width: auto; // fills grid column
-        // Flat continuous surface — sticky full-height column
-        position: sticky;
-        top: 0;
-        align-self: start;
-        height: 100dvh;
-        max-height: 100dvh;
         overflow-x: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
@@ -120,6 +123,18 @@ $lh-bp-tablet:   768px;
         padding: $lh-spacing-lg $lh-spacing-md;
         gap: $lh-spacing-md;
         border-radius: 0;
+    }
+
+    // Content column: push right to clear the fixed sidebar.
+    .lernhive-page {
+        margin-left: $lh-sidebar-width;
+    }
+
+    // Elements injected BEFORE the app-shell (via before_standard_top_of_body_html
+    // hooks) must also clear the fixed sidebar. The sidebar (z-index 100) would
+    // otherwise overlap the left portion of the injected element.
+    .lh-cta-strip {
+        margin-left: $lh-sidebar-width;
     }
 }
 
