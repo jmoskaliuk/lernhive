@@ -88,7 +88,7 @@ function theme_lernhive_get_extra_scss($theme) {
         '_login.scss',
         '_dock.scss',        // 0.9.21: Context Dock — floating action strip
         '_plugin-shell.scss', // 0.9.27: Plugin Shell — 2-zone page header for local plugins
-        '_icons.scss',       // 0.9.32: Icon Taxonomy — nav / artifact / action classes
+        '_icons.scss',       // 0.9.32: Icon Taxonomy — nav / artifact / action / info (0.9.38) classes
         '_sidepanel.scss',   // 0.9.36: Header Dock + Side Panel — unified overlay system
     ];
 
@@ -371,7 +371,7 @@ function theme_lernhive_get_sidepanel_items(): array {
     $items[] = [
         'key'           => 'messages',
         'label'         => get_string('messages', 'theme_lernhive'),
-        'size'          => 'm',
+        'size'          => '',
         'badge'         => false, // v1: no live count (wired in next release).
         'badgedot'      => false,
         'iconsvg'       => $iconmessage,
@@ -407,7 +407,7 @@ function theme_lernhive_get_sidepanel_items(): array {
     $items[] = [
         'key'           => 'aiassistant',
         'label'         => get_string('aiassistant', 'theme_lernhive'),
-        'size'          => 'm',
+        'size'          => '',
         'badge'         => '·',
         'badgedot'      => true,
         'iconsvg'       => $iconai,

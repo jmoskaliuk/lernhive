@@ -128,14 +128,14 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: rgba(#0e1d2c, 0.28);
-    opacity: 0;
+    // 0.9.39: backdrop is visually transparent — the page content behind
+    // the panel must stay legible (course context, admin screens, etc.).
+    // The element still exists to catch outside-clicks for closing.
+    background: transparent;
     pointer-events: none;
-    transition: opacity 0.2s ease;
     z-index: 1090; // above Moodle drawers (1080) and below any modal dialog.
 
     &.lh-sidepanel-backdrop--open {
-        opacity: 1;
         pointer-events: auto;
     }
 }
@@ -148,28 +148,24 @@
     top: var(--lh-sidepanel-top, 0);
     right: 0;
     bottom: 0;
-    width: 380px;
+    // 0.9.39: one unified width for all panels — switching between
+    // Messages / Notifications / AI / Help should not shift layout.
+    width: 420px;
     max-width: 92vw;
     background: $lh-bg-white;
     border-left: 1px solid $lh-border;
     border-top: 1px solid $lh-border;
-    border-top-left-radius: 0.75rem; // soft corner where panel meets header
     box-shadow: -0.375rem 0 1.5rem rgba(#0e1d2c, 0.12),
                 -0.125rem 0 0.375rem rgba(#0e1d2c, 0.06);
     transform: translateX(100%);
-    transition: transform 0.25s ease, width 0.25s ease;
+    transition: transform 0.25s ease;
     z-index: 1091;
     display: flex;
     flex-direction: column;
-    overflow: hidden; // clip the header's border-radius corner
 
     &.lh-sidepanel--open {
         transform: translateX(0);
     }
-
-    // Width variants — chosen by PHP per trigger.
-    &.lh-sidepanel--size-m { width: 480px; }
-    &.lh-sidepanel--size-l { width: 640px; }
 }
 
 
@@ -444,12 +440,6 @@
             border-radius: 999px;
             margin: 0.5rem auto 0;
             flex-shrink: 0;
-        }
-
-        // Size variants collapse on mobile.
-        &.lh-sidepanel--size-m,
-        &.lh-sidepanel--size-l {
-            width: 100%;
         }
     }
 
