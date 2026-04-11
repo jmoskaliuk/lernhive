@@ -4,14 +4,6 @@
         <p class="lernhive-brand__meta">{{#str}} exploreoptional, theme_lernhive {{/str}}</p>
     </div>
 
-    {{#showlauncher}}
-        {{#launcher}}
-            <div class="lernhive-sidebar__launcher">
-                {{> theme_lernhive/launcher }}
-            </div>
-        {{/launcher}}
-    {{/showlauncher}}
-
     {{! Primary navigation — built manually in PHP as $navitems array with
         FontAwesome icons, passed via template context. output.primary_nav
         returned empty in Moodle 5.x in this layout context. }}

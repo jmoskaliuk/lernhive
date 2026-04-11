@@ -30,4 +30,7 @@
 ## Open questions
 
 - Should the Dock replace `regionmainsettingsmenu` entirely (i.e. suppress Moodle's block-editing text button), or keep both for now? Current answer: keep both until Teacher feedback confirms Dock is sufficient.
+Muss auf jeden Fall bestehen bleiben, da der Teacher damit Blöcke im Kurs hinzufügen kann. Auch wenn die Block-Positionen noch nicht klar sind, da rechte Leiste wegfällt, die Funktion wichtig. 
+
 - Dock icon for block editing: `fa-th` (grid) good enough, or look for a better FA4 icon?
+Bitte pen-to-square nutzen

@@ -46,6 +46,7 @@ $string['privacy:metadata'] = 'The LernHive theme does not store any personal da
 $string['contextdock']  = 'Context actions';
 $string['dockblockson']  = 'Turn block editing on';
 $string['dockblocksoff'] = 'Turn block editing off';
+$string['useroptions'] = 'User options';
 
 $string['launcher'] = 'Launcher';
 $string['launcherdesc'] = 'Quick actions for creating and managing content.';

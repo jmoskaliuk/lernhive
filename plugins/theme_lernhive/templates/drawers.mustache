@@ -23,8 +23,56 @@
                         {{{ output.full_header }}}
                     </div>
                     <div class="lernhive-page-header__actions">
+                        {{! Notifications, messages etc. from core plugins }}
                         {{{ output.navbar_plugin_output }}}
-                        {{{ output.user_menu }}}
+
+                        {{! Language selector — only visible when Moodle has >1 language }}
+                        {{#haslangmenu}}
+                            <div class="lernhive-lang-menu">
+                                {{{ langmenu }}}
+                            </div>
+                        {{/haslangmenu}}
+
+                        {{! App Launcher — grid-dots icon, opens plugin launcher dropdown }}
+                        {{#showlauncher}}
+                            {{#launcher}}
+                                <div class="lernhive-page-header__launcher">
+                                    {{> theme_lernhive/launcher }}
+                                </div>
+                            {{/launcher}}
+                        {{/showlauncher}}
+
+                        {{! User block: avatar (→ profile) + chevron (→ options dropdown) }}
+                        {{#isloggedin}}
+                            <div class="lernhive-user-block">
+                                <a href="{{ profileurl }}"
+                                   class="lernhive-user-block__avatar"
+                                   title="{{#str}} viewprofile {{/str}}">
+                                    {{{ useravatar }}}
+                                </a>
+                                <details class="lernhive-user-block__menu">
+                                    <summary class="lernhive-user-block__toggle"
+                                             aria-label="{{#str}} useroptions, theme_lernhive {{/str}}">
+                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                    </summary>
+                                    <div class="lernhive-user-block__dropdown">
+                                        <a href="{{ profileurl }}" class="lernhive-user-block__item">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            {{#str}} viewprofile {{/str}}
+                                        </a>
+                                        <a href="{{ prefsurl }}" class="lernhive-user-block__item">
+                                            <i class="fa fa-cog" aria-hidden="true"></i>
+                                            {{#str}} preferences {{/str}}
+                                        </a>
+                                        <div class="lernhive-user-block__divider"></div>
+                                        <a href="{{ logouturl }}" class="lernhive-user-block__item lernhive-user-block__item--danger">
+                                            <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                            {{#str}} logout {{/str}}
+                                        </a>
+                                    </div>
+                                </details>
+                            </div>
+                        {{/isloggedin}}
                     </div>
                 </div>
             {{/showpageheader}}

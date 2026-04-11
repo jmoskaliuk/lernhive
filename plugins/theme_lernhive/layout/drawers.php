@@ -85,6 +85,9 @@ $blockregions = theme_lernhive_get_block_regions_context($OUTPUT);
 // Context Dock — floating action strip (Teacher/Trainer actions per page context).
 $dockitems = theme_lernhive_get_context_dock_items();
 
+// User header context: avatar → profile link, language menu, logout.
+$userheaderctx = theme_lernhive_get_header_user_context($OUTPUT);
+
 $templatecontext = array_merge([
     'sitename'                  => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output'                    => $OUTPUT,
@@ -100,6 +103,6 @@ $templatecontext = array_merge([
     'isfrontpage'               => $isfrontpage,
     'dockitems'                 => $dockitems,
     'hasdockitems'              => !empty($dockitems),
-], $blockregions);
+], $blockregions, $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/drawers', $templatecontext);

@@ -66,10 +66,18 @@ if (is_siteadmin()) {
     ];
 }
 
+// User header context: avatar → profile link, language menu, logout.
+$userheaderctx = theme_lernhive_get_header_user_context($OUTPUT);
+
+// Admin top navigation — horizontal tab-bar above main content.
+// Replaces the Boost left-drawer admin settings tree (hidden in LernHive shell).
+$admintopnav    = theme_lernhive_get_admin_topnav($PAGE);
+$hasadmintopnav = !empty($admintopnav);
+
 // Admin pages have no block regions — keep $blockregions empty rather than
 // calling theme_lernhive_get_block_regions_context() with regions that don't
 // exist in this layout (config.php maps admin → regions: []).
-$templatecontext = [
+$templatecontext = array_merge([
     'sitename'                  => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output'                    => $OUTPUT,
     'bodyattributes'            => $bodyattributes,
@@ -80,6 +88,8 @@ $templatecontext = [
     'showlauncher'              => $showlauncher,
     'launcher'                  => $launchercontext,
     'navitems'                  => $navitems,
-];
+    'admintopnav'               => $admintopnav,
+    'hasadmintopnav'            => $hasadmintopnav,
+], $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/admin', $templatecontext);

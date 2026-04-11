@@ -317,6 +317,96 @@ function theme_lernhive_get_context_dock_items(): array {
 }
 
 /**
+ * Build context data for the page-header user section (avatar → profile link,
+ * language selector, preferences, logout).
+ *
+ * Centralises the logic used by both drawers.php and admin.php so neither
+ * layout file duplicates the code.
+ *
+ * @param core_renderer $OUTPUT The theme's core_renderer.
+ * @return array<string, mixed>
+ */
+function theme_lernhive_get_header_user_context($OUTPUT): array {
+    global $USER;
+
+    if (!isloggedin() || isguestuser()) {
+        return [
+            'isloggedin'  => false,
+            'haslangmenu' => false,
+            'langmenu'    => '',
+        ];
+    }
+
+    $langmenu = $OUTPUT->lang_menu();
+    return [
+        'isloggedin'   => true,
+        'profileurl'   => (new moodle_url('/user/profile.php', ['id' => $USER->id]))->out(false),
+        'useravatar'   => $OUTPUT->user_picture($USER, ['size' => 35, 'link' => false, 'class' => 'lernhive-avatar']),
+        'logouturl'    => (new moodle_url('/login/logout.php', ['sesskey' => sesskey()]))->out(false),
+        'prefsurl'     => (new moodle_url('/user/preferences.php'))->out(false),
+        'langmenu'     => $langmenu,
+        'haslangmenu'  => !empty($langmenu),
+    ];
+}
+
+/**
+ * Build the admin top-navigation array for the admin layout.
+ *
+ * Moodle renders the admin settings tree in Boost's left drawer, which
+ * LernHive hides. This function extracts the top-level admin sections from
+ * admin_get_root() so the admin.mustache template can display them as a
+ * horizontal tab-bar above the main content.
+ *
+ * @param moodle_page $PAGE The current page object.
+ * @return array<int, array<string, mixed>>  Empty array when not a site admin.
+ */
+function theme_lernhive_get_admin_topnav($PAGE): array {
+    if (!is_siteadmin() || !function_exists('admin_get_root')) {
+        return [];
+    }
+
+    $adminroot = admin_get_root(false, false);
+    if (!$adminroot) {
+        return [];
+    }
+
+    // Determine active category from the URL (e.g. admin/category.php?category=users).
+    $currentcategory = $PAGE->url->get_param('category') ?? '';
+
+    $result = [];
+    foreach ($adminroot->children as $section) {
+        // Skip hidden or inaccessible sections.
+        if (isset($section->hidden) && $section->hidden) {
+            continue;
+        }
+        try {
+            if (!$section->check_access()) {
+                continue;
+            }
+        } catch (Exception $e) {
+            continue;
+        }
+
+        $sectionname = $section->name ?? '';
+        if ($section instanceof admin_externalpage) {
+            $url = is_string($section->url) ? $section->url : $section->url->out(false);
+        } else {
+            $url = (new moodle_url('/admin/category.php', ['category' => $sectionname]))->out(false);
+        }
+
+        $result[] = [
+            'text'     => $section->visiblename instanceof lang_string
+                ? $section->visiblename->out()
+                : (string) $section->visiblename,
+            'url'      => $url,
+            'key'      => $sectionname,
+            'isactive' => $sectionname !== '' && $sectionname === $currentcategory,
+        ];
+    }
+    return $result;
+}
+
+/**
  * Build the rendered block HTML and has-flags for every LernHive block region.
  *
  * Returns an array that can be merged into the Mustache template context, e.g.:

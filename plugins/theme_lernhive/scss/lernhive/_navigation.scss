@@ -45,7 +45,8 @@
 
 // --- Launcher ----------------------------------------------------------------
 // Compact icon-button trigger + icon-grid dropdown.
-// Standalone below the brand; .lernhive-sidebar__launcher wraps it.
+// Moved to page header (0.9.26): .lernhive-page-header__launcher wraps it.
+// Sidebar slot kept as noop for back-compat; no new sidebar launcher markup.
 
 .lernhive-sidebar__launcher {
     flex-shrink: 0;
@@ -178,6 +179,255 @@
     font-weight: 500;
     line-height: 1.2;
     color: inherit;
+}
+
+// --- Launcher in page header (0.9.26) ----------------------------------------
+// When the launcher sits inside .lernhive-page-header__launcher (white bg),
+// the toggle icon and dropdown need light-bg styles.
+
+.lernhive-page-header__launcher {
+    flex-shrink: 0;
+
+    .lernhive-launcher__toggle {
+        color: $lh-text-secondary;
+        background: transparent;
+        border: 1px solid $lh-border;
+        border-radius: $lh-radius-sm;
+        min-width: 2.25rem;
+        min-height: 2.25rem;
+
+        &:hover {
+            background: $lh-primary-light;
+            color: $lh-primary;
+            border-color: $lh-primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+
+        .lernhive-launcher__toggle-icon {
+            fill: currentColor;
+        }
+    }
+
+    // Dropdown opens right-aligned below the trigger
+    .lernhive-launcher__dropdown {
+        left: auto;
+        right: 0;
+        top: calc(100% + 0.375rem);
+    }
+}
+
+// --- User block (0.9.26) -------------------------------------------------------
+// Avatar → profile link + chevron → options dropdown (prefs, logout).
+
+.lernhive-user-block {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+
+    &__avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        padding: 2px;
+        text-decoration: none;
+        transition: border-color 0.15s ease;
+
+        &:hover {
+            border-color: $lh-primary;
+            text-decoration: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+            border-radius: 50%;
+        }
+
+        img.lernhive-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            display: block;
+            object-fit: cover;
+        }
+    }
+
+    &__menu {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    &__toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.375rem;
+        height: 1.375rem;
+        border-radius: $lh-radius-sm;
+        background: transparent;
+        color: $lh-text-secondary;
+        cursor: pointer;
+        list-style: none;
+        transition: background 0.15s ease, color 0.15s ease;
+
+        &::-webkit-details-marker { display: none; }
+        &::marker { display: none; }
+
+        .fa {
+            font-size: 0.6rem;
+            transition: transform 0.2s ease;
+        }
+
+        &:hover {
+            background: $lh-primary-light;
+            color: $lh-primary;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 1px;
+        }
+    }
+
+    // Rotate chevron when open
+    &__menu[open] &__toggle .fa {
+        transform: rotate(180deg);
+    }
+
+    &__dropdown {
+        position: absolute;
+        top: calc(100% + 0.375rem);
+        right: 0;
+        z-index: 1050;
+        min-width: 11rem;
+        background: #fff;
+        border: 1px solid $lh-border;
+        box-shadow: $lh-shadow-hover;
+        border-radius: $lh-radius;
+        padding: $lh-spacing-xs 0;
+        white-space: nowrap;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem $lh-spacing-md;
+        color: $lh-text;
+        font-size: $lh-font-size-sm;
+        text-decoration: none;
+        transition: background 0.12s ease, color 0.12s ease;
+
+        .fa {
+            width: 1rem;
+            text-align: center;
+            color: $lh-text-secondary;
+            flex-shrink: 0;
+        }
+
+        &:hover {
+            background: $lh-primary-light;
+            color: $lh-primary;
+            text-decoration: none;
+
+            .fa { color: $lh-primary; }
+        }
+
+        &--danger {
+            color: $lh-danger;
+
+            .fa { color: $lh-danger; }
+
+            &:hover {
+                background: rgba($lh-danger, 0.08);
+                color: darken($lh-danger, 8%);
+
+                .fa { color: darken($lh-danger, 8%); }
+            }
+        }
+    }
+
+    &__divider {
+        height: 1px;
+        background: $lh-border;
+        margin: $lh-spacing-xs 0;
+    }
+}
+
+// --- Language menu (0.9.26) ---------------------------------------------------
+// Wraps Moodle's output.lang_menu() — a select or link-based language picker.
+// We add a globe icon via a ::before pseudo-element on the wrapper.
+
+.lernhive-lang-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+    position: relative;
+
+    // Globe icon prefix (FontAwesome).
+    &::before {
+        content: '\f0ac'; // fa-globe
+        font-family: 'FontAwesome';
+        font-size: 0.9rem;
+        color: $lh-text-secondary;
+        pointer-events: none;
+        flex-shrink: 0;
+    }
+
+    // Moodle lang_menu output — typically a <select> or Bootstrap dropdown.
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        border: 1px solid $lh-border;
+        border-radius: $lh-radius-sm;
+        background: transparent;
+        color: $lh-text;
+        font-size: $lh-font-size-sm;
+        padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+        cursor: pointer;
+        transition: border-color 0.15s ease, background 0.15s ease;
+
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23666' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.4rem center;
+
+        &:hover {
+            border-color: $lh-primary;
+            background-color: $lh-primary-light;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 1px;
+            border-color: $lh-primary;
+        }
+    }
+
+    // Bootstrap dropdown variant
+    .dropdown-toggle {
+        color: $lh-text-secondary;
+        font-size: $lh-font-size-sm;
+        border: 1px solid $lh-border;
+        border-radius: $lh-radius-sm;
+        padding: 0.25rem 0.625rem;
+        background: transparent;
+        text-decoration: none;
+
+        &:hover {
+            background: $lh-primary-light;
+            color: $lh-primary;
+            border-color: $lh-primary;
+            text-decoration: none;
+        }
+    }
 }
 
 // --- Navigation container ---------------------------------------------------
