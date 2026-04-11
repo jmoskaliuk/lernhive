@@ -71,7 +71,7 @@ $THEME->layouts = [
         'options' => ['nonavbar' => true],
     ],
     'admin' => [
-        'file' => 'admin.php',
+        'file' => 'columns1.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
     ],
