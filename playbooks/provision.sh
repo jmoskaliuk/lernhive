@@ -380,25 +380,33 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 8. Install server-deploy wrapper as /usr/local/bin/lernhive-deploy.
+# 8. Install server-deploy and server-test wrappers in /usr/local/bin.
 # ---------------------------------------------------------------------------
-step "Installing lernhive-deploy command"
+step "Installing lernhive-deploy and lernhive-test commands"
 
-TARGET_LINK="/usr/local/bin/lernhive-deploy"
-SOURCE_SCRIPT="$LERNHIVE_DIR/playbooks/server-deploy.sh"
+install_wrapper() {
+  local linkname="$1"
+  local scriptpath="$2"
+  local target="/usr/local/bin/$linkname"
 
-if [[ ! -f "$SOURCE_SCRIPT" ]]; then
-  warn "$SOURCE_SCRIPT not found — skipping symlink (old repo layout?)"
-else
-  chmod +x "$SOURCE_SCRIPT"
-  ln -sfn "$SOURCE_SCRIPT" "$TARGET_LINK"
-  ok "$TARGET_LINK → $SOURCE_SCRIPT"
-fi
+  if [[ ! -f "$scriptpath" ]]; then
+    warn "$scriptpath not found — skipping symlink (old repo layout?)"
+    return 0
+  fi
+  chmod +x "$scriptpath"
+  ln -sfn "$scriptpath" "$target"
+  ok "$target → $scriptpath"
+}
 
-# Also ensure deploy.sh is executable.
-if [[ -f "$LERNHIVE_DIR/playbooks/deploy.sh" ]]; then
-  chmod +x "$LERNHIVE_DIR/playbooks/deploy.sh"
-fi
+install_wrapper lernhive-deploy "$LERNHIVE_DIR/playbooks/server-deploy.sh"
+install_wrapper lernhive-test   "$LERNHIVE_DIR/playbooks/server-test.sh"
+
+# Also ensure the underlying playbooks are executable.
+for s in deploy.sh test.sh; do
+  if [[ -f "$LERNHIVE_DIR/playbooks/$s" ]]; then
+    chmod +x "$LERNHIVE_DIR/playbooks/$s"
+  fi
+done
 
 # ---------------------------------------------------------------------------
 # 8b. Caddy reverse proxy (only if LERNHIVE_DOMAIN is set).

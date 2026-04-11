@@ -1,0 +1,303 @@
+name: Test on Hetzner
+
+# Runs PHPUnit and Behat on the live Hetzner container.
+#
+# Separate from deploy-hetzner.yml on purpose: deploy and test are
+# independent failure modes in the Actions graph, and a red test run
+# should not block a subsequent deploy (or vice versa).
+#
+# Triggers:
+#   A) Auto on push to main when plugin code, test logic, or Moodle
+#      core composer state changes. Kept in sync with deploy-hetzner.yml
+#      so every deploy is followed by a test run.
+#   B) workflow_dispatch with filters — the "run one suite on one
+#      plugin" button.
+#
+# Both triggers invoke `lernhive-test` on Hetzner via SSH. That wrapper
+# updates the workspace from git and hands off to playbooks/test.sh.
+#
+# The workflow relies on the same four repo secrets as deploy-hetzner.yml:
+#   HETZNER_HOST / HETZNER_USER / HETZNER_SSH_KEY / HETZNER_KNOWN_HOSTS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/**'
+      - 'playbooks/test.sh'
+      - 'playbooks/test.hetzner.env'
+      - 'playbooks/server-test.sh'
+      - '.github/workflows/test-hetzner.yml'
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Test suite: phpunit, behat, or all'
+        required: false
+        type: choice
+        default: 'all'
+        options:
+          - all
+          - phpunit
+          - behat
+      component:
+        description: 'Frankenstyle component filter (e.g. local_lernhive_contenthub). Leave empty to run everything.'
+        required: false
+        type: string
+        default: ''
+      tags:
+        description: 'Behat tag expression (overrides --component for Behat). Example: @javascript&&@local_lernhive_contenthub'
+        required: false
+        type: string
+        default: ''
+      reinit:
+        description: 'Force re-init of PHPUnit/Behat test environments (slower — use after schema/fixture changes)'
+        required: false
+        type: boolean
+        default: false
+
+# Never run two test jobs at the same time on the same container: both
+# PHPUnit and Behat hold locks inside their dataroots, so parallel runs
+# trample each other. Queue instead of cancel so an in-flight run isn't
+# interrupted mid-test.
+concurrency:
+  group: test-hetzner
+  cancel-in-progress: false
+
+jobs:
+  phpunit:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Show trigger context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          SUITE: ${{ inputs.suite }}
+          COMPONENT: ${{ inputs.component }}
+          REINIT: ${{ inputs.reinit }}
+        run: |
+          echo "Event:      $EVENT_NAME"
+          echo "Ref:        $REF"
+          echo "SHA:        $SHA"
+          echo "Actor:      $ACTOR"
+          echo "Job:        phpunit"
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "Suite:      ${SUITE:-all}"
+            echo "Component:  '${COMPONENT:-<all>}'"
+            echo "Reinit:     ${REINIT:-false}"
+          fi
+
+      - name: Skip PHPUnit if user picked behat only
+        id: gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SUITE: ${{ inputs.suite }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" && "$SUITE" == "behat" ]]; then
+            echo "User requested behat-only — skipping PHPUnit."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check deploy secrets
+        id: check_secrets
+        if: steps.gate.outputs.run == 'true'
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+        run: |
+          if [[ -z "${HETZNER_HOST:-}" ]]; then
+            echo "::warning::HETZNER_HOST secret is not set — skipping test."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Load SSH private key
+        if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.HETZNER_SSH_KEY }}
+
+      - name: Pin known_hosts
+        if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        env:
+          KNOWN_HOSTS: ${{ secrets.HETZNER_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Run PHPUnit over SSH
+        if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_USER: ${{ secrets.HETZNER_USER }}
+          EVENT_NAME: ${{ github.event_name }}
+          COMPONENT: ${{ inputs.component }}
+          REINIT: ${{ inputs.reinit }}
+        run: |
+          set -euo pipefail
+
+          CMD="lernhive-test --suite=phpunit"
+
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            if [[ -n "${COMPONENT:-}" ]]; then
+              if [[ ! "$COMPONENT" =~ ^[a-z][a-z0-9_]*$ ]]; then
+                echo "::error::Invalid component name: '$COMPONENT'"
+                exit 1
+              fi
+              CMD="$CMD --component=$COMPONENT"
+            fi
+            if [[ "${REINIT:-false}" == "true" ]]; then
+              CMD="$CMD --reinit"
+            fi
+          fi
+
+          echo "::group::Test command"
+          echo "$CMD"
+          echo "::endgroup::"
+
+          ssh \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 \
+            -o ServerAliveInterval=30 \
+            "$HETZNER_USER@$HETZNER_HOST" \
+            "$CMD"
+
+  behat:
+    name: Behat
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # Behat runs after PHPUnit in the same workflow, not because it
+    # depends on PHPUnit's result but because both suites share the
+    # container's Moodle code tree — serializing keeps init + run
+    # predictable and avoids resource contention on the small VM.
+    # `always()` makes Behat run even when PHPUnit failed, so we get
+    # full signal on every push.
+    needs: phpunit
+    if: always()
+    steps:
+      - name: Show trigger context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SUITE: ${{ inputs.suite }}
+          TAGS: ${{ inputs.tags }}
+          COMPONENT: ${{ inputs.component }}
+          REINIT: ${{ inputs.reinit }}
+        run: |
+          echo "Event:      $EVENT_NAME"
+          echo "Job:        behat"
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "Suite:      ${SUITE:-all}"
+            echo "Component:  '${COMPONENT:-<all>}'"
+            echo "Tags:       '${TAGS:-<auto>}'"
+            echo "Reinit:     ${REINIT:-false}"
+          fi
+
+      - name: Skip Behat if user picked phpunit only
+        id: gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SUITE: ${{ inputs.suite }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" && "$SUITE" == "phpunit" ]]; then
+            echo "User requested phpunit-only — skipping Behat."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check deploy secrets
+        id: check_secrets
+        if: steps.gate.outputs.run == 'true'
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+        run: |
+          if [[ -z "${HETZNER_HOST:-}" ]]; then
+            echo "::warning::HETZNER_HOST secret is not set — skipping test."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Load SSH private key
+        if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.HETZNER_SSH_KEY }}
+
+      - name: Pin known_hosts
+        if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        env:
+          KNOWN_HOSTS: ${{ secrets.HETZNER_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Run Behat over SSH
+        if: steps.gate.outputs.run == 'true' && steps.check_secrets.outputs.enabled == 'true'
+        env:
+          HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+          HETZNER_USER: ${{ secrets.HETZNER_USER }}
+          EVENT_NAME: ${{ github.event_name }}
+          COMPONENT: ${{ inputs.component }}
+          TAGS: ${{ inputs.tags }}
+          REINIT: ${{ inputs.reinit }}
+        run: |
+          set -euo pipefail
+
+          CMD="lernhive-test --suite=behat"
+
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            if [[ -n "${COMPONENT:-}" ]]; then
+              if [[ ! "$COMPONENT" =~ ^[a-z][a-z0-9_]*$ ]]; then
+                echo "::error::Invalid component name: '$COMPONENT'"
+                exit 1
+              fi
+              CMD="$CMD --component=$COMPONENT"
+            fi
+            if [[ -n "${TAGS:-}" ]]; then
+              # Validate loosely — allow @, alnum, underscore, & | ! , ~ ( )
+              if [[ ! "$TAGS" =~ ^[@a-zA-Z0-9_\&\|\!\,\~\(\)\ ]+$ ]]; then
+                echo "::error::Invalid behat tag expression: '$TAGS'"
+                exit 1
+              fi
+              CMD="$CMD --tags=$TAGS"
+            fi
+            if [[ "${REINIT:-false}" == "true" ]]; then
+              CMD="$CMD --reinit"
+            fi
+          fi
+
+          echo "::group::Test command"
+          echo "$CMD"
+          echo "::endgroup::"
+
+          ssh \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 \
+            -o ServerAliveInterval=30 \
+            "$HETZNER_USER@$HETZNER_HOST" \
+            "$CMD"
+
+      - name: Failure hints
+        if: failure()
+        run: |
+          cat <<'EOF'
+          ::error::Test run failed. Common causes:
+          -------------------------------------------------------------------
+          1. PHPUnit/Behat config keys missing in container config.php.
+             See playbooks/testing-hetzner.md for the exact snippet.
+          2. Selenium not reachable — verify the Selenium container is
+             running and $CFG->behat_profiles['default']['wd_host'] matches
+             its hostname inside the docker network.
+          3. Stale test DB — re-run this workflow with reinit=true.
+          4. lernhive-test command missing on server — re-run provision.sh
+             after pulling the new playbooks/server-test.sh.
+          -------------------------------------------------------------------
+          EOF
