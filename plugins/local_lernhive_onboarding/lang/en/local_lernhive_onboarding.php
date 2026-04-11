@@ -112,3 +112,7 @@ $string['tour_communication_announcements'] = 'Post announcements';
 $string['tour_communication_announcements_desc'] = 'Share news with everyone via the announcements forum.';
 $string['tour_communication_messaging'] = 'Send messages';
 $string['tour_communication_messaging_desc'] = 'Send direct messages to individual users.';
+
+// Onboarding sandbox course — hidden course that {DEMOCOURSEID} resolves to.
+$string['sandbox_course_fullname'] = 'LernHive Onboarding Sandbox';
+$string['sandbox_course_summary'] = '<p>Hidden sandbox course used by LernHive trainer onboarding tours as a safe target for course-context features. Delete at your own risk — tours that rely on <code>{DEMOCOURSEID}</code> will fall back to an invalid course if you do.</p>';

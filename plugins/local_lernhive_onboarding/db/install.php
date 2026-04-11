@@ -52,4 +52,11 @@ function xmldb_local_lernhive_onboarding_install() {
     \local_lernhive_onboarding\tour_importer::seed_categories();
     \local_lernhive_onboarding\tour_importer::import_level(1);
     \local_lernhive_onboarding\trainer_role::ensure();
+
+    // Provision the "Onboarding Sandbox" course that {DEMOCOURSEID}
+    // resolves to. Idempotent — on fresh install this creates the
+    // course, on reinstall (config wiped, course retained) it rewires
+    // the plugin config key. See classes/sandbox_course.php for why
+    // we keep the course around even on uninstall.
+    \local_lernhive_onboarding\sandbox_course::ensure();
 }

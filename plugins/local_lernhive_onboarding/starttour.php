@@ -15,10 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LernHive — Reset and start a user tour.
+ * LernHive Onboarding — catalog-initiated tour start.
  *
- * Resets the tour completion preference so the tour plays again,
- * then redirects to the target page where the tour is configured to appear.
+ * Thin page-level wrapper: handles `require_login()`, `require_sesskey()`
+ * and the final `redirect()`. Every other decision (pull `lh_start_url`
+ * from `configdata`, resolve placeholders, prime `_requested=1`, clear
+ * prior completion state) lives in `\local_lernhive_onboarding\starttour_flow`
+ * so it can be unit-tested without driving the full request lifecycle.
+ *
+ * See `docs/03-dev-doc.md` → "Deterministic tour start" for the full flow.
  *
  * @package    local_lernhive_onboarding
  * @copyright  2026 LernHive.de
@@ -32,40 +37,9 @@ require_sesskey();
 
 $tourid = required_param('tourid', PARAM_INT);
 
-// Load the tour record to find its pathmatch (= target page).
-$tour = $DB->get_record('tool_usertours_tours', ['id' => $tourid]);
-
-if (!$tour) {
-    throw new moodle_exception('invalidrecord', 'error');
-}
-
-// Reset the completion preference so the tour will play.
-$prefname = 'tool_usertours_' . $tourid . '_completed';
-unset_user_preference($prefname, $USER->id);
-
-// Also reset the "last step" preference so it starts from step 1.
-$steppref = 'tool_usertours_' . $tourid . '_lastStep';
-unset_user_preference($steppref, $USER->id);
-
-// Determine redirect URL from the tour's pathmatch.
-// Pathmatch is like "/course/view.php%" or "/user/editadvanced.php%".
-$pathmatch = $tour->pathmatch ?? '';
-$redirect = $pathmatch;
-
-// Clean up the pathmatch: remove trailing % wildcards.
-$redirect = rtrim($redirect, '%');
-
-// If pathmatch is empty or just "/", go back to tours overview.
-if (empty($redirect) || $redirect === '/') {
-    $redirect = new moodle_url('/local/lernhive_onboarding/tours.php');
-} else {
-    // Build a moodle_url. If the path contains placeholders we can't resolve,
-    // just go to the tours overview.
-    try {
-        $redirect = new moodle_url($redirect);
-    } catch (\Exception $e) {
-        $redirect = new moodle_url('/local/lernhive_onboarding/tours.php');
-    }
-}
+$redirect = \local_lernhive_onboarding\starttour_flow::prepare_redirect_url(
+    $tourid,
+    (int) $USER->id
+);
 
 redirect($redirect);

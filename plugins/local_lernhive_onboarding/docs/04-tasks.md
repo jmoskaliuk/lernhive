@@ -1,5 +1,48 @@
 # local_lernhive_onboarding — Tasks
 
+## Done (0.2.7 — 2026-04-11)
+
+- **LH-ONB-START-03** — `starttour.php` rewritten as a thin page
+  wrapper around the new `starttour_flow::prepare_redirect_url()`
+  helper. Flow: load tour → extract `lh_start_url` from configdata →
+  run through `start_url_resolver` → set `_requested=1`, clear
+  `_completed` + `_lastStep` → redirect. Tours without `lh_start_url`
+  fall back to the 0.2.x pathmatch-strip bridge, which is scheduled
+  for removal in 0.4.0 once every shipped tour has a `start_url`.
+  The page entry point keeps the `require_login()` +
+  `require_sesskey()` + `required_param('tourid', PARAM_INT)` guard
+  rails; everything else lives in the testable flow class.
+
+- **LH-ONB-START-04** — PHPUnit coverage in
+  `tests/starttour_flow_test.php` with five cases: fresh-start,
+  replay-after-completion (end-to-end `{DEMOCOURSEID}` resolution),
+  fallback when `lh_start_url` is absent, fallback when `configdata`
+  is empty, and the missing-tour error path. Sesskey enforcement is
+  deliberately covered via Behat (tracked as LH-ONB-START-07) rather
+  than duplicated in a unit test that would have to fake request
+  state.
+
+- **LH-ONB-START-06** — New class
+  `local_lernhive_onboarding\sandbox_course` with idempotent
+  `ensure()` / `forget()` helpers. `ensure()` short-circuits on a
+  valid stored config ID, recovers via shortname lookup if the
+  config key was wiped but the course survived, and falls through
+  to `create_course()` only for fresh provisioning. The course is
+  hidden (`visible=0`) and lives in the first visible top-level
+  category with a hard fallback to id=1 on exotic installs. Wired
+  into `db/install.php`, into a 0.2.7 upgrade savepoint
+  (`2026041207`) in `db/upgrade.php`, and into a new
+  `db/uninstall.php` that drops only the plugin config key —
+  never the course itself, because admins may have added real
+  content and plugin uninstall must not be a data-loss event.
+  Lang strings `sandbox_course_fullname` and `sandbox_course_summary`
+  added in both EN and DE. PHPUnit coverage in
+  `tests/sandbox_course_test.php`: fresh creation, idempotency,
+  shortname-based config recovery, stale-config rebuild via
+  `delete_course()`, `forget()` preserves the course row, and
+  end-to-end `{DEMOCOURSEID}` → sandbox resolution through
+  `start_url_resolver`.
+
 ## Done (0.2.4 — 2026-04-11)
 
 - **LH-ONB-START-01** — New class `local_lernhive_onboarding\start_url_resolver`
@@ -122,14 +165,15 @@ Independent from the registry work above — can land before or in parallel. Unb
 
 - [x] **LH-ONB-START-01** — *(landed 0.2.4)* New class `local_lernhive_onboarding\start_url_resolver` with a pure `resolve(string $template, int $userid): moodle_url` method. Placeholders: `{USERID}`, `{SYSCONTEXTID}`, `{SITEID}`, `{DEMOCOURSEID}`. Unknown placeholders stay literal. Unit tests: one per placeholder, plus "empty template → exception", plus "unknown placeholder → literal".
 - [x] **LH-ONB-START-02** — *(landed 0.2.4)* Teach `tour_importer::import_tour()` to read the top-level `start_url` key from tour JSON and merge it into `configdata` as `lh_start_url`. Must preserve any existing `filtervalues`/`placement`/etc. Unit test against a fixture JSON that already has a non-empty `configdata`.
-- [ ] **LH-ONB-START-03** — Rewrite `starttour.php` per the flow in `03-dev-doc.md`: load tour → pull `lh_start_url` from configdata → resolve placeholders → set `_requested=1` → clear `_completed` + `_lastStep` → redirect. Keep the 0.2.x pathmatch-strip as a fallback for tours without `lh_start_url`. Delete the fallback in 0.4.0 once all tours are migrated.
-- [ ] **LH-ONB-START-04** — PHPUnit: `starttour_flow_test.php` covering fresh-start, replay-after-completion, fallback-when-no-start_url, and sesskey enforcement.
+- [x] **LH-ONB-START-03** — *(landed 0.2.7)* Rewrote `starttour.php` as a thin page wrapper around `starttour_flow::prepare_redirect_url()`. Flow per `03-dev-doc.md`: load tour → pull `lh_start_url` from configdata → resolve placeholders → set `_requested=1` → clear `_completed`/`_lastStep` → redirect. Fallback to the 0.2.x pathmatch strip preserved for un-migrated tours; scheduled for removal in 0.4.0 once every tour has a `start_url`.
+- [x] **LH-ONB-START-04** — *(landed 0.2.7)* `tests/starttour_flow_test.php`: fresh-start, replay-after-completion (end-to-end `{DEMOCOURSEID}` resolution), fallback when `lh_start_url` missing, fallback when `configdata` empty, missing-tour error. Sesskey enforcement deferred to Behat (tracked as LH-ONB-START-07).
 - [ ] **LH-ONB-START-05** — Backfill `start_url` on all 12 existing Level-1 tour JSONs. Concrete mapping (Johannes to confirm during review):
   - `create_users/01_single.json` → `/user/editadvanced.php?id={USERID}` (verify: does editadvanced accept current user's id as a self-edit landing, or do we need a new-user URL?)
   - `create_users/02_csv.json` → `/admin/tool/uploaduser/index.php`
   - `enrol_users/*` → `/enrol/users.php?id={DEMOCOURSEID}` or similar — TBD during authoring review
   - remaining 9 — TBD during the Level-1 review sweep, tracked here as a sub-list.
-- [ ] **LH-ONB-START-06** — Install/upgrade step: provision the "Onboarding Sandbox" course (category: Miscellaneous or a new hidden `lh-onboarding` category), store its ID in `config_plugins` under `local_lernhive_onboarding.democourseid`. Idempotent; recreates if the stored ID points at a deleted course. Add a cleanup uninstaller that keeps the course by default (admins may have added real content) and only removes the config key.
+- [x] **LH-ONB-START-06** — *(landed 0.2.7)* Install/upgrade step provisions the "Onboarding Sandbox" course via `sandbox_course::ensure()` — hidden (`visible=0`), first visible top-level category, shortname `lh_onboarding_sandbox`, config key `local_lernhive_onboarding.democourseid`. Wired into `db/install.php`, 0.2.7 savepoint `2026041207` in `db/upgrade.php`, and `db/uninstall.php` drops only the config key (course survives because admins may have added real content). PHPUnit in `tests/sandbox_course_test.php` covers fresh create, idempotency, shortname-recovery after config wipe, stale-config rebuild via `delete_course()`, `forget()` behaviour, and end-to-end `{DEMOCOURSEID}` resolution.
+- [ ] **LH-ONB-START-07** — Behat: `starttour_sesskey.feature` covering (a) missing sesskey → rejected, (b) valid sesskey → redirect to the resolved target URL. Picks up the unit-test scope gap documented on START-04.
 - [ ] **LH-ONB-CHAIN-01** — Add `prereq` support to `tour_importer::import_tour()`. Read top-level `prereq` (string, tour name) → resolve to tour ID at import time → persist as `lh_prereq_tour_id` in `configdata`. Two-pass import required: first pass imports all tours without resolving prereqs, second pass back-fills prereq IDs once all names are known. Fail loudly (debugging + skip chain activation for that tour) if the prereq name cannot be resolved.
 - [ ] **LH-ONB-CHAIN-02** — New method `tour_manager::activate_successors(int $tourid, int $userid): void`. Queries tours with `lh_prereq_tour_id = $tourid` in `configdata`, sets `_requested=1` and clears `_completed` for each matching successor, for the given user. DB lookup must use `JSON_EXTRACT` where available and fall back to a PHP-side filter for DBs that lack JSON support. Write down the decision in the method docblock.
 - [ ] **LH-ONB-CHAIN-03** — Event observer `\tool_usertours\event\tour_ended` → `hook_callbacks::on_tour_ended` → `tour_manager::activate_successors($event->objectid, $event->userid)`. Register in `db/events.php`. If Moodle 5.x uses a hook instead of an event for tour end, switch to `db/hooks.php` and document the choice. Pick the one that actually fires in 5.2beta — validate on dev.lernhive.de.

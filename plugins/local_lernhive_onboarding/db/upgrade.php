@@ -140,5 +140,22 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041200, 'local', 'lernhive_onboarding');
     }
 
+    // 0.2.7 — LH-ONB-START-06: provision the "Onboarding Sandbox" course
+    // so `{DEMOCOURSEID}` in tour start_urls resolves to a real, hidden,
+    // non-production course instead of falling through to 0.
+    //
+    // NB: 0.2.5 and 0.2.6 were UX-only releases that bumped version.php
+    // without adding any DB work, so sites already upgraded to 2026041206
+    // still need this savepoint to run. That is why this step is gated
+    // on < 2026041207, not < 2026041206.
+    //
+    // Idempotent: sandbox_course::ensure() short-circuits if the stored
+    // course ID is still valid. On upgrades from 0.2.x (where no sandbox
+    // existed) this creates the course exactly once.
+    if ($oldversion < 2026041207) {
+        \local_lernhive_onboarding\sandbox_course::ensure();
+        upgrade_plugin_savepoint(true, 2026041207, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }
