@@ -1,5 +1,12 @@
 # local_lernhive_onboarding — Tasks
 
+## Done (0.2.1 — 2026-04-11)
+
+- **LH-ONB-TMPL-01** — `templates/dashboard_banner.mustache` rewritten from Bootstrap card to `.lh-cta-strip` component:
+  - Old: `<div class="card card-body">` with inline `<style>` block, `border-radius: 12px`, custom colours hardcoded
+  - New: `<aside class="lh-cta-strip lh-cta-strip--trainer">` with `__icon`, `__body` (title + intro + progress), `__cta` sub-elements; zero inline styles; all styling comes from `theme_lernhive` `_dashboard.scss`
+  - Behaviour unchanged: progress bar renders when `{{hasprogress}}`; CTA links to `{{toursurl}}`; `aria-labelledby` points to `lh-onboarding-banner-title`
+
 ## Done (0.2.0 — 2026-04-11)
 
 - **LH-ONB-01** Dedicated `lernhive_trainer` role — capability

@@ -17,11 +17,16 @@
 /**
  * ContentHub entry page.
  *
- * Dual-mode access:
- *   - Site admins reach it as an admin_externalpage registered in
- *     settings.php (shows inside the admin tree with the full breadcrumb).
- *   - Non-admin users (teachers, course creators) reach it directly and
- *     see it as a standalone site page.
+ * ContentHub is a content creation tool — not a site configuration page.
+ * It always renders as a `standard` page with the LernHive Plugin Shell,
+ * regardless of whether the visitor is a siteadmin or a teacher.
+ *
+ * The plugin still registers itself in the admin tree via settings.php
+ * (under Local plugins → LernHive ContentHub) so admins can discover it
+ * via the site-admin search, but the page does NOT call
+ * admin_externalpage_setup() — that would force pagelayout='admin' and
+ * layer the admin tab bar on top of the Plugin Shell, which owns its own
+ * navigation (ContentHub header strip, content-creation card grid).
  *
  * @package    local_lernhive_contenthub
  * @copyright  2026 LernHive.de
@@ -29,27 +34,19 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
-require_once($CFG->libdir . '/adminlib.php');
 
 use local_lernhive_contenthub\output\hub_page;
 
 $context = \core\context\system::instance();
 
-// Non-admins don't go through admin_externalpage_setup — they'd be
-// bounced. We route admins through the admin tree and everyone else
-// through a direct page so the hub is reachable from the launcher too.
-if (is_siteadmin()) {
-    admin_externalpage_setup('local_lernhive_contenthub_hub');
-} else {
-    require_login();
-    require_capability('local/lernhive_contenthub:view', $context);
+require_login();
+require_capability('local/lernhive_contenthub:view', $context);
 
-    $PAGE->set_context($context);
-    $PAGE->set_url(new moodle_url('/local/lernhive_contenthub/index.php'));
-    $PAGE->set_pagelayout('standard');
-    $PAGE->set_title(get_string('page_title', 'local_lernhive_contenthub'));
-    $PAGE->set_heading(get_string('page_title', 'local_lernhive_contenthub'));
-}
+$PAGE->set_context($context);
+$PAGE->set_url(new moodle_url('/local/lernhive_contenthub/index.php'));
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string('page_title', 'local_lernhive_contenthub'));
+$PAGE->set_heading(get_string('page_title', 'local_lernhive_contenthub'));
 
 /** @var \local_lernhive_contenthub\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('local_lernhive_contenthub');

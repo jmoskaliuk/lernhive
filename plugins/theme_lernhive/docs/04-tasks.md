@@ -22,6 +22,13 @@
   - Admin nav: two-level horizontal tab-bar — Level 1 top categories + Level 2 sub-items of active category — lib.php + admin.mustache + _layout.scss
   - Plugin Shell: new `_plugin-shell.scss` partial — 2-zone sticky page header for local plugins (Zone A header+tags, Zone B info/CTA, card grid with states, action buttons)
   - Mockup: `plugin-shell-concept.html` v0.2 (inline SVG sprite) + `plugin-shell-spec.md`
+- [x] 0.9.37 — Page-header alignment + avatar redesign + CTA strip icon (2026-04-11):
+  - `scss/lernhive/_layout.scss` — `.lernhive-page-header`: `align-items: center → flex-start` so action icons pin to the top of the header rather than floating vertically centred when `__main` is tall (page title + breadcrumb); top padding `$lh-spacing-sm (8px) → $lh-spacing-xs (4px)`.  `__actions` gets `padding-top: $lh-spacing-xs` for a consistent 4 px visual buffer.
+  - `scss/lernhive/_layout.scss` — New `.lernhive-user-block` CSS block (replaces the now-dead `.usermenu` rules). Targets the template's actual class structure (`__avatar` link + `__action` icon buttons):
+    - `__avatar`: 36 × 36 px, `border-radius: 50%`, circular border-color hover (was rectangular `$lh-radius-sm` hover from generic `.nav-link` rule)
+    - `.userinitials` (Moodle 5.x no-photo output): `font-size: 0 !important` hides "AU" initials text; `::before` draws a Lucide "user" SVG via CSS mask-image in `$lh-primary` on `$lh-primary-light` background
+    - `__action` (settings, logout): 36 × 36 px, `$lh-radius-sm` hover; `__action--danger` gets red hover
+  - `scss/lernhive/_dashboard.scss` — `.lh-cta-strip__icon`: changed from solid dark primary tile (`border-radius: 0; background: $lh-primary; color: #fff`) to `.lh-icon-artifact`-style rounded square (`border-radius: 9px; background: $lh-primary-light; color: $lh-primary`). Warning/success variants updated to match.
 - [x] 0.9.36 — Admin tab bar visibility fix (Johannes: Screenshot Boost-Referenz `/admin/search.php` zeigt `Allgemein | Nutzer/innen [active] | Kurse | …`, LernHive produziert das HTML aber rendert nichts):
   - `scss/lernhive/_base.scss` — remove the too-broad `nav.moremenu { display: none !important }` selector. Root cause: Boost's `core/moremenu` partial renders BOTH the primary navbar and the secondary admin tab bar as `<nav class="moremenu navigation">`, so the broad hide that was meant to suppress the primary navbar also killed the admin tab bar that 0.9.34 builds via `{{> core/moremenu }}`. The `.secondary-navigation { display: block }` override from 0.9.26 only un-hid the wrapper div; the `<nav>` element inside stayed `display: none !important`. Scoped the hide rule to `.primary-navigation` only, which cleanly suppresses the Boost primary navbar wrapper without affecting the `.secondary-navigation` wrapper used by the admin tab bar.
   - Net: admin tab bar now actually renders on screen — canonical Boost 9-tab sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development) is visible as originally intended in 0.9.34.
@@ -44,17 +51,17 @@
 
 ## Open — R1 scope
 
-- [ ] **Smoke-test 0.9.36** — on `/admin/index.php` + `/admin/search.php` verify the tab bar is actually VISIBLE and shows the canonical Boost sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development); active tab highlights correctly as you drill into categories; overflow menu renders when tabs don't fit; verify primary navbar is still suppressed (no duplicate nav bars)
-- [ ] **Smoke-test 0.9.34** — superseded by 0.9.36 (tab bar was built correctly but hidden by CSS; 0.9.36 un-hides it)
-- [ ] **Smoke-test 0.9.33** — verify on local Moodle: ContentHub page has no outer tile, top icon bar is flush to viewport, regular Moodle pages still render `.lernhive-main` as a centered tile with side gutters
-- [ ] **Smoke-test 0.9.27** — obsolete (superseded by 0.9.33 + 0.9.34 smoke-tests above)
+- [ ] **Smoke-test 0.9.37** — on `dev.lernhive.de`:
+  - Nav icons (notifications, launcher, avatar) sit at the very top of the content column — no large top gap
+  - Avatar with no uploaded photo shows a person icon (not "AU" text, not a rectangle hover)
+  - CTA strip icon is a soft rounded square (not solid dark tile)
+  - Admin tab bar (General | Users | Courses | …) is visible; active tab highlights; overflow renders
+  - Primary navbar is still suppressed (no duplicate nav bars)
+  - ContentHub renders 3-column card grid with `lh-plugin-content-area` gutter
+- [ ] **Smoke-test 0.9.34/0.9.36** — superseded by the 0.9.37 smoke-test above
+- [ ] **Smoke-test 0.9.33** — superseded by the 0.9.37 smoke-test above
 - [ ] `regionmainsettingsmenu` must stay — Teachers use it to add blocks to courses (block positions still unclear after right-hand drawer removal). Keep until an explicit block-placement UX replaces it.
 - [ ] Student dock items: progress overview shortcut, continue-learning button (post-flavour integration)
-- [ ] Smoke-test steps 3–6 (Fresh Apply LXP, config key verification, override test, audit table)
-- [ ] PHPUnit @covers deprecations in non-onboarding plugins (contenthub, copy, flavour, library — 41 remaining)
-- [ ] PHPUnit failure: `flavour_manager_test::test_apply_on_fresh_site_does_not_flag_overrides` (assertFalse fails, overrides_detected = true on fresh site)
-- [ ] Behat init_failed on Hetzner (wwwroot / Selenium config issue)
-- [ ] Smoke-test steps 3–6 (Fresh Apply LXP, config key verification, override test, audit table)
 - [ ] PHPUnit @covers deprecations in non-onboarding plugins (contenthub, copy, flavour, library — 41 remaining)
 - [ ] PHPUnit failure: `flavour_manager_test::test_apply_on_fresh_site_does_not_flag_overrides` (assertFalse fails, overrides_detected = true on fresh site)
 - [ ] Behat init_failed on Hetzner (wwwroot / Selenium config issue)

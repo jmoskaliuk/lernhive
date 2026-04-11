@@ -1,6 +1,14 @@
 # local_lernhive_contenthub — Tasks
 
-## Done (2026-04-10)
+## Done (0.1.3 — 2026-04-11)
+
+- **LH-HUB-SHELL-01** — `templates/hub_page.mustache` refined for plugin-shell consistency:
+  - Removed `← Dashboard` back button (redundant with sidebar; would appear on every plugin page)
+  - Container changed from `<div class="container-fluid py-4">` → `<div class="lh-plugin-content-area">` (picks up the 24/32 px responsive horizontal gutter defined in `theme_lernhive/_plugin-shell.scss`)
+  - Grid changed from `lh-plugin-grid--cols-2` → `lh-plugin-grid--cols-3` (3-column layout is now the standard for LernHive content card grids on desktop)
+- **LH-HUB-CARD-01** — `classes/card.php`: `default` branch of icon_color switch changed from `''` → `'generic'` so cards without an explicit type get the `--generic` blue-gray artifact icon fallback instead of no colour class
+
+## Done (0.1.0–0.1.2 — 2026-04-10)
 - scaffolded the plugin (version.php, lib.php, db/access.php, lang/en,
   settings.php, styles.css, README, null privacy provider)
 - built the card orchestration layer (`card`, `card_registry`) with

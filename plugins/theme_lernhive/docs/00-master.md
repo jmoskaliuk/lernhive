@@ -105,10 +105,9 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 **Consequences.**
 - Admin pages have no LernHive block regions (no `content-top`, `content-bottom`, etc.) and no Context Dock.
 - Admin pages share `sidebar.mustache` for consistent left navigation.
-- `admin.mustache` renders a page header (same structure as drawers) plus a horizontal `lernhive-admin-topnav` tab-bar built from `admin_get_root()` — replaces the hidden Boost left-drawer admin settings tree.
-- `output.secondary_nav` is still included for sub-pages (admin/category.php shows tab bar when Moodle registers secondary nav for that page).
+- `admin.mustache` renders a page header (same structure as drawers) plus the admin secondary navigation bar. See ADR-06 for the tab-bar implementation strategy.
 
-**Status.** Accepted and shipped in 0.9.20. Admin top-nav tab-bar added in 0.9.26.
+**Status.** Accepted and shipped in 0.9.20. Superseded in terms of admin tab-bar implementation by ADR-06 (0.9.34).
 
 ## Architecture decision ADR-05 — Page header owns Launcher, profile link, and language selector (2026-04-11, shipped in 0.9.26)
 
@@ -121,9 +120,25 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 - `drawers.mustache` and `admin.mustache` page header actions now follow the order: `[notifications] [lang menu] [launcher] [user block]`.
 - The Launcher dropdown in header context is right-aligned and uses dark-on-white icon colors (not white-on-dark as in the sidebar).
 - Language selector wraps `$OUTPUT->lang_menu()` with a globe icon prefix; hidden when Moodle has only one language.
-- `lib.php` gains two helper functions: `theme_lernhive_get_header_user_context()` (shared by drawers.php and admin.php) and `theme_lernhive_get_admin_topnav()`.
+- `lib.php` gains the helper function `theme_lernhive_get_header_user_context()` (shared by drawers.php and admin.php). A second helper, `theme_lernhive_get_admin_topnav()`, was added in 0.9.26 but removed again in 0.9.34 — see ADR-06.
+- 0.9.27 follow-up: the user-block chevron dropdown was replaced with three explicit icon buttons (avatar → profile link, gear → preferences, sign-out → logout), removing the `<details>/<summary>` pattern.
 
-**Status.** Accepted and shipped in 0.9.26.
+**Status.** Accepted and shipped in 0.9.26. User-block dropdown superseded by explicit icon buttons in 0.9.27.
+
+## Architecture decision ADR-06 — Admin tab bar delegates to Moodle core secondary_navigation (2026-04-11, shipped 0.9.34 + 0.9.36)
+
+**Decision.** The admin settings tab bar (`General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development`) is built by delegating entirely to Moodle core's `\core\navigation\views\secondary::load_admin_navigation()` pipeline and rendered via `core/moremenu`. Theme_lernhive's admin layout follows the exact same pattern as `theme_boost/layout/drawers.php` and `theme_boost/templates/drawers.mustache`. The previous custom helper `theme_lernhive_get_admin_topnav()` (0.9.26) is removed.
+
+**Why.** The 0.9.26 custom helper walked `admin_get_root()->children` directly and treated every `admin_category` node as a top-level tab. In Moodle 5.x that tree is effectively flat — category nodes and leaf setting nodes sit at the same level, which produced an L1/L2-mixed tab list (`General | Users | Courses | Grades | AI | Competencies | Badges | H5P | Licence | Location | Language | Messaging`). Core's `load_admin_navigation()` already solves this: it promotes the site-admin root as a "General" tab and only lifts children with `display && !is_short_branch()` to the top level, producing the canonical Boost 9-tab sequence. Delegating keeps theme_lernhive automatically consistent with any future core nav refactor.
+
+**Consequences.**
+- `layout/admin.php` builds `$secondarymoremenu` from `new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav)` and also forwards `overflow` via `$PAGE->secondarynav->get_overflow_menu_data()` — exactly the Boost pattern.
+- `templates/admin.mustache` replaces the custom two-level `{{#hasadmintopnav}}` / `{{#hasadminsecondnav}}` blocks with `{{#secondarymoremenu}} … {{> core/moremenu}} {{/secondarymoremenu}}` and a tertiary `{{#overflow}} … {{> core/url_select}} {{/overflow}}` block.
+- `theme_lernhive_get_admin_topnav()` is deleted from `lib.php` (~165 lines of custom walker gone).
+- `.lernhive-admin-topnav` / `.lernhive-admin-topnav--secondary` SCSS rules in `_layout.scss` are replaced by a thin `.lernhive-secondary-navigation` wrapper that only supplies horizontal gutter + bottom margin so the core `<nav class="moremenu navigation">` sits flush with the flush-layout shell from 0.9.33.
+- **CSS scoping lesson (0.9.36 follow-up):** Boost's `core/moremenu` partial renders *both* the primary navbar and the secondary/admin tab bar as `<nav class="moremenu navigation">`. Theme_lernhive distinguishes them only at the wrapper level (`.primary-navigation` vs. `.secondary-navigation`), **exactly like Boost**. Any rule that tries to hide the primary navbar must be scoped to `.primary-navigation` — never to `nav.moremenu` or a bare `nav` selector — or it will also kill the admin tab bar. A 0.9.34-era `nav.moremenu { display: none !important }` rule in `_base.scss` accidentally did exactly that and had to be scoped down in 0.9.36.
+
+**Status.** Accepted and shipped. Structural delegation 0.9.34; CSS scoping fix 0.9.36.
 
 ## Release scope
 

@@ -43,31 +43,53 @@ The page header (`lernhive-page-header`) is a horizontal strip at the top of the
 3. **Launcher** — `<div class="lernhive-page-header__launcher">{{> theme_lernhive/launcher }}</div>` — 9-dot grid icon; dropdown right-aligned; dark-on-white colors in this context
 4. **User block** — custom avatar link + chevron dropdown replacing `output.user_menu`
 
-### User block
-The user block (`lernhive-user-block`) separates two distinct actions that `output.user_menu` combined in a single click:
-- **Avatar** (`lernhive-user-block__avatar`) — `<a href="{{ profileurl }}">` — direct link to `/user/profile.php?id=X`
-- **Chevron** (`lernhive-user-block__toggle`) — `<details>/<summary>` pattern — opens a dropdown with Profile / Preferences / Logout
+### User block (current — since 0.9.27, restyled 0.9.37)
+
+The user block (`lernhive-user-block`) replaces Moodle's `output.user_menu`. It renders three focused controls:
+
+- **Avatar** (`lernhive-user-block__avatar`) — `<a href="{{ profileurl }}">` — direct profile link. Circular 36 × 36 px button. Wraps `{{{ useravatar }}}` (Moodle's output, which may be an `<img>` for uploaded photos or a `<span class="userinitials">` on Moodle 5.x when no photo exists).
+- **Settings** (`lernhive-user-block__action`) — `<a href="{{ prefsurl }}">` — Preferences icon (fa-cog)
+- **Logout** (`lernhive-user-block__action lernhive-user-block__action--danger`) — `<a href="{{ logouturl }}">` — sign-out icon (fa-sign-out), danger-red hover
+
+The old `<details>/<summary>` chevron dropdown pattern (0.9.26 – 0.9.26) was removed in 0.9.27. There is no dropdown on the user block; each action is a direct link.
+
+#### Avatar: no-photo state (Moodle 5.x)
+
+Moodle 5.x renders initials as `<span class="userinitials size-35 bg-color-X">AU</span>` — **not** as `img.defaultuserpic`. The CSS in `_layout.scss` targets `.userinitials` directly:
+
+```scss
+.lernhive-user-block__avatar .userinitials {
+    font-size: 0 !important;         // hides "AU" text
+    background: $lh-primary-light !important;  // overrides Moodle's bg-color-X
+    // ::before draws a Lucide "user" SVG via mask-image in $lh-primary
+}
+```
+
+Do **not** add CSS targeting `img.defaultuserpic` — that element no longer exists on Moodle 5.x.
 
 ### Helper functions in lib.php
 
 | Function | Role |
 |---|---|
-| `theme_lernhive_get_header_user_context($OUTPUT)` | Returns array with `profileurl`, `useravatar`, `logouturl`, `prefsurl`, `langmenu`, `haslangmenu`, `isloggedin`. Shared by `drawers.php` and `admin.php` to avoid duplication. |
-| `theme_lernhive_get_admin_topnav($PAGE)` | Returns array of admin top-nav items from `admin_get_root()`. Used only in `admin.php`. |
+| `theme_lernhive_get_header_user_context($OUTPUT)` | Returns array with `profileurl`, `useravatar`, `logouturl`, `prefsurl`, `langmenu`, `haslangmenu`, `isloggedin`. Shared by `drawers.php` and `admin.php`. |
+| `theme_lernhive_get_admin_topnav($PAGE)` | **Deleted in 0.9.34.** Admin nav now delegates to Moodle's `core\navigation\output\more_menu` via `$PAGE->secondarynav` (canonical Boost pattern). |
 
-### Admin top navigation
-On admin pages, `theme_lernhive_get_admin_topnav($PAGE)` iterates `admin_get_root()->children`, filters hidden/inaccessible sections, and builds a `[{text, url, key, isactive}]` array. The template renders this as `lernhive-admin-topnav` — a horizontal scroll-able tab-bar between the page header and main content. Active state is derived from `$PAGE->url->get_param('category')`.
+### Admin top navigation (current — since 0.9.34)
+
+Admin pages render the secondary nav via `secondarymoremenu` / `{{> core/moremenu}}` — the same mechanism Boost uses. This produces the canonical 9-tab sequence (General | Users | Courses | Grades | Plugins | Appearance | Server | Reports | Development) with correct overflow handling. The earlier custom `theme_lernhive_get_admin_topnav()` + two-level `lernhive-admin-topnav` approach was removed in 0.9.34 because it produced a mixed L1/L2 list on `/admin/index.php`.
 
 ### SCSS files
 | File | What it contains |
 |---|---|
-| `_navigation.scss` | `.lernhive-page-header__launcher` — header context styles for launcher toggle + dropdown; `.lernhive-user-block` — avatar link, chevron, dropdown; `.lernhive-lang-menu` — globe prefix + select/dropdown styling |
-| `_layout.scss` | `.lernhive-admin-topnav` — horizontal tab-bar; `.lernhive-page-header` — header shell (already present since 0.9.x) |
+| `_layout.scss` | `.lernhive-page-header` shell; `.lernhive-user-block` avatar + action icons (including `.userinitials` mask); `.lernhive-admin-topnav` (removed 0.9.34, CSS now in `.lernhive-secondary-navigation`) |
+| `_navigation.scss` | `.lernhive-page-header__launcher` — launcher toggle + dropdown; `.lernhive-lang-menu` — globe prefix styling |
+| `_sidepanel.scss` | Side panel system (Messages / Notifications / AI / Help — added 0.9.36) |
 
 ### Design decisions
-- Sidebar removes the launcher (0.9.26): sidebar is now purely navigational (nav items + blocks). No action controls.
-- `output.user_menu` is dropped: the Moodle default dropdown mixed navigation and actions. The custom user block separates them explicitly.
-- Language selector is always wrapped: even if Moodle's `lang_menu()` changes its internal markup, the `.lernhive-lang-menu` container provides a stable styling hook.
+- Sidebar is purely navigational (since 0.9.26): no launcher, no action controls.
+- `output.user_menu` is dropped: Moodle's default dropdown mixed navigation and actions. The custom user block splits them into explicit direct links.
+- Avatar hover is strictly circular (`border-radius: 50%`) — the generic `.nav-link` hover rule uses `$lh-radius-sm` (rectangle), so `.lernhive-user-block__avatar` must explicitly set `border-radius: 50%` to win.
+- Language selector is always wrapped: `.lernhive-lang-menu` provides a stable styling hook regardless of Moodle's internal `lang_menu()` markup changes.
 
 ## Context Dock (since 0.9.21)
 
