@@ -95,10 +95,27 @@ $THEME->layouts = [
         'defaultregion' => $lhdefaultregion,
     ],
     'mydashboard' => [
-        'file' => 'admin.php',
+        'file' => 'drawers.php',
         'regions' => $lhregions,
         'defaultregion' => $lhdefaultregion,
         'options' => ['langmenu' => true],
+    ],
+    'mycourses' => [
+        'file' => 'drawers.php',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
+        'options' => ['langmenu' => true],
+    ],
+    'mypublic' => [
+        'file' => 'drawers.php',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
+        'options' => ['langmenu' => true],
+    ],
+    'contentbank' => [
+        'file' => 'drawers.php',
+        'regions' => $lhregions,
+        'defaultregion' => $lhdefaultregion,
     ],
     'login' => [
         'file' => 'login.php',
