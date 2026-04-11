@@ -215,6 +215,15 @@ body.pagelayout-frontpage .lernhive-main {
   box-shadow: none;
 }
 
+.lernhive-admin-navbar {
+  margin-bottom: .75rem;
+}
+
+.lernhive-admin-navbar .breadcrumb-nav,
+.lernhive-admin-navbar nav[aria-label="breadcrumb"] {
+  margin-bottom: 0;
+}
+
 .lernhive-admin-header__main,
 .lernhive-admin-main {
   min-width: 0;

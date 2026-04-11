@@ -17,15 +17,17 @@
         {{> theme_lernhive/sidebar }}
 
         <div id="page" class="lernhive-page">
-            <div class="lernhive-page-header">
-                <div class="lernhive-page-header__main">
-                    {{{ output.full_header }}}
+            {{#showpageheader}}
+                <div class="lernhive-page-header">
+                    <div class="lernhive-page-header__main">
+                        {{{ output.full_header }}}
+                    </div>
+                    <div class="lernhive-page-header__actions">
+                        {{{ output.navbar_plugin_output }}}
+                        {{{ output.user_menu }}}
+                    </div>
                 </div>
-                <div class="lernhive-page-header__actions">
-                    {{{ output.navbar_plugin_output }}}
-                    {{{ output.user_menu }}}
-                </div>
-            </div>
+            {{/showpageheader}}
 
             <div id="page-content" class="lernhive-page-content">
                 {{#hasregionmainsettingsmenu}}

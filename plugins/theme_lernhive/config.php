@@ -76,10 +76,10 @@ $THEME->layouts = [
         'defaultregion' => 'side-pre',
     ],
     'mydashboard' => [
-        'file' => 'drawers.php',
+        'file' => 'admin.php',
         'regions' => ['side-pre'],
         'defaultregion' => 'side-pre',
-        'options' => ['nonavbar' => true, 'langmenu' => true],
+        'options' => ['langmenu' => true],
     ],
     'login' => [
         'file' => 'login.php',
