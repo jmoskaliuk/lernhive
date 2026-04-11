@@ -86,7 +86,8 @@ function theme_lernhive_get_extra_scss($theme) {
         '_dashboard.scss',
         '_course.scss',
         '_login.scss',
-        '_dock.scss',       // 0.9.21: Context Dock — floating action strip
+        '_dock.scss',        // 0.9.21: Context Dock — floating action strip
+        '_plugin-shell.scss', // 0.9.27: Plugin Shell — 2-zone page header for local plugins
     ];
 
     foreach ($partials as $partial) {
@@ -350,60 +351,150 @@ function theme_lernhive_get_header_user_context($OUTPUT): array {
 }
 
 /**
- * Build the admin top-navigation array for the admin layout.
+ * Build the admin top-navigation arrays for the admin layout (0.9.27: two levels).
  *
- * Moodle renders the admin settings tree in Boost's left drawer, which
- * LernHive hides. This function extracts the top-level admin sections from
- * admin_get_root() so the admin.mustache template can display them as a
- * horizontal tab-bar above the main content.
+ * Level 1 (admintopnav):  The direct children of admin_get_root() —
+ *   Notifications, Registration, Advanced features, Users, Courses, …
+ *
+ * Level 2 (adminsecondnav): The sub-categories/pages inside the currently
+ *   active top-level category, shown as a second tab bar below level 1.
+ *
+ * Active detection: checks the `category` URL param first; if absent, checks
+ * the `section` param and walks the admin tree to find the parent category.
  *
  * @param moodle_page $PAGE The current page object.
- * @return array<int, array<string, mixed>>  Empty array when not a site admin.
+ * @return array{
+ *   admintopnav: array<int, array<string, mixed>>,
+ *   hasadmintopnav: bool,
+ *   adminsecondnav: array<int, array<string, mixed>>,
+ *   hasadminsecondnav: bool,
+ * }
  */
 function theme_lernhive_get_admin_topnav($PAGE): array {
+    $empty = [
+        'admintopnav'      => [],
+        'hasadmintopnav'   => false,
+        'adminsecondnav'   => [],
+        'hasadminsecondnav'=> false,
+    ];
+
     if (!is_siteadmin() || !function_exists('admin_get_root')) {
-        return [];
+        return $empty;
     }
 
     $adminroot = admin_get_root(false, false);
     if (!$adminroot) {
-        return [];
+        return $empty;
     }
 
-    // Determine active category from the URL (e.g. admin/category.php?category=users).
-    $currentcategory = $PAGE->url->get_param('category') ?? '';
+    // --- Determine which top-level category is currently active ---------------
+    $urlcategory = $PAGE->url->get_param('category') ?? '';
+    $urlsection  = $PAGE->url->get_param('section')  ?? '';
 
-    $result = [];
-    foreach ($adminroot->children as $section) {
-        // Skip hidden or inaccessible sections.
-        if (isset($section->hidden) && $section->hidden) {
-            continue;
+    // Helper: build one nav item array from an admin_* node.
+    $build_item = function($node, bool $isactive): array {
+        $name = $node->name ?? '';
+        if ($node instanceof admin_externalpage) {
+            $url = is_string($node->url) ? $node->url : $node->url->out(false);
+        } else {
+            $url = (new moodle_url('/admin/category.php', ['category' => $name]))->out(false);
+        }
+        $label = $node->visiblename instanceof lang_string
+            ? $node->visiblename->out()
+            : (string) $node->visiblename;
+        return ['text' => $label, 'url' => $url, 'key' => $name, 'isactive' => $isactive];
+    };
+
+    // Helper: check if a node is visible and accessible.
+    $is_visible = function($node): bool {
+        if (isset($node->hidden) && $node->hidden) {
+            return false;
         }
         try {
-            if (!$section->check_access()) {
-                continue;
-            }
+            return $node->check_access();
         } catch (Exception $e) {
+            return false;
+        }
+    };
+
+    // --- Level 1: top-level children of admin_get_root() ---------------------
+    $toplevel = [];
+    $activetopkey = '';
+
+    foreach ($adminroot->children as $section) {
+        if (!$is_visible($section)) {
             continue;
         }
+        $key = $section->name ?? '';
 
-        $sectionname = $section->name ?? '';
-        if ($section instanceof admin_externalpage) {
-            $url = is_string($section->url) ? $section->url : $section->url->out(false);
-        } else {
-            $url = (new moodle_url('/admin/category.php', ['category' => $sectionname]))->out(false);
+        // Active if URL category matches this section directly.
+        $isactive = ($key !== '' && $key === $urlcategory);
+        $toplevel[$key] = ['node' => $section, 'isactive' => $isactive];
+        if ($isactive) {
+            $activetopkey = $key;
         }
-
-        $result[] = [
-            'text'     => $section->visiblename instanceof lang_string
-                ? $section->visiblename->out()
-                : (string) $section->visiblename,
-            'url'      => $url,
-            'key'      => $sectionname,
-            'isactive' => $sectionname !== '' && $sectionname === $currentcategory,
-        ];
     }
-    return $result;
+
+    // If no match on category param, try to find active via section param.
+    if ($activetopkey === '' && $urlsection !== '') {
+        foreach ($toplevel as $key => $info) {
+            $node = $info['node'];
+            if (!($node instanceof admin_category)) {
+                continue;
+            }
+            // Walk one level of children looking for the section name.
+            foreach ($node->children as $child) {
+                if (($child->name ?? '') === $urlsection) {
+                    $toplevel[$key]['isactive'] = true;
+                    $activetopkey = $key;
+                    break 2;
+                }
+                // Two levels deep (subcategory → setting).
+                if ($child instanceof admin_category) {
+                    foreach ($child->children as $grandchild) {
+                        if (($grandchild->name ?? '') === $urlsection) {
+                            $toplevel[$key]['isactive'] = true;
+                            $activetopkey = $key;
+                            break 3;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Build level-1 result array.
+    $admintopnav = [];
+    foreach ($toplevel as $key => $info) {
+        $admintopnav[] = $build_item($info['node'], $info['isactive']);
+    }
+
+    // --- Level 2: children of the active top-level category ------------------
+    $adminsecondnav = [];
+
+    if ($activetopkey !== '' && isset($toplevel[$activetopkey])) {
+        $activenode = $toplevel[$activetopkey]['node'];
+        if ($activenode instanceof admin_category && !empty($activenode->children)) {
+            foreach ($activenode->children as $child) {
+                if (!$is_visible($child)) {
+                    continue;
+                }
+                $childkey = $child->name ?? '';
+                $childactive = ($childkey !== '' && (
+                    $childkey === $urlcategory ||
+                    $childkey === $urlsection
+                ));
+                $adminsecondnav[] = $build_item($child, $childactive);
+            }
+        }
+    }
+
+    return [
+        'admintopnav'       => $admintopnav,
+        'hasadmintopnav'    => !empty($admintopnav),
+        'adminsecondnav'    => $adminsecondnav,
+        'hasadminsecondnav' => !empty($adminsecondnav),
+    ];
 }
 
 /**

@@ -22,6 +22,9 @@
 
 - [ ] `regionmainsettingsmenu` must stay — Teachers use it to add blocks to courses (block positions still unclear after right-hand drawer removal). Keep until an explicit block-placement UX replaces it.
 - [ ] Student dock items: progress overview shortcut, continue-learning button (post-flavour integration)
+- [ ]  Das Menu oben bei admin.php wird angezeigt, es ist aber das falsch. Das ist das erst Untermenu im Adminbereich. Es müsste ein zweites übergeordnetes Menu geben, das dort angezeigt werden soll. 
+- [ ] Dropdown neben Profilbild oben rechts sollte weg. Die Funktionen "Einstellungen" und "Ausloggen" sollten als Icons neben dem Profilbild stehen. Edit Profil kann weg, das ist ja jetzt mit dem profilbild verknüfpt
+ [ ] Es solle noch ein Icon für die Sprachauswahl geben. 
 - [ ] Smoke-test steps 3–6 (Fresh Apply LXP, config key verification, override test, audit table)
 - [ ] PHPUnit @covers deprecations in non-onboarding plugins (contenthub, copy, flavour, library — 41 remaining)
 - [ ] PHPUnit failure: `flavour_manager_test::test_apply_on_fresh_site_does_not_flag_overrides` (assertFalse fails, overrides_detected = true on fresh site)

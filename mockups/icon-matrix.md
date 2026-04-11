@@ -74,6 +74,27 @@ Reference family:
 | Bookmark | save for later | `bookmark` |
 | Follow | subscribe to meaningful updates | `star` |
 
+## Card action icons (Plugin Shell)
+
+These icons form the standard action strip at the bottom of every content card. Usage and appearance depend on context — not all icons appear on every card.
+
+| Action | Icon (Lucide) | Button style | When to show | Label required? |
+|--------|--------------|--------------|-------------|-----------------|
+| Start | `play` | `lh-btn--accent` (orange filled) | Active/current items only | Yes always |
+| Öffnen | `arrow-right` | `lh-btn--primary` (nav-dark filled) | Navigation to detail view | Yes always |
+| Wiederholen | `rotate-ccw` | `lh-btn--ghost` (outline) | Completed tour steps | Yes |
+| Kopieren | `copy` | `lh-btn--ghost` icon-only | Where duplication is available | No (tooltip) |
+| Löschen | `trash-2` | `lh-btn--danger-ghost` (red outline) | Admin / Trainer role only | No (tooltip) |
+| Info | `info` | `lh-btn--ghost` icon-only | Always — every card | No (tooltip) |
+
+### Card action layout rules
+
+- Primary actions (Start, Öffnen) are leftmost, always carry a text label
+- Info is always rightmost, separated from other actions by a flex spacer
+- Löschen never appears as a default visible action in grid views — move it behind `ellipsis` for list/table rows
+- Disabled actions (locked state) use `opacity: 0.5` and `pointer-events: none`, not removal
+- Maximum 2 visible labeled buttons per card; other actions are icon-only
+
 ## Action icon rules
 
 - standard actions should use the same icon everywhere in the product

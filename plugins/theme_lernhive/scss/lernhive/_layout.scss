@@ -392,6 +392,39 @@ $lh-bp-tablet:   768px;
     }
 }
 
+// Level-2 secondary nav (0.9.27): sub-categories of the active top-level item.
+// Visually distinct: no bottom-border on individual items, uses accent underline,
+// slightly smaller text, and a quiet left-accent stripe on the container.
+
+.lernhive-admin-topnav--secondary {
+    background: $lh-bg;
+    border: 1px solid $lh-border;
+    border-top: 3px solid $lh-accent;  // orange stripe = "you are inside this section"
+    border-radius: 0 0 $lh-radius $lh-radius;
+    box-shadow: none;
+    margin-top: -$lh-radius; // visually connect to level-1 nav above
+    padding: 0 $lh-spacing-md;
+
+    .lernhive-admin-topnav__link {
+        font-size: $lh-font-size-xs;
+        color: $lh-text-secondary;
+        padding: 0.5rem $lh-spacing-sm;
+        border-bottom: 2px solid transparent;
+
+        &:hover {
+            color: $lh-accent-dark;
+            border-bottom-color: $lh-accent;
+        }
+
+        &--active,
+        &[aria-current="page"] {
+            color: $lh-accent-dark;
+            border-bottom-color: $lh-accent;
+            font-weight: 600;
+        }
+    }
+}
+
 // --- Settings menu (gear icon, edit mode toggle) ----------------------------
 
 .lernhive-settings-menu {

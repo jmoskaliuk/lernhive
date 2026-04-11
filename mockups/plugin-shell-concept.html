@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LernHive Plugin Shell — Design Concept v0.2</title>
+<style>
+/* ═══════════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════════ */
+:root {
+  --nav:          #194866;
+  --nav-deep:     #0f2d3e;
+  --accent:       #f98012;
+  --accent-mid:   rgba(249,128,18,.18);
+  --accent-soft:  #fff4e8;
+  --accent-faint: #fef9f5;
+  --ink:          #2e3d49;
+  --muted:        #6b7a8a;
+  --line:         #e4e8ed;
+  --line-strong:  #c8d3dc;
+  --bg:           #edf0f4;
+  --surface:      #ffffff;
+
+  --tag-level:    #dbeafe; --tag-level-ink: #1e4d8c;
+  --tag-type:     #ede9fb; --tag-type-ink:  #5b3fa6;
+  --tag-done:     #dcfce7; --tag-done-ink:  #166534;
+  --tag-active:   #fff4e8; --tag-active-ink:#b45309;
+  --tag-locked:   #f1f5f9; --tag-locked-ink:#64748b;
+
+  --radius-card:  12px;
+  --radius-pill:  999px;
+  --radius-btn:   7px;
+
+  --shadow-card:  0 1px 3px rgba(25,72,102,.08), 0 0 0 1px var(--line);
+  --shadow-header:0 2px 10px rgba(25,72,102,.08);
+
+  --green:        #166534;
+  --green-soft:   #dcfce7;
+  --red:          #b91c1c;
+  --red-soft:     #fee2e2;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Open Sans","Helvetica Neue",Arial,sans-serif;
+  font-size: 14px; color: var(--ink); background: var(--bg); line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════════
+   SVG ICON HELPER
+   Usage: <svg class="ic"><use href="#ic-NAME"/></svg>
+═══════════════════════════════════════════════════ */
+.ic {
+  width: 1em; height: 1em;
+  fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  vertical-align: middle; flex-shrink: 0;
+  display: inline-block;
+}
+.ic-sm  { width: 14px; height: 14px; }
+.ic-md  { width: 18px; height: 18px; }
+.ic-lg  { width: 22px; height: 22px; }
+
+/* ═══════════════════════════════════════════════════
+   DEMO CHROME
+═══════════════════════════════════════════════════ */
+.demo-shell { display: grid; grid-template-columns: 210px 1fr; min-height: 100vh; }
+.demo-sidebar {
+  background: var(--nav); color: rgba(255,255,255,.6);
+  padding: 20px 0; font-size: 13px;
+}
+.demo-sidebar .logo {
+  padding: 0 18px 20px; color:#fff; font-size:16px; font-weight:700;
+  border-bottom:1px solid rgba(255,255,255,.1); margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+.demo-sidebar nav a {
+  display:flex; align-items:center; gap:9px; padding:9px 18px;
+  color:rgba(255,255,255,.6); text-decoration:none;
+}
+.demo-sidebar nav a.active,
+.demo-sidebar nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+.demo-content { background: var(--bg); overflow-y: auto; }
+
+/* ═══════════════════════════════════════════════════
+   DEMO SWITCHER
+═══════════════════════════════════════════════════ */
+.demo-switcher {
+  display:flex; gap:8px; padding:12px 24px;
+  background:#fff; border-bottom:1px solid var(--line);
+}
+.demo-tab {
+  padding:5px 14px; border-radius:var(--radius-pill);
+  font-size:12px; font-weight:700; cursor:pointer;
+  border:1px solid var(--line); background:var(--bg); color:var(--muted);
+  transition: all .15s;
+}
+.demo-tab.active { background:var(--nav); color:#fff; border-color:var(--nav); }
+
+/* ═══════════════════════════════════════════════════
+   PLUGIN SHELL — ZONE A: HEADER PANEL
+   Back | [Title block + Tags] | Help
+═══════════════════════════════════════════════════ */
+.lh-header {
+  background: var(--surface);
+  box-shadow: var(--shadow-header);
+  padding: 18px 24px 16px;
+  position: sticky; top: 0; z-index: 20;
+  /* Clear top border accent */
+  border-top: 3px solid var(--nav);
+}
+.lh-header__row {
+  display: flex; align-items: flex-start; gap: 16px;
+}
+
+/* Back / Help buttons */
+.lh-nav-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px; border-radius: var(--radius-btn);
+  border: 1px solid var(--line-strong); background: var(--bg);
+  color: var(--muted); font-size: 12px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; text-decoration: none;
+  flex-shrink: 0; margin-top: 2px;
+  transition: background .15s, color .15s;
+}
+.lh-nav-btn:hover { background: var(--line); color: var(--nav); }
+.lh-nav-btn .ic { font-size: 14px; }
+
+/* Title block */
+.lh-header__title-block { flex: 1; min-width: 0; }
+
+.lh-header__name {
+  font-size: 17px; font-weight: 800; color: var(--nav);
+  display: flex; align-items: baseline; gap: 0; flex-wrap: wrap;
+  line-height: 1.2;
+}
+.lh-header__name .plugin { color: var(--nav); }
+.lh-header__name .sep {
+  color: var(--accent); margin: 0 8px; font-weight: 300; font-size: 20px;
+}
+.lh-header__name .tagline { color: var(--nav); font-weight: 600; font-size: 15px; }
+
+.lh-header__subtitle {
+  font-size: 12px; color: var(--muted); margin-top: 3px;
+  max-width: 560px; line-height: 1.5;
+}
+
+/* Tags — live INSIDE Zone A, below subtitle */
+.lh-header__tags {
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  margin-top: 12px;
+}
+.lh-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px 3px 8px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 700;
+  user-select: none; cursor: default; white-space: nowrap;
+}
+.lh-tag .ic { font-size: 11px; }
+.lh-tag--level   { background: var(--tag-level);  color: var(--tag-level-ink); }
+.lh-tag--type    { background: var(--tag-type);   color: var(--tag-type-ink); }
+.lh-tag--done    { background: var(--tag-done);   color: var(--tag-done-ink); }
+.lh-tag--active  { background: var(--tag-active); color: var(--tag-active-ink); }
+.lh-tag--locked  { background: var(--tag-locked); color: var(--tag-locked-ink); }
+
+/* ═══════════════════════════════════════════════════
+   PLUGIN SHELL — ZONE B: INFO / CTA BAR
+   Stats / Progress · Primary CTA
+═══════════════════════════════════════════════════ */
+.lh-infobar {
+  background: var(--accent-faint);
+  border-bottom: 1px solid rgba(249,128,18,.2);
+  padding: 10px 24px;
+  display: flex; align-items: center; gap: 20px;
+}
+.lh-infobar__stats {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+}
+.lh-infobar__stat {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted);
+}
+.lh-infobar__stat strong { color: var(--ink); font-weight: 700; }
+.lh-infobar__stat .ic { color: var(--nav); font-size: 14px; }
+
+/* Progress variant */
+.lh-infobar__progress {
+  display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;
+}
+.lh-infobar__prog-label { font-size: 12px; color: var(--muted); white-space: nowrap; font-weight: 600; }
+.lh-infobar__prog-track {
+  flex: 1; height: 7px; background: rgba(249,128,18,.2);
+  border-radius: var(--radius-pill); overflow: hidden;
+}
+.lh-infobar__prog-fill {
+  height: 100%; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--nav) 0%, #3a8a5c 100%);
+  transition: width .4s ease;
+}
+.lh-infobar__prog-count {
+  font-size: 12px; font-weight: 800; color: var(--nav); white-space: nowrap;
+}
+
+/* Spacer */
+.lh-infobar__spacer { flex: 1; }
+
+/* CTA button */
+.lh-cta {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 18px; border-radius: var(--radius-pill);
+  background: var(--accent); color: #fff;
+  font-size: 13px; font-weight: 700; border: none; cursor: pointer;
+  text-decoration: none; flex-shrink: 0; white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(249,128,18,.35);
+  transition: background .15s, box-shadow .15s;
+}
+.lh-cta:hover { background: #d96e0a; box-shadow: 0 3px 10px rgba(249,128,18,.4); }
+.lh-cta .ic { font-size: 14px; }
+
+/* ═══════════════════════════════════════════════════
+   CONTENT AREA & GRID
+═══════════════════════════════════════════════════ */
+.lh-content { padding: 22px 24px 48px; }
+.lh-section-heading {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .6px;
+  margin-bottom: 14px;
+}
+.lh-grid { display: grid; gap: 14px; }
+.lh-grid--3 { grid-template-columns: repeat(3,1fr); }
+.lh-grid--4 { grid-template-columns: repeat(4,1fr); }
+
+/* ═══════════════════════════════════════════════════
+   CONTENT CARD
+═══════════════════════════════════════════════════ */
+.lh-card {
+  background: var(--surface); border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; overflow: hidden;
+  transition: box-shadow .15s, transform .12s;
+}
+.lh-card:hover {
+  box-shadow: 0 4px 16px rgba(25,72,102,.13), 0 0 0 1px var(--line);
+  transform: translateY(-2px);
+}
+.lh-card--current { box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(249,128,18,.15); }
+.lh-card--done    { opacity: .82; }
+.lh-card--locked  { opacity: .52; }
+
+/* Card header */
+.lh-card__top {
+  padding: 16px 16px 10px;
+  display: flex; align-items: flex-start; gap: 11px;
+}
+.lh-card__icon-wrap {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.lh-card__icon-wrap .ic { font-size: 19px; }
+.ci-course    { background: #dbeafe; color: #1e4d8c; }
+.ci-snack     { background: #fff4e8; color: #b45309; }
+.ci-community { background: #ede9fb; color: #5b3fa6; }
+.ci-tour      { background: #dcfce7; color: #166534; }
+.ci-neutral   { background: var(--bg); color: var(--muted); }
+.ci-lock      { background: var(--bg); color: var(--muted); }
+
+.lh-card__meta { flex: 1; min-width: 0; }
+.lh-card__kicker {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px;
+}
+.lh-card__title { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.lh-card__sub   { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+.lh-card__badge { flex-shrink: 0; align-self: flex-start; margin-top: 1px; }
+
+/* Card body */
+.lh-card__body {
+  padding: 0 16px 12px; flex: 1;
+  font-size: 12px; color: var(--muted); line-height: 1.55;
+}
+
+/* Card action strip */
+.lh-card__actions {
+  padding: 10px 14px; border-top: 1px solid var(--line);
+  background: rgba(237,240,244,.45);
+  display: flex; align-items: center; gap: 6px;
+}
+.lh-card__actions-gap { flex: 1; }
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: var(--radius-btn);
+  font-size: 12px; font-weight: 700; border: 1px solid transparent;
+  cursor: pointer; text-decoration: none; white-space: nowrap; line-height: 1;
+  transition: background .13s, color .13s, border-color .13s;
+}
+.btn .ic { font-size: 13px; }
+
+.btn-primary {
+  background: var(--nav); color:#fff; border-color: var(--nav);
+}
+.btn-primary:hover { background: var(--nav-deep); border-color: var(--nav-deep); }
+
+.btn-start {
+  background: var(--accent); color:#fff; border-color: var(--accent);
+  box-shadow: 0 1px 4px rgba(249,128,18,.3);
+}
+.btn-start:hover { background: #d96e0a; border-color: #d96e0a; }
+
+.btn-ghost {
+  background: transparent; color: var(--muted); border-color: var(--line-strong);
+}
+.btn-ghost:hover { background: var(--bg); color: var(--ink); }
+
+.btn-danger {
+  background: transparent; color: var(--red); border-color: var(--line-strong);
+}
+.btn-danger:hover { background: var(--red-soft); border-color: #fca5a5; }
+
+/* Icon-only button */
+.btn-icon {
+  padding: 6px 7px;
+}
+
+/* Disabled */
+.btn-disabled { opacity: .45; pointer-events: none; }
+
+/* ═══════════════════════════════════════════════════
+   COMPARE SECTION (Vorher / Nachher)
+═══════════════════════════════════════════════════ */
+.compare-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 22px 24px; }
+.compare-box  { border-radius: 14px; overflow: hidden; border: 2px solid var(--line); }
+.compare-box--bad  { border-color: #fca5a5; }
+.compare-box--good { border-color: #86efac; }
+.compare-label {
+  padding: 9px 14px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+  display: flex; align-items: center; gap: 7px;
+}
+.compare-label .ic { font-size: 13px; }
+.compare-label--bad  { background: var(--red-soft);  color: var(--red); }
+.compare-label--good { background: var(--green-soft); color: var(--green); }
+.compare-body { padding: 14px; background: var(--bg); }
+
+/* OLD pattern styles */
+.old-hero {
+  background:#fff; border:1px solid var(--line); border-radius:18px; padding:20px;
+}
+.old-hero h2 { text-align:center; font-size:17px; color:var(--ink); margin-bottom:5px; }
+.old-hero p  { text-align:center; font-size:12px; color:var(--muted); margin-bottom:16px; }
+.old-cards   { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.old-card    { background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px; }
+.old-card h4 { font-size:13px; font-weight:700; margin-bottom:3px; }
+.old-card p  { font-size:11px; color:var(--muted); margin-bottom:10px; }
+.old-btn     { display:block; text-align:center; padding:7px; background:var(--nav); color:#fff; border-radius:6px; font-size:11px; font-weight:700; }
+
+/* ═══════════════════════════════════════════════════
+   ICON LEGEND AT BOTTOM
+═══════════════════════════════════════════════════ */
+.spec-strip {
+  background: var(--nav); padding: 22px 24px;
+}
+.spec-strip h3 { color:#fff; font-size:14px; margin-bottom:14px; }
+.spec-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+.spec-item { border-left:3px solid var(--accent); padding-left:12px; }
+.spec-item h4 { color:#fff; font-size:12px; margin-bottom:5px; }
+.spec-item p  { font-size:11px; color:rgba(255,255,255,.65); line-height:1.55; }
+
+.icon-strip {
+  background:#fff; border-top:1px solid var(--line);
+  padding: 14px 24px; display:flex; gap:22px; flex-wrap:wrap; align-items:center;
+}
+.icon-strip h4 { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; width:100%; margin-bottom:4px; }
+.icon-entry {
+  display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted);
+}
+.icon-entry strong { color:var(--ink); }
+.icon-swatch {
+  width:30px; height:30px; border-radius:7px;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 15px;
+}
+.sw-start     { background:var(--accent); color:#fff; }
+.sw-open      { background:var(--nav);    color:#fff; }
+.sw-copy      { background:var(--bg);     color:var(--muted); border:1px solid var(--line); }
+.sw-delete    { background:var(--red-soft); color:var(--red); border:1px solid #fca5a5; }
+.sw-info      { background:var(--bg);     color:var(--muted); border:1px solid var(--line); }
+
+.demo-page { display:none; }
+.demo-page.visible { display:block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     INLINE SVG SPRITE  (no CDN dependency)
+═══════════════════════════════════════════════════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!-- navigation -->
+  <symbol id="ic-arrow-left"      viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+  <symbol id="ic-arrow-right"     viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="ic-circle-help"     viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <!-- actions -->
+  <symbol id="ic-play"            viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></symbol>
+  <symbol id="ic-copy"            viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="ic-trash-2"         viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></symbol>
+  <symbol id="ic-info"            viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  <symbol id="ic-rotate-ccw"      viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <!-- state -->
+  <symbol id="ic-check"           viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="ic-check-circle"    viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></symbol>
+  <symbol id="ic-lock"            viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="ic-circle-dot"      viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1" fill="currentColor"/></symbol>
+  <symbol id="ic-play-circle"     viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></symbol>
+  <symbol id="ic-x-circle"        viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
+  <!-- tags / metadata -->
+  <symbol id="ic-layers"          viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+  <symbol id="ic-layout-grid"     viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="ic-map"             viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></symbol>
+  <!-- content types -->
+  <symbol id="ic-book-open"       viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="ic-circle-play"     viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></symbol>
+  <symbol id="ic-archive"         viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+  <symbol id="ic-file-stack"      viewBox="0 0 24 24"><path d="M21 7h-3a2 2 0 0 1-2-2V2"/><path d="M21 6v6.5c0 .8-.7 1.5-1.5 1.5h-7c-.8 0-1.5-.7-1.5-1.5v-9c0-.8.7-1.5 1.5-1.5H17Z"/><path d="M7 8v8.8c0 .3.2.6.4.8.2.2.5.4.8.4H15"/><path d="M3 12v8.8c0 .3.2.6.4.8.2.2.5.4.8.4H11"/></symbol>
+  <symbol id="ic-users"           viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <!-- sidebar -->
+  <symbol id="ic-gauge"           viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+  <symbol id="ic-compass"         viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+  <symbol id="ic-chart-bar"       viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></symbol>
+  <symbol id="ic-inbox"           viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+  <symbol id="ic-plus"            viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+</svg>
+
+<!-- ═══════════════════════════════════════════════════ SHELL ═ -->
+<div class="demo-shell">
+
+  <!-- Sidebar -->
+  <aside class="demo-sidebar">
+    <div class="logo">
+      <span style="font-size:20px">🐝</span> LernHive
+    </div>
+    <nav>
+      <a href="#"><svg class="ic ic-sm"><use href="#ic-gauge"/></svg> Dashboard</a>
+      <a href="#"><svg class="ic ic-sm"><use href="#ic-compass"/></svg> Explore</a>
+      <a href="#"><svg class="ic ic-sm"><use href="#ic-book-open"/></svg> My Learning</a>
+      <a href="#" class="active"><svg class="ic ic-sm"><use href="#ic-layout-grid"/></svg> ContentHub</a>
+      <a href="#"><svg class="ic ic-sm"><use href="#ic-users"/></svg> Communities</a>
+      <a href="#"><svg class="ic ic-sm"><use href="#ic-inbox"/></svg> Notifications</a>
+      <a href="#"><svg class="ic ic-sm"><use href="#ic-chart-bar"/></svg> Reports</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="demo-content">
+
+    <!-- Tab Switcher -->
+    <div class="demo-switcher">
+      <button class="demo-tab active" onclick="show('contenthub',this)">ContentHub</button>
+      <button class="demo-tab"        onclick="show('onboarding',this)">Onboarding</button>
+      <button class="demo-tab"        onclick="show('compare',this)">Vorher / Nachher</button>
+    </div>
+
+    <!-- ───── CONTENTHUB ───── -->
+    <div id="demo-contenthub" class="demo-page visible">
+
+      <!-- ZONE A: Header Panel -->
+      <div class="lh-header">
+        <div class="lh-header__row">
+          <a href="#" class="lh-nav-btn">
+            <svg class="ic ic-sm"><use href="#ic-arrow-left"/></svg> Zurück
+          </a>
+          <div class="lh-header__title-block">
+            <div class="lh-header__name">
+              <span class="plugin">ContentHub</span>
+              <span class="sep">|</span>
+              <span class="tagline">Neuen Kurs erstellen</span>
+            </div>
+            <div class="lh-header__subtitle">
+              ContentHub führt dich zum richtigen Startpunkt — die eigentliche Arbeit geschieht im passenden LernHive-Plugin.
+            </div>
+            <div class="lh-header__tags">
+              <span class="lh-tag lh-tag--level">
+                <svg class="ic"><use href="#ic-layers"/></svg> Level: Starter
+              </span>
+              <span class="lh-tag lh-tag--type">
+                <svg class="ic"><use href="#ic-layout-grid"/></svg> Kurs-Erstellung
+              </span>
+              <span class="lh-tag lh-tag--active">
+                <svg class="ic"><use href="#ic-circle-dot"/></svg> Aktiv
+              </span>
+            </div>
+          </div>
+          <a href="#" class="lh-nav-btn">
+            <svg class="ic ic-sm"><use href="#ic-circle-help"/></svg> Hilfe
+          </a>
+        </div>
+      </div>
+
+      <!-- ZONE B: Info Bar -->
+      <div class="lh-infobar">
+        <div class="lh-infobar__stats">
+          <div class="lh-infobar__stat">
+            <svg class="ic ic-sm"><use href="#ic-book-open"/></svg>
+            <span><strong>12</strong> Kurse auf dieser Site</span>
+          </div>
+          <div class="lh-infobar__stat">
+            <svg class="ic ic-sm"><use href="#ic-circle-play"/></svg>
+            <span><strong>8</strong> Snacks verfügbar</span>
+          </div>
+          <div class="lh-infobar__stat">
+            <svg class="ic ic-sm"><use href="#ic-file-stack"/></svg>
+            <span><strong>4</strong> Templates in der Bibliothek</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="lh-content">
+        <div class="lh-section-heading">Startpunkt wählen</div>
+        <div class="lh-grid lh-grid--3">
+
+          <div class="lh-card">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-course">
+                <svg class="ic ic-lg"><use href="#ic-copy"/></svg>
+              </div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Option A</div>
+                <div class="lh-card__title">Kopieren</div>
+                <div class="lh-card__sub">Bestehenden Kurs als Vorlage nutzen</div>
+              </div>
+            </div>
+            <div class="lh-card__body">
+              Starte mit einem vorhandenen Kurs — alle Inhalte werden kopiert, du bearbeitest danach nur noch was du brauchst.
+            </div>
+            <div class="lh-card__actions">
+              <a href="#" class="btn btn-primary">
+                <svg class="ic"><use href="#ic-arrow-right"/></svg> Öffnen
+              </a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info">
+                <svg class="ic"><use href="#ic-info"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="lh-card">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-snack">
+                <svg class="ic ic-lg"><use href="#ic-file-stack"/></svg>
+              </div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Option B</div>
+                <div class="lh-card__title">Template</div>
+                <div class="lh-card__sub">Vordefinierte Kursstruktur nutzen</div>
+              </div>
+            </div>
+            <div class="lh-card__body">
+              Wähle eine für dein Flavour kuratierte Struktur. Der Rahmen steht — du füllst ihn mit deinen Inhalten.
+            </div>
+            <div class="lh-card__actions">
+              <a href="#" class="btn btn-primary">
+                <svg class="ic"><use href="#ic-arrow-right"/></svg> Öffnen
+              </a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info">
+                <svg class="ic"><use href="#ic-info"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="lh-card">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-community">
+                <svg class="ic ic-lg"><use href="#ic-archive"/></svg>
+              </div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Option C</div>
+                <div class="lh-card__title">Bibliothek</div>
+                <div class="lh-card__sub">Fertigen Kurs aus der LernHive-Bibliothek importieren</div>
+              </div>
+            </div>
+            <div class="lh-card__body">
+              Importiere einen sofort nutzbaren Kurs. Ideal für standardisierte Themen, die du nicht selbst aufbauen musst.
+            </div>
+            <div class="lh-card__actions">
+              <a href="#" class="btn btn-primary">
+                <svg class="ic"><use href="#ic-arrow-right"/></svg> Öffnen
+              </a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info">
+                <svg class="ic"><use href="#ic-info"/></svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /contenthub -->
+
+
+    <!-- ───── ONBOARDING ───── -->
+    <div id="demo-onboarding" class="demo-page">
+
+      <!-- ZONE A -->
+      <div class="lh-header">
+        <div class="lh-header__row">
+          <a href="#" class="lh-nav-btn">
+            <svg class="ic ic-sm"><use href="#ic-arrow-left"/></svg> Zurück
+          </a>
+          <div class="lh-header__title-block">
+            <div class="lh-header__name">
+              <span class="plugin">Onboarding</span>
+              <span class="sep">|</span>
+              <span class="tagline">Schritt für Schritt durch LernHive</span>
+            </div>
+            <div class="lh-header__subtitle">
+              Interaktive Touren führen dich durch die wichtigsten Funktionen — in deinem Tempo, jederzeit wiederholbar.
+            </div>
+            <div class="lh-header__tags">
+              <span class="lh-tag lh-tag--level">
+                <svg class="ic"><use href="#ic-layers"/></svg> Level: Starter
+              </span>
+              <span class="lh-tag lh-tag--type">
+                <svg class="ic"><use href="#ic-map"/></svg> Tour
+              </span>
+              <span class="lh-tag lh-tag--active">
+                <svg class="ic"><use href="#ic-circle-dot"/></svg> In Bearbeitung
+              </span>
+            </div>
+          </div>
+          <a href="#" class="lh-nav-btn">
+            <svg class="ic ic-sm"><use href="#ic-circle-help"/></svg> Hilfe
+          </a>
+        </div>
+      </div>
+
+      <!-- ZONE B: Progress -->
+      <div class="lh-infobar">
+        <div class="lh-infobar__progress">
+          <span class="lh-infobar__prog-label">Fortschritt</span>
+          <div class="lh-infobar__prog-track">
+            <div class="lh-infobar__prog-fill" style="width:37.5%"></div>
+          </div>
+          <span class="lh-infobar__prog-count">3 / 8 Schritte</span>
+        </div>
+        <a href="#" class="lh-cta">
+          <svg class="ic"><use href="#ic-play"/></svg> Weiter mit Schritt 4
+        </a>
+      </div>
+
+      <!-- Cards -->
+      <div class="lh-content">
+        <div class="lh-section-heading">Deine Tour-Schritte</div>
+        <div class="lh-grid lh-grid--4">
+
+          <!-- Step 1 done -->
+          <div class="lh-card lh-card--done">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-tour">
+                <svg class="ic ic-lg"><use href="#ic-check-circle"/></svg>
+              </div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 1</div>
+                <div class="lh-card__title">Willkommen</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--done" style="font-size:10px;padding:2px 8px;">
+                  <svg class="ic"><use href="#ic-check"/></svg> Erledigt
+                </span>
+              </div>
+            </div>
+            <div class="lh-card__body">Überblick über LernHive und deine Rolle auf der Plattform.</div>
+            <div class="lh-card__actions">
+              <a href="#" class="btn btn-ghost">
+                <svg class="ic"><use href="#ic-rotate-ccw"/></svg> Wiederholen
+              </a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+          <!-- Step 2 done -->
+          <div class="lh-card lh-card--done">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-tour">
+                <svg class="ic ic-lg"><use href="#ic-check-circle"/></svg>
+              </div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 2</div>
+                <div class="lh-card__title">Profil einrichten</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--done" style="font-size:10px;padding:2px 8px;">
+                  <svg class="ic"><use href="#ic-check"/></svg> Erledigt
+                </span>
+              </div>
+            </div>
+            <div class="lh-card__body">Name, Foto und Benachrichtigungseinstellungen anpassen.</div>
+            <div class="lh-card__actions">
+              <a href="#" class="btn btn-ghost">
+                <svg class="ic"><use href="#ic-rotate-ccw"/></svg> Wiederholen
+              </a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+          <!-- Step 3 done -->
+          <div class="lh-card lh-card--done">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-tour">
+                <svg class="ic ic-lg"><use href="#ic-check-circle"/></svg>
+              </div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 3</div>
+                <div class="lh-card__title">Ersten Kurs erkunden</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--done" style="font-size:10px;padding:2px 8px;">
+                  <svg class="ic"><use href="#ic-check"/></svg> Erledigt
+                </span>
+              </div>
+            </div>
+            <div class="lh-card__body">Navigation durch einen Kurs und Abschluss einer ersten Aktivität.</div>
+            <div class="lh-card__actions">
+              <a href="#" class="btn btn-ghost">
+                <svg class="ic"><use href="#ic-rotate-ccw"/></svg> Wiederholen
+              </a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+          <!-- Step 4 ACTIVE -->
+          <div class="lh-card lh-card--current">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-snack">
+                <svg class="ic ic-lg"><use href="#ic-play-circle"/></svg>
+              </div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 4</div>
+                <div class="lh-card__title">Nutzer anlegen</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--active" style="font-size:10px;padding:2px 8px;">
+                  <svg class="ic"><use href="#ic-circle-dot"/></svg> Aktuell
+                </span>
+              </div>
+            </div>
+            <div class="lh-card__body">Lernende und Trainer anlegen und die Rollenverwaltung verstehen.</div>
+            <div class="lh-card__actions">
+              <a href="#" class="btn btn-start">
+                <svg class="ic"><use href="#ic-play"/></svg> Starten
+              </a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+          <!-- Steps 5-8 locked -->
+          <div class="lh-card lh-card--locked">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-lock"><svg class="ic ic-lg"><use href="#ic-lock"/></svg></div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 5</div>
+                <div class="lh-card__title">Kurs erstellen</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--locked" style="font-size:10px;padding:2px 8px;">
+                  <svg class="ic"><use href="#ic-lock"/></svg> Gesperrt
+                </span>
+              </div>
+            </div>
+            <div class="lh-card__body">Deinen ersten Kurs mit ContentHub anlegen.</div>
+            <div class="lh-card__actions">
+              <a class="btn btn-ghost btn-disabled"><svg class="ic"><use href="#ic-lock"/></svg> Gesperrt</a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon" title="Info"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+          <div class="lh-card lh-card--locked">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-lock"><svg class="ic ic-lg"><use href="#ic-lock"/></svg></div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 6</div>
+                <div class="lh-card__title">Community einrichten</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--locked" style="font-size:10px;padding:2px 8px;"><svg class="ic"><use href="#ic-lock"/></svg> Gesperrt</span>
+              </div>
+            </div>
+            <div class="lh-card__body">Gruppenräume für kollaboratives Lernen konfigurieren.</div>
+            <div class="lh-card__actions">
+              <a class="btn btn-ghost btn-disabled"><svg class="ic"><use href="#ic-lock"/></svg> Gesperrt</a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+          <div class="lh-card lh-card--locked">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-lock"><svg class="ic ic-lg"><use href="#ic-lock"/></svg></div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 7</div>
+                <div class="lh-card__title">Berichte auswerten</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--locked" style="font-size:10px;padding:2px 8px;"><svg class="ic"><use href="#ic-lock"/></svg> Gesperrt</span>
+              </div>
+            </div>
+            <div class="lh-card__body">Lernfortschritte im Reporting-Dashboard lesen.</div>
+            <div class="lh-card__actions">
+              <a class="btn btn-ghost btn-disabled"><svg class="ic"><use href="#ic-lock"/></svg> Gesperrt</a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+          <div class="lh-card lh-card--locked">
+            <div class="lh-card__top">
+              <div class="lh-card__icon-wrap ci-lock"><svg class="ic ic-lg"><use href="#ic-lock"/></svg></div>
+              <div class="lh-card__meta">
+                <div class="lh-card__kicker">Schritt 8</div>
+                <div class="lh-card__title">LernHive einrichten</div>
+              </div>
+              <div class="lh-card__badge">
+                <span class="lh-tag lh-tag--locked" style="font-size:10px;padding:2px 8px;"><svg class="ic"><use href="#ic-lock"/></svg> Gesperrt</span>
+              </div>
+            </div>
+            <div class="lh-card__body">Plattform-Einstellungen und globale Konfiguration abschließen.</div>
+            <div class="lh-card__actions">
+              <a class="btn btn-ghost btn-disabled"><svg class="ic"><use href="#ic-lock"/></svg> Gesperrt</a>
+              <div class="lh-card__actions-gap"></div>
+              <a href="#" class="btn btn-ghost btn-icon"><svg class="ic"><use href="#ic-info"/></svg></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /onboarding -->
+
+
+    <!-- ───── COMPARE ───── -->
+    <div id="demo-compare" class="demo-page">
+      <div style="padding:20px 24px 4px;">
+        <h2 style="font-size:17px;color:var(--nav);margin-bottom:4px;">Konzeptvergleich: Card-in-Card → Plugin Shell</h2>
+        <p style="color:var(--muted);font-size:12px;">Dieselbe ContentHub-Seite — altes vs. neues Layout-Pattern.</p>
+      </div>
+      <div class="compare-wrap">
+
+        <!-- OLD -->
+        <div class="compare-box compare-box--bad">
+          <div class="compare-label compare-label--bad">
+            <svg class="ic ic-sm"><use href="#ic-x-circle"/></svg>
+            Vorher — Karte in der Karte
+          </div>
+          <div class="compare-body">
+            <div class="old-hero">
+              <h2>How would you like to start?</h2>
+              <p>Pick one of the content paths below. ContentHub only guides you to the right starting point — the actual work happens in the matching LernHive plugin.</p>
+              <div class="old-cards">
+                <div class="old-card">
+                  <h4>📄 Copy</h4>
+                  <p>Reuse an existing course from your site as a starting point.</p>
+                  <a href="#" class="old-btn">Select</a>
+                </div>
+                <div class="old-card">
+                  <h4>🧩 Template</h4>
+                  <p>Start from a predefined course structure curated for your flavour.</p>
+                  <a href="#" class="old-btn">Select</a>
+                </div>
+                <div class="old-card">
+                  <h4>📚 Library</h4>
+                  <p>Import a ready-to-use course from the managed LernHive library.</p>
+                  <a href="#" class="old-btn">Select</a>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:12px;background:var(--red-soft);border-radius:8px;padding:10px 13px;font-size:11px;color:var(--red);line-height:1.7;">
+              ✗ Äußerer Container wirkt wie eine Karte → Karten darin fühlen sich verschachtelt an<br>
+              ✗ Kein Zurück-Button, kein Hilfe-Button<br>
+              ✗ Keine Metadaten / Tags<br>
+              ✗ Heading hat keinen festen Platz im Layout
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW (mini version) -->
+        <div class="compare-box compare-box--good">
+          <div class="compare-label compare-label--good">
+            <svg class="ic ic-sm"><use href="#ic-check-circle"/></svg>
+            Nachher — Plugin Shell (2 Zonen)
+          </div>
+          <div class="compare-body">
+
+            <!-- Mini Zone A -->
+            <div style="background:#fff;border-top:3px solid var(--nav);border-radius:8px 8px 0 0;padding:12px 14px;box-shadow:0 2px 8px rgba(25,72,102,.08);">
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--line-strong);border-radius:6px;font-size:10px;font-weight:600;color:var(--muted);background:var(--bg);white-space:nowrap;">
+                  <svg class="ic" style="font-size:11px;"><use href="#ic-arrow-left"/></svg> Zurück
+                </span>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:800;color:var(--nav);">
+                    ContentHub <span style="color:var(--accent);margin:0 5px;font-weight:300;">|</span> Neuen Kurs erstellen
+                  </div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px;">ContentHub führt dich zum richtigen Startpunkt.</div>
+                  <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+                    <span class="lh-tag lh-tag--level" style="font-size:10px;"><svg class="ic" style="font-size:10px;"><use href="#ic-layers"/></svg> Starter</span>
+                    <span class="lh-tag lh-tag--type" style="font-size:10px;"><svg class="ic" style="font-size:10px;"><use href="#ic-layout-grid"/></svg> Kurs-Erstellung</span>
+                  </div>
+                </div>
+                <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--line-strong);border-radius:6px;font-size:10px;font-weight:600;color:var(--muted);background:var(--bg);white-space:nowrap;">
+                  <svg class="ic" style="font-size:11px;"><use href="#ic-circle-help"/></svg> Hilfe
+                </span>
+              </div>
+            </div>
+
+            <!-- Mini Zone B -->
+            <div style="background:var(--accent-faint);border-bottom:1px solid rgba(249,128,18,.2);padding:8px 14px;display:flex;gap:14px;align-items:center;">
+              <span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;"><svg class="ic ic-sm"><use href="#ic-book-open"/></svg><strong>12</strong> Kurse</span>
+              <span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;"><svg class="ic ic-sm"><use href="#ic-circle-play"/></svg><strong>8</strong> Snacks</span>
+              <span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;"><svg class="ic ic-sm"><use href="#ic-file-stack"/></svg><strong>4</strong> Templates</span>
+            </div>
+
+            <!-- Mini cards -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;">
+              <div style="background:#fff;border-radius:8px;box-shadow:var(--shadow-card);padding:10px;display:flex;flex-direction:column;gap:6px;">
+                <div style="width:28px;height:28px;border-radius:7px;background:#dbeafe;display:flex;align-items:center;justify-content:center;"><svg class="ic ic-sm" style="color:#1e4d8c;"><use href="#ic-copy"/></svg></div>
+                <div style="font-size:11px;font-weight:700;color:var(--ink);">Kopieren</div>
+                <div style="font-size:10px;color:var(--muted);">Bestehenden Kurs nutzen</div>
+                <a href="#" class="btn btn-primary" style="font-size:10px;padding:4px 8px;border-radius:5px;"><svg class="ic" style="font-size:11px;"><use href="#ic-arrow-right"/></svg> Öffnen</a>
+              </div>
+              <div style="background:#fff;border-radius:8px;box-shadow:var(--shadow-card);padding:10px;display:flex;flex-direction:column;gap:6px;">
+                <div style="width:28px;height:28px;border-radius:7px;background:#fff4e8;display:flex;align-items:center;justify-content:center;"><svg class="ic ic-sm" style="color:#b45309;"><use href="#ic-file-stack"/></svg></div>
+                <div style="font-size:11px;font-weight:700;color:var(--ink);">Template</div>
+                <div style="font-size:10px;color:var(--muted);">Vordefinierte Struktur</div>
+                <a href="#" class="btn btn-primary" style="font-size:10px;padding:4px 8px;border-radius:5px;"><svg class="ic" style="font-size:11px;"><use href="#ic-arrow-right"/></svg> Öffnen</a>
+              </div>
+              <div style="background:#fff;border-radius:8px;box-shadow:var(--shadow-card);padding:10px;display:flex;flex-direction:column;gap:6px;">
+                <div style="width:28px;height:28px;border-radius:7px;background:#ede9fb;display:flex;align-items:center;justify-content:center;"><svg class="ic ic-sm" style="color:#5b3fa6;"><use href="#ic-archive"/></svg></div>
+                <div style="font-size:11px;font-weight:700;color:var(--ink);">Bibliothek</div>
+                <div style="font-size:10px;color:var(--muted);">Fertigen Kurs importieren</div>
+                <a href="#" class="btn btn-primary" style="font-size:10px;padding:4px 8px;border-radius:5px;"><svg class="ic" style="font-size:11px;"><use href="#ic-arrow-right"/></svg> Öffnen</a>
+              </div>
+            </div>
+
+            <div style="margin-top:10px;background:var(--green-soft);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--green);line-height:1.7;">
+              ✓ Kein äußerer Card-Container — Seite ist die Fläche<br>
+              ✓ Zone A: Titel + Untertitel + Tags in einem Block<br>
+              ✓ Zone B: Info / Stats / CTA klar getrennt<br>
+              ✓ Alle Icons sichtbar und konsistent
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /compare -->
+
+    <!-- Spec strip -->
+    <div class="spec-strip">
+      <h3>Plugin Shell — 2-Zonen-Struktur</h3>
+      <div class="spec-grid">
+        <div class="spec-item">
+          <h4>Zone A · Header-Panel (weiß)</h4>
+          <p>Sticky. Enthält: Zurück-Button · Plugin-Name | Tagline · Untertitel · Tags. Der dunkle Top-Balken (3px nav) verankert die Seite visuell.</p>
+        </div>
+        <div class="spec-item">
+          <h4>Zone B · Info/CTA-Leiste (warm getönt)</h4>
+          <p>Direkt darunter. Hintergrund: accent-faint. Enthält stats oder Fortschrittsbalken · optionale primäre CTA. Ausblendbar wenn keine Daten.</p>
+        </div>
+        <div class="spec-item">
+          <h4>Cards · Nur Inhalte</h4>
+          <p>Direkt auf dem Seiten-Hintergrund. Keine äußere Karte. Jede Karte zeigt einen Inhalt: Kurs, Snack, Community, Tour-Schritt.</p>
+        </div>
+        <div class="spec-item">
+          <h4>Icons · Inline SVG Sprite</h4>
+          <p>Kein CDN. Alle Icons als &lt;symbol&gt; im HTML. Konsistente 2px-Stroke-Linie. Selbe Bedeutung in allen Plugins — nie wechseln.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icon legend -->
+    <div class="icon-strip">
+      <h4>Card Action Icons — Standard-Set</h4>
+      <div class="icon-entry">
+        <div class="icon-swatch sw-start"><svg class="ic ic-sm" style="color:#fff;"><use href="#ic-play"/></svg></div>
+        <div><strong>Starten</strong> — orange, immer mit Label, nur bei aktiven Items</div>
+      </div>
+      <div class="icon-entry">
+        <div class="icon-swatch sw-open"><svg class="ic ic-sm" style="color:#fff;"><use href="#ic-arrow-right"/></svg></div>
+        <div><strong>Öffnen</strong> — nav-blau, mit Label, navigiert zur Detail-Ansicht</div>
+      </div>
+      <div class="icon-entry">
+        <div class="icon-swatch sw-copy"><svg class="ic ic-sm" style="color:var(--muted);"><use href="#ic-copy"/></svg></div>
+        <div><strong>Kopieren</strong> — ghost, icon-only in Listen</div>
+      </div>
+      <div class="icon-entry">
+        <div class="icon-swatch sw-delete"><svg class="ic ic-sm" style="color:var(--red);"><use href="#ic-trash-2"/></svg></div>
+        <div><strong>Löschen</strong> — rot, nur für Trainer/Admin, immer mit Bestätigung</div>
+      </div>
+      <div class="icon-entry">
+        <div class="icon-swatch sw-info"><svg class="ic ic-sm" style="color:var(--muted);"><use href="#ic-info"/></svg></div>
+        <div><strong>Info</strong> — ghost, icon-only, immer ganz rechts, jede Karte</div>
+      </div>
+    </div>
+
+    <div style="height:40px;"></div>
+  </main>
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.demo-page').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('demo-' + id).classList.add('visible');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

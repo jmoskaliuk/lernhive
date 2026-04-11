@@ -1,0 +1,530 @@
+// =============================================================================
+// _plugin-shell.scss — LernHive Plugin Shell Pattern (0.9.27)
+//
+// Provides the 2-zone sticky page header used by all LernHive local plugins.
+// Replaces the old "big white hero card wrapping content cards" pattern.
+//
+// Zone A (.lh-plugin-header):   Sticky white panel — back button, plugin name |
+//                                tagline, subtitle, tag pills.  Anchored by a
+//                                3px $lh-primary top border.
+// Zone B (.lh-plugin-infobar):  Warm-tinted strip — stats / progress bar + CTA.
+//                                Orange accent border separates it from Zone A.
+//
+// Content cards (.lh-plugin-card): Sit directly on the page background;
+//                                   never nested inside another card.
+//
+// Usage example (PHP/Mustache inside a local_* plugin):
+//   <div class="lh-plugin-header">
+//     <div class="lh-plugin-header__row">
+//       <a href="..." class="lh-plugin-header__nav-btn">
+//         <i class="fa fa-arrow-left"></i> Back
+//       </a>
+//       <div class="lh-plugin-header__title-block">
+//         <div class="lh-plugin-header__name">
+//           Plugin Name <span class="lh-plugin-header__sep">|</span>
+//           <span class="lh-plugin-header__tagline">Tagline</span>
+//         </div>
+//         <p class="lh-plugin-header__subtitle">One-line description.</p>
+//         <div class="lh-plugin-header__tags">
+//           <span class="lh-plugin-tag lh-plugin-tag--level">Level: Starter</span>
+//         </div>
+//       </div>
+//       <a href="..." class="lh-plugin-header__nav-btn">
+//         <i class="fa fa-question-circle"></i> Help
+//       </a>
+//     </div>
+//   </div>
+//   <div class="lh-plugin-infobar">...</div>
+//   <div class="container-fluid py-3">
+//     <div class="lh-plugin-grid lh-plugin-grid--cols-3">
+//       <div class="lh-plugin-card">...</div>
+//     </div>
+//   </div>
+// =============================================================================
+
+// ─── Zone A: Header Panel ────────────────────────────────────────────────────
+
+.lh-plugin-header {
+    background: $lh-bg-white;
+    border-top: 3px solid $lh-primary;
+    box-shadow: 0 2px 10px rgba(25, 72, 102, 0.08);
+    padding: $lh-spacing-md $lh-spacing-lg;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+
+    &__row {
+        display: flex;
+        align-items: flex-start;
+        gap: $lh-spacing-md;
+    }
+
+    // Back / Help navigation buttons — flanking the title block.
+    &__nav-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px $lh-spacing-sm;
+        border-radius: $lh-radius-sm;
+        border: 1px solid $lh-border;
+        background: $lh-bg;
+        color: $lh-text-secondary;
+        font-size: $lh-font-size-sm;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+        margin-top: 2px;  // optical alignment with title baseline
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+        .fa { font-size: 0.875rem; }
+
+        &:hover {
+            background: $lh-border;
+            color: $lh-primary;
+            border-color: $lh-secondary-dark;
+            text-decoration: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+    }
+
+    // Center: title block (flex-grows to fill available space).
+    &__title-block {
+        flex: 1;
+        min-width: 0;
+    }
+
+    // "Plugin Name | Tagline" — bold name, pipe in accent orange, lighter tagline.
+    &__name {
+        font-size: 1.0625rem;
+        font-weight: 800;
+        color: $lh-primary;
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        line-height: 1.25;
+        gap: 0;
+    }
+
+    &__sep {
+        color: $lh-accent;
+        margin: 0 0.4em;
+        font-weight: 300;
+        font-size: 1.25rem;
+    }
+
+    &__tagline {
+        font-weight: 600;
+        font-size: 0.9375rem;
+        color: $lh-primary;
+    }
+
+    // One-sentence description below the name line.
+    &__subtitle {
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+        margin-top: 0.2rem;
+        line-height: 1.5;
+        max-width: 580px;
+    }
+
+    // Tag pills — live at the bottom of Zone A, below subtitle.
+    &__tags {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: $lh-spacing-sm;
+    }
+}
+
+// ─── Tag Pills ───────────────────────────────────────────────────────────────
+// Semantic, non-interactive metadata chips.
+// Rules: max 4 tags, no hover/button appearance, pair with icon where possible.
+
+.lh-plugin-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px 3px 8px;
+    border-radius: $lh-radius-pill;
+    font-size: $lh-font-size-xs;
+    font-weight: 700;
+    user-select: none;
+    cursor: default;
+    white-space: nowrap;
+    line-height: 1.4;
+
+    .fa { font-size: 0.6875rem; }
+
+    // Level (e.g. Starter, Advanced)
+    &--level {
+        background: #dbeafe;
+        color: #1e4d8c;
+    }
+
+    // Content type (Tour, Kurs, Snack, …)
+    &--type {
+        background: #ede9fb;
+        color: #5b3fa6;
+    }
+
+    // Status variants
+    &--active {
+        background: $lh-accent-light;
+        color: $lh-accent-dark;
+    }
+
+    &--done {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    &--locked {
+        background: $lh-bg;
+        color: $lh-text-secondary;
+        border: 1px solid $lh-border;
+    }
+}
+
+// ─── Zone B: Info / CTA Bar ──────────────────────────────────────────────────
+// Plugin-specific context strip.  Warm faint tint differentiates from Zone A.
+// Use .lh-plugin-infobar__stats for statistic items or
+//     .lh-plugin-infobar__progress for a progress bar variant.
+
+.lh-plugin-infobar {
+    background: #fef9f5;                              // faint warm-orange tint
+    border-bottom: 1px solid rgba(249, 128, 18, 0.2); // soft orange divider
+    padding: 10px $lh-spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $lh-spacing-lg;
+    flex-wrap: wrap;
+
+    // Stat items (numbers + labels) — e.g. "12 Kurse · 8 Snacks"
+    &__stats {
+        display: flex;
+        align-items: center;
+        gap: $lh-spacing-md;
+        flex-wrap: wrap;
+        flex: 1;
+    }
+
+    &__stat {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+
+        .fa {
+            color: $lh-primary;
+            font-size: 0.875rem;
+        }
+
+        strong {
+            color: $lh-text;
+            font-weight: 700;
+        }
+    }
+
+    // Progress bar variant (onboarding, multi-step flows)
+    &__progress {
+        display: flex;
+        align-items: center;
+        gap: $lh-spacing-sm;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__progress-label {
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+        white-space: nowrap;
+        font-weight: 600;
+    }
+
+    &__progress-track {
+        flex: 1;
+        height: 7px;
+        background: rgba(249, 128, 18, 0.18);
+        border-radius: $lh-radius-pill;
+        overflow: hidden;
+    }
+
+    &__progress-fill {
+        height: 100%;
+        border-radius: $lh-radius-pill;
+        background: linear-gradient(90deg, $lh-primary 0%, $lh-success 100%);
+        transition: width 0.4s ease;
+    }
+
+    &__progress-count {
+        font-size: $lh-font-size-sm;
+        font-weight: 800;
+        color: $lh-primary;
+        white-space: nowrap;
+    }
+
+    // Primary CTA — one per infobar, always rightmost.
+    &__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px $lh-spacing-md;
+        border-radius: $lh-radius-pill;
+        background: $lh-accent;
+        color: #fff;
+        font-size: $lh-font-size-sm;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        flex-shrink: 0;
+        white-space: nowrap;
+        box-shadow: 0 2px 6px rgba(249, 128, 18, 0.3);
+        transition: background 0.15s ease, box-shadow 0.15s ease;
+
+        .fa { font-size: 0.875rem; }
+
+        &:hover {
+            background: $lh-accent-dark;
+            box-shadow: 0 3px 10px rgba(249, 128, 18, 0.4);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+    }
+}
+
+// ─── Content Cards ────────────────────────────────────────────────────────────
+// Cards for courses, snacks, communities, tour steps, etc.
+// MUST sit directly on the page background — never nest inside a container card.
+
+.lh-plugin-card {
+    background: $lh-bg-white;
+    border-radius: $lh-radius;
+    box-shadow: 0 1px 3px rgba(25, 72, 102, 0.08), 0 0 0 1px $lh-border;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow 0.15s ease, transform 0.12s ease;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(25, 72, 102, 0.13), 0 0 0 1px $lh-border;
+        transform: translateY(-2px);
+    }
+
+    // State variants
+    &--current {
+        // Active item: 2px accent ring
+        box-shadow: 0 0 0 2px $lh-accent, 0 4px 12px rgba(249, 128, 18, 0.15);
+        &:hover {
+            box-shadow: 0 0 0 2px $lh-accent, 0 6px 18px rgba(249, 128, 18, 0.2);
+        }
+    }
+    &--done   { opacity: 0.82; }
+    &--locked { opacity: 0.52; }
+
+    // Top section: icon wrap + meta + optional badge
+    &__top {
+        padding: $lh-spacing-md;
+        display: flex;
+        align-items: flex-start;
+        gap: $lh-spacing-sm;
+    }
+
+    // Coloured icon container
+    &__icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.125rem;
+        background: $lh-bg;
+        color: $lh-text-secondary;
+
+        // Content-type colour variants
+        &--course    { background: #dbeafe; color: #1e4d8c; }
+        &--snack     { background: $lh-accent-light; color: $lh-accent-dark; }
+        &--community { background: #ede9fb; color: #5b3fa6; }
+        &--tour      { background: #dcfce7; color: #166534; }
+        &--lock      { background: $lh-bg; color: $lh-text-secondary; }
+    }
+
+    &__meta     { flex: 1; min-width: 0; }
+    &__badge    { flex-shrink: 0; align-self: flex-start; margin-top: 1px; }
+
+    &__kicker {
+        font-size: $lh-font-size-xs;
+        font-weight: 700;
+        color: $lh-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 2px;
+    }
+
+    &__title {
+        font-size: $lh-font-size-sm;
+        font-weight: 700;
+        color: $lh-text;
+        line-height: 1.3;
+    }
+
+    &__sub {
+        font-size: $lh-font-size-xs;
+        color: $lh-text-secondary;
+        margin-top: 2px;
+        line-height: 1.4;
+    }
+
+    // Body text
+    &__body {
+        padding: 0 $lh-spacing-md $lh-spacing-sm;
+        flex: 1;
+        font-size: $lh-font-size-sm;
+        color: $lh-text-secondary;
+        line-height: 1.55;
+    }
+
+    // Action strip at card bottom
+    &__actions {
+        padding: $lh-spacing-sm $lh-spacing-md;
+        border-top: 1px solid $lh-border-light;
+        background: rgba(243, 245, 248, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    // Flexible spacer that pushes Info icon to far right
+    &__actions-gap { flex: 1; }
+}
+
+// ─── Card Action Buttons ──────────────────────────────────────────────────────
+// Compact variants for .lh-plugin-card__actions.
+// min-height is 32px (smaller than the global 44px touch target) because
+// these are within an established card context, not standalone controls.
+
+.lh-plugin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: $lh-radius-sm;
+    font-size: $lh-font-size-sm;
+    font-weight: 700;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1;
+    min-height: 32px;
+    transition: background 0.13s ease, color 0.13s ease, border-color 0.13s ease;
+
+    .fa { font-size: 0.8125rem; }
+
+    &:hover       { text-decoration: none; }
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    // Start — orange, primary CTA; only on active/current items.
+    &--start {
+        background: $lh-accent;
+        color: #fff;
+        border-color: $lh-accent;
+        box-shadow: 0 1px 4px rgba(249, 128, 18, 0.28);
+        &:hover { background: $lh-accent-dark; border-color: $lh-accent-dark; color: #fff; }
+    }
+
+    // Open — nav-blue; navigation to detail view.
+    &--open {
+        background: $lh-primary;
+        color: #fff;
+        border-color: $lh-primary;
+        &:hover { background: $lh-primary-dark; border-color: $lh-primary-dark; color: #fff; }
+    }
+
+    // Ghost — outline; secondary actions (Wiederholen, Kopieren).
+    &--ghost {
+        background: transparent;
+        color: $lh-text-secondary;
+        border-color: $lh-border;
+        &:hover { background: $lh-bg; color: $lh-text; border-color: $lh-secondary-dark; }
+    }
+
+    // Danger — red outline; destructive actions (Löschen).
+    // Only for admin/trainer roles; always requires confirmation dialog.
+    &--danger {
+        background: transparent;
+        color: $lh-danger;
+        border-color: $lh-border;
+        &:hover {
+            background: $lh-danger-light;
+            color: darken($lh-danger, 5%);
+            border-color: lighten($lh-danger, 20%);
+        }
+    }
+
+    // Icon-only compact variant (Info, Copy in list contexts).
+    &--icon {
+        padding: 5px 6px;
+        min-width: 32px;
+        justify-content: center;
+    }
+
+    // Disabled (locked state).
+    &--disabled {
+        opacity: 0.45;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+}
+
+// ─── Section heading inside plugin content area ───────────────────────────────
+
+.lh-plugin-section-heading {
+    font-size: $lh-font-size-xs;
+    font-weight: 700;
+    color: $lh-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: $lh-spacing-sm;
+}
+
+// ─── Responsive card grid helpers ─────────────────────────────────────────────
+// Wrap cards in .lh-plugin-grid + a column modifier class.
+// The grid uses CSS Grid — Bootstrap's col-* can be used alternatively.
+
+.lh-plugin-grid {
+    display: grid;
+    gap: $lh-spacing-sm;
+
+    &--cols-2 { grid-template-columns: repeat(2, 1fr); }
+    &--cols-3 { grid-template-columns: repeat(3, 1fr); }
+    &--cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        &--cols-3,
+        &--cols-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+        &--cols-2,
+        &--cols-3,
+        &--cols-4 { grid-template-columns: 1fr; }
+    }
+}

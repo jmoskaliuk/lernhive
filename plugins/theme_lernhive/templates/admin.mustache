@@ -45,6 +45,7 @@
                         {{/launcher}}
                     {{/showlauncher}}
 
+                    {{! User block: avatar (→ profile) + settings icon + logout icon (0.9.27). }}
                     {{#isloggedin}}
                         <div class="lernhive-user-block">
                             <a href="{{ profileurl }}"
@@ -52,35 +53,26 @@
                                title="{{#str}} viewprofile {{/str}}">
                                 {{{ useravatar }}}
                             </a>
-                            <details class="lernhive-user-block__menu">
-                                <summary class="lernhive-user-block__toggle"
-                                         aria-label="{{#str}} useroptions, theme_lernhive {{/str}}">
-                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                                </summary>
-                                <div class="lernhive-user-block__dropdown">
-                                    <a href="{{ profileurl }}" class="lernhive-user-block__item">
-                                        <i class="fa fa-user" aria-hidden="true"></i>
-                                        {{#str}} viewprofile {{/str}}
-                                    </a>
-                                    <a href="{{ prefsurl }}" class="lernhive-user-block__item">
-                                        <i class="fa fa-cog" aria-hidden="true"></i>
-                                        {{#str}} preferences {{/str}}
-                                    </a>
-                                    <div class="lernhive-user-block__divider"></div>
-                                    <a href="{{ logouturl }}" class="lernhive-user-block__item lernhive-user-block__item--danger">
-                                        <i class="fa fa-sign-out" aria-hidden="true"></i>
-                                        {{#str}} logout {{/str}}
-                                    </a>
-                                </div>
-                            </details>
+                            <a href="{{ prefsurl }}"
+                               class="lernhive-user-block__action"
+                               title="{{#str}} preferences {{/str}}"
+                               aria-label="{{#str}} preferences {{/str}}">
+                                <i class="fa fa-cog" aria-hidden="true"></i>
+                            </a>
+                            <a href="{{ logouturl }}"
+                               class="lernhive-user-block__action lernhive-user-block__action--danger"
+                               title="{{#str}} logout {{/str}}"
+                               aria-label="{{#str}} logout {{/str}}">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            </a>
                         </div>
                     {{/isloggedin}}
                 </div>
             </div>
 
-            {{! Admin settings top-navigation — horizontal tab-bar of admin sections.
-                Replaces the Boost left-drawer admin tree which LernHive hides.
-                Built from admin_get_root() in admin.php. }}
+            {{! Admin navigation — two-level horizontal tab-bars (0.9.27).
+                Level 1: top-level admin categories (Notifications, Users, Courses, …).
+                Level 2: sub-categories of the active level-1 entry (shown below). }}
             {{#hasadmintopnav}}
                 <nav class="lernhive-admin-topnav" aria-label="{{#str}} administrationsite {{/str}}">
                     <ul class="lernhive-admin-topnav__list">
@@ -96,6 +88,24 @@
                     </ul>
                 </nav>
             {{/hasadmintopnav}}
+
+            {{! Level 2: sub-items of the active category }}
+            {{#hasadminsecondnav}}
+                <nav class="lernhive-admin-topnav lernhive-admin-topnav--secondary"
+                     aria-label="{{#str}} administrationsite {{/str}} — subcategories">
+                    <ul class="lernhive-admin-topnav__list">
+                        {{#adminsecondnav}}
+                            <li class="lernhive-admin-topnav__item">
+                                <a href="{{ url }}"
+                                   class="lernhive-admin-topnav__link{{#isactive}} lernhive-admin-topnav__link--active{{/isactive}}"
+                                   {{#isactive}}aria-current="page"{{/isactive}}>
+                                    {{ text }}
+                                </a>
+                            </li>
+                        {{/adminsecondnav}}
+                    </ul>
+                </nav>
+            {{/hasadminsecondnav}}
 
             <div id="page-content" class="lernhive-page-content">
                 <main id="region-main-box" class="lernhive-main">
