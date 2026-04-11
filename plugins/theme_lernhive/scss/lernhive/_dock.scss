@@ -1,39 +1,44 @@
 // =============================================================================
-// _dock.scss — LernHive Context Dock (0.9.23)
+// _dock.scss — LernHive Context Dock (0.9.47)
 //
 // Floating action strip for context-aware Teacher / Student actions.
 //
 // Design: freestanding circular icon buttons — each icon is its own elevated
 // circle with a drop shadow. No rectangular button-bar container.
 //
-// Desktop : vertical column of circles anchored at bottom of sidebar column.
+// Desktop : horizontal row of circles anchored at the bottom-right corner
+//           of the viewport. The row grows leftward as more icons are added,
+//           keeping a consistent breathing distance from the right edge.
 // Mobile  : horizontal row at bottom of screen (macOS Dock style).
 //
 // Tooltip progressive disclosure (CSS-only baseline):
-//   Tooltips appear on hover, sliding in from the left.
+//   Tooltips appear on hover, sliding up from below.
 //   JS IIFE in template adds .lh-dock--experienced after 3 visits → hidden.
 // =============================================================================
 
 // --- Dock container -----------------------------------------------------------
-// Horizontal row of circular icons, centered in the sidebar column.
-// Desktop: row anchored at bottom of sidebar, transparent background.
-// Mobile:  same row, solid background strip at screen bottom.
+// Desktop: bottom-right of the viewport, row grows leftward for 5+ icons.
+//          The right offset keeps a safe breathing distance from the edge.
+// Mobile:  full-width strip anchored to the screen bottom.
 
 .lh-dock {
     position: fixed;
-    left: 0;
-    bottom: 1.25rem;
-    width: $lh-sidebar-width;
+    right: 1.5rem;                // breathing distance from viewport edge
+    bottom: 1.5rem;
+    left: auto;                   // ensure no leftover left anchoring
+    width: auto;                  // hug contents so it grows leftward
+    max-width: calc(100vw - 3rem); // never exceed viewport on narrow desktops
     z-index: 200;
 
     display: flex;
     flex-direction: row;          // horizontal — icons side by side
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-end;    // anchor to right edge of container
     align-items: center;
-    gap: $lh-spacing-sm;          // 8px between circles
+    gap: $lh-spacing-sm;           // 8px between circles
     padding: $lh-spacing-xs;
 
-    background: none;             // no container background — circles float
+    background: none;              // no container background — circles float
     border: none;
     box-shadow: none;
 
@@ -42,7 +47,9 @@
         right: 0;
         bottom: 0;
         width: 100%;
+        max-width: none;
         border-radius: 0;
+        justify-content: center;
         gap: $lh-spacing-md;
         padding: 0.625rem $lh-spacing-md;
         background: rgba($lh-primary-dark, 0.96);
