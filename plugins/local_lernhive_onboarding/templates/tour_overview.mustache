@@ -1,13 +1,20 @@
 {{!
     @template  local_lernhive_onboarding/tour_overview
 
-    LernHive Lernpfad (Learning Path) — Tour overview page.
+    LernHive Onboarding — Tour overview page.
     Displays tour categories as cards with progress tracking.
+
+    0.2.5: cards now use the shared `lh-plugin-card` shell classes (same as
+    local_lernhive_contenthub/hub_page) so every LernHive plugin surface uses
+    the same visual language. The old hand-rolled `.lh-tours-card` block was
+    swapped for `.lh-plugin-card` + `__top`/`__icon`/`__meta`/`__body`/
+    `__actions`. Progress bar + category status chip live inside `__body`
+    and `__actions` respectively. 6 category icon colours are mapped onto
+    the shell icon variants (`--course`, `--tour`, `--community`, `--snack`)
+    plus two plugin-local extras (`--teal`, `--red`) defined in styles.css.
 
     0.2.2: wrapped in the shared Plugin Shell (Zone A sticky header +
     Zone B info bar) via the `theme_lernhive/plugin_shell_header` partial.
-    The old hand-rolled tour header block (title/intro/badge) has been
-    removed in favour of the shell, so the page matches ContentHub 1:1.
 
     Context variables required for this template:
     * shell (object) - Plugin Shell Zone A + Zone B context (see partial)
@@ -51,90 +58,85 @@
 
 {{! ── Content area — matches ContentHub's .lh-plugin-content-area wrapper ─ }}
 <div class="lh-plugin-content-area">
-<div class="lh-tours-container">
 
-    {{! Overall progress bar }}
-    <div class="lh-tours-overall card mb-4">
-        <div class="card-body d-flex align-items-center gap-3">
-            <span class="lh-tours-overall-label text-muted small fw-semibold">{{overall_label}}</span>
-            <div class="lh-tours-overall-bar flex-grow-1">
-                <div class="progress" style="height: 10px;">
-                    <div class="progress-bar lh-tours-progress-fill" role="progressbar"
-                         style="width: {{overall_percent}}%"
-                         aria-valuenow="{{overall_percent}}" aria-valuemin="0" aria-valuemax="100">
-                    </div>
-                </div>
-            </div>
-            <span class="lh-tours-overall-pct fw-bold text-primary">{{overall_percent}}%</span>
-            <span class="lh-tours-overall-text text-muted small">{{overall_text}}</span>
+    {{! Overall progress bar — sits above the card grid }}
+    <div class="lh-onboarding-overall">
+        <span class="lh-onboarding-overall__label">{{overall_label}}</span>
+        <div class="lh-onboarding-overall__bar">
+            <div class="lh-onboarding-overall__fill" role="progressbar"
+                 style="width: {{overall_percent}}%"
+                 aria-valuenow="{{overall_percent}}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
+        <span class="lh-onboarding-overall__pct">{{overall_percent}}%</span>
+        <span class="lh-onboarding-overall__text">{{overall_text}}</span>
     </div>
 
-    {{! Category cards grid }}
+    {{! Category cards grid — 3 columns, shared shell classes }}
     {{#has_categories}}
-    <div class="lh-tours-grid">
+    <div class="lh-plugin-grid lh-plugin-grid--cols-3" role="list">
         {{#categories}}
-        <div class="lh-tours-card card lh-tours-card--{{status}}" data-catid="{{id}}">
-            <div class="card-body">
-                <div class="d-flex align-items-start gap-3 mb-3">
-                    <div class="lh-tours-card-icon lh-tours-icon--{{color}}">
-                        <i class="fa fa-{{icon}} fa-fw"></i>
-                        {{#done}}
-                        <span class="lh-tours-check-overlay">
-                            <i class="fa fa-check"></i>
-                        </span>
-                        {{/done}}
-                    </div>
-                    <div class="flex-grow-1">
-                        <h5 class="lh-tours-card-title mb-1">{{name}}</h5>
-                        <p class="lh-tours-card-desc text-muted small mb-0">{{description}}</p>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="flex-grow-1">
-                        <div class="progress mb-1" style="height: 6px;">
-                            <div class="progress-bar {{#done}}bg-success{{/done}}" role="progressbar"
-                                 style="width: {{percent}}%"
-                                 aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100">
-                            </div>
-                        </div>
-                        <span class="lh-tours-card-progress-text text-muted" style="font-size: 0.72rem;">
-                            {{progress_str}}
-                        </span>
-                    </div>
-                    {{! Status chip — Information icon (Type 4, theme_lernhive icon taxonomy).
-                        Passive signal: cursor:help + visible text label for a11y; the
-                        .lh-icon-info class owns the visual signature (no hover grow). }}
-                    <span class="lh-tours-status" title="{{status_str}}">
-                        <span class="lh-icon-info lh-icon-info--sm lh-icon-info--{{status_info_variant}}" aria-hidden="true">
-                            <i class="fa fa-{{status_info_icon}} fa-fw"></i>
-                        </span>
-                        <span class="lh-tours-status__label">{{status_str}}</span>
+        <div class="lh-plugin-card lh-onboarding-card lh-onboarding-card--{{status}}"
+             role="listitem"
+             data-catid="{{id}}">
+
+            <div class="lh-plugin-card__top">
+                <div class="lh-plugin-card__icon lh-plugin-card__icon--onboarding-{{color}}" aria-hidden="true">
+                    <i class="fa fa-{{icon}}"></i>
+                    {{#done}}
+                    <span class="lh-onboarding-card__check" aria-hidden="true">
+                        <i class="fa fa-check"></i>
                     </span>
+                    {{/done}}
                 </div>
+                <div class="lh-plugin-card__meta">
+                    <div class="lh-plugin-card__kicker">
+                        <i class="fa fa-{{status_info_icon}}" aria-hidden="true"></i>
+                        {{status_str}}
+                    </div>
+                    <div class="lh-plugin-card__title">{{name}}</div>
+                </div>
+            </div>
+
+            <div class="lh-plugin-card__body">
+                {{description}}
+
+                <div class="lh-onboarding-card__progress">
+                    <div class="lh-onboarding-card__progress-bar">
+                        <div class="lh-onboarding-card__progress-fill {{#done}}lh-onboarding-card__progress-fill--done{{/done}}"
+                             role="progressbar"
+                             style="width: {{percent}}%"
+                             aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <span class="lh-onboarding-card__progress-text">{{progress_str}}</span>
+                </div>
+            </div>
+
+            <div class="lh-plugin-card__actions">
+                <button type="button" class="lh-plugin-btn lh-plugin-btn--ghost lh-onboarding-card__toggle"
+                        aria-expanded="false"
+                        aria-controls="lh-detail-{{id}}">
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                    {{#str}}tours_start, local_lernhive_onboarding{{/str}}
+                </button>
             </div>
 
             {{! Expandable tour list }}
             {{#has_tours}}
-            <div class="lh-tours-detail" id="lh-detail-{{id}}" style="display:none;">
-                <div class="px-3 pb-3">
-                    {{#tours}}
-                    <div class="lh-tours-item d-flex align-items-center gap-3 p-2 rounded mb-1
-                        {{#completed}}lh-tours-item--done{{/completed}}">
-                        <span class="lh-tours-item-num {{#completed}}lh-tours-num--done{{/completed}}{{^completed}}lh-tours-num--pending{{/completed}}">
-                            {{#completed}}<i class="fa fa-check"></i>{{/completed}}
-                            {{^completed}}{{num}}{{/completed}}
-                        </span>
-                        <div class="flex-grow-1 small">Tour {{num}}</div>
-                        <a href="{{start_url}}" class="btn btn-sm
-                            {{#completed}}btn-outline-secondary{{/completed}}
-                            {{^completed}}btn-primary{{/completed}}">
-                            {{#completed}}{{#str}}tours_restart, local_lernhive_onboarding{{/str}}{{/completed}}
-                            {{^completed}}{{#str}}tours_start, local_lernhive_onboarding{{/str}}{{/completed}}
-                        </a>
-                    </div>
-                    {{/tours}}
+            <div class="lh-onboarding-card__detail" id="lh-detail-{{id}}" hidden>
+                {{#tours}}
+                <div class="lh-onboarding-tour {{#completed}}lh-onboarding-tour--done{{/completed}}">
+                    <span class="lh-onboarding-tour__num {{#completed}}lh-onboarding-tour__num--done{{/completed}}">
+                        {{#completed}}<i class="fa fa-check"></i>{{/completed}}
+                        {{^completed}}{{num}}{{/completed}}
+                    </span>
+                    <span class="lh-onboarding-tour__label">Tour {{num}}</span>
+                    <a href="{{start_url}}"
+                       class="lh-plugin-btn {{#completed}}lh-plugin-btn--ghost{{/completed}}{{^completed}}lh-plugin-btn--start{{/completed}}">
+                        {{#completed}}{{#str}}tours_restart, local_lernhive_onboarding{{/str}}{{/completed}}
+                        {{^completed}}{{#str}}tours_start, local_lernhive_onboarding{{/str}}{{/completed}}
+                    </a>
                 </div>
+                {{/tours}}
             </div>
             {{/has_tours}}
         </div>
@@ -143,112 +145,236 @@
     {{/has_categories}}
 
     {{! Level unlock section }}
-    <div class="lh-tours-unlock card mt-4 text-center">
-        <div class="card-body py-4">
-            <h5 class="fw-semibold mb-2">{{#str}}tours_unlock_title, local_lernhive_onboarding{{/str}}</h5>
-            {{#all_done}}
-                <p class="text-success mb-3">{{#str}}tours_all_done, local_lernhive_onboarding{{/str}}</p>
-            {{/all_done}}
-            {{^all_done}}
-                <p class="text-muted mb-3">{{unlock_text}}</p>
-            {{/all_done}}
-            {{#can_unlock}}
-                <button class="btn btn-primary rounded-pill px-4" id="lh-unlock-btn">
-                    <i class="fa fa-lock-open fa-fw"></i> {{unlock_btn}}
-                </button>
-            {{/can_unlock}}
-            {{^can_unlock}}
-                {{^at_max_level}}
-                <button class="btn btn-secondary rounded-pill px-4" disabled>
-                    <i class="fa fa-lock fa-fw"></i> {{unlock_btn}}
-                </button>
-                {{/at_max_level}}
-            {{/can_unlock}}
-        </div>
+    <div class="lh-onboarding-unlock">
+        <h5 class="lh-onboarding-unlock__title">{{#str}}tours_unlock_title, local_lernhive_onboarding{{/str}}</h5>
+        {{#all_done}}
+            <p class="lh-onboarding-unlock__text lh-onboarding-unlock__text--done">
+                {{#str}}tours_all_done, local_lernhive_onboarding{{/str}}
+            </p>
+        {{/all_done}}
+        {{^all_done}}
+            <p class="lh-onboarding-unlock__text">{{unlock_text}}</p>
+        {{/all_done}}
+        {{#can_unlock}}
+            <button class="lh-plugin-btn lh-plugin-btn--start" id="lh-unlock-btn">
+                <i class="fa fa-lock-open" aria-hidden="true"></i> {{unlock_btn}}
+            </button>
+        {{/can_unlock}}
+        {{^can_unlock}}
+            {{^at_max_level}}
+            <button class="lh-plugin-btn lh-plugin-btn--ghost lh-plugin-btn--disabled" disabled>
+                <i class="fa fa-lock" aria-hidden="true"></i> {{unlock_btn}}
+            </button>
+            {{/at_max_level}}
+        {{/can_unlock}}
     </div>
-</div>
 </div>{{! /.lh-plugin-content-area }}
 
-{{! Inline styles matching the mockup design }}
+{{!
+    Inline styles — plugin-local extensions to the shared shell card pattern.
+    Only things that don't belong in the global _plugin-shell.scss live here:
+      - overall progress bar (onboarding-specific)
+      - 2 extra category icon colours (teal, red) — the shell ships course /
+        snack / community / tour; onboarding has 6 categories
+      - per-card progress bar + status overlays
+      - expandable tour detail list
+      - unlock CTA panel
+    The base card/icon/button styling comes from theme_lernhive.
+}}
 <style>
-.lh-tours-container { max-width: 960px; margin: 0 auto; }
-
-.lh-tours-level-badge {
-    background: #e8f0fe; color: #1a73e8;
-    font-size: 0.78rem; font-weight: 600; padding: 4px 12px; border-radius: 16px;
+/* ── Overall progress strip (above the grid) ───────────────────────────── */
+.lh-onboarding-overall {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(25, 72, 102, 0.08), 0 0 0 1px #e4eaef;
+}
+.lh-onboarding-overall__label {
+    font-size: 0.8rem; font-weight: 600; color: #5f6b77; white-space: nowrap;
+}
+.lh-onboarding-overall__bar {
+    flex: 1 1 auto;
+    height: 8px;
+    background: #eef1f5;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.lh-onboarding-overall__fill {
+    height: 100%;
+    background: linear-gradient(90deg, #194866 0%, #2a7a3a 100%);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+.lh-onboarding-overall__pct {
+    font-size: 0.9rem; font-weight: 800; color: #194866;
+}
+.lh-onboarding-overall__text {
+    font-size: 0.78rem; color: #5f6b77;
 }
 
-.lh-tours-progress-fill {
-    background: linear-gradient(90deg, #1a73e8, #6c63ff); border-radius: 5px;
+/* ── Card state rings (re-uses .lh-plugin-card--current visual hook) ──── */
+.lh-onboarding-card--in_progress {
+    box-shadow: 0 0 0 2px #f98012, 0 4px 12px rgba(249, 128, 18, 0.15);
+}
+.lh-onboarding-card--in_progress:hover {
+    box-shadow: 0 0 0 2px #f98012, 0 6px 18px rgba(249, 128, 18, 0.2);
+}
+.lh-onboarding-card--completed {
+    box-shadow: 0 0 0 2px #2a7a3a, 0 4px 12px rgba(42, 122, 58, 0.14);
+}
+.lh-onboarding-card--completed:hover {
+    box-shadow: 0 0 0 2px #2a7a3a, 0 6px 18px rgba(42, 122, 58, 0.18);
 }
 
-.lh-tours-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
-}
+/* ── Extra icon colour variants (shell ships 4; we need 6 here) ──────── */
+.lh-plugin-card__icon--onboarding-blue   { background: #dbeafe; color: #1e4d8c; }
+.lh-plugin-card__icon--onboarding-green  { background: #dcfce7; color: #166534; }
+.lh-plugin-card__icon--onboarding-purple { background: #ede9fb; color: #5b3fa6; }
+.lh-plugin-card__icon--onboarding-orange { background: #fef3e2; color: #b45309; }
+.lh-plugin-card__icon--onboarding-teal   { background: #ccfbf1; color: #115e59; }
+.lh-plugin-card__icon--onboarding-red    { background: #fee2e2; color: #991b1b; }
 
-.lh-tours-card {
-    cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease; border-radius: 12px;
-}
-.lh-tours-card:hover { box-shadow: 0 4px 16px rgba(60,64,67,0.18); transform: translateY(-2px); }
-.lh-tours-card--in_progress { border-color: #1a73e8; }
-.lh-tours-card--completed { border-color: #34a853; }
-
-.lh-tours-card-icon {
-    width: 52px; height: 52px; border-radius: 12px;
+/* ── Completed check overlay on the category icon ────────────────────── */
+.lh-onboarding-card__check {
+    position: absolute;
+    bottom: -4px; right: -4px;
+    width: 18px; height: 18px;
+    background: #2a7a3a; color: #fff;
+    border-radius: 50%;
+    border: 2px solid #fff;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: 1.2rem; position: relative;
+    font-size: 0.5rem;
 }
-.lh-tours-icon--blue { background: #e8f0fe; color: #1a73e8; }
-.lh-tours-icon--green { background: #e6f4ea; color: #34a853; }
-.lh-tours-icon--purple { background: #f3e5f5; color: #7b1fa2; }
-.lh-tours-icon--orange { background: #fef7e0; color: #f9ab00; }
-.lh-tours-icon--teal { background: #e0f2f1; color: #00695c; }
-.lh-tours-icon--red { background: #fce8e6; color: #ea4335; }
+.lh-plugin-card__icon { position: relative; }
 
-.lh-tours-check-overlay {
-    position: absolute; bottom: -4px; right: -4px;
-    width: 20px; height: 20px; background: #34a853; color: #fff;
-    border-radius: 50%; border: 2px solid #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.55rem;
+/* ── Per-card progress bar (inside .lh-plugin-card__body) ────────────── */
+.lh-onboarding-card__progress {
+    margin-top: 10px;
+}
+.lh-onboarding-card__progress-bar {
+    height: 6px;
+    background: #eef1f5;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+.lh-onboarding-card__progress-fill {
+    height: 100%;
+    background: #194866;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+.lh-onboarding-card__progress-fill--done {
+    background: #2a7a3a;
+}
+.lh-onboarding-card__progress-text {
+    font-size: 0.7rem;
+    color: #5f6b77;
+    font-weight: 600;
 }
 
-.lh-tours-card-title { font-size: 0.95rem; font-weight: 600; }
-.lh-tours-card-desc { font-size: 0.78rem; line-height: 1.4; }
+/* ── Kicker icon tint — colour matches status ────────────────────────── */
+.lh-onboarding-card--not_started .lh-plugin-card__kicker { color: #5f6b77; }
+.lh-onboarding-card--in_progress .lh-plugin-card__kicker { color: #194866; }
+.lh-onboarding-card--completed   .lh-plugin-card__kicker { color: #2a7a3a; }
+.lh-plugin-card__kicker .fa { margin-right: 4px; }
 
-/* Status chip layout — icon (.lh-icon-info) + text label side by side.
-   Colour/shape of the icon come from theme_lernhive/_icons.scss. This wrapper
-   only handles alignment + the text-label typography. */
-.lh-tours-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 600; color: #5f6368; }
-.lh-tours-status__label { white-space: nowrap; }
-
-.lh-tours-detail { border-top: 1px solid #e0e0e0; }
-
-.lh-tours-item { transition: background 0.15s; }
-.lh-tours-item:hover { background: #f5f6f8; }
-
-.lh-tours-item-num {
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.72rem; font-weight: 600; flex-shrink: 0;
+/* ── Expand toggle rotation when open ────────────────────────────────── */
+.lh-onboarding-card__toggle[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
 }
-.lh-tours-num--done { background: #34a853; color: #fff; }
-.lh-tours-num--pending { background: #f0f0f0; color: #80868b; }
+.lh-onboarding-card__toggle .fa-chevron-down {
+    transition: transform 0.2s ease;
+}
 
-.lh-tours-unlock { border-radius: 12px; }
+/* ── Expandable tour detail list ─────────────────────────────────────── */
+.lh-onboarding-card__detail {
+    padding: 4px 14px 14px;
+    border-top: 1px solid #eef1f5;
+    background: rgba(243, 245, 248, 0.5);
+}
+.lh-onboarding-tour {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 4px;
+    font-size: 0.82rem;
+}
+.lh-onboarding-tour + .lh-onboarding-tour {
+    border-top: 1px dashed #eef1f5;
+}
+.lh-onboarding-tour__num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 700;
+    background: #eef1f5; color: #80868b;
+    flex-shrink: 0;
+}
+.lh-onboarding-tour__num--done {
+    background: #2a7a3a; color: #fff;
+}
+.lh-onboarding-tour__label {
+    flex: 1;
+    color: #374151;
+}
+.lh-onboarding-tour--done .lh-onboarding-tour__label {
+    color: #6b7280;
+}
+
+/* ── Unlock CTA panel ────────────────────────────────────────────────── */
+.lh-onboarding-unlock {
+    margin-top: 22px;
+    padding: 22px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(25, 72, 102, 0.08), 0 0 0 1px #e4eaef;
+    text-align: center;
+}
+.lh-onboarding-unlock__title {
+    font-size: 1rem; font-weight: 700; color: #194866; margin: 0 0 6px 0;
+}
+.lh-onboarding-unlock__text {
+    font-size: 0.85rem; color: #5f6b77; margin: 0 0 14px 0;
+}
+.lh-onboarding-unlock__text--done {
+    color: #2a7a3a; font-weight: 600;
+}
 </style>
 
-{{! Toggle card expansion on click }}
+{{! Toggle tour detail on card click or chevron button ─ }}
 {{#js}}
-document.querySelectorAll('.lh-tours-card').forEach(function(card) {
-    card.addEventListener('click', function(e) {
-        // Don't toggle if clicking a button/link.
-        if (e.target.closest('a, button')) return;
-        var catid = card.getAttribute('data-catid');
-        var detail = document.getElementById('lh-detail-' + catid);
-        if (detail) {
-            detail.style.display = (detail.style.display === 'none') ? 'block' : 'none';
+document.querySelectorAll('.lh-onboarding-card').forEach(function(card) {
+    var toggle = card.querySelector('.lh-onboarding-card__toggle');
+    var catid = card.getAttribute('data-catid');
+    var detail = document.getElementById('lh-detail-' + catid);
+    if (!toggle || !detail) {
+        return;
+    }
+    var open = function(state) {
+        if (state) {
+            detail.removeAttribute('hidden');
+            toggle.setAttribute('aria-expanded', 'true');
+        } else {
+            detail.setAttribute('hidden', '');
+            toggle.setAttribute('aria-expanded', 'false');
         }
+    };
+    var flip = function() {
+        open(toggle.getAttribute('aria-expanded') !== 'true');
+    };
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        flip();
+    });
+    card.addEventListener('click', function(e) {
+        // Don't toggle if clicking a button/link inside the detail list.
+        if (e.target.closest('a, button')) {
+            return;
+        }
+        flip();
     });
 });
 {{/js}}
