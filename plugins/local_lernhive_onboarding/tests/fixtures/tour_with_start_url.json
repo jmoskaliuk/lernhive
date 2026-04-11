@@ -1,0 +1,21 @@
+{
+    "name": "LernHive Test Fixture: Tour mit start_url und bestehendem configdata",
+    "description": "Fixture for LH-ONB-START-02 tour_importer_test — carries a non-empty configdata (filtervalues) alongside a top-level start_url so the test can assert the merge preserves existing keys.",
+    "pathmatch": "/user/editadvanced.php%",
+    "start_url": "/user/editadvanced.php?id={USERID}",
+    "enabled": 1,
+    "sortorder": 0,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]},\"placement\":\"top\"}",
+    "steps": [
+        {
+            "title": "Willkommen",
+            "content": "<p>Test fixture step.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

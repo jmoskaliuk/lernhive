@@ -1,0 +1,20 @@
+{
+    "name": "LernHive Test Fixture: Tour ohne start_url",
+    "description": "Fixture for LH-ONB-START-02 tour_importer_test — has a non-empty configdata but no top-level start_url, so the test can assert the merge is a no-op and the original JSON is preserved byte-for-byte.",
+    "pathmatch": "/some/legacy/path.php%",
+    "enabled": 1,
+    "sortorder": 0,
+    "displaystepnumbers": 1,
+    "showtourwhen": 1,
+    "configdata": "{\"filtervalues\":{\"role\":[\"student\"]}}",
+    "steps": [
+        {
+            "title": "Willkommen",
+            "content": "<p>Test fixture step.</p>",
+            "targettype": 0,
+            "targetvalue": "",
+            "sortorder": 0,
+            "configdata": "{\"placement\":\"bottom\"}"
+        }
+    ]
+}

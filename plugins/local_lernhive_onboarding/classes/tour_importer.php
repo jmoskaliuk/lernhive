@@ -40,9 +40,10 @@ class tour_importer {
      *     "name": "Create a single user",
      *     "description": "Step-by-step guide...",
      *     "pathmatch": "/user/editadvanced.php%",
+     *     "start_url": "/user/editadvanced.php?id={USERID}",
      *     "enabled": 1,
      *     "sortorder": 0,
-     *     "configdata": "{}",
+     *     "configdata": "{\"filtervalues\":{\"role\":[\"editingteacher\"]}}",
      *     "steps": [
      *         {
      *             "title": "Welcome",
@@ -54,6 +55,12 @@ class tour_importer {
      *         }
      *     ]
      * }
+     *
+     * If a top-level `start_url` is present it is merged into the tour's
+     * `configdata` JSON under the key `lh_start_url`, without touching any
+     * pre-existing keys (e.g. `filtervalues`, `placement`). This is the
+     * storage side of LH-ONB-START-02: the `start_url_resolver` reads it
+     * back at tour-launch time to produce the deterministic redirect.
      *
      * @param string $filepath Full path to the JSON file.
      * @param int $categoryid The LernHive tour category ID.
@@ -91,7 +98,10 @@ class tour_importer {
         $tour->pathmatch = $data['pathmatch'] ?? '%';
         $tour->enabled = (int) ($data['enabled'] ?? 1);
         $tour->sortorder = (int) ($data['sortorder'] ?? 0);
-        $tour->configdata = $data['configdata'] ?? '{}';
+        $tour->configdata = self::merge_start_url_into_configdata(
+            $data['configdata'] ?? '{}',
+            isset($data['start_url']) ? (string) $data['start_url'] : ''
+        );
         $tour->endtourlabel = $data['endtourlabel'] ?? '';
         $tour->displaystepnumbers = (int) ($data['displaystepnumbers'] ?? 1);
         $tour->showtourwhen = (int) ($data['showtourwhen'] ?? 1); // 1 = on each visit until completed.
@@ -202,5 +212,50 @@ class tour_importer {
 
             $DB->insert_record('local_lhonb_cats', $record);
         }
+    }
+
+    /**
+     * Merge a tour's `start_url` into its `configdata` JSON string as
+     * the key `lh_start_url`, preserving every pre-existing key.
+     *
+     * `tool_usertours_tours.configdata` is a free-form JSON blob that
+     * already carries core keys like `filtervalues`, `placement`,
+     * `orphan`, and (in 0.3.0+) our own chain metadata
+     * `lh_prereq_tour_id`. We must never overwrite those.
+     *
+     * Behaviour:
+     *  - If `$starturl` is the empty string the input `configdata`
+     *    is returned unchanged. This is the no-op path for Level-1
+     *    tours that have not yet been migrated to carry a `start_url`
+     *    (see the 0.2.x pathmatch-strip fallback in `starttour.php`).
+     *  - If `$configdata` is not a valid JSON object it is coerced to
+     *    an empty object before the merge, so a malformed fixture
+     *    cannot crash the import path.
+     *
+     * Extracted as a private helper so the PHPUnit test for
+     * LH-ONB-START-02 can drive it through `import_tour()` (not
+     * called directly — the public contract is `import_tour`).
+     *
+     * @param string $configdata Raw JSON string from tour JSON.
+     * @param string $starturl   The top-level `start_url` value, or ''
+     *                           when the tour JSON does not declare one.
+     * @return string The JSON-encoded merged configdata.
+     */
+    private static function merge_start_url_into_configdata(string $configdata, string $starturl): string {
+        if ($starturl === '') {
+            return $configdata;
+        }
+
+        $decoded = json_decode($configdata, true);
+        if (!is_array($decoded)) {
+            // Malformed or null — start from an empty object so the
+            // `lh_start_url` key can still be written without losing
+            // data we never had.
+            $decoded = [];
+        }
+
+        $decoded['lh_start_url'] = $starturl;
+
+        return json_encode($decoded);
     }
 }
