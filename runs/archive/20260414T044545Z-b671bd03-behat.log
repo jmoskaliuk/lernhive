@@ -1,0 +1,22 @@
+[server-test] updating /opt/lernhive from origin/main...
+HEAD is now at b671bd0 theme_lernhive 0.9.56: DevFlow docs alignment for 0.9.51/0.9.52/0.9.54 course-page sidebar
+[server-test] invoking playbooks/test.sh --target=hetzner --suite=behat
+[1;34m[test][0m target=hetzner  container=lernhive-webserver-1  suite=behat  component=<default: lernhive plugins>  full=0  reinit=0
+[1;34m[test][0m preflight: killing stale phpunit/behat processes (if any)
+[preflight] no stale phpunit/behat processes
+[1;34m[test][0m preflight: dropping leftover phpu_* and behat_* tables
+[preflight] no leftover phpu_/behat_ tables
+[1;32m[test][0m preflight: container is clean
+[1;34m[test][0m Behat: diag
+Unknown error 1 This is not a behat test site!
+[1;34m[test][0m Behat: init (diag rc=1, force=0)
+You are already using the latest available Composer version 2.9.5 (stable channel).
+Installing dependencies from lock file (including require-dev)
+Verifying lock file contents can be installed on current platform.
+Nothing to install, update or remove
+Generating autoload files
+56 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+Unknown error 1 This is not a behat test site!
+[1;31m[test][0m Behat init failed. Check container logs and Selenium reachability.
+[1;31m[test][0m Selenium URL expected in config.php: $CFG->behat_profiles['default']['wd_host']
