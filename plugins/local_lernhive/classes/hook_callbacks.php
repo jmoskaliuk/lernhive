@@ -2313,6 +2313,14 @@ HTML;
     ): void {
         global $USER, $PAGE;
 
+        // Skip injection when the LernHive theme is active — it provides its
+        // own <aside class="lernhive-sidebar"> with curated navitems. Injecting
+        // a second <nav id="lernhive-sidebar"> would render an identical fixed
+        // element on top with the wrong nav tree (flat_navigation items).
+        if ($PAGE->theme->name === 'lernhive') {
+            return;
+        }
+
         $allowcourse = get_config('local_lernhive', 'allow_teacher_course_creation');
         $allowuser   = get_config('local_lernhive', 'allow_teacher_user_creation');
         $allowbrowse = get_config('local_lernhive', 'allow_teacher_user_browse');
