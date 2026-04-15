@@ -1,6 +1,7 @@
 {
     "name": "LernHive: Manuelle Einschreibung",
     "description": "Lerne, wie du Nutzer/innen manuell in einen Kurs einschreibst.",
+    "lernhive_feature": "core.user.enrol",
     "pathmatch": "/user/index.php%",
     "start_url": "/user/index.php?id={DEMOCOURSEID}",
     "enabled": 1,

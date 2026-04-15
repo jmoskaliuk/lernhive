@@ -1,15 +1,33 @@
-# local_lernhive_onboarding — User Documentation
+# local_lernhive_onboarding - User Documentation
 
-## User value
-Tours and level-linked onboarding journeys.
+## Who this is for
 
-## What the user should experience
-- simple, clear labels
-- minimal steps
-- no hidden complexity
-- terminology that also works in product communication
+Current primary audience:
+- users assigned the `lernhive_trainer` system role
+- users with `local/lernhive_onboarding:receivelearningpath`
 
-## Main user journeys
-- open the feature from the relevant LernHive entry point
-- complete the task with a guided and visible flow
-- understand the result immediately
+## What users can do today (0.2.8)
+
+1. See a dashboard banner on `/my/` while Level 1 is incomplete
+2. Open the onboarding catalog (`/local/lernhive_onboarding/tours.php`)
+3. Start or restart tours from category cards
+4. Track completion per category and across the current level
+
+## User journey
+
+1. User opens dashboard and sees the learning-path banner
+2. User opens "Learning Path"
+3. User expands a category and starts a tour
+4. User is redirected to the exact target page
+5. Tour auto-plays and progress updates after completion
+
+## Current constraints
+
+- Level-1 pack is the only fully wired runtime pack
+- Level unlock button is currently a visual affordance, not a complete self-service level-up flow
+- Some advanced multi-page flows are still single-tour placeholders until chaining is implemented
+
+## Support notes
+
+- If a tour opens on a wrong or invalid target, verify plugin settings and placeholder config first
+- If sandbox course was deleted, run upgrade to reprovision and restore `{DEMOCOURSEID}` targets

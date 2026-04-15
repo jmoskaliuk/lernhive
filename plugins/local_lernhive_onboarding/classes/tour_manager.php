@@ -36,6 +36,8 @@ defined('MOODLE_INTERNAL') || die();
  * - Check if levels are complete
  */
 class tour_manager {
+    /** @var bool|null */
+    private static ?bool $maphasfeatureid = null;
 
     /**
      * Get all tour categories for a given level, ordered by sortorder.
@@ -219,10 +221,19 @@ class tour_manager {
      * @param int $categoryid The category ID
      * @param int $tourid The Moodle tour ID
      * @param int $sortorder The display order (optional, defaults to end)
+     * @param string|null $featureid Optional local_lernhive feature id.
      * @return int The mapping record ID
      */
-    public static function add_tour_to_category(int $categoryid, int $tourid, int $sortorder = 0): int {
+    public static function add_tour_to_category(
+        int $categoryid,
+        int $tourid,
+        int $sortorder = 0,
+        ?string $featureid = null
+    ): int {
         global $DB;
+
+        $featureid = self::normalise_feature_id($featureid);
+        $canstorefeatureid = ($featureid !== null) && self::map_has_feature_id_field();
 
         // Check if mapping already exists.
         $existing = $DB->get_record(
@@ -231,6 +242,15 @@ class tour_manager {
         );
 
         if ($existing) {
+            if ($canstorefeatureid) {
+                $current = property_exists($existing, 'feature_id')
+                    ? (string) ($existing->feature_id ?? '')
+                    : '';
+                if ($current !== $featureid) {
+                    $existing->feature_id = $featureid;
+                    $DB->update_record('local_lhonb_map', $existing);
+                }
+            }
             return $existing->id;
         }
 
@@ -250,6 +270,9 @@ class tour_manager {
             'sortorder' => $sortorder,
             'timecreated' => time(),
         ];
+        if ($canstorefeatureid) {
+            $record->feature_id = $featureid;
+        }
 
         return $DB->insert_record('local_lhonb_map', $record);
     }
@@ -267,5 +290,50 @@ class tour_manager {
             'local_lhonb_map',
             ['categoryid' => $categoryid, 'tourid' => $tourid]
         );
+    }
+
+    /**
+     * Whether local_lhonb_map currently has the feature_id column.
+     *
+     * Needed because older upgrade savepoints still call mapping helpers before
+     * the FR-01 schema step has run.
+     *
+     * @return bool
+     */
+    private static function map_has_feature_id_field(): bool {
+        global $DB;
+
+        if (self::$maphasfeatureid !== null) {
+            return self::$maphasfeatureid;
+        }
+
+        $columns = $DB->get_columns('local_lhonb_map');
+        self::$maphasfeatureid = isset($columns['feature_id']);
+
+        return self::$maphasfeatureid;
+    }
+
+    /**
+     * Normalise feature ids from import payloads.
+     *
+     * @param string|null $featureid
+     * @return string|null
+     */
+    private static function normalise_feature_id(?string $featureid): ?string {
+        if ($featureid === null) {
+            return null;
+        }
+        $featureid = trim($featureid);
+        if ($featureid === '') {
+            return null;
+        }
+        if (\core_text::strlen($featureid) > 128) {
+            debugging(
+                'local_lernhive_onboarding: feature_id exceeds 128 chars, truncating: ' . $featureid,
+                DEBUG_DEVELOPER
+            );
+            $featureid = \core_text::substr($featureid, 0, 128);
+        }
+        return $featureid;
     }
 }

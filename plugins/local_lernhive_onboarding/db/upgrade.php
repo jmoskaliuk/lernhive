@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
     global $DB;
+    $dbman = $DB->get_manager();
 
     // Fix user tours configdata: convert stdClass role filters to plain arrays.
     // Moodle 5.x requires role filter to be a plain array ["editingteacher"],
@@ -190,6 +191,34 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         );
 
         upgrade_plugin_savepoint(true, 2026041208, 'local', 'lernhive_onboarding');
+    }
+
+    // 0.3.0-dev (FR-01) - add feature_id to local_lhonb_map so tours can be
+    // linked to local_lernhive feature-registry IDs without relying on
+    // directory-level heuristics.
+    if ($oldversion < 2026041500) {
+        $table = new xmldb_table('local_lhonb_map');
+
+        $featureid = new xmldb_field(
+            'feature_id',
+            XMLDB_TYPE_CHAR,
+            '128',
+            null,
+            null,
+            null,
+            null,
+            'tourid'
+        );
+        if (!$dbman->field_exists($table, $featureid)) {
+            $dbman->add_field($table, $featureid);
+        }
+
+        $featureidx = new xmldb_index('ix_featureid', XMLDB_INDEX_NOTUNIQUE, ['feature_id']);
+        if (!$dbman->index_exists($table, $featureidx)) {
+            $dbman->add_index($table, $featureidx);
+        }
+
+        upgrade_plugin_savepoint(true, 2026041500, 'local', 'lernhive_onboarding');
     }
 
     return true;

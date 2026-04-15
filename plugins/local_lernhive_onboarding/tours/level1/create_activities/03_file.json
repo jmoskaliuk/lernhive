@@ -1,6 +1,7 @@
 {
     "name": "LernHive: Datei hochladen",
     "description": "Lerne, wie du Dateien (Dateien-Ressource) in deinen Kurs hochladst.",
+    "lernhive_feature": "mod_resource.create",
     "pathmatch": "/course/modedit.php%",
     "start_url": "/course/modedit.php?add=resource&course={DEMOCOURSEID}&section=1",
     "enabled": 1,

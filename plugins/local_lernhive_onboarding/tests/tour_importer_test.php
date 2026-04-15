@@ -17,8 +17,11 @@
 /**
  * Unit tests for the JSON tour importer.
  *
- * Focus: LH-ONB-START-02 — merge top-level `start_url` into `configdata`
- * as `lh_start_url` while preserving any existing configdata keys.
+ * Focus:
+ * - LH-ONB-START-02: merge top-level `start_url` into `configdata`
+ *   as `lh_start_url` while preserving any existing configdata keys.
+ * - LH-ONB-FR-02: persist top-level `lernhive_feature` to
+ *   `local_lhonb_map.feature_id`.
  *
  * @package    local_lernhive_onboarding
  * @copyright  2026 LernHive.de
@@ -82,6 +85,15 @@ final class tour_importer_test extends advanced_testcase {
         // Pre-existing scalar key still there.
         $this->assertArrayHasKey('placement', $config);
         $this->assertSame('top', $config['placement']);
+
+        // Feature mapping persisted on the category-tour join row.
+        $mapping = $DB->get_record(
+            'local_lhonb_map',
+            ['categoryid' => (int) $category->id, 'tourid' => (int) $tourid],
+            '*',
+            MUST_EXIST
+        );
+        $this->assertSame('core.user.create', (string) ($mapping->feature_id ?? ''));
     }
 
     /**
@@ -117,6 +129,72 @@ final class tour_importer_test extends advanced_testcase {
         // Original filter values still present.
         $this->assertArrayHasKey('filtervalues', $config);
         $this->assertSame(['student'], $config['filtervalues']['role']);
+
+        // No feature key in JSON -> mapping stays null/empty.
+        $mapping = $DB->get_record(
+            'local_lhonb_map',
+            ['categoryid' => (int) $category->id, 'tourid' => (int) $tourid],
+            '*',
+            MUST_EXIST
+        );
+        $this->assertTrue(
+            !isset($mapping->feature_id) || $mapping->feature_id === null || $mapping->feature_id === '',
+            'feature_id must stay empty when the source JSON has no lernhive_feature key'
+        );
+    }
+
+    /**
+     * Re-import path: when a tour row already exists, import_tour()
+     * must still update the mapping row with `feature_id`.
+     *
+     * This covers the branch where import_tour() short-circuits on
+     * existing `tool_usertours_tours.name` but still calls
+     * tour_manager::add_tour_to_category(..., $featureid).
+     */
+    public function test_import_existing_tour_updates_mapping_feature_id(): void {
+        $this->resetAfterTest();
+        global $DB, $CFG;
+
+        tour_importer::seed_categories();
+        $category = tour_manager::get_category_by_shortname('create_users');
+        $this->assertNotFalse($category);
+
+        // Existing tour row with matching fixture name.
+        $tourid = $DB->insert_record('tool_usertours_tours', (object) [
+            'name' => 'LernHive Test Fixture: Tour mit start_url und bestehendem configdata',
+            'description' => '',
+            'pathmatch' => '/user/editadvanced.php%',
+            'enabled' => 1,
+            'sortorder' => 0,
+            'configdata' => json_encode(['filtervalues' => ['role' => ['editingteacher']]]),
+            'endtourlabel' => '',
+            'displaystepnumbers' => 1,
+            'showtourwhen' => 1,
+        ]);
+
+        // Existing mapping with no feature id yet.
+        $DB->insert_record('local_lhonb_map', (object) [
+            'categoryid' => (int) $category->id,
+            'tourid' => (int) $tourid,
+            'sortorder' => 1,
+            'timecreated' => time(),
+            'feature_id' => null,
+        ]);
+
+        $fixture = $CFG->dirroot
+            . '/local/lernhive_onboarding/tests/fixtures/tour_with_start_url.json';
+        $this->assertFileExists($fixture);
+
+        $result = tour_importer::import_tour($fixture, (int) $category->id, 1);
+        $this->assertSame((int) $tourid, $result);
+
+        $mapping = $DB->get_record(
+            'local_lhonb_map',
+            ['categoryid' => (int) $category->id, 'tourid' => (int) $tourid],
+            '*',
+            MUST_EXIST
+        );
+        $this->assertSame('core.user.create', (string) ($mapping->feature_id ?? ''));
     }
 
     /**

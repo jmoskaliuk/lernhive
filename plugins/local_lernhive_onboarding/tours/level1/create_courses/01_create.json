@@ -1,6 +1,7 @@
 {
     "name": "LernHive: Kurs erstellen",
     "description": "Lerne, wie du einen neuen Kurs in LernHive anlegst und einrichtest.",
+    "lernhive_feature": "core.course.create",
     "pathmatch": "/course/edit.php%",
     "start_url": "/course/edit.php?category={TRAINERCOURSECATEGORYID}",
     "enabled": 1,

@@ -1,40 +1,50 @@
-# local_lernhive_onboarding — Master Document
+# local_lernhive_onboarding - Master Document
 
-**Plugin type:** local plugin
+**Plugin type:** local plugin  
 **Release target:** R1
 
 ## Purpose
 
-Tours and level-linked onboarding journeys.
+Guided onboarding journeys for LernHive users through Moodle user tours (`tool_usertours`).
 
-## Role in LernHive
+## Current delivery status (0.2.8)
 
-This plugin is part of the LernHive ecosystem and should fit the core rules:
-- Moodle stays the core
-- English-first terminology
-- use Moodle core strings wherever possible
-- no business logic in the theme
-- must stay understandable for UX, docs, marketing and sales
+Implemented and shipped:
+- Trainer learning-path dashboard banner on `/my/`
+- Dedicated `lernhive_trainer` role + capability gate
+- Tours overview page with Level-1 progress cards
+- Deterministic tour start (`start_url` -> `starttour.php` -> `_requested` replay flag)
+- Onboarding Sandbox course (`{DEMOCOURSEID}`)
+- Admin setting for trainer target course category (`{TRAINERCOURSECATEGORYID}`)
+
+## 0.3.x target scope (planned)
+
+Planned next:
+- feature-registry-driven visibility (consumer of `local_lernhive` ADR-01)
+- `feature_id` on category-tour mappings
+- Level-2 pack activation and remaining Level-3..5 content packs
+- chained multi-page learning units (`prereq` + successor activation)
+- LXP audience extension via flavour presets
+
+## Role in LernHive architecture
+
+This plugin is a consumer layer:
+- Uses Moodle core user tours for delivery
+- Uses `local_lernhive` level model for progression
+- Should not duplicate level-rights business logic outside the shared feature registry
+- Keeps UX guidance in plugin/theme layer, not in Moodle core modifications
 
 ## Main dependencies
-local_lernhive
 
-## Main features
-- tour catalog
-- level-based progress
-- Grow area
-- admin override support — consumed from `local_lernhive`'s feature registry (see ADR-01 in `../../local_lernhive/docs/00-master.md`)
-
-## Related architecture decisions
-
-- **ADR-01 (local_lernhive) — Feature Registry & konfigurierbare Level-Rechte.** This plugin is a consumer: tour visibility depends on the registry's `effective_level` and `is_available_for_user` checks. See `level-tour-matrix.md` (v2) for the feature-to-level default proposal and `../../local_lernhive/docs/00-master.md` for the full ADR.
-- **Single-page-tour rule (0.3.0).** Every LernHive onboarding tour binds exactly one `pathmatch` and plays on exactly one URL. Multi-page features are modelled as chained single-page tours. Mirrors Moodle core's own shipped-tour convention. See `01-features.md` → "One tour = one page" and `03-dev-doc.md` → "Tour chaining".
-- **Deterministic tour start (0.3.0).** The catalog's "Start" button routes through `starttour.php`, which resolves a per-tour `start_url` (with `{USERID}`/`{DEMOCOURSEID}` placeholders) and primes `_requested=1` — Moodle's native replay flag. `pathmatch` stays a filter, never a URL source. See `03-dev-doc.md` → "Deterministic tour start".
+- `local_lernhive`
+- Moodle core `tool_usertours`
+- `theme_lernhive` (visual shell classes)
 
 ## DevFlow files
-- 00-master.md
-- 01-features.md
-- 02-user-doc.md
-- 03-dev-doc.md
-- 04-tasks.md
-- 05-quality.md
+
+- `00-master.md`
+- `01-features.md`
+- `02-user-doc.md`
+- `03-dev-doc.md`
+- `04-tasks.md`
+- `05-quality.md`

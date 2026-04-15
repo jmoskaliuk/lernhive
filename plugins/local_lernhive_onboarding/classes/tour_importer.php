@@ -39,6 +39,7 @@ class tour_importer {
      * {
      *     "name": "Create a single user",
      *     "description": "Step-by-step guide...",
+     *     "lernhive_feature": "core.user.create",
      *     "pathmatch": "/user/editadvanced.php%",
      *     "start_url": "/user/editadvanced.php?id={USERID}",
      *     "enabled": 1,
@@ -62,6 +63,10 @@ class tour_importer {
      * storage side of LH-ONB-START-02: the `start_url_resolver` reads it
      * back at tour-launch time to produce the deterministic redirect.
      *
+     * If the top-level `lernhive_feature` key is present it is persisted on
+     * `local_lhonb_map.feature_id` (FR-02). Missing/empty key keeps the
+     * mapping nullable for backward compatibility.
+     *
      * @param string $filepath Full path to the JSON file.
      * @param int $categoryid The LernHive tour category ID.
      * @param int $sortorder Sort order within the category.
@@ -82,12 +87,13 @@ class tour_importer {
             debugging("LernHive Onboarding tour_importer: invalid JSON in {$filepath}", DEBUG_DEVELOPER);
             return 0;
         }
+        $featureid = self::extract_feature_id($data);
 
         // Check if tour with this name already exists (avoid duplicates on re-import).
         $existing = $DB->get_record('tool_usertours_tours', ['name' => $data['name']]);
         if ($existing) {
             // Map to category if not yet mapped.
-            tour_manager::add_tour_to_category($categoryid, $existing->id, $sortorder);
+            tour_manager::add_tour_to_category($categoryid, $existing->id, $sortorder, $featureid);
             return (int) $existing->id;
         }
 
@@ -125,7 +131,7 @@ class tour_importer {
         }
 
         // Map tour to category.
-        tour_manager::add_tour_to_category($categoryid, $tourid, $sortorder);
+        tour_manager::add_tour_to_category($categoryid, $tourid, $sortorder, $featureid);
 
         return $tourid;
     }
@@ -392,5 +398,22 @@ class tour_importer {
         $decoded['lh_start_url'] = $starturl;
 
         return json_encode($decoded);
+    }
+
+    /**
+     * Read and normalise the optional tour JSON key `lernhive_feature`.
+     *
+     * @param array $data Decoded tour JSON.
+     * @return string|null
+     */
+    private static function extract_feature_id(array $data): ?string {
+        if (!array_key_exists('lernhive_feature', $data)) {
+            return null;
+        }
+        $featureid = trim((string) $data['lernhive_feature']);
+        if ($featureid === '') {
+            return null;
+        }
+        return $featureid;
     }
 }
