@@ -1,15 +1,28 @@
 # local_lernhive_reporting — User Documentation
 
 ## User value
-Simple tile-based reports on top of Moodle reports and analytics.
 
-## What the user should experience
-- simple, clear labels
-- minimal steps
-- no hidden complexity
-- terminology that also works in product communication
+A quick reporting entry point that answers common everyday questions without opening complex Moodle report builders.
 
-## Main user journeys
-- open the feature from the relevant LernHive entry point
-- complete the task with a guided and visible flow
-- understand the result immediately
+## Main flow
+
+1. Open **LernHive Reporting**
+2. Pick a course in the course filter
+3. Read the three headline tiles:
+- users in my course
+- most popular courses
+- completion rate
+4. Use drilldowns for detail lists
+
+## UX behavior
+
+- simple card/tile layout
+- plain language labels
+- minimal clicks
+- responsive table/card behavior
+
+## R1 limitations
+
+- no advanced segmentation
+- no custom exports
+- no personalized recommendations

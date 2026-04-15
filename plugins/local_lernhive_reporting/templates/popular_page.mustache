@@ -1,0 +1,35 @@
+{{!
+    @template local_lernhive_reporting/popular_page
+}}
+
+<a class="btn btn-link mb-3 px-0" href="{{backurl}}">{{#str}} back_to_dashboard, local_lernhive_reporting {{/str}}</a>
+
+<div class="card">
+    <div class="card-body">
+        <h2 class="h5 mb-3">{{#str}} tile_popular_title, local_lernhive_reporting {{/str}}</h2>
+
+        {{#hasrows}}
+        <div class="table-responsive">
+            <table class="table table-sm table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>{{#str}} course_label, local_lernhive_reporting {{/str}}</th>
+                        <th class="text-right">{{#str}} participants_label, local_lernhive_reporting {{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#rows}}
+                    <tr>
+                        <td><a href="{{courseurl}}">{{coursename}}</a></td>
+                        <td class="text-right">{{usercount}}</td>
+                    </tr>
+                    {{/rows}}
+                </tbody>
+            </table>
+        </div>
+        {{/hasrows}}
+        {{^hasrows}}
+        <p class="text-muted mb-0">{{#str}} no_data, local_lernhive_reporting {{/str}}</p>
+        {{/hasrows}}
+    </div>
+</div>

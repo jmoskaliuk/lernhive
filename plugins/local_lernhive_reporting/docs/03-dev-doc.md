@@ -1,19 +1,50 @@
 # local_lernhive_reporting — Developer Documentation
 
-## Architecture note
-Simple tile-based reports on top of Moodle reports and analytics.
+## Architecture
+
+R1 implementation is intentionally lightweight and Moodle-native.
+
+### Main files
+
+- `index.php` — dashboard entry page
+- `users.php` — users-in-course drilldown page
+- `popular.php` — popular-courses drilldown page
+- `completion.php` — completion drilldown page
+- `classes/report_service.php` — KPI data access from Moodle core tables
+- `classes/output/dashboard_page.php` — template context builder
+- `classes/output/users_page.php` — users drilldown context builder
+- `classes/output/popular_page.php` — popular drilldown context builder
+- `classes/output/completion_page.php` — completion drilldown context builder
+- `classes/output/renderer.php` — template rendering
+- `templates/dashboard_page.mustache` — UI output
+- `templates/users_page.mustache` — users drilldown UI
+- `templates/popular_page.mustache` — popular drilldown UI
+- `templates/completion_page.mustache` — completion drilldown UI
+- `db/access.php` — capability model
+- `classes/privacy/provider.php` — null privacy provider
 
 ## Technical direction
-- keep boundaries clean
+
 - use Moodle APIs where possible
-- prefer existing core strings over plugin-specific duplicates
-- keep data model minimal for release 1
-- document release 2 complexity separately
+- use read-only SQL against core reporting/completion tables
+- avoid custom schema in R1
+- keep plugin logic independent from theme
 
-## Current dependencies
-local_lernhive
+## Current data sources
 
-## Integration points
-- Moodle core APIs
-- LernHive shared services as needed
-- theme integration only for styling, not for business logic
+- `{course}`
+- `{enrol}`
+- `{user_enrolments}`
+- `{user}`
+- `{course_completions}`
+
+## Capability model
+
+- `local/lernhive_reporting:view`
+- cloned from `moodle/site:viewreports`
+
+## Open technical follow-ups
+
+- role-aware course visibility refinement (beyond current course list fallback)
+- optional deeper drilldown pages per tile
+- optional export strategy decision (R2)

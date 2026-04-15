@@ -1,0 +1,57 @@
+{{!
+    @template local_lernhive_reporting/users_page
+}}
+
+<a class="btn btn-link mb-3 px-0" href="{{backurl}}">{{#str}} back_to_dashboard, local_lernhive_reporting {{/str}}</a>
+
+{{#hascourses}}
+<div class="card mb-4">
+    <div class="card-body">
+        <h2 class="h5 mb-3">{{#str}} tile_users_title, local_lernhive_reporting {{/str}}</h2>
+        <form method="get" action="{{selecturl}}" class="form-inline">
+            <label class="mr-2" for="id_courseid">{{#str}} course_label, local_lernhive_reporting {{/str}}</label>
+            <select id="id_courseid" name="courseid" class="custom-select mr-2">
+                {{#courseoptions}}
+                <option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>
+                {{/courseoptions}}
+            </select>
+            <button type="submit" class="btn btn-primary">{{#str}} filter_apply, local_lernhive_reporting {{/str}}</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h3 class="h6 text-muted mb-3">{{selectedcoursename}}</h3>
+        {{#hasrows}}
+        <div class="table-responsive">
+            <table class="table table-sm table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>{{#str}} name_label, local_lernhive_reporting {{/str}}</th>
+                        <th>{{#str}} email_label, local_lernhive_reporting {{/str}}</th>
+                        <th>{{#str}} lastaccess_label, local_lernhive_reporting {{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#rows}}
+                    <tr>
+                        <td><a href="{{profileurl}}">{{fullname}}</a></td>
+                        <td>{{email}}</td>
+                        <td>{{lastaccess}}</td>
+                    </tr>
+                    {{/rows}}
+                </tbody>
+            </table>
+        </div>
+        {{/hasrows}}
+        {{^hasrows}}
+        <p class="text-muted mb-0">{{#str}} no_data, local_lernhive_reporting {{/str}}</p>
+        {{/hasrows}}
+    </div>
+</div>
+{{/hascourses}}
+
+{{^hascourses}}
+<div class="alert alert-info" role="status">{{#str}} no_courses_notice, local_lernhive_reporting {{/str}}</div>
+{{/hascourses}}
