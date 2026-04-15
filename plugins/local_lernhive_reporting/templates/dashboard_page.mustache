@@ -38,6 +38,9 @@
                     <h3 class="h6 text-muted mb-2">{{#str}} tile_users_title, local_lernhive_reporting {{/str}}</h3>
                     <div class="display-4 mb-2">{{usercount}}</div>
                     <p class="mb-2">{{selectedcoursename}}</p>
+                    {{#usersisempty}}
+                    <p class="text-muted small mb-2">{{#str}} empty_users_in_selected_course, local_lernhive_reporting {{/str}}</p>
+                    {{/usersisempty}}
                     {{#hasselectedcourse}}
                     <a class="btn btn-link px-0" href="{{usersdrilldownurl}}">
                         {{#str}} open_users_report, local_lernhive_reporting {{/str}}
@@ -69,6 +72,12 @@
                         {{selectedcompleted}} {{#str}} completed_label, local_lernhive_reporting {{/str}}
                         / {{selectedparticipants}} {{#str}} participants_label, local_lernhive_reporting {{/str}}
                     </p>
+                    {{#completionisempty}}
+                    <p class="text-muted small mb-2">{{#str}} empty_completion_no_participants, local_lernhive_reporting {{/str}}</p>
+                    {{/completionisempty}}
+                    {{#completionnotstarted}}
+                    <p class="text-muted small mb-2">{{#str}} empty_completion_no_completions, local_lernhive_reporting {{/str}}</p>
+                    {{/completionnotstarted}}
                     {{#hasselectedcourse}}
                     <a class="btn btn-link px-0" href="{{completiondrilldownurl}}">
                         {{#str}} open_completion_report, local_lernhive_reporting {{/str}}
@@ -105,7 +114,7 @@
                     </div>
                     {{/haspopularrows}}
                     {{^haspopularrows}}
-                    <p class="text-muted mb-0">{{#str}} no_data, local_lernhive_reporting {{/str}}</p>
+                    <p class="text-muted mb-0">{{#str}} no_popular_rows_notice, local_lernhive_reporting {{/str}}</p>
                     {{/haspopularrows}}
                 </div>
             </div>
@@ -140,7 +149,7 @@
                     </div>
                     {{/hascompletionrows}}
                     {{^hascompletionrows}}
-                    <p class="text-muted mb-0">{{#str}} no_data, local_lernhive_reporting {{/str}}</p>
+                    <p class="text-muted mb-0">{{#str}} no_completion_rows_notice, local_lernhive_reporting {{/str}}</p>
                     {{/hascompletionrows}}
                 </div>
             </div>

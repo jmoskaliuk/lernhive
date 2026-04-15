@@ -105,12 +105,18 @@ class dashboard_page implements renderable, templatable {
         }
 
         $toppopular = $popularrows[0] ?? null;
+        $usersisempty = ($selectedcourseid > 0 && $usercount === 0);
+        $completionisempty = ($selectedcourseid > 0 && $completion['participants'] === 0);
+        $completionnotstarted = ($selectedcourseid > 0 && $completion['participants'] > 0 && $completion['completed'] === 0);
 
         return [
             'hascourses'                => !empty($coursemap),
             'haspopularrows'            => !empty($popularrows),
             'hascompletionrows'         => !empty($completionrows),
             'hasselectedcourse'         => ($selectedcourseid > 0),
+            'usersisempty'              => $usersisempty,
+            'completionisempty'         => $completionisempty,
+            'completionnotstarted'      => $completionnotstarted,
             'selecturl'                 => (new \moodle_url('/local/lernhive_reporting/index.php'))->out(false),
             'usersdrilldownurl'         => (new \moodle_url('/local/lernhive_reporting/users.php', ['courseid' => $selectedcourseid]))->out(false),
             'populardrilldownurl'       => (new \moodle_url('/local/lernhive_reporting/popular.php'))->out(false),
@@ -120,7 +126,7 @@ class dashboard_page implements renderable, templatable {
             'usercount'                 => $usercount,
             'toppopularcoursename'      => $toppopular['coursename'] ?? get_string('no_data', 'local_lernhive_reporting'),
             'toppopularcourseusers'     => $toppopular['usercount'] ?? 0,
-            'selectedcompletionrate'     => $completion['completionrate'],
+            'selectedcompletionrate'    => $completion['completionrate'],
             'selectedcompletionratetext' => $completion['completionrate'] . '%',
             'selectedparticipants'      => $completion['participants'],
             'selectedcompleted'         => $completion['completed'],

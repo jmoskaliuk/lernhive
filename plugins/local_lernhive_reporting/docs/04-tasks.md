@@ -9,15 +9,13 @@
 - [x] refine role-aware course visibility (capability-based course filtering)
 - [x] add dedicated drilldown pages (`users.php`, `popular.php`, `completion.php`)
 - [x] extend PHPUnit coverage for ranking and visibility behavior
+- [x] add explicit UX empty states for no participants/no completion data
+- [x] strengthen global reporting visibility (show all courses for global roles)
 
 ## Next tasks
 
-- [ ] refine role-aware course visibility rules
-- [ ] add explicit UX empty states for edge cases (no enrolments, no completion records)
-- [ ] add additional PHPUnit tests for popular/completion table ranking
 - [ ] define whether R1 needs CSV export or keeps on-screen only
 
 ## Open questions
 
-- Should teachers only see courses where they have teaching roles, or all accessible courses?
 - Is export explicitly out of R1 or a deferred option within R1?

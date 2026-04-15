@@ -45,6 +45,4 @@ R1 implementation is intentionally lightweight and Moodle-native.
 
 ## Open technical follow-ups
 
-- role-aware course visibility refinement (beyond current course list fallback)
-- optional deeper drilldown pages per tile
 - optional export strategy decision (R2)

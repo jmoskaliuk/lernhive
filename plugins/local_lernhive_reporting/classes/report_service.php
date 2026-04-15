@@ -47,8 +47,26 @@ class report_service {
     public function get_selectable_courses(int $limit = 200): array {
         global $DB, $USER;
 
-        $options = [];
         $userid = (int)$USER->id;
+        $isglobalreporter = $this->user_has_global_reporting_access($userid);
+        $options = [];
+
+        if ($isglobalreporter) {
+            $records = $DB->get_records_select(
+                'course',
+                'id <> :siteid',
+                ['siteid' => SITEID],
+                'fullname ASC',
+                'id, fullname',
+                0,
+                $limit,
+            );
+            foreach ($records as $record) {
+                $courseid = (int)$record->id;
+                $options[$courseid] = $this->format_course_name($courseid, $record->fullname);
+            }
+            return $options;
+        }
 
         $enrolledcourses = enrol_get_all_users_courses($userid, true, 'id, fullname', 'fullname ASC');
         foreach ($enrolledcourses as $course) {
@@ -63,10 +81,7 @@ class report_service {
             return $options;
         }
 
-        if (!$this->user_has_global_reporting_access($userid)) {
-            return $options;
-        }
-
+        // Fallback for users who are not enrolled but still hold course-level capabilities.
         $records = $DB->get_records_select(
             'course',
             'id <> :siteid',

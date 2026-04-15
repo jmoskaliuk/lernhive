@@ -74,6 +74,8 @@ class completion_page implements renderable, templatable {
         if ($selectedcourseid > 0) {
             $metrics = $service->get_completion_for_course($selectedcourseid);
         }
+        $completionisempty = ($selectedcourseid > 0 && $metrics['participants'] === 0);
+        $completionnotstarted = ($selectedcourseid > 0 && $metrics['participants'] > 0 && $metrics['completed'] === 0);
 
         $rows = [];
         foreach ($service->get_completion_table(25) as $row) {
@@ -98,6 +100,8 @@ class completion_page implements renderable, templatable {
             'selectedcompleted' => $metrics['completed'],
             'selectedpending' => $metrics['pending'],
             'selectedcompletionratetext' => $metrics['completionrate'] . '%',
+            'completionisempty' => $completionisempty,
+            'completionnotstarted' => $completionnotstarted,
             'selecturl' => (new \moodle_url('/local/lernhive_reporting/completion.php'))->out(false),
             'backurl' => (new \moodle_url('/local/lernhive_reporting/index.php', ['courseid' => $selectedcourseid]))->out(false),
         ];

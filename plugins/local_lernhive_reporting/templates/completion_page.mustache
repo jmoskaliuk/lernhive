@@ -35,6 +35,13 @@
     </div>
 </div>
 
+{{#completionisempty}}
+<div class="alert alert-info" role="status">{{#str}} empty_completion_no_participants, local_lernhive_reporting {{/str}}</div>
+{{/completionisempty}}
+{{#completionnotstarted}}
+<div class="alert alert-info" role="status">{{#str}} empty_completion_no_completions, local_lernhive_reporting {{/str}}</div>
+{{/completionnotstarted}}
+
 <div class="card">
     <div class="card-body">
         <h3 class="h6 text-muted mb-3">{{#str}} drilldown_completion, local_lernhive_reporting {{/str}}</h3>
@@ -63,7 +70,7 @@
         </div>
         {{/hasrows}}
         {{^hasrows}}
-        <p class="text-muted mb-0">{{#str}} no_data, local_lernhive_reporting {{/str}}</p>
+        <p class="text-muted mb-0">{{#str}} no_completion_rows_notice, local_lernhive_reporting {{/str}}</p>
         {{/hasrows}}
     </div>
 </div>

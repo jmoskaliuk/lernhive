@@ -87,6 +87,24 @@ final class report_service_test extends advanced_testcase {
     }
 
     /**
+     * Course without participants returns an all-zero completion snapshot.
+     */
+    public function test_get_completion_for_course_without_participants_returns_zeroes(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $service = new report_service();
+        $metrics = $service->get_completion_for_course((int)$course->id);
+
+        $this->assertSame(0, $metrics['participants']);
+        $this->assertSame(0, $metrics['completed']);
+        $this->assertSame(0, $metrics['pending']);
+        $this->assertSame(0, $metrics['completionrate']);
+    }
+
+    /**
      * Popular courses are sorted by user count desc, then course name asc.
      */
     public function test_get_popular_courses_orders_by_user_count_then_name(): void {
@@ -227,5 +245,47 @@ final class report_service_test extends advanced_testcase {
 
         $this->assertArrayHasKey((int)$allowed->id, $courses);
         $this->assertArrayNotHasKey((int)$denied->id, $courses);
+    }
+
+    /**
+     * Global reporting users must see all courses even without enrolments.
+     */
+    public function test_get_selectable_courses_for_global_reporting_user_returns_all_courses(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $coursea = $generator->create_course(['fullname' => 'Global A']);
+        $courseb = $generator->create_course(['fullname' => 'Global B']);
+
+        $this->setAdminUser();
+
+        $service = new report_service();
+        $courses = $service->get_selectable_courses();
+
+        $this->assertArrayHasKey((int)$coursea->id, $courses);
+        $this->assertArrayHasKey((int)$courseb->id, $courses);
+    }
+
+    /**
+     * Capability-based fallback works even when the user is not enrolled.
+     */
+    public function test_get_selectable_courses_includes_capability_course_without_enrolment(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $course = $generator->create_course(['fullname' => 'Capability Course']);
+
+        $editingteacherid = (int)$DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+        role_assign($editingteacherid, $user->id, \core\context\course::instance($course->id)->id);
+
+        $this->setUser($user);
+
+        $service = new report_service();
+        $courses = $service->get_selectable_courses();
+
+        $this->assertArrayHasKey((int)$course->id, $courses);
     }
 }

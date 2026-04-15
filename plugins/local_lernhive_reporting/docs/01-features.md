@@ -20,6 +20,11 @@ Offer a simple reporting dashboard on top of Moodle reports and analytics.
 4. **Course filter**
 - user selects a course to update tile values
 
+5. **Explicit empty states**
+- no participants in selected course
+- no completion records yet
+- no drilldown rows yet
+
 ## Data model policy (R1)
 
 - read-only access to Moodle core tables

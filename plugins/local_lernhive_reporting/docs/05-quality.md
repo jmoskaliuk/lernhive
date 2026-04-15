@@ -13,9 +13,11 @@
 - `report_service_test` verifies:
   - active participant counting
   - completion metrics calculation
+  - empty completion metrics for courses without participants
   - popular-course ranking order
   - completion table ranking and percentage values
   - role-aware selectable-course filtering
+  - global reporting access visibility
 
 ## Manual QA checklist
 

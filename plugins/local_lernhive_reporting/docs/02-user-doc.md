@@ -20,6 +20,7 @@ A quick reporting entry point that answers common everyday questions without ope
 - plain language labels
 - minimal clicks
 - responsive table/card behavior
+- explicit empty states when there are no participants or no completion records
 
 ## R1 limitations
 
