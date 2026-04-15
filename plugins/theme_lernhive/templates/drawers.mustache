@@ -11,6 +11,10 @@
 {{> core/local/toast/wrapper}}
 <div id="page-wrapper" class="theme-lernhive-shell">
     {{{ output.standard_top_of_body_html }}}
+    {{! 0.9.64: Signal to local_lernhive that this theme provides its own sidebar.
+        The plugin's inject_dashboard_content() checks for this variable before
+        appending a duplicate <nav id="lernhive-sidebar"> to the DOM. }}
+    <script>var lhThemeHasSidebar = true;</script>
     <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
 
     <div class="lernhive-app-shell">

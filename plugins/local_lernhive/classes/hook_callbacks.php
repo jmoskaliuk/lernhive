@@ -1603,7 +1603,12 @@ HTML;
         before_standard_top_of_body_html_generation $hook,
         int $level
     ): void {
-        global $USER, $DB;
+        global $USER, $DB, $PAGE;
+
+        // Skip sidebar injection when LernHive theme is active — it has its
+        // own sidebar. We still inject the welcome banner and stats below;
+        // only the <nav id="lernhive-sidebar"> block is suppressed.
+        $skipSidebar = ($PAGE->theme->name === 'lernhive');
 
         $levelname = level_manager::get_level_name($level);
         $firstname = s($USER->firstname);
@@ -2051,10 +2056,14 @@ document.addEventListener("DOMContentLoaded", function() {
     var sidePanel = document.querySelector("[data-region='sidepanel']");
     if (sidePanel) sidePanel.style.display = "none";
 
-    // 7. Inject LernHive sidebar navigation.
+    // 7. Inject LernHive sidebar navigation (only when theme_lernhive is NOT active).
+    // theme_lernhive provides its own <aside class="lernhive-sidebar"> — injecting
+    // a second <nav id="lernhive-sidebar"> would create a duplicate fixed element.
+    if (typeof lhThemeHasSidebar === 'undefined') {
     var sidebarEl = document.createElement("div");
     sidebarEl.innerHTML = '{$sidebarescaped}';
     document.body.appendChild(sidebarEl.firstElementChild);
+    }
 
     // 8. Clean up course overview block (Explorer simplification).
     if (courseBlock) {
