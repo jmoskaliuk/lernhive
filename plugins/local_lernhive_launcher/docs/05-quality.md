@@ -18,7 +18,8 @@
 - launcher opens from the intended global trigger on desktop and mobile
 - visible actions match role and capability expectations
 - hidden actions do not leave broken or unreachable gaps in the user flow
-- `ContentHub`, `Reports`, `Snack`, and `Community` labels follow canonical product terminology
+- `ContentHub`, `Library`, `Reports`, `Snack`, and `Community` labels follow canonical product terminology
+- `Library` appears only when `local_lernhive_library` is available and the user has `local/lernhive_library:import`
 - `Reports` appears only when `local_lernhive_reporting` is available and the user has `local/lernhive_reporting:view`
 - generic terms reuse Moodle core strings where suitable
 - keyboard interaction and focus handling work for open, close, and action selection

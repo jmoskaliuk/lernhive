@@ -12,7 +12,7 @@
         {
             "title": "Willkommen zu Kursformat und Sichtbarkeit",
             "content": "<p>Das Kursformat bestimmt, wie Inhalte angezeigt werden. Die Sichtbarkeit kontrolliert, wer deinen Kurs sehen kann.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -20,7 +20,7 @@
         {
             "title": "Kursformat wählen",
             "content": "<p>Wähle zwischen 'Wochenformat', 'Themenformat' oder anderen Layouts. Das Format bestimmt die Struktur deines Kursinhalts.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_format",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -28,7 +28,7 @@
         {
             "title": "Sichtbarkeit einstellen",
             "content": "<p>Unter 'Kurs sichtbar' kannst du festlegen, ob der Kurs in der Kursliste angezeigt wird. 'Verborgen' macht ihn unsichtbar für Nutzer/innen ohne Zugriff.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_visible",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -36,7 +36,7 @@
         {
             "title": "Änderungen speichern",
             "content": "<p>Klick auf 'Speichern', um deine Einstellungen zu speichern. Dein Kurs wird jetzt im gewählten Format mit der richtigen Sichtbarkeit angezeigt.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_submitbutton",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"

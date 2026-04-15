@@ -13,7 +13,7 @@
         {
             "title": "Willkommen zur Kurserstellung",
             "content": "<p>Mit wenigen Schritten erstellst du einen neuen Kurs in LernHive. Hier legst du die grundlegenden Informationen fest.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -21,7 +21,7 @@
         {
             "title": "Kursname eingeben",
             "content": "<p>Gib einen aussagekräftigen Namen für deinen Kurs ein. Dieser wird in der Kursliste und oben auf jeder Kursseite angezeigt.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_fullname",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -29,7 +29,7 @@
         {
             "title": "Kurskurzname",
             "content": "<p>Der Kurzkurzname ist kürzer und wird für URLs verwendet. Er sollte keine Sonderzeichen enthalten und ist eindeutig pro System.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_shortname",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -37,7 +37,7 @@
         {
             "title": "Kategorie auswählen",
             "content": "<p>Wähle eine Kategorie für deinen Kurs, um ihn sinnvoll zu organisieren. Nutzer/innen können so deine Kurse leichter finden.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_category",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -45,7 +45,7 @@
         {
             "title": "Kurs speichern",
             "content": "<p>Klick auf 'Speichern und anzeigen' oder 'Speichern', um deinen Kurs zu erstellen. Du kannst dann Aktivitäten hinzufügen.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_submitbutton",
             "sortorder": 4,
             "configdata": "{\"placement\":\"bottom\"}"

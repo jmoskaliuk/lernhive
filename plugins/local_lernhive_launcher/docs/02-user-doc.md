@@ -15,7 +15,7 @@ The Launcher gives users one simple place for important actions such as creating
 ### Teacher or content creator
 - opens the launcher from the global LernHive UI
 - sees a focused set of create and manage actions
-- selects an action such as `ContentHub`, `Reports`, or a creation shortcut
+- selects an action such as `ContentHub`, `Library`, `Reports`, or a creation shortcut
 - lands directly in the correct destination flow
 
 ### Administrator or manager

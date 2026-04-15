@@ -13,7 +13,7 @@
         {
             "title": "Willkommen zu den Einschreibeeinstellungen",
             "content": "<p>Mit Selbsteinschreibung können sich Nutzer/innen selbst in deinen Kurs eintragen, wenn sie den richtigen Schlüssel haben.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -21,7 +21,7 @@
         {
             "title": "Einschreibemethode auswählen",
             "content": "<p>Stelle sicher, dass 'Selbsteinschreibung' als Methode aktiviert ist. Du findest diese Option in den Kurseinstellungen unter 'Einschreibemethoden'.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_enrol",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -29,7 +29,7 @@
         {
             "title": "Einschreibeschlüssel setzen",
             "content": "<p>Gib einen Einschreibeschlüssel ein. Nutzer/innen müssen diesen Schlüssel eingeben, um sich selbst einzuschreiben. Wähle etwas Einfaches und Einprägsames.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_password",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -37,7 +37,7 @@
         {
             "title": "Einstellungen speichern",
             "content": "<p>Klick auf 'Änderungen speichern'. Die Selbsteinschreibung ist jetzt aktiv und deine Nutzer/innen können sich mit dem Schlüssel anmelden.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_submitbutton",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"

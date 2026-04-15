@@ -12,7 +12,7 @@
         {
             "title": "Sitzungen wiederverwendbar machen",
             "content": "<p>Eine Live-Sitzung ist nach dem Ende verloren — es sei denn, du zeichnest sie auf. Aufzeichnungen sind ein einfacher Weg, wertvolle Inhalte auch für Nutzer/innen bereitzustellen, die nicht live dabei sein konnten.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -20,7 +20,7 @@
         {
             "title": "Aufzeichnung aktivieren",
             "content": "<p>Setze den Haken bei 'Die Sitzung kann aufgezeichnet werden'. Erst damit wird der Aufnahme-Button in der Live-Sitzung für dich als Moderator/in verfügbar.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_record, input[name=\"record\"]",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -28,7 +28,7 @@
         {
             "title": "Aufzeichnung automatisch starten",
             "content": "<p>Optional kannst du 'Aufzeichnung ab Sitzungsstart' aktivieren. Dann läuft die Aufnahme sofort, wenn die Sitzung beginnt — das vergisst man sonst leicht im Eifer des Gefechts.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_recordallfromstart, input[name=\"recordallfromstart\"]",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -36,7 +36,7 @@
         {
             "title": "Aufzeichnungen im Kurs anzeigen",
             "content": "<p>Im Bereich 'Aufzeichnungen anzeigen' stellst du ein, ob Nutzer/innen die fertigen Aufnahmen direkt in der Aktivität sehen. Wenn du das aktivierst, erscheinen alle Aufnahmen automatisch als Liste unter dem Sitzungs-Button.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_showrecordings, input[name=\"showrecordings\"]",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -44,7 +44,7 @@
         {
             "title": "Hinweis an die Teilnehmer/innen",
             "content": "<p>Wenn eine Sitzung aufgezeichnet wird, sehen Teilnehmer/innen beim Betreten einen Hinweis darauf. Du solltest das trotzdem zu Beginn der Sitzung kurz explizit ansagen — aus Datenschutz-Respekt und weil es Vertrauen schafft.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 4,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -52,7 +52,7 @@
         {
             "title": "Einstellungen speichern",
             "content": "<p>Speichere mit 'Speichern und anzeigen'. Ab jetzt kannst du in der Sitzung den roten Aufnahme-Button drücken — und nach Ende der Sitzung erscheint die fertige Aufzeichnung in der Aktivität.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_submitbutton",
             "sortorder": 5,
             "configdata": "{\"placement\":\"bottom\"}"

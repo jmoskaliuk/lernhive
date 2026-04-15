@@ -13,7 +13,7 @@
         {
             "title": "Willkommen zur manuellen Einschreibung",
             "content": "<p>Hier kannst du einzelne Nutzer/innen direkt in deinen Kurs einschreiben und ihnen eine Rolle zuweisen.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -21,7 +21,7 @@
         {
             "title": "Nutzer/in suchen",
             "content": "<p>Nutze das Suchfeld, um die Nutzer/in zu finden, die du einschreiben möchtest. Tippe den Namen oder Benutzernamen ein.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "input[placeholder*=\"Nutzer\"]",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -29,7 +29,7 @@
         {
             "title": "Rolle auswählen",
             "content": "<p>Wähle die Rolle für die Nutzer/in: Trainer/in für Kursleiter/innen oder Teilnehmer/in für Schüler/innen.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_roleid",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -37,7 +37,7 @@
         {
             "title": "Einschreiben",
             "content": "<p>Klick auf 'Einschreiben', um die Nutzer/in in den Kurs aufzunehmen. Sie hat dann sofort Zugriff auf alle Kursmaterialien.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_submitbutton",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"

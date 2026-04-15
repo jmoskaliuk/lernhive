@@ -23,6 +23,7 @@ PHPUnit:
 - verify banner only appears on dashboard and only for eligible users
 - verify each start button redirects to intended target URL
 - verify completed tours replay from step 1 after restart
+- verify step progression after welcome step (selector targets resolve, next-step flow works)
 - verify sandbox course exists and stays hidden by default
 
 ## Known gaps

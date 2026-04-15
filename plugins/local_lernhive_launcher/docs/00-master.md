@@ -23,6 +23,7 @@ local_lernhive
 - role-aware launcher entries
 - global quick actions
 - entry to ContentHub
+- entry to Library
 - entry to Reports
 - entry to snack/community creation
 

@@ -49,7 +49,7 @@ class tour_importer {
      *         {
      *             "title": "Welcome",
      *             "content": "This tour shows...",
-     *             "targettype": 0,
+     *             "targettype": 2,
      *             "targetvalue": "",
      *             "placement": 0,
      *             "sortorder": 0
@@ -121,7 +121,7 @@ class tour_importer {
                 $step->tourid = $tourid;
                 $step->title = $stepdata['title'] ?? '';
                 $step->content = $stepdata['content'] ?? '';
-                $step->targettype = (int) ($stepdata['targettype'] ?? 0);
+                $step->targettype = self::normalise_step_targettype($stepdata);
                 $step->targetvalue = $stepdata['targetvalue'] ?? '';
                 $step->sortorder = (int) ($stepdata['sortorder'] ?? $i);
                 $step->configdata = $stepdata['configdata'] ?? '{}';
@@ -415,5 +415,35 @@ class tour_importer {
             return null;
         }
         return $featureid;
+    }
+
+    /**
+     * Normalise step target type values from JSON import payloads.
+     *
+     * Canonical Moodle 4.5+/5.x mapping:
+     * - 0 = CSS selector
+     * - 1 = block
+     * - 2 = unattached (middle of the page)
+     *
+     * Legacy LernHive fixtures used a swapped selector/unattached mapping.
+     * We detect that by combining target type and target value:
+     * - `targettype=2` with a non-empty selector value => selector (0)
+     * - `targettype=0` with an empty target value => unattached (2)
+     *
+     * @param array $stepdata One decoded JSON step payload.
+     * @return int Normalised Moodle target type.
+     */
+    private static function normalise_step_targettype(array $stepdata): int {
+        $targettype = (int) ($stepdata['targettype'] ?? 2);
+        $targetvalue = trim((string) ($stepdata['targetvalue'] ?? ''));
+
+        if ($targettype === 2 && $targetvalue !== '') {
+            return 0;
+        }
+        if ($targettype === 0 && $targetvalue === '') {
+            return 2;
+        }
+
+        return $targettype;
     }
 }

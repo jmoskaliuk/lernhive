@@ -69,61 +69,100 @@ class hook_callbacks {
 
         $css = '<style>
 .local-lernhive-launcher-fallback {
-    margin: 1rem;
-    max-width: 26rem;
+    --lh-launcher-border: #dbe7ee;
+    --lh-launcher-title: #0f2330;
+    --lh-launcher-copy: #415563;
+    --lh-launcher-accent: #0f4c5c;
+    margin: 1rem auto;
+    max-width: min(60rem, calc(100vw - 2rem));
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__panel {
-    border: 1px solid #d9e1e7;
-    border-radius: 1rem;
-    background: #fff;
-    box-shadow: 0 0.75rem 2rem rgba(17, 24, 39, 0.08);
+    border: 1px solid var(--lh-launcher-border);
+    border-radius: 1.125rem;
+    background: linear-gradient(180deg, #f5fafc 0%, #ffffff 18rem);
+    box-shadow: 0 0.9rem 2.5rem rgba(15, 35, 48, 0.09);
+    overflow: hidden;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__summary {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem 1.125rem;
+    gap: 0.4rem;
+    padding: 1.05rem 1.2rem;
     cursor: pointer;
+    list-style: none;
+    border-bottom: 1px solid #e8eff4;
+    background: linear-gradient(120deg, #ffffff 0%, #eff6fb 100%);
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__summary::-webkit-details-marker {
+    display: none;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__title {
+    color: var(--lh-launcher-title);
+    font-size: 1rem;
     font-weight: 700;
+    letter-spacing: 0.01em;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__description,
 .local-lernhive-launcher-fallback .local-lernhive-launcher__copy span,
 .local-lernhive-launcher-fallback .local-lernhive-launcher__empty {
-    color: #52606d;
-    font-size: 0.95rem;
+    color: var(--lh-launcher-copy);
+    font-size: 0.94rem;
+    line-height: 1.4;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__actions {
     display: grid;
-    gap: 0.75rem;
-    padding: 0 1rem 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 0.8rem;
+    padding: 1rem;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__action {
     display: grid;
-    grid-template-columns: 2.5rem 1fr;
-    gap: 0.75rem;
+    grid-template-columns: 2.65rem 1fr;
+    gap: 0.8rem;
     align-items: center;
-    padding: 0.875rem 1rem;
-    border: 1px solid #d9e1e7;
-    border-radius: 0.875rem;
+    padding: 0.9rem 0.95rem;
+    border: 1px solid #d6e2ea;
+    border-radius: 0.95rem;
     color: inherit;
     text-decoration: none;
-    background: #f8fafc;
+    background: #ffffff;
+    transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__action:hover,
 .local-lernhive-launcher-fallback .local-lernhive-launcher__action:focus-visible {
-    border-color: #194866;
+    border-color: var(--lh-launcher-accent);
+    box-shadow: 0 0.45rem 1.4rem rgba(17, 47, 64, 0.16);
+    transform: translateY(-1px);
     outline: none;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__icon {
     display: grid;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.75rem;
-    background: #fff3e8;
-    color: #d97706;
+    width: 2.65rem;
+    height: 2.65rem;
+    border-radius: 0.78rem;
+    background: #edf6ff;
+    color: #0a4f92;
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__action[data-actionid="contenthub"] .local-lernhive-launcher__icon {
+    background: #ebfbf4;
+    color: #1c7d4f;
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__action[data-actionid="library"] .local-lernhive-launcher__icon {
+    background: #fff5e9;
+    color: #9a5c00;
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__action[data-actionid="reports"] .local-lernhive-launcher__icon {
+    background: #eef0ff;
+    color: #3740a0;
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__action[data-actionid="create_snack"] .local-lernhive-launcher__icon {
+    background: #ffeaf3;
+    color: #a91a64;
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__action[data-actionid="create_community"] .local-lernhive-launcher__icon {
+    background: #eafff2;
+    color: #17663f;
 }
 .local-lernhive-launcher-fallback .local-lernhive-launcher__icon svg {
     width: 1.25rem;
@@ -137,7 +176,30 @@ class hook_callbacks {
 .local-lernhive-launcher-fallback .local-lernhive-launcher__copy {
     display: flex;
     flex-direction: column;
-    gap: 0.125rem;
+    gap: 0.16rem;
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__copy strong {
+    color: #132a39;
+    font-size: 0.97rem;
+    letter-spacing: 0.01em;
+}
+.local-lernhive-launcher-fallback .local-lernhive-launcher__empty {
+    margin: 0;
+    padding: 1rem 1.2rem 1.1rem;
+}
+@media (max-width: 640px) {
+    .local-lernhive-launcher-fallback .local-lernhive-launcher__actions {
+        grid-template-columns: 1fr;
+        padding: 0.9rem;
+    }
+    .local-lernhive-launcher-fallback .local-lernhive-launcher__action {
+        grid-template-columns: 2.4rem 1fr;
+        padding: 0.82rem 0.86rem;
+    }
+    .local-lernhive-launcher-fallback .local-lernhive-launcher__icon {
+        width: 2.4rem;
+        height: 2.4rem;
+    }
 }
 </style>';
 
