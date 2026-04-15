@@ -35,16 +35,22 @@ Global action launcher for create, manage, and configure actions that complement
 - keep these entries clearly optional and capability-dependent
 - do not make LXP actions appear as the default primary model in non-LXP usage
 
-### 6. Guided action language
+### 6. Reporting entry
+- include a direct entry to `Reports` when `local_lernhive_reporting` is installed
+- show `Reports` only for users who can access the reporting dashboard
+- keep reporting access action-oriented and avoid turning the launcher into a full admin menu
+
+### 7. Guided action language
 - action labels must be short and outcome-oriented
 - Moodle core strings should be reused where they fit semantically
-- LernHive-specific labels should remain limited to established product terms such as `Launcher`, `ContentHub`, `Snack`, and `Community`
+- LernHive-specific labels should remain limited to established product terms such as `Launcher`, `ContentHub`, `Reports`, `Snack`, and `Community`
 
 ## Baseline Release 1 action inventory
 
-### Always-priority actions
+### Core actions
 - `ContentHub`
 - `Create course`
+- `Reports` (capability-dependent)
 
 ### Conditional Release 1 shortcuts
 - `Create snack`
@@ -54,7 +60,7 @@ Global action launcher for create, manage, and configure actions that complement
 - `ContentHub` is the default orchestration entry for content-related creation paths
 - direct launcher shortcuts should be limited to a very small number of repeated high-value actions
 - `Template`, `Library`, and similar sub-paths should stay behind `ContentHub` in the baseline Release 1 launcher
-- configuration and reporting destinations may be added later only if they remain action-oriented and do not turn the launcher into a second navigation menu
+- broader configuration destinations may be added later only if they remain action-oriented and do not turn the launcher into a second navigation menu
 
 ## Release 1 guardrails
 - launcher is for actions, not for browsing content areas

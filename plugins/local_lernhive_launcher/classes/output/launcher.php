@@ -64,6 +64,7 @@ class launcher implements renderable, templatable {
                 'url' => $action->url->out(false),
                 'iscreatecourse' => $action->icon === 'book-open',
                 'iscontenthub' => $action->icon === 'layout-grid',
+                'isreports' => $action->icon === 'chart-bar',
                 'iscreatesnack' => $action->icon === 'circle-play',
                 'iscreatecommunity' => $action->icon === 'users',
             ];

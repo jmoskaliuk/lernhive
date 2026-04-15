@@ -43,6 +43,7 @@ class action_provider {
         $actions = array_filter([
             self::build_create_course_action(),
             self::build_contenthub_action(),
+            self::build_reports_action(),
             self::build_create_snack_action(),
             self::build_create_community_action(),
         ]);
@@ -137,6 +138,32 @@ class action_provider {
     }
 
     /**
+     * Build the Reports action when the reporting plugin and permission exist.
+     *
+     * @return action|null
+     */
+    protected static function build_reports_action(): ?action {
+        $url = self::resolve_local_plugin_url('lernhive_reporting');
+        if (!$url) {
+            return null;
+        }
+
+        $systemcontext = \core\context\system::instance();
+        if (!has_capability('local/lernhive_reporting:view', $systemcontext)) {
+            return null;
+        }
+
+        return new action(
+            'reports',
+            get_string('actionreports', 'local_lernhive_launcher'),
+            get_string('actionreportsdesc', 'local_lernhive_launcher'),
+            'chart-bar',
+            $url,
+            30
+        );
+    }
+
+    /**
      * Build the Snack shortcut when a target exists.
      *
      * @return action|null
@@ -153,7 +180,7 @@ class action_provider {
             get_string('actioncreatesnackdesc', 'local_lernhive_launcher'),
             'circle-play',
             $url,
-            30
+            40
         );
     }
 
@@ -174,7 +201,7 @@ class action_provider {
             get_string('actioncreatecommunitydesc', 'local_lernhive_launcher'),
             'users',
             $url,
-            40
+            50
         );
     }
 

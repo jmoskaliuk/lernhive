@@ -1,25 +1,28 @@
 # local_lernhive_launcher — Tasks
 
-## Implementation status (0.1.1 — 2026-04-11)
+## Implementation status (0.1.2 — 2026-04-15)
 
 | Ticket | Topic | Status | Notes |
 |---|---|---|---|
-| LH-LAUNCHER-01 | R1 action inventory | done | Decision locked: `Create course`, `ContentHub`, optional `Create snack`/`Create community`. |
-| LH-LAUNCHER-02 | Visibility & permissions | partial | `Create course` + `ContentHub` fully gated (plugin + capability + downstream availability). Snack/Community still rely on file-existence check only. |
-| LH-LAUNCHER-03 | Information architecture | done in design | Single compact flyout, ordering 10/20/30/40 encoded in `action_provider`. |
-| LH-LAUNCHER-04 | Strings & labels | done for R1 core | `actioncontenthub`/`actioncontenthubdesc` live in `local_lernhive_launcher` lang file. Theme prototype strings still need the follow-up cleanup noted below. |
-| LH-LAUNCHER-05 | Target routing map | partial | `Create course` → `course_manager::get_create_course_url()`. `ContentHub` → `/local/lernhive_contenthub/index.php`. Snack/Community still placeholder paths. |
+| LH-LAUNCHER-01 | R1 action inventory | done | Decision locked: `Create course`, `ContentHub`, `Reports`, optional `Create snack`/`Create community`. |
+| LH-LAUNCHER-02 | Visibility & permissions | partial | `Create course`, `ContentHub`, and `Reports` are capability-gated. Snack/Community still rely on file-existence check only. |
+| LH-LAUNCHER-03 | Information architecture | done in design | Single compact flyout, ordering 10/20/30/40/50 encoded in `action_provider`. |
+| LH-LAUNCHER-04 | Strings & labels | done for R1 core | Core action strings (`ContentHub`, `Reports`, create shortcuts) live in `local_lernhive_launcher` lang files. Theme prototype strings still need the follow-up cleanup noted below. |
+| LH-LAUNCHER-05 | Target routing map | partial | `Create course` → `course_manager::get_create_course_url()`. `ContentHub` → `/local/lernhive_contenthub/index.php`. `Reports` → `/local/lernhive_reporting/index.php`. Snack/Community still placeholder paths. |
 | LH-LAUNCHER-06 | UI shell ticket | open | Flyout wiring via theme integration + `launcher_manager::get_theme_context()` exists; focus management and a11y review still open. |
 | LH-LAUNCHER-07 | Backend provider ticket | done for R1 | `action_provider` + immutable `action` value object. Capability and downstream availability evaluated per request; no DB state, no ranking. |
 | LH-LAUNCHER-08 | QA ticket | open | No PHPUnit or Behat coverage for the action provider yet — see "Follow-up" below. |
 
-### Follow-up work called out by the 0.1.1 change
+### Follow-up work called out by the 0.1.2 change
 
 - Tests: add a unit test for `action_provider::build_contenthub_action()`
   covering the four failure modes (plugin missing, capability denied,
   no available cards, older ContentHub without `has_available_cards`)
   and the happy path. The ContentHub side already has
   `card_registry_test::test_has_available_cards_reflects_sibling_state`.
+- Tests: add capability + plugin-availability unit coverage for
+  `action_provider::build_reports_action()` (plugin missing, capability
+  denied, and happy path).
 - Snack / Community: replace the current `resolve_local_plugin_url()`
   stubs with real capability + route checks once the discovery plugin
   exposes stable creation URLs (`LH-LAUNCHER-05` follow-up).
@@ -44,18 +47,20 @@
 |---|---|---|---|---|
 | `ContentHub` | global | users with relevant content creation access | `local_lernhive_contenthub` | core launcher action |
 | `Create course` | global | teachers, course creators, admins with course creation rights | Moodle core or shared LernHive course creation entry | core launcher action |
+| `Reports` | global | teachers, course creators, managers, and other users with reporting capability | `local_lernhive_reporting` dashboard | core launcher action (capability-dependent) |
 | `Create snack` | conditional | users with LXP creation rights and required plugin availability | LXP flow owned outside the launcher | optional direct shortcut |
 | `Create community` | conditional | users with community creation rights and required plugin availability | LXP flow owned outside the launcher | optional direct shortcut |
 
 #### Decisions for Release 1
-- keep the baseline launcher to two always-priority actions: `ContentHub` and `Create course`
+- keep the baseline launcher to three core actions: `Create course`, `ContentHub`, and `Reports`
 - allow `Create snack` and `Create community` only as conditional shortcuts in LXP-capable contexts
 - keep `Template`, `Library`, and similar content sub-paths behind `ContentHub` instead of exposing them all in the launcher baseline
-- do not add reports, navigation destinations, or broad admin menus to the initial launcher inventory
+- do not add broad navigation destinations or admin menu clones to the initial launcher inventory
 
 #### Rationale
 - `ContentHub` already owns orchestration for copy, template, and library paths
 - `Create course` is a frequent high-value action and is already present in the launcher mockup direction
+- `Reports` maps directly to the MVP reporting dashboard and follows the same capability model as the reporting plugin itself
 - direct `Snack` and `Community` shortcuts support the documented LXP model without making LXP the default for every installation
 - a shorter launcher list reduces overload and stays aligned with the action-surface principle
 
@@ -71,6 +76,7 @@
 |---|---|---|---|---|
 | `ContentHub` | visible only to users who can start content-related creation flows | plugin availability plus at least one accessible downstream content path | `local_lernhive_contenthub` is unavailable or no downstream path is accessible | launcher should not expose a dead-end entry |
 | `Create course` | visible to users with valid course creation access | if LernHive teacher course creation is enabled, use `local_lernhive\\course_manager::is_enabled()` plus course creation rights in the target category | course creation is disabled or the user lacks creation rights | primary baseline action |
+| `Reports` | visible only to users who can view reporting | `local_lernhive_reporting` plugin route exists plus `local/lernhive_reporting:view` in system context | reporting plugin is unavailable or capability is missing | routes to reporting dashboard, never to placeholder URLs |
 | `Create snack` | visible only in LXP-capable contexts | required plugin path exists and user has the relevant creation right | LXP creation path unavailable or user lacks creation rights | optional shortcut |
 | `Create community` | visible only in LXP-capable contexts | required plugin path exists and user has the relevant creation right | community creation path unavailable or user lacks creation rights | optional shortcut |
 
@@ -100,13 +106,14 @@
 #### Ordering rule
 1. `Create course`
 2. `ContentHub`
-3. `Create snack` when visible
-4. `Create community` when visible
+3. `Reports` when visible
+4. `Create snack` when visible
+5. `Create community` when visible
 
 #### IA rationale
 - a single list matches the current launcher flyout mockup and theme pattern
 - ordering by action priority is clearer than introducing categories too early
-- optional LXP entries can sit after the two baseline actions without redefining the product around LXP
+- optional LXP entries can sit after the core actions without redefining the product around LXP
 
 #### Release 1 interaction model
 - one global trigger
@@ -128,6 +135,7 @@
 | `Launcher` | LernHive-specific string | `local_lernhive_launcher` | canonical product term |
 | `Create course` | reuse existing wording where possible | Moodle core or stable existing LernHive wording | avoid synonyms such as `New course` |
 | `ContentHub` | LernHive-specific string reuse | `local_lernhive_contenthub` | canonical product term |
+| `Reports` | canonical action label aligned with reporting plugin intent | `local_lernhive_launcher` | simple launcher label for opening reporting dashboard |
 | `Create snack` | mixed label: core verb plus LernHive object | verb from core where practical, `Snack` from owning LernHive term | keep exact term `Snack` |
 | `Create community` | mixed label: core verb plus LernHive object | verb from core where practical, `Community` from owning LernHive term | keep exact term `Community` |
 | action descriptions | launcher-owned strings | `local_lernhive_launcher` | helper copy belongs with the launcher |
@@ -136,6 +144,7 @@
 - use one canonical visible label per action
 - prefer `Create course`
 - keep `ContentHub` unchanged
+- keep `Reports` unchanged
 - keep `Snack` and `Community` unchanged
 - avoid admin-heavy wording in the launcher baseline
 
@@ -155,6 +164,7 @@
 |---|---|---|---|
 | `Create course` | Moodle core or shared LernHive-assisted URL | `/course/edit.php` with the category URL resolved through `local_lernhive\\course_manager::get_create_course_url()` when enabled | launcher routes only; course creation stays outside launcher |
 | `ContentHub` | LernHive plugin screen | `local_lernhive_contenthub` entry URL to be finalized in plugin implementation | `ContentHub` owns copy, template, and library path choice |
+| `Reports` | LernHive plugin screen | `/local/lernhive_reporting/index.php` | reporting logic stays in `local_lernhive_reporting`; launcher only routes |
 | `Create snack` | LXP plugin-owned creation flow | final plugin URL to be defined by the owning snack flow | launcher must not add a parallel snack wizard |
 | `Create community` | LXP plugin-owned creation flow | final plugin URL to be defined by the owning community flow | launcher must not add a parallel community wizard |
 
@@ -165,7 +175,7 @@
 
 #### Current dependency note
 - `Create course` is the most concrete route today because `local_lernhive` already provides a URL helper
-- `ContentHub`, `Snack`, and `Community` still need final implementation URLs from their owning plugins
+- `ContentHub` and `Reports` are now concrete routes; `Snack` and `Community` still need final implementation URLs from their owning plugins
 
 ### LH-LAUNCHER-06 — Prepare UI implementation ticket
 - define trigger placement expectations for desktop and mobile
@@ -176,6 +186,7 @@
 #### Proposed UI shell ticket
 - use the compact flyout pattern as the Release 1 default
 - place the launcher trigger in the left-oriented global shell, visually aligned with navigation but clearly separate from navigation items
+- in sidebar mode, open the launcher downward over the left rail (icon-grid pattern) instead of rolling out to the right
 - keep the dock-style pattern as an optional later enhancement, not the baseline requirement
 
 #### Functional behaviour
@@ -229,11 +240,12 @@
 #### Proposed QA checklist
 - manager sees baseline actions when routes are available
 - eligible teacher sees `Create course` when course creation is enabled
+- users with `local/lernhive_reporting:view` see `Reports` and can open the dashboard
 - users without creation rights do not see dead-end launcher actions
 - `Create snack` and `Create community` appear only in intended LXP-capable contexts
 - launcher order remains stable across desktop and mobile
 - launcher can be operated with keyboard only
-- visible labels use `Launcher`, `ContentHub`, `Snack`, and `Community` consistently
+- visible labels use `Launcher`, `ContentHub`, `Reports`, `Snack`, and `Community` consistently
 - launcher still behaves correctly if optional downstream plugins are disabled
 
 ## Open questions

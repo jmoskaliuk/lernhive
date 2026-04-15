@@ -23,9 +23,8 @@
 }
 
 // Launcher slot in the brand row (desktop sidebar).
-// 0.9.59: launcher moves from page-header actions to the brand row.
-// Dropdown opens to the RIGHT (position: fixed left: $lh-sidebar-width) so it
-// clears the sidebar's overflow-y: auto container without being clipped.
+// 0.9.60: dropdown opens DOWNWARD over the left rail as a compact icon grid.
+// This scales better once the launcher grows to ~9 actions.
 .lernhive-brand__launcher {
     flex-shrink: 0;
     position: relative;
@@ -58,20 +57,31 @@
         }
     }
 
-    // Dropdown: fixed position so it escapes sidebar overflow-y clipping.
-    // Opens horizontally (flex-direction: row) to the right of the sidebar.
+    // Sidebar launcher dropdown.
+    // Mobile: anchored below the trigger.
+    // Desktop: still below trigger, constrained to sidebar width.
     .lernhive-launcher__dropdown {
-        position: fixed;
-        left: $lh-sidebar-width;
-        top: $lh-spacing-lg;
-        right: auto;
-        flex-direction: row;
-        flex-wrap: wrap;
-        max-width: calc(100vw - #{$lh-sidebar-width} - #{$lh-spacing-md});
+        position: absolute;
+        top: calc(100% + #{$lh-spacing-xs});
+        right: 0;
+        left: auto;
+        display: grid;
+        grid-template-columns: repeat(3, 2.5rem);
+        grid-auto-rows: 2.5rem;
         gap: $lh-spacing-xs;
         padding: $lh-spacing-sm;
         border-radius: $lh-radius;
         z-index: 200;
+        min-width: auto;
+        width: auto;
+        max-width: calc(100vw - #{$lh-spacing-md} - #{$lh-spacing-md});
+        justify-content: end;
+    }
+
+    @media (min-width: $lh-bp-desktop) {
+        .lernhive-launcher__dropdown {
+            max-width: calc(#{$lh-sidebar-width} - #{$lh-spacing-md} - #{$lh-spacing-md});
+        }
     }
 }
 
