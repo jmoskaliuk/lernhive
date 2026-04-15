@@ -452,3 +452,178 @@ Once the Hetzner pipeline deploys new SCSS, the compiled theme CSS on the server
 - treat ContentHub as a themed decision surface that routes into distinct plugin flows for Copy, Template, and Library
 - treat course pages as content-first surfaces; Context Helper and block output may appear in a secondary helper area instead of becoming primary navigation
 - treat Snack-oriented surfaces as short-form presentation variants with visible duration, compact actions, and linear step treatment; actual Snack detection remains outside the theme
+
+## Design System Implementation Guide (2026-04-15)
+
+Dieser Abschnitt beschreibt die SCSS-Umsetzung der finalisierten Design-Entscheidungen aus der Design-Session vom 15. April 2026. Die kanonische Referenz ist `mockups/design-system-reference.html`.
+
+### Icon-Taxonomie — SCSS-Regeln
+
+```scss
+// Typ 1: Navigation Icon — IMMER transparent, auch aktiv
+.lh-icon-nav {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: transparent;
+  color: $lh-text-secondary;
+  &:hover { background: rgba($lh-primary, .08); }
+  &--active { background: transparent; color: $lh-accent; } // NUR Farbe, kein Hintergrund
+  &--on-dark { color: rgba(#fff, .7); &:hover { background: rgba(#fff, .10); } }
+  svg { fill: none; stroke: currentColor; stroke-width: 2; }
+}
+
+// Typ 2: Artifact Icon — IMMER sichtbarer Kasten
+.lh-icon-artifact {
+  width: 38px; height: 38px; border-radius: 9px;
+  // background + color IMMER gesetzt — kein transparent erlaubt
+  &--course    { background: #dbeafe; color: #1e4d8c; }
+  &--snack     { background: $lh-accent-light; color: $lh-accent-dark; }
+  &--community { background: #ede9fb; color: #5b3fa6; }
+  &--tour      { background: #dcfce7; color: #166534; }
+  &--generic   { background: #e2edf2; color: #3d6b80; }
+  &--lock      { background: $lh-bg; color: $lh-text-light; border: 1px solid $lh-border; }
+}
+
+// Typ 3: Action Icon — IMMER sichtbarer Vollkreis (auch vor Hover)
+.lh-icon-action {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba($lh-primary, .08);   // ← niemals transparent als Default
+  color: $lh-text-secondary;
+  &:hover { transform: scale(1.10); box-shadow: 0 2px 8px rgba(#000, .14); background: rgba($lh-primary, .15); }
+  &--primary { background: $lh-accent; color: #fff; }
+  &--nav     { background: $lh-primary; color: #fff; }
+  &--danger  { background: rgba($lh-danger, .09); color: $lh-danger; }
+  &--on-dark { background: rgba(#fff, .12); color: rgba(#fff, .75); } // ← nicht transparent!
+  svg { fill: none; stroke: currentColor; stroke-width: 2; }
+}
+
+// Typ 4: Information Icon — IMMER sichtbares Rechteck, cursor: help, kein grow
+.lh-icon-info {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: $lh-border-light;         // ← immer sichtbar, muss zu Kontext kontrastieren
+  color: $lh-text-secondary;
+  cursor: help;
+  &:hover { background: $lh-border; }  // nur Hintergrund dunkler — kein scale, kein shadow
+  &--help    { background: #dbeafe; color: #1e4d8c; }
+  &--warning { background: $lh-accent-light; color: $lh-accent-dark; }
+  &--success { background: #dcfce7; color: #166534; }
+  &--error   { background: $lh-danger-light; color: $lh-danger; }
+  &--locked  { background: $lh-bg; color: $lh-text-light; border: 1px dashed $lh-border; }
+  svg { fill: none; stroke: currentColor; stroke-width: 2; }
+}
+```
+
+### Button-System — alle 8px, keine Pills
+
+```scss
+// Standalone-Buttons (Seite, Zone B, CTA Strip)
+.lh-btn-start { border-radius: 8px; background: $lh-accent; color: #fff; }
+.lh-btn-open  { border-radius: 8px; background: $lh-primary; color: #fff; }
+.lh-btn-ghost { border-radius: 8px; background: transparent; border: 1px solid $lh-border; }
+
+// Card-Buttons (in .lh-plugin-card__actions)
+.lh-plugin-btn--start { border-radius: 8px; /* orange */ }
+.lh-plugin-btn--open  { border-radius: 8px; /* navy  */ }
+.lh-plugin-btn--ghost { border-radius: 8px; /* outline */ }
+
+// CTA Strip + Zone B CTAs
+.lh-cta-strip__cta        { border-radius: 8px; /* nicht pill! */ }
+.lh-plugin-infobar__cta   { border-radius: 8px; /* nicht pill! */ }
+
+// Tags sind die EINZIGEN Pills im System
+.lh-plugin-tag { border-radius: $lh-radius-pill; } // bleibt pill
+```
+
+### Sidebar Nav — Icon-Wrapper-Muster
+
+```mustache
+{{! Korrekte Struktur: Icon in .lh-nav-icon Wrapper }}
+<a href="{{url}}" class="lh-nav-item {{#active}}lh-nav-item--active{{/active}}">
+  <div class="lh-nav-icon">
+    {{! Lucide SVG — fill:none, stroke:currentColor }}
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <use href="#icon-home"/>
+    </svg>
+  </div>
+  {{label}}
+</a>
+```
+
+```scss
+.lh-nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px;
+  color: rgba(#fff, .6); font-weight: 600;
+  &:hover { background: rgba(#fff, .07); }
+  &--active { background: rgba(#fff, .10); color: #fff; }
+}
+.lh-nav-icon {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: rgba(#fff, .10);
+  .lh-nav-item--active & { background: rgba($lh-accent, .22); }
+  svg { width: 14px; height: 14px; stroke: rgba(#fff, .65);
+        .lh-nav-item--active & { stroke: $lh-accent; } }
+}
+```
+
+### Sidebar Launcher-Trigger
+
+```mustache
+<div class="lernhive-sidebar__brand">
+  <div class="lernhive-sidebar__wordmark">LernHive</div>
+  {{! Launcher: Typ 3 Action Icon — oranger Vollkreis }}
+  <button class="lernhive-sidebar__launcher" aria-label="{{#str}}launcher{{/str}}">
+    {{> theme_lernhive/lucide_layout-grid }}
+  </button>
+</div>
+```
+
+```scss
+.lernhive-sidebar__brand { display: flex; align-items: center; gap: 10px; /* ... */ }
+.lernhive-sidebar__launcher {
+  width: 30px; height: 30px;
+  border-radius: 50%;          // Vollkreis — Typ 3 Action
+  background: $lh-accent;      // orange fill — primary action
+  // Kein rgba(white, .12) — das sieht auf dunkelblau schwarz aus
+  border: none; cursor: pointer;
+  box-shadow: 0 2px 6px rgba($lh-accent, .35);
+  svg { stroke: #fff; fill: none; }
+}
+```
+
+### App Shell Topbar — 5-Ebenen-Layout
+
+```
+[Topbar 48px]  [Launcher-Panel | Trennstrich | Action Icons]
+[Zone 0]       [h1 + Breadcrumb          | Page Actions   ]
+[Zone A]       [← Back | Name | Tagline | Tags | ? Help   ] sticky top:48px
+[Zone B]       [Stats / Progress                | CTA      ]
+[Content]      [Cards direkt auf $lh-bg                    ]
+[Dock]         [                    fixed bottom-right     ]
+```
+
+```scss
+// Topbar
+.lernhive-page-header { height: 48px; /* statt 60px */ }
+
+// Zone 0 (nur auf Nicht-Plugin-Shell-Seiten)
+.lh-zone0 {
+  background: $lh-bg;
+  padding: 14px 24px 12px;
+  border-bottom: 1px solid rgba($lh-border, .6);
+  // Auf Plugin-Shell-Seiten ausblenden:
+  .lernhive-page:has(.lh-plugin-header) & { display: none; }
+}
+
+// Zone A (bereits als .lh-plugin-header vorhanden — CSS-Klassen angleichen)
+.lh-plugin-header {
+  position: sticky; top: 48px; // direkt unter Topbar
+  border-top: 3px solid $lh-primary; // kein Card-Rahmen!
+  border-radius: 0; box-shadow: none;
+}
+
+// Zone B
+.lh-plugin-infobar {
+  border-radius: 0; // kein Card-Rahmen!
+}
+```

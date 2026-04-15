@@ -96,13 +96,14 @@
         }
     }
 
-    // Active / current destination
+    // Active / current destination — ONLY colour change, never a background box.
+    // Typ 1 rule: transparent background always, even when active.
     &--active {
-        background: rgba($lh-accent, 0.12);
+        background: transparent;
         color: $lh-accent;
 
         &.lh-icon-nav--on-dark {
-            background: rgba($lh-accent, 0.20);
+            background: transparent;
             color: $lh-accent;
         }
     }
@@ -180,26 +181,37 @@
     padding: 0;
     text-decoration: none;
 
-    // Base: neutral circle — suitable for secondary/contextual actions
-    background: $lh-bg;
+    // Base: ALWAYS a visible neutral circle — never transparent.
+    // Light surface: rgba(primary, .08). This circle is visible before any hover.
+    // The circle IS the defining shape of Typ 3 — not just a hover effect.
+    background: rgba($lh-primary, 0.08);
     color: $lh-text-secondary;
-    border: 1px solid $lh-border;
+    border: none;
 
     .fa { font-size: 0.9375rem; line-height: 1; }
+
+    // SVG icons inside action icons
+    svg {
+        width: 1rem;
+        height: 1rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
 
     transition:
         transform   0.15s ease,
         box-shadow  0.18s ease,
         background  0.15s ease,
-        color       0.15s ease,
-        border-color 0.15s ease;
+        color       0.15s ease;
 
     &:hover,
     &:focus-visible {
         transform: scale(1.10);
-        background: $lh-border;
+        background: rgba($lh-primary, 0.15);
         color: $lh-primary;
-        border-color: $lh-secondary-dark;
         text-decoration: none;
         box-shadow: 0 2px 8px rgba($lh-primary, 0.15);
     }
@@ -240,35 +252,35 @@
         }
     }
 
-    // Danger — destructive actions (Delete, Revoke)
+    // Danger — destructive actions (Delete, Revoke).
+    // ALWAYS a visible circle — lila tint as base, not transparent.
     &--danger {
-        background: transparent;
+        background: rgba($lh-danger, 0.09);
         color: $lh-danger;
-        border-color: $lh-border;
+        border: none;
 
         &:hover,
         &:focus-visible {
+            transform: scale(1.10);
             background: $lh-danger-light;
             color: darken($lh-danger, 5%);
-            border-color: lighten($lh-danger, 20%);
             box-shadow: 0 2px 8px rgba($lh-danger, 0.15);
         }
     }
 
-    // On-dark variant — for use in the Context Dock (dark background)
+    // On-dark variant — for use in the Context Dock and dark sidebar.
+    // ALWAYS a visible circle — white tint as base, not transparent/dark.
     &--on-dark {
-        background: $lh-primary-dark;
-        color: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.30), 0 4px 16px rgba(0, 0, 0, 0.20);
+        background: rgba(255, 255, 255, 0.12);
+        color: rgba(255, 255, 255, 0.75);
+        border: none;
 
         &:hover,
         &:focus-visible {
-            transform: scale(1.10) translateY(-2px);
-            background: lighten($lh-primary-dark, 6%);
-            border-color: rgba(255, 255, 255, 0.28);
+            transform: scale(1.10);
+            background: rgba(255, 255, 255, 0.22);
             color: #fff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.38), 0 8px 28px rgba(0, 0, 0, 0.22);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20);
         }
     }
 
@@ -317,23 +329,35 @@
     height: 28px;
     border-radius: 6px;
     flex-shrink: 0;
-    // Base neutral chip — used when no semantic modifier applies
-    background: $lh-bg;
+    // Base: ALWAYS a visible rounded rectangle.
+    // Must contrast against the context background — never $lh-bg on $lh-bg.
+    // On white card surfaces: $lh-border-light is visibly lighter than white.
+    // On $lh-bg page background: use a coloured modifier (--help, --warning, etc.).
+    background: $lh-border-light;
     color: $lh-text-secondary;
-    border: 1px solid $lh-border;
-    // Default to `help` — `title` tooltip is expected
+    border: none;
     cursor: help;
-    // Explicitly NO box-shadow, NO transition on transform/scale
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    // Never a control — undo any inherited button / link decoration
+    // NO transform/scale/lift on hover — distinguishes Info from Action.
+    transition: background 0.15s ease, color 0.15s ease;
     text-decoration: none;
     user-select: none;
 
     .fa { font-size: 0.8125rem; line-height: 1; }
 
-    // Passive hover: only a subtle tint deepening, never a grow/lift
+    // SVG icons inside info chips
+    svg {
+        width: 0.875rem;
+        height: 0.875rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    // Passive hover: background deepens — no scale, no shadow, no colour shift.
     &:hover {
-        background: darken($lh-bg, 3%);
+        background: darken($lh-border-light, 4%);
     }
 
     // If an info chip receives focus (e.g. tabbable because it hosts a
@@ -345,11 +369,12 @@
 
     // ── Status modifiers ─────────────────────────────────────────────────────
 
-    // Content locked / not yet available — muted, no strong colour
+    // Content locked / not yet available — muted.
+    // Dashed border is intentional: signals "not yet available" without urgency.
     &--locked {
         background: $lh-bg;
-        color: $lh-text-secondary;
-        border-color: $lh-border;
+        color: $lh-text-light;
+        border: 1px dashed $lh-border;
     }
 
     // Completed state — green, calm
@@ -375,13 +400,14 @@
 
     // ── Semantic modifiers ───────────────────────────────────────────────────
 
-    // Help — circle-help next to a form label or setting
+    // Help — circle-help next to a form label or setting.
+    // ALWAYS has a visible blue-tint box — never transparent.
     &--help {
-        background: transparent;
-        color: $lh-text-secondary;
-        border-color: $lh-border;
+        background: #dbeafe;
+        color: #1e4d8c;
+        border: none;
 
-        &:hover { color: $lh-primary; border-color: $lh-primary; }
+        &:hover { background: darken(#dbeafe, 5%); }
     }
 
     // Warning — inline warning in forms / alerts

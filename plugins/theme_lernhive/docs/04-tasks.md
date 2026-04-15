@@ -174,3 +174,66 @@
 - [ ] format_lernhive_snack: move snack_*.mustache out of theme (ADR-01, target 0.10.0)
 - [ ] format_lernhive_community: community feed rendering (ADR-01, target 0.11.0)
 - [ ] Decide whether format_lernhive_classic is needed or if format_topics suffices
+
+## Design System Consolidation — 2026-04-15 (Abend-Session)
+
+### Abgeschlossen in dieser Session
+
+- [x] **Design System Reference** (`mockups/design-system-reference.html`) — kanonisches Referenzdokument mit allen Tokens, Icon-Taxonomie (4 Typen), Buttons, Tags, CTA Strip, Plugin Shell (Zone A+B), Cards, App Shell 5-Ebenen-Diagramm. Dient als einzige Wahrheitsquelle für alle künftigen Implementierungen.
+- [x] **Design Vocabulary + Icon Matrix** aktualisiert — `docs/design-vocabulary.md` + `mockups/icon-matrix.md` spiegeln die finalisierten Regeln.
+- [x] **Neue Mockups** erstellt:
+  - `mockups/dashboard.html` — Dashboard ohne Plugin Shell (Zone 0), Launcher-Panel, CTA Strip, Today/My Courses/Recommended
+  - `mockups/course-page.html` — voller Plugin Shell (Zone A+B), Kursnavigation links in Sidebar
+  - `mockups/explore.html` — LXP Discover-Surface, Zone A+B mit Filter-Bar
+
+### Finalisierte Design-Entscheidungen (in dieser Session bestätigt)
+
+| Entscheidung | Regel | Konsequenz |
+|---|---|---|
+| Icon Typ 1 Navigation | Immer transparenter Hintergrund — auch im aktiven Zustand. Aktiv = nur Farbwechsel | `.lh-icon-nav--active { background: transparent }` |
+| Icon Typ 2 Artifact | Immer sichtbarer farbiger Kasten — muss zum Kontext kontrastieren | Kein `background: transparent` erlaubt |
+| Icon Typ 3 Action | Immer sichtbarer Vollkreis — vor Hover, hell: `rgba(primary,.08)`, dunkel: `rgba(white,.12)` | Kein `background: transparent` als Default |
+| Icon Typ 4 Information | Immer sichtbares abgerundetes Rechteck (6px) — `cursor: help`, kein grow | Trennt sich von Artifact (Quadrat) und Action (Kreis) |
+| Buttons | Alle Buttons `border-radius: 8px`. **Pill ausschließlich für Tags** | `.lh-btn-start`, `.lh-btn-open`, `.lh-btn-ghost` — alle 8px |
+| Back-Button Zone A | Zeigt **konkreten Eltern-Kontext** — nie "← Dashboard" (schon in Sidebar-Nav) | Content-spezifisches Label zwingend |
+| App Shell Topbar | Launcher-Trigger = **oranger Vollkreis** neben LernHive-Logo in Sidebar. Klick öffnet Panel in linker Topbar-Hälfte | `lh-sidebar__launcher { background: var(--lh-accent); border-radius: 50% }` |
+
+## Open — R1 scope (nach Design-Session ergänzt)
+
+- [ ] **0.9.65 — Icon-Taxonomie implementieren** (`_icons.scss` + alle Templates):
+  - **Typ 1 Navigation** — `.lh-icon-nav--active`: `background: transparent !important` — nur Farbwechsel, nie Quadrat/Kreis
+  - **Typ 3 Action** — `.lh-icon-action`: Default `background: rgba($lh-primary, .08)` (nicht `transparent`). `.lh-icon-action--on-dark`: Default `background: rgba(#fff, .12)`. Gilt für alle Vorkommen: User Block, Context Dock, Topbar Actions, Card Buttons (Info-Icon)
+  - **Typ 4 Information** — `.lh-icon-info` neu einführen: 28px, 6px radius, `cursor: help`, immer sichtbarer Kasten, kein scale/shadow beim Hover. Modifiers: `--help`, `--warning`, `--success`, `--error`, `--locked`, `--new`, `--pending`
+  - Referenz: `mockups/design-system-reference.html` Sektion 3
+
+- [ ] **0.9.66 — Button-System vereinheitlichen** (`_buttons.scss` + alle Templates):
+  - Standalone-Buttons (`.lh-btn`): `border-radius: 8px` statt `$lh-radius-pill`
+  - CTA Strip Button (`.lh-cta-strip__cta`): `border-radius: 8px`
+  - Zone B CTA (`.lh-plugin-infobar__cta`): `border-radius: 8px`
+  - Neue Klassen einführen: `.lh-btn-start` (orange, 8px), `.lh-btn-open` (navy, 8px), `.lh-btn-ghost` (outline, 8px), `.lh-btn-action` (Kreis, Typ-3-Icon in Cards)
+  - Tags (`.lh-plugin-tag`): behalten `border-radius: $lh-radius-pill` — **einzige Pills im System**
+  - Referenz: `mockups/design-system-reference.html` Sektion 5
+
+- [ ] **0.9.67 — App Shell Header refaktorieren** (`_layout.scss`, `drawers.mustache`):
+  - **Sidebar Brand Row**: LernHive-Wordmark links, Launcher-Trigger rechts als oranger Vollkreis (`background: $lh-accent; border-radius: 50%`). Kein Icon-Kasten (Quadrat), kein weiß-transparentes Pseudo-Quadrat.
+  - **Sidebar Nav Items**: Icon in `.lh-nav-icon` Wrapper (24px, border-radius 6px, rgba-weißer Tint). Aktives Item: Row-Highlight `rgba(#fff, .10)` + Icon-Box `rgba($lh-accent, .22)`. Text weiß. Kein Border/Rahmen.
+  - **Topbar** (48px): Linke Hälfte = Launcher-Panel (`.lh-launcher-icon` als Vollkreis-Buttons, `rgba(primary,.07)`). Rechte Hälfte = Action Icons (Bell, Avatar, Settings, Logout). Border-Right zwischen beiden Hälften als Trenner.
+  - **Zone 0**: `background: $lh-bg`, Breadcrumb links, h1, Page-Action-Icons rechts. Auf Plugin-Shell-Seiten ausgeblendet (`:has(.lh-plugin-header)`).
+  - Referenz: `mockups/design-system-reference.html` Sektion 0 + alle drei neuen Mockups
+
+- [ ] **0.9.68 — Dashboard-Content-Muster** (`_dashboard.scss`, `drawers.mustache`/Dashboard-Block):
+  - Abschnitte: "Today" (fällige + laufende Items), "My Courses" (Fortschrittskarten), "Recommended" (Snacks)
+  - Section-Header-Muster: Icon (Typ 1 Nav, inline 16px) + Titel + optionaler "View all →"-Link
+  - Card-Grid: `display: grid; gap: 14px` — 2-spaltig für Today, 3-spaltig für My Courses
+  - Referenz: `mockups/dashboard.html`
+
+- [ ] **0.9.69 — Course-Page-Sidebar** (`sidebar_course.mustache`, `_navigation.scss`):
+  - Kursnavigation kommt in linke Sidebar: nach `<hr class="lernhive-nav__divider">`, Section-Label "Course Navigation", Section-Items mit Typ-2-Artifact Icons (check=abgeschlossen, play=aktiv, lock=gesperrt)
+  - Kein rechtes Spalten-Layout mehr — Content-Bereich ist einspaltig
+  - Referenz: `mockups/course-page.html`
+
+- [ ] **0.9.70 — Explore-Surface** (`explore_shell.mustache`, `_layout.scss`):
+  - Zone A ohne Back-Button (Explore ist Toplevel in der Sidebar-Nav)
+  - Zone B mit Filter-Bar (aktive Filter als Ghost-Buttons mit ×, Search, Sort)
+  - Grid-Inhalt: Featured (full-width Hero-Card) + Results (3-spaltig, gemischte Typen)
+  - Referenz: `mockups/explore.html`
