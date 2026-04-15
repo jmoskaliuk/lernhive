@@ -677,32 +677,33 @@
         min-width: 0;
     }
 
-    // Reset section-toggle chevrons.
-    // 0.9.59: Moodle 5.x uses generic Bootstrap .btn (+ .btn-icon) without
-    // the legacy .courseindex-chevron / .icons-collapse-expand class names on
-    // every install, so class-only selectors are unreliable. We target ALL
-    // buttons inside section-title rows AND keep the class fallbacks.
-    // CSS custom properties do NOT support !important — setting variables
-    // without !important is fine here because:
-    //   (a) our selector has higher specificity than Bootstrap's .btn (one
-    //       extra parent class: .lernhive-course-index__body .courseindex-section-title)
-    //   (b) the CSS property overrides use !important for the computed values.
-    .courseindex-section-title button,
-    .courseindex-section-title a[data-bs-toggle],
+    // 0.9.60: Nuclear button reset — target by ELEMENT TYPE, not class.
+    // Previous approaches (class selectors .courseindex-chevron, parent-scoped
+    // .courseindex-section-title button) failed because Moodle 5.x DOM layout
+    // varies. By targeting `button` and `[data-bs-toggle]` directly inside
+    // .lernhive-course-index__body we guarantee every section toggle is reset
+    // regardless of its class, regardless of DOM nesting depth.
+    //
+    // !important beats Bootstrap .btn.btn-icon (specificity 20) because
+    // CSS !important always wins over non-!important regardless of specificity.
+    button,
+    [data-bs-toggle="collapse"],
     .courseindex-chevron,
     .icons-collapse-expand {
-        // Bootstrap 5 CSS custom properties (no !important — not supported).
+        // Reset Bootstrap 5 CSS custom properties (no !important — not supported).
         --bs-btn-bg: transparent;
         --bs-btn-color: rgba(255, 255, 255, 0.6);
         --bs-btn-border-color: transparent;
-        --bs-btn-hover-bg: transparent;
+        --bs-btn-hover-bg: rgba(255, 255, 255, 0.1);
         --bs-btn-hover-border-color: transparent;
         --bs-btn-hover-color: #fff;
         --bs-btn-active-bg: transparent;
         --bs-btn-active-border-color: transparent;
         --bs-btn-focus-shadow-rgb: 0, 0, 0;
+        --bs-btn-padding-x: 0;
+        --bs-btn-padding-y: 0;
 
-        // Property overrides — these DO support !important and beat Bootstrap.
+        // CSS properties with !important beat any Bootstrap selector.
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -713,14 +714,17 @@
         padding: 0 !important;
         border: 0 !important;
         border-color: transparent !important;
+        border-width: 0 !important;
         background: transparent !important;
         background-color: transparent !important;
         background-image: none !important;
         box-shadow: none !important;
+        outline: none;
         color: rgba(255, 255, 255, 0.6) !important;
-        text-decoration: none;
+        text-decoration: none !important;
         flex: 0 0 auto;
-        line-height: 1;
+        line-height: 1 !important;
+        font-size: inherit !important;
 
         &:hover,
         &:focus-visible {
@@ -735,10 +739,15 @@
             color: rgba(255, 255, 255, 0.9) !important;
         }
 
+        &:focus-visible {
+            outline: 2px solid rgba($lh-accent, 0.6) !important;
+            outline-offset: 1px;
+        }
+
         // Icon elements inside the button.
         .icon, .fa, svg {
-            margin: 0;
-            font-size: 0.75rem;
+            margin: 0 !important;
+            font-size: 0.75rem !important;
             color: inherit !important;
             width: 1rem;
             height: 1rem;
@@ -877,15 +886,14 @@
     padding-top: $lh-spacing-sm;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
 
-    // 0.9.59: Hide the Moodle Navigation block and any HTML block that
-    // replicates the site nav tree. LernHive renders its own curated
-    // navitems via the custom nav — a second, unstyled nav tree inside the
-    // sidebar clutters the layout and duplicates items. Admins should
-    // remove block_navigation from the sidebar-bottom region entirely;
-    // this CSS is a safety-net while that cleanup happens.
-    .block_navigation,
-    .block[data-block="navigation"],
-    .block[data-block="site_main_menu"] {
+    // 0.9.60: Hide ALL Moodle blocks in the sidebar-bottom region.
+    // LernHive renders its own curated navitems — any block placed here
+    // (Navigation, Site main menu, HTML, etc.) duplicates and clutters the
+    // sidebar. Admins should remove blocks from this region via
+    // Site Administration → Blocks. This CSS is a broad safety-net.
+    // If a specific block IS desired in the sidebar in future, add an
+    // explicit allow-list exception here.
+    .block {
         display: none !important;
     }
 

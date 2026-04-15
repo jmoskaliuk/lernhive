@@ -371,6 +371,9 @@ $lh-bp-tablet:   768px;
 
             // Moodle 5.x: no photo → <span class="userinitials size-35 bg-color-X">AU</span>
             // We hide the "AU" text and show a Lucide "user" person icon via CSS mask.
+            // 0.9.59b: $lh-primary-light = $lh-bg = #f3f5f8 → circle was invisible.
+            // Use rgba($lh-primary, 0.14) which gives a distinct light-blue tint
+            // that reads clearly against the #f3f5f8 page-header background.
             .userinitials {
                 font-size: 0 !important;         // hide initials text
                 color: transparent !important;
@@ -380,7 +383,7 @@ $lh-bp-tablet:   768px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: $lh-primary-light !important;  // override Moodle's bg-color-X
+                background: rgba($lh-primary, 0.14) !important;  // visible tint on $lh-bg
                 flex-shrink: 0;
                 position: relative;
 
