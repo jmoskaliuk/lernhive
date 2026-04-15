@@ -5,6 +5,10 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
+
+    LernHive login page — split-screen layout (0.9.62).
+    Left panel:  hero / tagline / features / course teaser.
+    Right panel: Moodle login form (output.main_content).
 }}
 {{> theme_boost/head }}
 <body {{{ bodyattributes }}}>
@@ -13,26 +17,68 @@
     {{{ output.standard_top_of_body_html }}}
     <a class="lernhive-skip-link" href="#maincontent">Skip to main content</a>
 
-    <main id="page" class="lernhive-login__page">
-        {{! #maincontent is Moodle's skip-link target — core CSS forces it to
-            height:1px; overflow:clip. Never put real content inside it. }}
-        <div id="maincontent" tabindex="-1" aria-hidden="true"></div>
+    <main id="page" class="lernhive-login__page lernhive-login__page--split">
+
+        {{! ── LEFT: Hero panel ─────────────────────────────────────────── }}
+        <div class="lernhive-login__hero" aria-hidden="true">
+
+            <div class="lernhive-login__hero-brand">
+                <span class="lernhive-login__logo">Lern<span>Hive</span></span>
+                <span class="lernhive-login__badge">LXP Platform</span>
+            </div>
+
+            <div class="lernhive-login__hero-headline">
+                <h2>{{{ herotagline }}}</h2>
+                <p>{{ herodesc }}</p>
+            </div>
+
+            <ul class="lernhive-login__features" role="list">
+                {{#herofeatures}}
+                <li class="lernhive-login__feature">
+                    <span class="lernhive-login__feature-icon" aria-hidden="true">{{{ icon }}}</span>
+                    <span class="lernhive-login__feature-body">
+                        <strong>{{ title }}</strong>
+                        <span>{{ desc }}</span>
+                    </span>
+                </li>
+                {{/herofeatures}}
+            </ul>
+
+            {{#hascourses}}
+            <div class="lernhive-login__courses">
+                <p class="lernhive-login__courses-label">{{#str}} hero_availablecourses, theme_lernhive {{/str}}</p>
+                <ul role="list">
+                    {{#herocourses}}
+                    <li>
+                        <a href="{{ url }}" class="lernhive-login__course-card">
+                            <span class="lernhive-login__course-dot" style="background:{{ color }}"></span>
+                            <span class="lernhive-login__course-name">{{ name }}</span>
+                            <svg class="lernhive-login__course-arrow" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                    </li>
+                    {{/herocourses}}
+                </ul>
+            </div>
+            {{/hascourses}}
+        </div>
+
+        {{! ── RIGHT: Login form ────────────────────────────────────────── }}
         <section class="lernhive-login__panel">
-            {{! Brand is already rendered inside Moodle's login form content — no duplicate here. }}
+            {{! #maincontent is Moodle's skip-link target — core CSS forces it to
+                height:1px; overflow:clip. Never put real content inside it. }}
+            <div id="maincontent" tabindex="-1" aria-hidden="true"></div>
             <div class="lernhive-login__content">
                 {{{ output.main_content }}}
             </div>
         </section>
+
     </main>
 
-    {{! Floating privacy / cookies button — bottom-right corner.
-        Replaces the Moodle-rendered "Cookies notice" button which sits inside
-        the login card. The original is hidden via CSS in _login.scss. }}
+    {{! Floating privacy / cookies button — bottom-right corner. }}
     <a href="{{{ config.wwwroot }}}/admin/tool/policy/index.php"
        class="lernhive-privacy-fab"
        aria-label="{{#str}} privacy, theme_lernhive {{/str}}"
        title="{{#str}} privacy, theme_lernhive {{/str}}">
-        {{! Lucide "shield" icon }}
         <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>

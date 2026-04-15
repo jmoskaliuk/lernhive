@@ -219,7 +219,7 @@ deploy_plugin() {
 
 run_moodle_upgrade() {
   log "Running admin/cli/upgrade.php..."
-  if ! in_container php "$MOODLE_CLI_ROOT/admin/cli/upgrade.php" --non-interactive --no-cli-maintenance; then
+  if ! in_container php "$MOODLE_CLI_ROOT/admin/cli/upgrade.php" --non-interactive; then
     warn "upgrade.php returned non-zero (ok if no DB changes)"
   fi
 }
