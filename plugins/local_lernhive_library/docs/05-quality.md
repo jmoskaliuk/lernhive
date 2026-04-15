@@ -20,6 +20,8 @@
 - PHPUnit contract checks:
   - `tests/catalog_test.php` (catalog + catalog_entry value contract)
   - `tests/catalog_page_test.php` (catalog_page mustache context contract)
+  - manifest parser checks: valid array/object inputs are accepted,
+    invalid JSON/rows are skipped fail-closed
   - constructor guard: seeded catalog data must be `catalog_entry[]`
     (invalid element types fail fast with `coding_exception`)
   - constructor guard: `catalog_entry` required fields must be non-blank
@@ -31,7 +33,7 @@
 
 ## CI gate
 
-Repository-level gates for R1:
+Repository-level gates for current phase:
 - `deploy-hetzner.yml` (deploy automation)
 - `test-hetzner.yml` (nightly/manual PHPUnit + Behat runs)
 

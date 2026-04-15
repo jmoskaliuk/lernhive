@@ -1,11 +1,11 @@
 # local_lernhive_library — Master Document
 
 **Plugin type:** local plugin
-**Release target:** R1
+**Release target:** R2 (phase 1)
 
 ## Purpose
 
-External managed content import for LernHive customers.
+Managed catalog access and staged import workflow for LernHive customers.
 
 ## Role in LernHive
 
