@@ -73,6 +73,16 @@ final class catalog_test extends advanced_testcase {
     }
 
     /**
+     * Seed lists must contain catalog_entry objects only.
+     */
+    public function test_catalog_rejects_invalid_seed_entry_types(): void {
+        $this->resetAfterTest();
+
+        $this->expectException(\coding_exception::class);
+        new catalog([new \stdClass()]);
+    }
+
+    /**
      * The template context exposes exactly the keys the mustache
      * template consumes — if this changes, update the template too.
      */
@@ -103,7 +113,7 @@ final class catalog_test extends advanced_testcase {
             description: 'desc',
             version: '1.0.0',
             updated: 1700000000,
-            language: 'de',
+            language: ' de ',
         );
 
         $context = $entry->to_template_context();
@@ -128,6 +138,38 @@ final class catalog_test extends advanced_testcase {
     }
 
     /**
+     * @dataProvider invalid_entry_contract_provider
+     * @param string $id
+     * @param string $title
+     * @param string $version
+     * @param int $updated
+     * @param string $language
+     * @param string $expectedmessagepart
+     */
+    public function test_entry_rejects_invalid_contract_data(
+        string $id,
+        string $title,
+        string $version,
+        int $updated,
+        string $language,
+        string $expectedmessagepart,
+    ): void {
+        $this->resetAfterTest();
+
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage($expectedmessagepart);
+
+        new catalog_entry(
+            id: $id,
+            title: $title,
+            description: 'desc',
+            version: $version,
+            updated: $updated,
+            language: $language,
+        );
+    }
+
+    /**
      * Helper: build a catalog entry with sensible defaults.
      */
     private function make_entry(string $id, string $title): catalog_entry {
@@ -139,5 +181,18 @@ final class catalog_test extends advanced_testcase {
             updated: 1700000000,
             language: 'en',
         );
+    }
+
+    /**
+     * @return array
+     */
+    public static function invalid_entry_contract_provider(): array {
+        return [
+            'blank id' => ['', 'Demo', '1.0.0', 1700000000, 'en', '"id"'],
+            'blank title' => ['demo', ' ', '1.0.0', 1700000000, 'en', '"title"'],
+            'blank version' => ['demo', 'Demo', '', 1700000000, 'en', '"version"'],
+            'blank language' => ['demo', 'Demo', '1.0.0', 1700000000, ' ', '"language"'],
+            'negative updated' => ['demo', 'Demo', '1.0.0', -1, 'en', '"updated"'],
+        ];
     }
 }

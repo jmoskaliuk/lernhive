@@ -42,6 +42,7 @@ final class catalog_entry {
      * @param string $version     Semver-like version string of the .mbz.
      * @param int    $updated     Unix timestamp of the last catalog update.
      * @param string $language    ISO code of the primary course language.
+     * @throws \coding_exception If required fields are blank or timestamp is invalid.
      */
     public function __construct(
         public readonly string $id,
@@ -51,6 +52,14 @@ final class catalog_entry {
         public readonly int $updated,
         public readonly string $language,
     ) {
+        $this->assert_required_string($this->id, 'id');
+        $this->assert_required_string($this->title, 'title');
+        $this->assert_required_string($this->version, 'version');
+        $this->assert_required_string($this->language, 'language');
+
+        if ($this->updated < 0) {
+            throw new \coding_exception('Catalog entry field "updated" must be a non-negative unix timestamp.');
+        }
     }
 
     /**
@@ -65,7 +74,21 @@ final class catalog_entry {
             'description' => $this->description,
             'version'     => $this->version,
             'updated'     => userdate($this->updated, get_string('strftimedate', 'core_langconfig')),
-            'language'    => strtoupper($this->language),
+            'language'    => strtoupper(trim($this->language)),
         ];
+    }
+
+    /**
+     * Validate required string fields for the catalog contract.
+     *
+     * @param string $value
+     * @param string $field
+     * @return void
+     * @throws \coding_exception
+     */
+    private function assert_required_string(string $value, string $field): void {
+        if (trim($value) === '') {
+            throw new \coding_exception('Catalog entry field "' . $field . '" must not be blank.');
+        }
     }
 }

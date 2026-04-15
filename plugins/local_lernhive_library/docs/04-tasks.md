@@ -12,6 +12,30 @@ state correctly and is reachable from the ContentHub Library card and
 the admin tree. No catalog entries are returned yet — the backend source
 is not connected.
 
+R1.1 layout fix is shipped as version `2026041103` (`0.1.1`), keeping the
+same functional scope while enforcing standard pagelayout for all users.
+
+## Quality follow-up (repo, not deployed yet)
+
+- **LH-LIB-QA-01** — PHPUnit coverage extended to
+  `output/catalog_page::export_for_template()` via
+  `tests/catalog_page_test.php` (empty state + seeded entries + labels).
+- **LH-LIB-QA-02** — Behat smoke scenario added via
+  `tests/behat/library_page.feature` to assert admin-tree access and
+  R1 empty-state rendering.
+- **LH-LIB-QA-03** — Catalog seed contract hardened in `classes/catalog.php`:
+  constructor now rejects non-`catalog_entry` elements with a fast-fail
+  `coding_exception`; covered by `tests/catalog_test.php`.
+- **LH-LIB-QA-04** — `catalog_entry` contract hardened in
+  `classes/catalog_entry.php`: required fields (`id`, `title`, `version`,
+  `language`) must not be blank and `updated` must be non-negative;
+  covered by data-provider cases in `tests/catalog_test.php`.
+- **LH-LIB-QA-05** — Template-context consistency hardening:
+  `output/catalog_page::export_for_template()` now derives `empty` from
+  exported `entries`, and `catalog_entry` normalises display language with
+  `trim + strtoupper`; covered by `tests/catalog_page_test.php` and
+  `tests/catalog_test.php`.
+
 ## Open R1 issues
 
 _None known._
@@ -23,5 +47,4 @@ _None known._
 - Version metadata: show available vs installed version per entry
 - Safe update: import new `.mbz` version without destructive overwrite
 - Update decision workflow (compare changelogs, confirm)
-- Behat scenario: course creator browses catalog and imports a course
-- PHPUnit: extend coverage to catalog_page renderable
+- Behat scenario: course creator imports a library course once import flow exists

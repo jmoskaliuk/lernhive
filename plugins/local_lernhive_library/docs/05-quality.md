@@ -14,13 +14,26 @@
   clearly communicated, not just a blank page
 - responsive: catalog grid collapses gracefully on smaller screens
 - role/permission checks: `:import` capability enforced on direct URL,
-  admin layout used when accessed via admin tree
+  standard layout used consistently for all users (including admin-tree entry)
 - language string review: empty-state string, page title — no duplicates
   of Moodle core strings
+- PHPUnit contract checks:
+  - `tests/catalog_test.php` (catalog + catalog_entry value contract)
+  - `tests/catalog_page_test.php` (catalog_page mustache context contract)
+  - constructor guard: seeded catalog data must be `catalog_entry[]`
+    (invalid element types fail fast with `coding_exception`)
+  - constructor guard: `catalog_entry` required fields must be non-blank
+    and `updated` must be non-negative
+  - presentation normalisation: language display value is `trim + uppercase`
+  - context consistency: `catalog_page` derives `empty` from exported entries
+- Behat smoke check:
+  - `tests/behat/library_page.feature` validates admin navigation and empty-state visibility
 
 ## CI gate
 
-Same as all R1 LernHive plugins: `deploy-hetzner.yml` is the only
-automated gate (rsync + CLI upgrade + purge). A dedicated moodle-plugin-ci
-matrix is deferred until the plugin stops churning — see contenthub
-`05-quality.md` for the full rationale.
+Repository-level gates for R1:
+- `deploy-hetzner.yml` (deploy automation)
+- `test-hetzner.yml` (nightly/manual PHPUnit + Behat runs)
+
+A dedicated `moodle-plugin-ci` matrix is deferred until plugin/API churn
+stabilises — see contenthub `05-quality.md` for rationale.
