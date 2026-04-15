@@ -877,9 +877,14 @@
 }
 
 // --- Sidebar blocks region --------------------------------------------------
+// 0.9.63: Hide the entire block region. LernHive uses custom navitems —
+// blocks placed in sidebar-bottom (typically block_navigation) clutter the
+// sidebar with an unstyled Moodle nav tree. Remove the Navigation block from
+// Site Administration → Blocks to clean this up in the DB permanently.
+// This display:none is a belt-and-suspenders guard until then.
 
 .lernhive-sidebar__blocks {
-    display: flex;
+    display: none !important;
     flex-direction: column;
     gap: 0.75rem;
     margin-top: $lh-spacing-sm;

@@ -81,14 +81,38 @@ if (!empty($COURSE) && $COURSE->id > 1) {
         }
     }
 
+    // Participant count — cheap query: count enrolled users directly.
+    $participantcount = '';
+    try {
+        $enrolcount = count_enrolled_users($coursecontext);
+        $participantcount = $enrolcount . ' ' .
+            ($enrolcount === 1
+                ? get_string('participant', 'moodle')
+                : get_string('participants', 'moodle'));
+    } catch (\Throwable $e) {
+        $participantcount = '';
+    }
+
+    // Secondary navigation (Nutzer/innen, Einstellungen, etc.) —
+    // rendered by Moodle's secondary_nav output; appears in Zone B.
+    $secondarynavhtml = '';
+    try {
+        $secondarynavhtml = $OUTPUT->secondary_nav();
+    } catch (\Throwable $e) {
+        $secondarynavhtml = '';
+    }
+
     $courseheaderctx = [
-        'coursename'      => $coursename,
-        'shortname'       => $shortname,
-        'hascategoryname' => $categoryname !== '',
-        'categoryname'    => $categoryname,
-        'backurl'         => (new moodle_url('/my/courses.php'))->out(false),
-        'backlabel'       => get_string('mycourses'),
-        'hascourseheader' => true,
+        'coursename'          => $coursename,
+        'shortname'           => $shortname,
+        'hascategoryname'     => $categoryname !== '',
+        'categoryname'        => $categoryname,
+        'backurl'             => (new moodle_url('/my/courses.php'))->out(false),
+        'backlabel'           => get_string('mycourses'),
+        'participantcount'    => $participantcount,
+        'secondarynavhtml'    => $secondarynavhtml,
+        'hassecondarynavhtml' => $secondarynavhtml !== '',
+        'hascourseheader'     => true,
     ];
 }
 

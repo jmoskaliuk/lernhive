@@ -24,36 +24,15 @@
                 replaces the short-lived bespoke lernhive-course-header card
                 that shipped in 0.9.45 and hid all of the above. }}
             {{#showpageheader}}
-                <div class="lernhive-page-header{{#hascourseheader}} lernhive-page-header--course{{/hascourseheader}}">
-                    {{! Course Plugin Shell Zone A: back arrow + course title + category.
-                        0.9.58: replaces full_header on real course pages.
-                        0.9.59: fixed comment — no Mustache tags inside comments. }}
-                    {{#hascourseheader}}
-                        {{#courseheader}}
-                        <div class="lernhive-course-header">
-                            <a href="{{ backurl }}"
-                               class="lernhive-course-header__back"
-                               aria-label="{{ backlabel }}">
-                                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-                                    <polyline points="15 18 9 12 15 6"/>
-                                </svg>
-                            </a>
-                            <div class="lernhive-course-header__title">
-                                <h1>{{ coursename }}</h1>
-                                {{#hascategoryname}}
-                                    <span class="lernhive-course-header__category">
-                                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                                        {{ categoryname }}
-                                    </span>
-                                {{/hascategoryname}}
-                            </div>
-                        </div>
-                        {{/courseheader}}
-                    {{/hascourseheader}}
+                <div class="lernhive-page-header">
+                    {{! 0.9.63: course pages no longer render full_header in the page-header bar.
+                        Zone A (lh-plugin-header) is injected into region-main BELOW, which triggers
+                        the :has(.lh-plugin-header) CSS rules — hiding __main and removing gaps.
+                        Keep __main empty so the :has() detection works but renders nothing. }}
+                    <div class="lernhive-page-header__main" aria-hidden="true"></div>
                     {{^hascourseheader}}
-                        <div class="lernhive-page-header__main">
-                            {{{ output.full_header }}}
-                        </div>
+                        {{! Fallback for non-course pages using this layout. }}
+                        {{{ output.full_header }}}
                     {{/hascourseheader}}
                     <div class="lernhive-page-header__actions">
                         {{#hassidepanel}}
@@ -121,10 +100,63 @@
                     <span id="maincontent" class="lernhive-skip-anchor"></span>
                     <section class="lernhive-course-surface" aria-label="content">
                         <div id="region-main">
-                            {{! 0.9.59: suppress course_content_header when we render our own
-                                Plugin Shell Zone A header (hascourseheader = true). The content
-                                header re-renders the course title + meta as an h1 + breadcrumb
-                                which duplicates the Zone A we built in the page header. }}
+                            {{! 0.9.63: Plugin Shell Zone A + Zone B for course pages.
+                                Uses the canonical lh-plugin-header / lh-plugin-infobar
+                                classes — same visual language as ContentHub and Onboarding.
+                                The :has(.lh-plugin-header) CSS rules on .lernhive-page
+                                automatically hide .lernhive-page-header__main and remove
+                                gap/padding from the content column. }}
+                            {{#hascourseheader}}
+                                {{#courseheader}}
+
+                                {{! ── Zone A: course name | category ─────────────────── }}
+                                <div class="lh-plugin-header">
+                                    <div class="lh-plugin-header__row">
+                                        <a href="{{ backurl }}"
+                                           class="lh-plugin-header__nav-btn"
+                                           aria-label="{{ backlabel }}">
+                                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                            {{ backlabel }}
+                                        </a>
+                                        <div class="lh-plugin-header__title-block">
+                                            <div class="lh-plugin-header__name">
+                                                {{ coursename }}
+                                                {{#hascategoryname}}
+                                                    <span class="lh-plugin-header__sep" aria-hidden="true">|</span>
+                                                    <span class="lh-plugin-header__tagline">{{ categoryname }}</span>
+                                                {{/hascategoryname}}
+                                            </div>
+                                            {{#hascategoryname}}
+                                            <div class="lh-plugin-header__tags">
+                                                <span class="lh-plugin-tag lh-plugin-tag--type">
+                                                    <i class="fa fa-folder-open-o" aria-hidden="true"></i>
+                                                    {{ categoryname }}
+                                                </span>
+                                            </div>
+                                            {{/hascategoryname}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{! ── Zone B: course meta + secondary nav (Nutzer/innen, Einstellungen) }}
+                                <div class="lh-plugin-infobar lh-plugin-infobar--course">
+                                    <div class="lh-plugin-infobar__stats">
+                                        {{#participantcount}}
+                                        <span class="lh-plugin-infobar__stat">
+                                            <i class="fa fa-users" aria-hidden="true"></i>
+                                            {{ participantcount }}
+                                        </span>
+                                        {{/participantcount}}
+                                    </div>
+                                    {{#hassecondarynavhtml}}
+                                    <div class="lh-plugin-infobar__course-actions">
+                                        {{{ secondarynavhtml }}}
+                                    </div>
+                                    {{/hassecondarynavhtml}}
+                                </div>
+
+                                {{/courseheader}}
+                            {{/hascourseheader}}
                             {{^hascourseheader}}
                                 {{{ output.course_content_header }}}
                             {{/hascourseheader}}
