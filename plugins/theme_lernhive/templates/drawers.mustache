@@ -22,11 +22,14 @@
 
         <div id="page" class="lernhive-page">
             {{#showpageheader}}
-                <div class="lernhive-page-header">
-                    <div class="lernhive-page-header__main">
-                        {{{ output.full_header }}}
-                    </div>
-                    <div class="lernhive-page-header__actions">
+                {{! ══ Layer 1: Top Bar (0.9.67) ══════════════════════════════════
+                    Navigation only: launcher panel left, user actions right.
+                    The class lernhive-page-header is kept for backward-compat CSS.
+                    lh-topbar provides the new 48px fixed-height layout.       }}
+                <div class="lernhive-page-header lh-topbar">
+                    {{! Launcher panel — filled by JS when launcher is open }}
+                    <div class="lh-topbar__launcher" id="lh-launcher-panel" aria-hidden="true"></div>
+                    <div class="lernhive-page-header__actions lh-topbar__actions">
                         {{! Header Dock — unified side-panel system (0.9.36).
                             Replaces core navbar_plugin_output with one shared panel
                             for messages, notifications, AI assistant and help. }}
@@ -76,6 +79,19 @@
                                 </a>
                             </div>
                         {{/isloggedin}}
+                    </div>
+                </div>
+
+                {{! ══ Layer 2: Zone 0 (0.9.67) ══════════════════════════════════
+                    Page identity: h1 + breadcrumb left, page-action icons right.
+                    Hidden on Plugin Shell pages via CSS :has(.lh-plugin-header).
+                    lernhive-page-header__main kept for backward-compat CSS rules. }}
+                <div class="lh-zone0">
+                    <div class="lh-zone0__left lernhive-page-header__main">
+                        {{{ output.full_header }}}
+                    </div>
+                    <div class="lh-zone0__right">
+                        {{! Page-level action icons (e.g. edit-mode toggle) go here }}
                     </div>
                 </div>
             {{/showpageheader}}

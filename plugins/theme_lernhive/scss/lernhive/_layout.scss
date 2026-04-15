@@ -600,3 +600,246 @@ $lh-bp-tablet:   768px;
         padding: 0 $lh-spacing-sm $lh-spacing-xs;
     }
 }
+
+// =============================================================================
+// 0.9.67 — 5-Layer App Shell Header
+// Layer 1: .lh-topbar   — navigation only (launcher + user actions)
+// Layer 2: .lh-zone0    — page identity (h1 + breadcrumb + page actions)
+// Layer 3: .lh-plugin-header — Zone A (sticky, Plugin Shell pages only)
+// Layer 4: .lh-plugin-infobar — Zone B (Plugin Shell pages only)
+// Layer 5: content
+// =============================================================================
+
+// ─── Layer 1: Top Bar ─────────────────────────────────────────────────────────
+// Navigation only. No page title here.
+// Left: launcher panel (icons expand when launcher is open).
+// Right: action icons — Notifications, Avatar, Settings, Logout.
+// A border-right separates the two halves when the launcher panel has items.
+
+.lh-topbar {
+    height: 48px;
+    background: $lh-bg-white;
+    border-bottom: 1px solid $lh-border;
+    padding: 0 $lh-spacing-lg;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    // Override the old lernhive-page-header padding/shadow when this class is applied alongside it
+    box-shadow: 0 1px 0 rgba(25, 72, 102, 0.06);
+}
+
+// Left half — launcher icons (visible when launcher is expanded)
+.lh-topbar__launcher {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    // When launcher panel has icons, show a separator on the right
+    &:not(:empty) {
+        padding-right: $lh-spacing-md;
+        border-right: 1px solid $lh-border;
+    }
+}
+
+// Launcher icon buttons in the topbar — Typ 3 Action, subtiler Tint
+.lh-launcher-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba($lh-primary, 0.07);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.12s ease;
+
+    &:hover {
+        background: rgba($lh-primary, 0.14);
+        transform: scale(1.08);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+        stroke: $lh-primary;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .fa {
+        font-size: 0.875rem;
+        color: $lh-primary;
+    }
+}
+
+// Right half — action icon buttons
+.lh-topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+// Action icons in topbar — Typ 3, always-visible circle
+.lh-topbar-action {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba($lh-primary, 0.07);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: background 0.15s ease, transform 0.12s ease;
+
+    &:hover {
+        background: rgba($lh-primary, 0.14);
+        transform: scale(1.08);
+        text-decoration: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    svg {
+        width: 16px;
+        height: 16px;
+        stroke: $lh-text-secondary;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .fa { font-size: 0.9rem; color: $lh-text-secondary; }
+
+    // Avatar: subtle accent tint
+    &--avatar {
+        background: rgba($lh-accent, 0.14);
+
+        svg { stroke: $lh-accent-dark; }
+        .fa { color: $lh-accent-dark; }
+    }
+}
+
+// ─── Layer 2: Zone 0 ──────────────────────────────────────────────────────────
+// Page identity: h1 + breadcrumb on the left, page-level action icons on the right.
+// Hidden on Plugin Shell pages (Zone A replaces it as the orientation anchor).
+
+.lh-zone0 {
+    background: $lh-bg;
+    padding: 14px $lh-spacing-lg 12px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba($lh-border, 0.6);
+    flex-shrink: 0;
+
+    &__left {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+    }
+
+    &__breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: $lh-font-size-xs;
+        color: $lh-text-secondary;
+        flex-wrap: nowrap;
+        overflow: hidden;
+
+        a {
+            color: $lh-text-secondary;
+            text-decoration: none;
+            &:hover { color: $lh-primary; }
+        }
+
+        // Separator between crumbs
+        &-sep {
+            color: $lh-border;
+            flex-shrink: 0;
+        }
+
+        &-current {
+            color: $lh-text;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    &__h1 {
+        font-size: $lh-font-size-xl;
+        font-weight: 700;
+        color: $lh-text;
+        margin: 0;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__right {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-shrink: 0;
+        margin-left: $lh-spacing-md;
+    }
+
+    // Page-level action icons (Typ 3 Action — Vollkreis)
+    &__action {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba($lh-primary, 0.07);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: background 0.15s ease, transform 0.12s ease;
+
+        &:hover { background: rgba($lh-primary, 0.14); transform: scale(1.08); }
+        &:focus-visible { outline: 2px solid $lh-accent; outline-offset: 2px; }
+
+        svg {
+            width: 14px; height: 14px;
+            stroke: $lh-text-secondary; fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        .fa { font-size: 0.8125rem; color: $lh-text-secondary; }
+    }
+}
+
+// Zone 0 is hidden on Plugin Shell pages — Zone A takes over as orientation anchor.
+.lernhive-page:has(.lh-plugin-header) .lh-zone0 {
+    display: none;
+}
+
+// ─── Zone A sticky offset ────────────────────────────────────────────────────
+// Zone A was at top: 3rem (≈ 48px) — now explicitly tied to the topbar height.
+// This rule reinforces what _plugin-shell.scss already sets.
+.lh-plugin-header {
+    top: 48px;  // exactly below the 48px topbar
+}

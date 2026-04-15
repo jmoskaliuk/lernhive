@@ -1,8 +1,7 @@
 <aside class="lernhive-sidebar">
-    {{! Brand row: logo left + launcher trigger right (0.9.59).
-        The launcher was previously in the page-header action bar. Moving it
-        here keeps it always visible alongside the logo, opens to the RIGHT
-        of the sidebar (position: fixed), no labels — only title tooltips. }}
+    {{! Brand row: logo left + launcher trigger right (0.9.67).
+        Launcher trigger: orange Vollkreis (Typ 3 Action Icon). Opens launcher
+        panel into the Topbar left half. }}
     <div class="lernhive-brand">
         <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link" aria-label="LernHive — Home">
             <img src="{{{ config.wwwroot }}}/theme/lernhive/pix/logo-sidebar.svg"
@@ -11,6 +10,7 @@
                  width="148"
                  height="30">
         </a>
+        {{! 0.9.67: Launcher trigger — orange Vollkreis, always visible in brand row. }}
         {{#showlauncher}}
             {{#launcher}}
                 <div class="lernhive-brand__launcher">
@@ -22,14 +22,17 @@
 
     {{! Primary navigation — built manually in PHP as $navitems array with
         FontAwesome icons, passed via template context. output.primary_nav
-        returned empty in Moodle 5.x in this layout context. }}
+        returned empty in Moodle 5.x in this layout context.
+        0.9.67: nav items now use .lh-nav-icon wrapper for icon box styling. }}
     <nav class="lernhive-nav" aria-label="{{#str}} primarynavigation, theme_lernhive {{/str}}">
         <ul class="lernhive-nav__list">
             {{#navitems}}
             <li class="lernhive-nav__item">
                 <a class="lernhive-nav__link{{#isactive}} lernhive-nav__link--active{{/isactive}}"
                    href="{{ url }}"{{#isactive}} aria-current="page"{{/isactive}}>
-                    <i class="fa fa-{{ faicon }}" aria-hidden="true"></i>
+                    <span class="lh-nav-icon" aria-hidden="true">
+                        <i class="fa fa-{{ faicon }}"></i>
+                    </span>
                     <span class="lernhive-nav__text">{{ text }}</span>
                 </a>
             </li>

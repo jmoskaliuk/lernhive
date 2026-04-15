@@ -945,3 +945,133 @@
         margin-bottom: 0.125rem;
     }
 }
+
+// =============================================================================
+// 0.9.67 — Sidebar brand + nav icon wrapper
+// =============================================================================
+
+// ─── Sidebar Brand: Launcher Trigger ─────────────────────────────────────────
+// The launcher trigger sits to the RIGHT of the wordmark/logo in the brand row.
+// Shape: Vollkreis, background: $lh-accent — Typ 3 Action Icon, primary intent.
+// Clicking it expands the launcher panel into the Topbar left half.
+
+.lernhive-brand__launcher-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;                     // Vollkreis — Typ 3 Action
+    background: $lh-accent;                 // orange — primary action
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: auto;                      // push to right end of brand row
+    box-shadow: 0 2px 6px rgba($lh-accent, 0.35);
+    transition: background 0.15s ease, transform 0.12s ease;
+
+    &:hover {
+        background: $lh-accent-dark;
+        transform: scale(1.08);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    svg {
+        width: 15px;
+        height: 15px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    // FontAwesome fallback
+    .fa {
+        color: #fff;
+        font-size: 0.875rem;
+    }
+}
+
+// ─── Nav Icon Wrapper (.lh-nav-icon) ─────────────────────────────────────────
+// 24×24px rounded square inside each nav item.
+// Default: subtle white tint. Active: orange tint (icon-Typ 1 rule maintained —
+// the ROW gets highlight, the ICON-BOX gets orange tint, but the nav item itself
+// stays transparent with just the row highlight).
+
+.lh-nav-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+
+    svg {
+        width: 14px;
+        height: 14px;
+        stroke: rgba(255, 255, 255, 0.65);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .fa {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.65);
+    }
+}
+
+// ─── Nav Item Active State (with .lh-nav-icon wrapper) ───────────────────────
+// Active row: rgba(white, .10) background on the full nav link.
+// Active icon-box: rgba(accent, .22) tint + orange icon stroke.
+// Nav Typ 1 rule preserved: the nav LINK stays transparent — the row highlight
+// is on the containing <a>, which also serves as row boundary.
+
+.lernhive-nav__link {
+    // Ensure nav-icon gets the orange tint when parent link is active
+    &--active .lh-nav-icon {
+        background: rgba($lh-accent, 0.22);
+
+        svg { stroke: $lh-accent; }
+        .fa { color: $lh-accent; }
+    }
+}
+
+// ─── Brand Launcher Toggle: override to Vollkreis (orange) ───────────────────
+// The existing .lernhive-launcher__toggle defaults to a neutral rounded rect.
+// When placed inside .lernhive-brand__launcher (sidebar brand row) it should
+// render as an orange Vollkreis — Typ 3 Action, primary intent.
+
+.lernhive-brand__launcher .lernhive-launcher__toggle {
+    background: $lh-accent;
+    border-radius: 50%;
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    box-shadow: 0 2px 6px rgba($lh-accent, 0.35);
+    transition: background 0.15s ease, transform 0.12s ease;
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-accent-dark;
+        color: #fff;
+        transform: scale(1.08);
+    }
+
+    .lernhive-launcher__toggle-icon {
+        fill: #fff;
+        width: 15px;
+        height: 15px;
+    }
+}
