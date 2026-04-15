@@ -110,3 +110,97 @@
 .lernhive-search-form .input-group {
     max-width: 500px;
 }
+
+/* ── Dashboard welcome section (0.2.x) ───────────────────────── */
+.lernhive-welcome-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1.5rem 0 1rem;
+}
+
+.lernhive-welcome-left { flex: 1 1 auto; min-width: 0; }
+
+.lernhive-welcome-heading {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a2e3b;
+    margin: 0 0 .25rem;
+}
+
+.lernhive-welcome-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* Level badge */
+.lernhive-level-badge {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+}
+
+.lernhive-level-badge-circle {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(25, 72, 102, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lernhive-level-badge-circle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.lernhive-level-badge-text strong {
+    font-size: .9375rem;
+    font-weight: 700;
+    color: #194866;
+}
+
+/* Progress ring — constrain the SVG! */
+.lernhive-progress-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .375rem;
+}
+
+.lernhive-progress-circle {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+}
+
+.lernhive-progress-circle svg {
+    width: 64px;
+    height: 64px;
+    display: block;
+}
+
+.lernhive-progress-circle-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    font-weight: 700;
+    color: #194866;
+}
+
+.lernhive-progress-ring-label {
+    font-size: .75rem;
+    font-weight: 600;
+    color: #5c7a8a;
+    white-space: nowrap;
+}
