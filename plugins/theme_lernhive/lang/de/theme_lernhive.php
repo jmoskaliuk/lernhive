@@ -182,3 +182,4 @@ $string['shell_tag_overview'] = 'Übersicht';
 $string['shell_tag_courses'] = 'Kurse';
 $string['shell_tag_account'] = 'Konto';
 $string['shell_tag_settings'] = 'Einstellungen';
+$string['privacy'] = 'Datenschutz & Cookies';

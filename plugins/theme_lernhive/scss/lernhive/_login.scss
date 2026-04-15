@@ -252,54 +252,67 @@ body.pagelayout-login {
         }
     }
 
-    // ── Cookies notice → floating privacy icon (bottom-right) ───────────────────
-    // Moodle's tool_policy renders this in .loginpolicies after the guest section.
-    // We detach it from flow and fix it to the viewport bottom-right corner.
+    // ── Hide Moodle's built-in "Cookies notice" button ──────────────────────────
+    // Replaced by .lernhive-privacy-fab injected directly in login.mustache.
+    // We target broadly because Moodle renders this via different selectors
+    // depending on whether tool_policy is active or not.
     .loginpolicies,
     #policyagreedbutton,
-    .policy-agreed-modal-trigger {
-        position: fixed !important;
-        bottom: 24px !important;
-        right: 24px !important;
-        z-index: 999 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: transparent !important;
+    .policy-agreed-modal-trigger,
+    .login-policylinks,
+    .login-container-box .btn[href*="policy"],
+    .login-container-box a[href*="policy"],
+    .lernhive-login__content .btn[href*="policy"],
+    .lernhive-login__content a[href*="policy"],
+    .lernhive-login__content a[href*="cookie"],
+    .lernhive-login__content .loginpolicies {
+        display: none !important;
+    }
+}
 
-        button,
-        .btn,
-        a {
-            width: 44px !important;
-            height: 44px !important;
-            min-width: 44px !important;
-            border-radius: 50% !important;
-            padding: 0 !important;
-            background: rgba(25, 72, 102, 0.82) !important;
-            border: none !important;
-            color: transparent !important;   // hide text
-            font-size: 0 !important;         // hide text
-            box-shadow: 0 3px 12px rgba(25, 72, 102, 0.25) !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            cursor: pointer !important;
-            transition: background 0.15s ease, box-shadow 0.15s ease !important;
+// ── Floating privacy FAB (login page) ────────────────────────────────────────
+// Injected in login.mustache; scoped outside body.pagelayout-login so it always
+// renders on top regardless of stacking context.
+.lernhive-privacy-fab {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
 
-            // Show shield icon via pseudo-element.
-            &::after {
-                content: '\f132';           // fa-shield
-                font-family: FontAwesome, sans-serif;
-                font-size: 1.125rem !important;
-                color: #fff !important;
-                display: block !important;
-                line-height: 1 !important;
-            }
+    svg {
+        width: 1.125rem;
+        height: 1.125rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+    }
 
-            &:hover {
-                background: $lh-primary !important;
-                box-shadow: 0 4px 16px rgba(25, 72, 102, 0.35) !important;
-                color: transparent !important;
-            }
-        }
+    &:hover {
+        background: rgba(255, 255, 255, 0.28);
+        color: #fff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+        text-decoration: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.8);
+        outline-offset: 3px;
     }
 }
