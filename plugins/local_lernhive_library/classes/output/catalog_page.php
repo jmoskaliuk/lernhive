@@ -57,7 +57,7 @@ class catalog_page implements renderable, templatable {
         return [
             'heading' => get_string('catalog_heading', 'local_lernhive_library'),
             'intro'   => get_string('catalog_intro', 'local_lernhive_library'),
-            'empty'   => $this->catalog->is_empty(),
+            'empty'   => empty($entries),
             'emptymsg' => get_string('catalog_empty', 'local_lernhive_library'),
             'entries' => $entries,
             'labels'  => [

@@ -38,8 +38,16 @@ class catalog {
 
     /**
      * @param catalog_entry[] $entries Optional seed list (for tests).
+     * @throws \coding_exception If a seeded entry is not a catalog_entry.
      */
     public function __construct(private readonly array $entries = []) {
+        foreach ($entries as $index => $entry) {
+            if (!($entry instanceof catalog_entry)) {
+                throw new \coding_exception(
+                    'Catalog seed entries must be instances of local_lernhive_library\\catalog_entry (invalid index: ' . $index . ').'
+                );
+            }
+        }
     }
 
     /**

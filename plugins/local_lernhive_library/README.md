@@ -20,7 +20,7 @@ The import button is rendered but disabled. Wiring it up to Moodle core backup/r
 local_lernhive_library/
 ├── version.php                 depends on local_lernhive_contenthub
 ├── lib.php
-├── index.php                   entry page (dual admin/standard)
+├── index.php                   entry page (standard layout + capability gate)
 ├── settings.php                admin_externalpage registration
 ├── styles.css                  scoped .lh-library-* only
 ├── README.md
@@ -34,7 +34,12 @@ local_lernhive_library/
 │   │   └── renderer.php
 │   └── privacy/provider.php    null_provider
 ├── templates/catalog_page.mustache
-├── tests/catalog_test.php      unit tests for catalog + entry
+├── tests/
+│   ├── catalog_test.php        unit tests for catalog + catalog_entry
+│   ├── catalog_page_test.php   unit tests for catalog_page context export
+│   └── behat/
+│       ├── library_page.feature
+│       └── behat_local_lernhive_library.php
 └── docs/                       DevFlow
 ```
 
@@ -44,11 +49,15 @@ Capability: `local/lernhive_library:import`, cloned from `moodle/course:create`.
 
 ## Dependencies
 
-`local_lernhive_contenthub ≥ 2026041000` — the Library card in the Hub needs a target URL that resolves to this plugin, so the hub's detection logic uses `local_lernhive_library` as a signal.
+`local_lernhive_contenthub ≥ 2026041002` — the Library card in the Hub needs a target URL that resolves to this plugin, so the hub's detection logic uses `local_lernhive_library` as a signal.
 
 ## CI & deployment
 
-Runs through the shared `.github/workflows/moodle-plugin-ci.yml` workflow (matrix-extended). Deployment to Hetzner is handled by the repo-wide `deploy-hetzner.yml`.
+Repository-level workflows:
+- `.github/workflows/deploy-hetzner.yml` deploys to Hetzner (push to `main` + manual dispatch)
+- `.github/workflows/test-hetzner.yml` runs PHPUnit/Behat on Hetzner (nightly + manual dispatch)
+
+No dedicated `moodle-plugin-ci` matrix is currently wired for this plugin.
 
 ## Roadmap
 
