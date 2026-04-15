@@ -13,7 +13,7 @@
         {
             "title": "Willkommen zum CSV-Import",
             "content": "<p>Mit dem CSV-Upload kannst du viele Nutzer/innen auf einmal in LernHive importieren. Das spart Zeit und ist besonders am Anfang eines Schuljahres nützlich.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -21,7 +21,7 @@
         {
             "title": "CSV-Datei auswählen",
             "content": "<p>Wähle deine CSV-Datei mit den Nutzer/innendaten aus. Die Datei sollte Spalten für Benutzername, Vorname, Nachname und E-Mail enthalten.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "[data-fieldtype=\"filemanager\"]",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -29,7 +29,7 @@
         {
             "title": "Vorschau anschauen",
             "content": "<p>Überprüfe die Vorschau, um sicherzustellen, dass alle Daten korrekt erkannt wurden. Du kannst hier noch Anpassungen vornehmen.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_previewbutton",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -37,7 +37,7 @@
         {
             "title": "Import starten",
             "content": "<p>Klick auf 'Hochladen', um die Nutzer/innen in dein LernHive-System zu importieren. Dies kann je nach Anzahl eine Weile dauern.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_submitbutton",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"

@@ -43,6 +43,7 @@ class action_provider {
         $actions = array_filter([
             self::build_create_course_action(),
             self::build_contenthub_action(),
+            self::build_library_action(),
             self::build_reports_action(),
             self::build_create_snack_action(),
             self::build_create_community_action(),
@@ -160,6 +161,32 @@ class action_provider {
             'chart-bar',
             $url,
             30
+        );
+    }
+
+    /**
+     * Build the Library action when the plugin and capability exist.
+     *
+     * @return action|null
+     */
+    protected static function build_library_action(): ?action {
+        $url = self::resolve_local_plugin_url('lernhive_library');
+        if (!$url) {
+            return null;
+        }
+
+        $systemcontext = \core\context\system::instance();
+        if (!has_capability('local/lernhive_library:import', $systemcontext)) {
+            return null;
+        }
+
+        return new action(
+            'library',
+            get_string('actionlibrary', 'local_lernhive_launcher'),
+            get_string('actionlibrarydesc', 'local_lernhive_launcher'),
+            'library',
+            $url,
+            25
         );
     }
 

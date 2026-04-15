@@ -30,25 +30,31 @@ Global action launcher for create, manage, and configure actions that complement
 - include a clear entry to `ContentHub`
 - treat `ContentHub` as the preferred entry point for content-related creation flows where appropriate
 
-### 5. LXP-related creation entry points
+### 5. Library entry
+- include a direct launcher action to `Library` when `local_lernhive_library` is installed
+- show the action only when the user can access `local/lernhive_library:import`
+- keep `Library` action-oriented (open catalog + import), not as a full navigation replacement
+
+### 6. LXP-related creation entry points
 - support entry points for `Snack` and `Community` creation where the relevant plugins and capabilities are available
 - keep these entries clearly optional and capability-dependent
 - do not make LXP actions appear as the default primary model in non-LXP usage
 
-### 6. Reporting entry
+### 7. Reporting entry
 - include a direct entry to `Reports` when `local_lernhive_reporting` is installed
 - show `Reports` only for users who can access the reporting dashboard
 - keep reporting access action-oriented and avoid turning the launcher into a full admin menu
 
-### 7. Guided action language
+### 8. Guided action language
 - action labels must be short and outcome-oriented
 - Moodle core strings should be reused where they fit semantically
-- LernHive-specific labels should remain limited to established product terms such as `Launcher`, `ContentHub`, `Reports`, `Snack`, and `Community`
+- LernHive-specific labels should remain limited to established product terms such as `Launcher`, `ContentHub`, `Library`, `Reports`, `Snack`, and `Community`
 
 ## Baseline Release 1 action inventory
 
 ### Core actions
 - `ContentHub`
+- `Library` (capability-dependent)
 - `Create course`
 - `Reports` (capability-dependent)
 
@@ -59,7 +65,7 @@ Global action launcher for create, manage, and configure actions that complement
 ### Release 1 routing rule
 - `ContentHub` is the default orchestration entry for content-related creation paths
 - direct launcher shortcuts should be limited to a very small number of repeated high-value actions
-- `Template`, `Library`, and similar sub-paths should stay behind `ContentHub` in the baseline Release 1 launcher
+- `Template` and similar sub-paths should stay behind `ContentHub`; `Library` may be exposed as a direct action when import rights exist
 - broader configuration destinations may be added later only if they remain action-oriented and do not turn the launcher into a second navigation menu
 
 ## Release 1 guardrails

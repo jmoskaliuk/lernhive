@@ -13,7 +13,7 @@
         {
             "title": "Willkommen zum Datei-Upload",
             "content": "<p>Mit der Datei-Ressource kannst du PDF, Dokumente, Bilder und andere Dateien für deine Nutzer/innen bereitstellen.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -21,7 +21,7 @@
         {
             "title": "Ressourcennamen eingeben",
             "content": "<p>Gib einen beschreibenden Namen ein. Dies wird als Titel angezeigt und sollte die Art der Datei deutlich machen.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_name",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -29,7 +29,7 @@
         {
             "title": "Datei hochladen",
             "content": "<p>Klick auf den Upload-Bereich oder ziehe die Datei hierher. Unterstützt werden alle gängigen Dateitypen.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "[data-fieldtype=\"filemanager\"]",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
@@ -37,7 +37,7 @@
         {
             "title": "Datei speichern",
             "content": "<p>Klick auf 'Speichern und anzeigen'. Die Datei ist dann für Nutzer/innen verfügbar zum Download und Anschauen.</p>",
-            "targettype": 2,
+            "targettype": 0,
             "targetvalue": "#id_submitbutton",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"

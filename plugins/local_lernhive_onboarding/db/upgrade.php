@@ -221,5 +221,40 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041500, 'local', 'lernhive_onboarding');
     }
 
+    // 0.3.0-dev (FR-05) - normalise targettype mapping for existing
+    // onboarding tour steps. Moodle expects:
+    //   0 = selector, 1 = block, 2 = unattached.
+    // Older LernHive tour fixtures used swapped selector/unattached values.
+    // This migration updates only tours that belong to this plugin
+    // (`local_lhonb_map` join), preserving unrelated site tours.
+    if ($oldversion < 2026041501) {
+        $steps = $DB->get_records_sql(
+            "SELECT s.id, s.targettype, s.targetvalue
+               FROM {tool_usertours_steps} s
+               JOIN {local_lhonb_map} m
+                 ON m.tourid = s.tourid"
+        );
+
+        foreach ($steps as $step) {
+            $targettype = (int) $step->targettype;
+            $targetvalue = trim((string) $step->targetvalue);
+            $normalised = $targettype;
+
+            if ($targettype === 2 && $targetvalue !== '') {
+                // Legacy "selector" encoded as 2.
+                $normalised = 0;
+            } elseif ($targettype === 0 && $targetvalue === '') {
+                // Legacy "unattached" encoded as 0.
+                $normalised = 2;
+            }
+
+            if ($normalised !== $targettype) {
+                $DB->set_field('tool_usertours_steps', 'targettype', $normalised, ['id' => (int) $step->id]);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2026041501, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }

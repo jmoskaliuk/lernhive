@@ -16,6 +16,7 @@
 - [x] **LH-ONB-FR-01** Added `feature_id` (`VARCHAR(128)`, nullable) to `local_lhonb_map` with non-unique index `ix_featureid` (install + upgrade path).
 - [x] **LH-ONB-FR-02** `tour_importer` now reads top-level `lernhive_feature` and persists it to `local_lhonb_map.feature_id` (including existing-tour remap path).
 - [x] **LH-ONB-FR-05 (phase 1)** Backfilled `lernhive_feature` on every Level-1 tour JSON with a currently canonical registry mapping (7/10 files). Remaining fallback files require new registry feature definitions: `course_settings/01_format.json`, `course_settings/02_completion.json`, `communication/02_messaging.json`.
+- [x] **LH-ONB-HOTFIX-01** Normalized Moodle tour `targettype` mapping (`selector=0`, `unattached=2`) in JSON fixtures, importer normalization, and DB upgrade migration for already imported tours.
 
 ## In progress / next (0.3.x)
 

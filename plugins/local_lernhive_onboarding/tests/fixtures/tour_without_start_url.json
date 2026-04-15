@@ -11,7 +11,7 @@
         {
             "title": "Willkommen",
             "content": "<p>Test fixture step.</p>",
-            "targettype": 0,
+            "targettype": 2,
             "targetvalue": "",
             "sortorder": 0,
             "configdata": "{\"placement\":\"bottom\"}"

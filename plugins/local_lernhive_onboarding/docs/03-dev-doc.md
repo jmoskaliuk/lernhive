@@ -15,6 +15,10 @@
   - resolve `lh_start_url` via `start_url_resolver`
   - set `tool_usertours_{id}_requested = 1`
   - clear `_completed` and `_lastStep`
+- Tour step import normalization:
+  - canonical Moodle mapping is `selector=0`, `block=1`, `unattached=2`
+  - importer normalizes legacy swapped selector/unattached values
+  - upgrade step `2026041501` backfills existing onboarding tour rows
 - Dashboard banner injection via output hook callback
 
 ### Planned architecture (0.3.x)

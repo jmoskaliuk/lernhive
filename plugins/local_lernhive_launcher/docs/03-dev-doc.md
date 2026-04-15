@@ -16,6 +16,7 @@ local_lernhive
 
 Optional sibling integrations:
 - local_lernhive_contenthub
+- local_lernhive_library
 - local_lernhive_reporting
 - local_lernhive_discovery
 
@@ -52,7 +53,7 @@ Optional sibling integrations:
 ## String plan
 - reuse Moodle core strings for generic verbs and objects where possible
 - keep `Launcher` as a launcher-owned string
-- reuse canonical LernHive terms from the owning plugin when the action refers to `ContentHub`, `Reports`, `Snack`, or `Community`
+- reuse canonical LernHive terms from the owning plugin when the action refers to `ContentHub`, `Library`, `Reports`, `Snack`, or `Community`
 - avoid introducing synonym strings for the same action
 
 ## Release 1 technical constraints
@@ -60,7 +61,7 @@ Optional sibling integrations:
 - no action analytics dependency required for initial rollout
 - no hard dependency on the LXP Flavour for the base launcher
 
-## Implemented visibility rules (0.1.2)
+## Implemented visibility rules (0.1.3)
 
 The Release 1 action provider currently evaluates visibility in this
 order. Every action must return `null` from its builder rather than
@@ -102,6 +103,14 @@ fall through to a rendered dead-end entry.
    `local_lernhive_reporting/index.php` and prevents dead-end entries.
 3. URL resolves to `/local/lernhive_reporting/index.php`.
 
+### `Library`
+1. `local_lernhive_library` must be installed (detected via
+   `core_component`). If it is missing, the launcher hides the action.
+2. The current user must hold the system-context capability
+   `local/lernhive_library:import`. This mirrors
+   `local_lernhive_library/index.php` and prevents dead-end entries.
+3. URL resolves to `/local/lernhive_library/index.php`.
+
 ### `Create snack` / `Create community`
 - Hidden until a concrete creation route is exposed by the owning
   discovery plugin. The current `resolve_local_plugin_url()` checks
@@ -121,4 +130,5 @@ for the launcher and must be coordinated:
 | `local_lernhive` | `level_manager::get_level_record(int $userid)` | `build_create_course_action()` |
 | `local_lernhive_contenthub` | capability `local/lernhive_contenthub:view` | `build_contenthub_action()` |
 | `local_lernhive_contenthub` | `card_registry::has_available_cards()` | `build_contenthub_action()` |
+| `local_lernhive_library` | capability `local/lernhive_library:import` | `build_library_action()` |
 | `local_lernhive_reporting` | capability `local/lernhive_reporting:view` | `build_reports_action()` |

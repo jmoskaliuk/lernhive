@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_lernhive_launcher';
-$plugin->version   = 2026041500;
+$plugin->version   = 2026041501;
 $plugin->requires  = 2024100700; // Moodle 4.5+.
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.1.2';
+$plugin->release   = '0.1.3';
 $plugin->dependencies = ['local_lernhive' => 2026040901];
