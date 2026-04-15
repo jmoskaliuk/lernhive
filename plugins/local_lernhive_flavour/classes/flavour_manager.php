@@ -190,7 +190,13 @@ class flavour_manager {
      */
     public static function has_pending_overrides(string $key): bool {
         foreach (self::diff($key) as $entry) {
-            if ($entry['changes']) {
+            // Only treat as an override when the value was previously SET by an
+            // admin (current !== null) AND would be changed by applying this flavour.
+            // A null current means the key has never been configured — applying the
+            // flavour is a first-time seed, not a stomping of existing state.
+            // This matches the logic in detect_overrides() which was designed with
+            // the same intent: "first-ever apply on a fresh site returns false".
+            if ($entry['current'] !== null && $entry['changes']) {
                 return true;
             }
         }
