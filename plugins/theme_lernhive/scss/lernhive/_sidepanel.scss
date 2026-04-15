@@ -37,15 +37,15 @@
 }
 
 .lh-hdock {
+    // 0.9.59: remove shared pill container (border + bg) — each button
+    // is its own standalone circular element, matching the user block actions.
     display: inline-flex;
     align-items: center;
     gap: 0.125rem;
-    padding: 0.1875rem;
-    border-radius: 999px;
-    background: $lh-bg;
-    border: 1px solid $lh-border;
-
-    // Reset Moodle's padding that can leak into this region.
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: none;
     margin: 0 0.25rem 0 0;
 }
 

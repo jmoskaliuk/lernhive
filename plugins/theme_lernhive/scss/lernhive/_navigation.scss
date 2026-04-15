@@ -6,14 +6,90 @@
 
 // --- Brand -------------------------------------------------------------------
 
+// 0.9.59: brand row is now a flex row containing the logo link + launcher trigger.
 .lernhive-brand {
     flex-shrink: 0;
     padding-right: $lh-spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $lh-spacing-xs;
 
     @media (min-width: $lh-bp-desktop) {
         padding-right: 0;
         padding-bottom: $lh-spacing-md;
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+}
+
+// Launcher slot in the brand row (desktop sidebar).
+// 0.9.59: launcher moves from page-header actions to the brand row.
+// Dropdown opens to the RIGHT (position: fixed left: $lh-sidebar-width) so it
+// clears the sidebar's overflow-y: auto container without being clipped.
+.lernhive-brand__launcher {
+    flex-shrink: 0;
+    position: relative;
+
+    // Trigger button — same circular style as all other icon buttons.
+    .lernhive-launcher__toggle {
+        color: rgba(255, 255, 255, 0.7);
+        background: transparent;
+        border: none;
+        border-radius: 999px;
+        width: 2rem;
+        height: 2rem;
+        min-width: 2rem;
+        min-height: 2rem;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+
+        .lernhive-launcher__toggle-icon {
+            fill: currentColor;
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    // Dropdown: fixed position so it escapes sidebar overflow-y clipping.
+    // Opens horizontally (flex-direction: row) to the right of the sidebar.
+    .lernhive-launcher__dropdown {
+        position: fixed;
+        left: $lh-sidebar-width;
+        top: $lh-spacing-lg;
+        right: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: calc(100vw - #{$lh-sidebar-width} - #{$lh-spacing-md});
+        gap: $lh-spacing-xs;
+        padding: $lh-spacing-sm;
+        border-radius: $lh-radius;
+        z-index: 200;
+    }
+}
+
+// Icon-only launcher actions — label hidden, tooltip via title attribute.
+.lernhive-launcher__action--icon-only {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+
+    .lernhive-launcher__action-label {
+        display: none;
+    }
+
+    .lernhive-launcher__action-icon {
+        width: 2.5rem;
+        height: 2.5rem;
     }
 }
 
@@ -227,26 +303,30 @@
     gap: $lh-spacing-xs;
     flex-shrink: 0;
 
+    // 0.9.59: no border ring on hover — matches hdock/action flat hover.
     &__avatar {
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        border: 2px solid transparent;
-        padding: 2px;
+        border-radius: 999px;
+        border: none;
+        padding: 0;
         text-decoration: none;
-        transition: border-color 0.15s ease;
+        transition: background 0.15s ease, box-shadow 0.15s ease;
         flex-shrink: 0;
+        width: 2.25rem;
+        height: 2.25rem;
+        overflow: hidden;
 
         &:hover {
-            border-color: $lh-primary;
+            background: $lh-bg-white;
+            box-shadow: 0 0 0 2px $lh-bg-white;
             text-decoration: none;
         }
 
         &:focus-visible {
             outline: 2px solid $lh-accent;
             outline-offset: 2px;
-            border-radius: 50%;
         }
 
         img.lernhive-avatar {
@@ -597,56 +677,71 @@
         min-width: 0;
     }
 
-    // Reset the chevron: no border, no padding box, small icon, inherits
-    // color from the sidebar palette.
-    // 0.9.58: Bootstrap 5 uses CSS custom properties (--bs-btn-*) to drive
-    // button colours — `background: transparent !important` on the CSS property
-    // alone didn't override them. Add the variable overrides too so Bootstrap's
-    // button variants (btn-secondary, btn-icon, etc.) can't restore white bg.
+    // Reset section-toggle chevrons.
+    // 0.9.59: Moodle 5.x uses generic Bootstrap .btn (+ .btn-icon) without
+    // the legacy .courseindex-chevron / .icons-collapse-expand class names on
+    // every install, so class-only selectors are unreliable. We target ALL
+    // buttons inside section-title rows AND keep the class fallbacks.
+    // CSS custom properties do NOT support !important — setting variables
+    // without !important is fine here because:
+    //   (a) our selector has higher specificity than Bootstrap's .btn (one
+    //       extra parent class: .lernhive-course-index__body .courseindex-section-title)
+    //   (b) the CSS property overrides use !important for the computed values.
+    .courseindex-section-title button,
+    .courseindex-section-title a[data-bs-toggle],
     .courseindex-chevron,
     .icons-collapse-expand {
-        // Kill Bootstrap 5 button CSS variables first.
-        --bs-btn-bg: transparent !important;
-        --bs-btn-border-color: transparent !important;
-        --bs-btn-active-bg: transparent !important;
-        --bs-btn-active-border-color: transparent !important;
-        --bs-btn-hover-bg: transparent !important;
-        --bs-btn-hover-border-color: transparent !important;
-        --bs-btn-focus-shadow-rgb: 0, 0, 0 !important;
+        // Bootstrap 5 CSS custom properties (no !important — not supported).
+        --bs-btn-bg: transparent;
+        --bs-btn-color: rgba(255, 255, 255, 0.6);
+        --bs-btn-border-color: transparent;
+        --bs-btn-hover-bg: transparent;
+        --bs-btn-hover-border-color: transparent;
+        --bs-btn-hover-color: #fff;
+        --bs-btn-active-bg: transparent;
+        --bs-btn-active-border-color: transparent;
+        --bs-btn-focus-shadow-rgb: 0, 0, 0;
 
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 1.25rem;
-        height: 1.25rem;
+        // Property overrides — these DO support !important and beat Bootstrap.
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
         padding: 0 !important;
         border: 0 !important;
         border-color: transparent !important;
         background: transparent !important;
         background-color: transparent !important;
+        background-image: none !important;
         box-shadow: none !important;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.6) !important;
         text-decoration: none;
         flex: 0 0 auto;
+        line-height: 1;
 
         &:hover,
         &:focus-visible {
-            color: #fff;
+            color: #fff !important;
             background: transparent !important;
             background-color: transparent !important;
         }
 
-        // Bootstrap aria-expanded="true" state override
         &[aria-expanded="true"] {
             background: transparent !important;
             background-color: transparent !important;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.9) !important;
         }
 
-        .icon {
+        // Icon elements inside the button.
+        .icon, .fa, svg {
             margin: 0;
             font-size: 0.75rem;
-            color: inherit;
+            color: inherit !important;
+            width: 1rem;
+            height: 1rem;
         }
     }
 
@@ -781,6 +876,18 @@
     margin-top: $lh-spacing-sm;
     padding-top: $lh-spacing-sm;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+    // 0.9.59: Hide the Moodle Navigation block and any HTML block that
+    // replicates the site nav tree. LernHive renders its own curated
+    // navitems via the custom nav — a second, unstyled nav tree inside the
+    // sidebar clutters the layout and duplicates items. Admins should
+    // remove block_navigation from the sidebar-bottom region entirely;
+    // this CSS is a safety-net while that cleanup happens.
+    .block_navigation,
+    .block[data-block="navigation"],
+    .block[data-block="site_main_menu"] {
+        display: none !important;
+    }
 
     .block {
         background: transparent;

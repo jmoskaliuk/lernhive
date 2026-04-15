@@ -25,12 +25,9 @@
                 that shipped in 0.9.45 and hid all of the above. }}
             {{#showpageheader}}
                 <div class="lernhive-page-header{{#hascourseheader}} lernhive-page-header--course{{/hascourseheader}}">
-                    {{! Course Plugin Shell Zone A: back ← + course title + category.
-                        0.9.58: replaces full_header on real course pages so the
-                        header matches the Plugin Shell pattern used by all local
-                        plugins. full_header is hidden via CSS on --course pages.
-                        Non-course pages (incourse/frontpage) fall back to the old
-                        full_header rendering via the {{^hascourseheader}} branch. }}
+                    {{! Course Plugin Shell Zone A: back arrow + course title + category.
+                        0.9.58: replaces full_header on real course pages.
+                        0.9.59: fixed comment — no Mustache tags inside comments. }}
                     {{#hascourseheader}}
                         {{#courseheader}}
                         <div class="lernhive-course-header">
@@ -69,13 +66,7 @@
                             </div>
                         {{/haslangmenu}}
 
-                        {{#showlauncher}}
-                            {{#launcher}}
-                                <div class="lernhive-page-header__launcher">
-                                    {{> theme_lernhive/launcher }}
-                                </div>
-                            {{/launcher}}
-                        {{/showlauncher}}
+                        {{! Launcher moved to sidebar brand row in 0.9.59. }}
 
                         {{#isloggedin}}
                             <div class="lernhive-user-block">
@@ -130,7 +121,13 @@
                     <span id="maincontent" class="lernhive-skip-anchor"></span>
                     <section class="lernhive-course-surface" aria-label="content">
                         <div id="region-main">
-                            {{{ output.course_content_header }}}
+                            {{! 0.9.59: suppress course_content_header when we render our own
+                                Plugin Shell Zone A header (hascourseheader = true). The content
+                                header re-renders the course title + meta as an h1 + breadcrumb
+                                which duplicates the Zone A we built in the page header. }}
+                            {{^hascourseheader}}
+                                {{{ output.course_content_header }}}
+                            {{/hascourseheader}}
                             {{{ output.main_content }}}
                             {{{ output.course_content_footer }}}
                         </div>

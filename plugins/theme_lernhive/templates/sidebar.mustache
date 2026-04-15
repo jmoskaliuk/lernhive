@@ -1,4 +1,8 @@
 <aside class="lernhive-sidebar">
+    {{! Brand row: logo left + launcher trigger right (0.9.59).
+        The launcher was previously in the page-header action bar. Moving it
+        here keeps it always visible alongside the logo, opens to the RIGHT
+        of the sidebar (position: fixed), no labels — only title tooltips. }}
     <div class="lernhive-brand">
         <a href="{{{ config.wwwroot }}}/" class="lernhive-brand__link" aria-label="LernHive — Home">
             <img src="{{{ config.wwwroot }}}/theme/lernhive/pix/logo-sidebar.svg"
@@ -7,6 +11,13 @@
                  width="148"
                  height="30">
         </a>
+        {{#showlauncher}}
+            {{#launcher}}
+                <div class="lernhive-brand__launcher">
+                    {{> theme_lernhive/launcher }}
+                </div>
+            {{/launcher}}
+        {{/showlauncher}}
     </div>
 
     {{! Primary navigation — built manually in PHP as $navitems array with

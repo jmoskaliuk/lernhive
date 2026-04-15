@@ -22,7 +22,12 @@
             <p class="lernhive-launcher__empty">{{ emptytext }}</p>
         {{/empty}}
         {{#actions}}
-            <a class="lernhive-launcher__action" href="{{ url }}" title="{{ label }}" data-actionid="{{ id }}">
+            {{! 0.9.59: label hidden — icon only in dropdown, title attr provides tooltip. }}
+            <a class="lernhive-launcher__action lernhive-launcher__action--icon-only"
+               href="{{ url }}"
+               title="{{ label }}"
+               aria-label="{{ label }}"
+               data-actionid="{{ id }}">
                 <span class="lernhive-launcher__action-icon" aria-hidden="true">
                     {{#iscreatecourse}}
                         <svg viewBox="0 0 24 24" focusable="false">

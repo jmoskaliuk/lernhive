@@ -37,14 +37,8 @@
                             </div>
                         {{/haslangmenu}}
 
-                        {{! App Launcher — grid-dots icon, opens plugin launcher dropdown }}
-                        {{#showlauncher}}
-                            {{#launcher}}
-                                <div class="lernhive-page-header__launcher">
-                                    {{> theme_lernhive/launcher }}
-                                </div>
-                            {{/launcher}}
-                        {{/showlauncher}}
+                        {{! App Launcher — moved to sidebar brand row in 0.9.59.
+                            No longer rendered in the page header to avoid duplication. }}
 
                         {{! User block: avatar (→ profile) + settings icon + logout icon.
                             Dropdown removed (0.9.27): actions are always-visible icon buttons. }}
