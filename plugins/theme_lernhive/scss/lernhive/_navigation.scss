@@ -185,18 +185,18 @@
 .lernhive-page-header__launcher {
     flex-shrink: 0;
 
+    // 0.9.57: circular, no permanent border — matches .lh-hdock__btn
     .lernhive-launcher__toggle {
         color: $lh-text-secondary;
         background: transparent;
-        border: 1px solid $lh-border;
-        border-radius: $lh-radius-sm;
+        border: none;
+        border-radius: 999px;
         min-width: 2.25rem;
         min-height: 2.25rem;
 
         &:hover {
-            background: $lh-primary-light;
+            background: $lh-bg-white;
             color: $lh-primary;
-            border-color: $lh-primary;
         }
 
         &:focus-visible {
@@ -259,26 +259,37 @@
     }
 
     // Icon-only action button (settings, logout).
+    // 0.9.57: matches .lh-hdock__btn — circular, no permanent border,
+    // Lucide SVG stroke icons, same hover/focus states.
     &__action {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 2rem;
-        height: 2rem;
-        border-radius: $lh-radius-sm;
-        border: 1px solid $lh-border;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 999px;
+        border: none;
         background: transparent;
         color: $lh-text-secondary;
         text-decoration: none;
         flex-shrink: 0;
-        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 
-        .fa { font-size: 0.875rem; }
+        // Lucide SVGs — stroke only, no fill, 1.125rem matches hdock.
+        svg {
+            width: 1.125rem;
+            height: 1.125rem;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
 
         &:hover {
-            background: $lh-primary-light;
+            background: $lh-bg-white;
             color: $lh-primary;
-            border-color: $lh-primary;
             text-decoration: none;
         }
 
@@ -291,7 +302,6 @@
             &:hover {
                 background: $lh-danger-light;
                 color: $lh-danger;
-                border-color: lighten($lh-danger, 20%);
             }
         }
     }

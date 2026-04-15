@@ -32,13 +32,21 @@
 // inside `.lernhive-page-header`, so the 60px offset is pure wasted space
 // that pushed the user action icons far below the CTA strip. Reset it.
 //
-// IMPORTANT: only reset `margin-top` here. DO NOT touch `margin-left` /
-// `margin-right` — on desktop `.lernhive-page { margin-left: $lh-sidebar-width; }`
-// (see _layout.scss) pushes the page column past the fixed sidebar; any
-// `margin-left: 0 !important` here would collapse that offset and bury
-// admin tabs + page content under the sidebar.
+// 0.9.57: Also enforce margin-left here with high specificity.
+// `.lernhive-page { margin-left: $lh-sidebar-width }` in _layout.scss is a
+// CLASS selector (specificity 0-0-1-0 = 10). Boost's inherited CSS uses an
+// ID selector `#page { margin-left: 0 }` (specificity 0-1-0-0 = 100) which
+// silently wins, collapsing the page column under the fixed sidebar on pages
+// where Boost emits its own reset. Adding it here with `.theme-lernhive-shell
+// #page` (class + ID = 0-1-1-0 = 110) beats Boost's rule.
 .theme-lernhive-shell #page {
     margin-top: 0 !important;
+}
+
+@media (min-width: $lh-bp-desktop) {
+    .theme-lernhive-shell #page {
+        margin-left: $lh-sidebar-width;
+    }
 }
 
 // Ensure #page-wrapper participates in our shell rather than blocking it.

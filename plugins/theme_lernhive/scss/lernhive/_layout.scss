@@ -396,28 +396,45 @@ $lh-bp-tablet:   768px;
         }
 
         // Settings + logout icon buttons
+        // 0.9.57: matches .lh-hdock__btn — circular, no border, Lucide SVG stroke
         &__action {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: $lh-radius-sm;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 999px;
+            border: none;
+            background: transparent;
             color: $lh-text-secondary;
             text-decoration: none;
             flex-shrink: 0;
-            transition: background 0.15s ease, color 0.15s ease;
+            transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 
-            i { font-size: 1rem; }
+            svg {
+                width: 1.125rem;
+                height: 1.125rem;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                flex-shrink: 0;
+            }
 
             &:hover {
-                background: $lh-primary-light;
+                background: $lh-bg-white;
                 color: $lh-primary;
+            }
+
+            &:focus-visible {
+                outline: 2px solid $lh-accent;
+                outline-offset: 2px;
             }
 
             // Logout — danger hover
             &--danger:hover {
-                background: rgba($lh-danger, 0.08);
+                background: $lh-danger-light;
                 color: $lh-danger;
             }
         }
