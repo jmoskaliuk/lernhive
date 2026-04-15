@@ -36,6 +36,7 @@ $PAGE->set_url(new moodle_url('/local/lernhive_reporting/popular.php'));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string('tile_popular_title', 'local_lernhive_reporting'));
 $PAGE->set_heading(get_string('pluginname', 'local_lernhive_reporting'));
+$PAGE->requires->css('/local/lernhive_reporting/styles.css');
 
 /** @var \local_lernhive_reporting\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('local_lernhive_reporting');

@@ -26,6 +26,7 @@
 - completion drilldown values are plausible (completed <= participants)
 - capability guard blocks unauthorized access
 - layout remains readable on narrow screens
+- reporting pages follow the same design-system shell structure as other LernHive plugins
 
 ## Known risks
 

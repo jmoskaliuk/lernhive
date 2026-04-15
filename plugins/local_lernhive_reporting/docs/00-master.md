@@ -2,7 +2,7 @@
 
 **Plugin type:** local plugin  
 **Release target:** R1  
-**Current implementation status:** v0.1.0 scaffold (dashboard + 3 tiles + drilldowns)
+**Current implementation status:** v0.1.1 (dashboard + 3 tiles + drilldowns + design-system-aligned UI shell)
 
 ## Purpose
 

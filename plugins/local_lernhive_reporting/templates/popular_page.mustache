@@ -2,34 +2,75 @@
     @template local_lernhive_reporting/popular_page
 }}
 
-<a class="btn btn-link mb-3 px-0" href="{{backurl}}">{{#str}} back_to_dashboard, local_lernhive_reporting {{/str}}</a>
-
-<div class="card">
-    <div class="card-body">
-        <h2 class="h5 mb-3">{{#str}} tile_popular_title, local_lernhive_reporting {{/str}}</h2>
-
-        {{#hasrows}}
-        <div class="table-responsive">
-            <table class="table table-sm table-striped mb-0">
-                <thead>
-                    <tr>
-                        <th>{{#str}} course_label, local_lernhive_reporting {{/str}}</th>
-                        <th class="text-right">{{#str}} participants_label, local_lernhive_reporting {{/str}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#rows}}
-                    <tr>
-                        <td><a href="{{courseurl}}">{{coursename}}</a></td>
-                        <td class="text-right">{{usercount}}</td>
-                    </tr>
-                    {{/rows}}
-                </tbody>
-            </table>
+<div class="lh-reporting-page">
+    <div class="lh-plugin-header">
+        <div class="lh-plugin-header__row">
+            <a class="lh-plugin-header__nav-btn" href="{{backurl}}">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                {{#str}} back_to_dashboard, local_lernhive_reporting {{/str}}
+            </a>
+            <div class="lh-plugin-header__title-block">
+                <div class="lh-plugin-header__name">
+                    {{#str}} pluginname, local_lernhive_reporting {{/str}}
+                    <span class="lh-plugin-header__sep">|</span>
+                    <span class="lh-plugin-header__tagline">{{#str}} tile_popular_title, local_lernhive_reporting {{/str}}</span>
+                </div>
+                <p class="lh-plugin-header__subtitle">{{#str}} popular_subtitle, local_lernhive_reporting {{/str}}</p>
+            </div>
         </div>
-        {{/hasrows}}
-        {{^hasrows}}
-        <p class="text-muted mb-0">{{#str}} no_popular_rows_notice, local_lernhive_reporting {{/str}}</p>
-        {{/hasrows}}
+    </div>
+
+    <div class="lh-plugin-infobar">
+        <div class="lh-plugin-infobar__stats">
+            <div class="lh-plugin-infobar__stat">
+                <i class="fa fa-line-chart" aria-hidden="true"></i>
+                <strong>{{rowcount}}</strong>
+                {{#str}} popular_courses_ranked, local_lernhive_reporting {{/str}}
+            </div>
+            <div class="lh-plugin-infobar__stat">
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <strong>{{topcoursename}}</strong>
+                ({{topcourseusers}} {{#str}} participants_label, local_lernhive_reporting {{/str}})
+            </div>
+        </div>
+    </div>
+
+    <div class="lh-plugin-content-area">
+        <div class="lh-plugin-card">
+            <div class="lh-plugin-card__top">
+                <span class="lh-plugin-card__icon lh-plugin-card__icon--community" aria-hidden="true">
+                    <i class="fa fa-bar-chart"></i>
+                </span>
+                <div class="lh-plugin-card__meta">
+                    <div class="lh-plugin-card__kicker">{{#str}} drilldown_popular, local_lernhive_reporting {{/str}}</div>
+                    <div class="lh-plugin-card__title">{{#str}} tile_popular_title, local_lernhive_reporting {{/str}}</div>
+                </div>
+            </div>
+            <div class="lh-plugin-card__body">
+                {{#hasrows}}
+                <div class="lh-reporting-table-wrap">
+                    <table class="lh-reporting-table">
+                        <thead>
+                            <tr>
+                                <th>{{#str}} course_label, local_lernhive_reporting {{/str}}</th>
+                                <th class="lh-reporting-cell--num">{{#str}} participants_label, local_lernhive_reporting {{/str}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#rows}}
+                            <tr>
+                                <td><a href="{{courseurl}}">{{coursename}}</a></td>
+                                <td class="lh-reporting-cell--num">{{usercount}}</td>
+                            </tr>
+                            {{/rows}}
+                        </tbody>
+                    </table>
+                </div>
+                {{/hasrows}}
+                {{^hasrows}}
+                <p class="lh-reporting-empty">{{#str}} no_popular_rows_notice, local_lernhive_reporting {{/str}}</p>
+                {{/hasrows}}
+            </div>
+        </div>
     </div>
 </div>

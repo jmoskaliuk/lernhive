@@ -20,6 +20,7 @@ R1 implementation is intentionally lightweight and Moodle-native.
 - `templates/users_page.mustache` — users drilldown UI
 - `templates/popular_page.mustache` — popular drilldown UI
 - `templates/completion_page.mustache` — completion drilldown UI
+- `styles.css` — reporting-specific style layer aligned with the LernHive design system
 - `db/access.php` — capability model
 - `classes/privacy/provider.php` — null privacy provider
 
@@ -29,6 +30,7 @@ R1 implementation is intentionally lightweight and Moodle-native.
 - use read-only SQL against core reporting/completion tables
 - avoid custom schema in R1
 - keep plugin logic independent from theme
+- follow the LernHive plugin-shell visual pattern in templates (`lh-plugin-header`, `lh-plugin-infobar`, `lh-plugin-card`)
 
 ## Current data sources
 

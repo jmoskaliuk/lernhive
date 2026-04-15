@@ -25,6 +25,11 @@ Offer a simple reporting dashboard on top of Moodle reports and analytics.
 - no completion records yet
 - no drilldown rows yet
 
+6. **Design-system aligned reporting UI**
+- dashboard and drilldowns use the LernHive plugin-shell pattern (Zone A header + Zone B infobar)
+- KPI tiles and detail tables use consistent card spacing, typography, and action styling
+- course filter and alerts follow the same visual language as other LernHive plugin screens
+
 ## Data model policy (R1)
 
 - read-only access to Moodle core tables

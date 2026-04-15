@@ -19,6 +19,7 @@ A quick reporting entry point that answers common everyday questions without ope
 - simple card/tile layout
 - plain language labels
 - minimal clicks
+- consistent LernHive plugin-shell layout (header, infobar, and content cards)
 - responsive table/card behavior
 - explicit empty states when there are no participants or no completion records
 

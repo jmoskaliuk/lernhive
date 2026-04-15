@@ -11,6 +11,7 @@
 - [x] extend PHPUnit coverage for ranking and visibility behavior
 - [x] add explicit UX empty states for no participants/no completion data
 - [x] strengthen global reporting visibility (show all courses for global roles)
+- [x] align dashboard and drilldowns to the LernHive design-system shell and card patterns
 
 ## Next tasks
 

@@ -82,6 +82,7 @@ class users_page implements renderable, templatable {
         return [
             'hascourses' => !empty($coursemap),
             'hasrows' => !empty($rows),
+            'rowcount' => count($rows),
             'courseoptions' => $courseoptions,
             'rows' => $rows,
             'selectedcoursename' => $selectedcourseid > 0

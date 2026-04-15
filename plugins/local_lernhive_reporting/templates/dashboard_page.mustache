@@ -14,99 +14,185 @@
     }
 }}
 
-<div class="container-fluid px-0">
-    {{#hascourses}}
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="h5 mb-3">{{#str}} filter_heading, local_lernhive_reporting {{/str}}</h2>
-            <form method="get" action="{{selecturl}}" class="form-inline">
-                <label class="mr-2" for="id_courseid">{{#str}} course_label, local_lernhive_reporting {{/str}}</label>
-                <select id="id_courseid" name="courseid" class="custom-select mr-2">
-                    {{#courseoptions}}
-                    <option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>
-                    {{/courseoptions}}
-                </select>
-                <button type="submit" class="btn btn-primary">{{#str}} filter_apply, local_lernhive_reporting {{/str}}</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h3 class="h6 text-muted mb-2">{{#str}} tile_users_title, local_lernhive_reporting {{/str}}</h3>
-                    <div class="display-4 mb-2">{{usercount}}</div>
-                    <p class="mb-2">{{selectedcoursename}}</p>
-                    {{#usersisempty}}
-                    <p class="text-muted small mb-2">{{#str}} empty_users_in_selected_course, local_lernhive_reporting {{/str}}</p>
-                    {{/usersisempty}}
-                    {{#hasselectedcourse}}
-                    <a class="btn btn-link px-0" href="{{usersdrilldownurl}}">
-                        {{#str}} open_users_report, local_lernhive_reporting {{/str}}
-                    </a>
-                    {{/hasselectedcourse}}
+<div class="lh-reporting-page">
+    <div class="lh-plugin-header">
+        <div class="lh-plugin-header__row">
+            <div class="lh-plugin-header__title-block">
+                <div class="lh-plugin-header__name">
+                    {{#str}} pluginname, local_lernhive_reporting {{/str}}
+                    <span class="lh-plugin-header__sep">|</span>
+                    <span class="lh-plugin-header__tagline">{{#str}} dashboard_tagline, local_lernhive_reporting {{/str}}</span>
+                </div>
+                <p class="lh-plugin-header__subtitle">{{#str}} dashboard_subtitle, local_lernhive_reporting {{/str}}</p>
+                <div class="lh-plugin-header__tags">
+                    <span class="lh-plugin-tag lh-plugin-tag--active">{{#str}} tag_release1, local_lernhive_reporting {{/str}}</span>
+                    <span class="lh-plugin-tag lh-plugin-tag--type">{{#str}} tag_moodlebased, local_lernhive_reporting {{/str}}</span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h3 class="h6 text-muted mb-2">{{#str}} tile_popular_title, local_lernhive_reporting {{/str}}</h3>
-                    <div class="h4 mb-2">{{toppopularcoursename}}</div>
-                    <p class="mb-2">{{toppopularcourseusers}} {{#str}} participants_label, local_lernhive_reporting {{/str}}</p>
-                    <a class="btn btn-link px-0" href="{{populardrilldownurl}}">
+    {{#hascourses}}
+    <div class="lh-plugin-infobar">
+        <div class="lh-plugin-infobar__stats">
+            <div class="lh-plugin-infobar__stat">
+                <i class="fa fa-book" aria-hidden="true"></i>
+                <strong>{{selectedcoursename}}</strong>
+            </div>
+            <div class="lh-plugin-infobar__stat">
+                <i class="fa fa-users" aria-hidden="true"></i>
+                <strong>{{usercount}}</strong>
+                {{#str}} participants_label, local_lernhive_reporting {{/str}}
+            </div>
+            <div class="lh-plugin-infobar__stat">
+                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                <strong>{{selectedcompletionratetext}}</strong>
+                {{#str}} completion_rate_label, local_lernhive_reporting {{/str}}
+            </div>
+        </div>
+        {{#hasselectedcourse}}
+        <a class="lh-plugin-infobar__cta" href="{{completiondrilldownurl}}">
+            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            {{#str}} open_completion_report, local_lernhive_reporting {{/str}}
+        </a>
+        {{/hasselectedcourse}}
+    </div>
+    {{/hascourses}}
+
+    <div class="lh-plugin-content-area">
+        {{#hascourses}}
+        <div class="lh-plugin-card lh-reporting-filter-card">
+            <div class="lh-plugin-card__top">
+                <span class="lh-plugin-card__icon lh-plugin-card__icon--generic" aria-hidden="true">
+                    <i class="fa fa-filter"></i>
+                </span>
+                <div class="lh-plugin-card__meta">
+                    <div class="lh-plugin-card__kicker">{{#str}} filter_heading, local_lernhive_reporting {{/str}}</div>
+                    <div class="lh-plugin-card__title">{{#str}} course_label, local_lernhive_reporting {{/str}}</div>
+                    <div class="lh-plugin-card__sub">{{#str}} filter_helptext, local_lernhive_reporting {{/str}}</div>
+                </div>
+            </div>
+            <div class="lh-plugin-card__body">
+                <form method="get" action="{{selecturl}}" class="lh-reporting-filter-form">
+                    <div class="lh-reporting-field">
+                        <label class="lh-reporting-label" for="id_courseid">{{#str}} course_label, local_lernhive_reporting {{/str}}</label>
+                        <select id="id_courseid" name="courseid" class="lh-reporting-select">
+                            {{#courseoptions}}
+                            <option value="{{value}}"{{#selected}} selected{{/selected}}>{{label}}</option>
+                            {{/courseoptions}}
+                        </select>
+                    </div>
+                    <button type="submit" class="lh-btn lh-btn--accent btn btn-primary">{{#str}} filter_apply, local_lernhive_reporting {{/str}}</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="lh-plugin-grid lh-plugin-grid--cols-3 lh-reporting-section-gap">
+            <div class="lh-plugin-card">
+                <div class="lh-plugin-card__top">
+                    <span class="lh-plugin-card__icon lh-plugin-card__icon--course" aria-hidden="true">
+                        <i class="fa fa-users"></i>
+                    </span>
+                    <div class="lh-plugin-card__meta">
+                        <div class="lh-plugin-card__kicker">{{#str}} tile_users_title, local_lernhive_reporting {{/str}}</div>
+                        <div class="lh-plugin-card__title">{{selectedcoursename}}</div>
+                    </div>
+                </div>
+                <div class="lh-plugin-card__body">
+                    <p class="lh-reporting-kpi">{{usercount}}</p>
+                    {{#usersisempty}}
+                    <p class="lh-reporting-note">{{#str}} empty_users_in_selected_course, local_lernhive_reporting {{/str}}</p>
+                    {{/usersisempty}}
+                </div>
+                {{#hasselectedcourse}}
+                <div class="lh-plugin-card__actions">
+                    <a class="lh-plugin-btn lh-plugin-btn--open btn btn-link" href="{{usersdrilldownurl}}">
+                        {{#str}} open_users_report, local_lernhive_reporting {{/str}}
+                    </a>
+                </div>
+                {{/hasselectedcourse}}
+            </div>
+
+            <div class="lh-plugin-card">
+                <div class="lh-plugin-card__top">
+                    <span class="lh-plugin-card__icon lh-plugin-card__icon--community" aria-hidden="true">
+                        <i class="fa fa-line-chart"></i>
+                    </span>
+                    <div class="lh-plugin-card__meta">
+                        <div class="lh-plugin-card__kicker">{{#str}} tile_popular_title, local_lernhive_reporting {{/str}}</div>
+                        <div class="lh-plugin-card__title">{{#str}} top_course_label, local_lernhive_reporting {{/str}}</div>
+                    </div>
+                </div>
+                <div class="lh-plugin-card__body">
+                    <p class="lh-reporting-kpi lh-reporting-kpi--title">{{toppopularcoursename}}</p>
+                    <p class="lh-reporting-note">{{toppopularcourseusers}} {{#str}} participants_label, local_lernhive_reporting {{/str}}</p>
+                </div>
+                <div class="lh-plugin-card__actions">
+                    <a class="lh-plugin-btn lh-plugin-btn--open btn btn-link" href="{{populardrilldownurl}}">
                         {{#str}} open_popular_report, local_lernhive_reporting {{/str}}
                     </a>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h3 class="h6 text-muted mb-2">{{#str}} tile_completion_title, local_lernhive_reporting {{/str}}</h3>
-                    <div class="display-4 mb-2">{{selectedcompletionratetext}}</div>
-                    <p class="mb-2">
+            <div class="lh-plugin-card">
+                <div class="lh-plugin-card__top">
+                    <span class="lh-plugin-card__icon lh-plugin-card__icon--tour" aria-hidden="true">
+                        <i class="fa fa-check-square-o"></i>
+                    </span>
+                    <div class="lh-plugin-card__meta">
+                        <div class="lh-plugin-card__kicker">{{#str}} tile_completion_title, local_lernhive_reporting {{/str}}</div>
+                        <div class="lh-plugin-card__title">{{selectedcoursename}}</div>
+                    </div>
+                </div>
+                <div class="lh-plugin-card__body">
+                    <p class="lh-reporting-kpi">{{selectedcompletionratetext}}</p>
+                    <p class="lh-reporting-note">
                         {{selectedcompleted}} {{#str}} completed_label, local_lernhive_reporting {{/str}}
                         / {{selectedparticipants}} {{#str}} participants_label, local_lernhive_reporting {{/str}}
                     </p>
                     {{#completionisempty}}
-                    <p class="text-muted small mb-2">{{#str}} empty_completion_no_participants, local_lernhive_reporting {{/str}}</p>
+                    <p class="lh-reporting-note">{{#str}} empty_completion_no_participants, local_lernhive_reporting {{/str}}</p>
                     {{/completionisempty}}
                     {{#completionnotstarted}}
-                    <p class="text-muted small mb-2">{{#str}} empty_completion_no_completions, local_lernhive_reporting {{/str}}</p>
+                    <p class="lh-reporting-note">{{#str}} empty_completion_no_completions, local_lernhive_reporting {{/str}}</p>
                     {{/completionnotstarted}}
-                    {{#hasselectedcourse}}
-                    <a class="btn btn-link px-0" href="{{completiondrilldownurl}}">
+                </div>
+                {{#hasselectedcourse}}
+                <div class="lh-plugin-card__actions">
+                    <a class="lh-plugin-btn lh-plugin-btn--open btn btn-link" href="{{completiondrilldownurl}}">
                         {{#str}} open_completion_report, local_lernhive_reporting {{/str}}
                     </a>
-                    {{/hasselectedcourse}}
                 </div>
+                {{/hasselectedcourse}}
             </div>
         </div>
-    </div>
 
-    <div class="row mt-2">
-        <div class="col-lg-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="h5 mb-3">{{#str}} drilldown_popular, local_lernhive_reporting {{/str}}</h2>
+        <div class="lh-plugin-grid lh-plugin-grid--cols-2">
+            <div class="lh-plugin-card">
+                <div class="lh-plugin-card__top">
+                    <span class="lh-plugin-card__icon lh-plugin-card__icon--community" aria-hidden="true">
+                        <i class="fa fa-bar-chart"></i>
+                    </span>
+                    <div class="lh-plugin-card__meta">
+                        <div class="lh-plugin-card__kicker">{{#str}} drilldown_popular, local_lernhive_reporting {{/str}}</div>
+                        <div class="lh-plugin-card__title">{{#str}} tile_popular_title, local_lernhive_reporting {{/str}}</div>
+                    </div>
+                </div>
+                <div class="lh-plugin-card__body">
                     {{#haspopularrows}}
-                    <div class="table-responsive">
-                        <table class="table table-sm table-striped mb-0">
+                    <div class="lh-reporting-table-wrap">
+                        <table class="lh-reporting-table">
                             <thead>
                                 <tr>
                                     <th>{{#str}} course_label, local_lernhive_reporting {{/str}}</th>
-                                    <th class="text-right">{{#str}} participants_label, local_lernhive_reporting {{/str}}</th>
+                                    <th class="lh-reporting-cell--num">{{#str}} participants_label, local_lernhive_reporting {{/str}}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#popularrows}}
                                 <tr>
                                     <td><a href="{{courseurl}}">{{coursename}}</a></td>
-                                    <td class="text-right">{{usercount}}</td>
+                                    <td class="lh-reporting-cell--num">{{usercount}}</td>
                                 </tr>
                                 {{/popularrows}}
                             </tbody>
@@ -114,34 +200,40 @@
                     </div>
                     {{/haspopularrows}}
                     {{^haspopularrows}}
-                    <p class="text-muted mb-0">{{#str}} no_popular_rows_notice, local_lernhive_reporting {{/str}}</p>
+                    <p class="lh-reporting-empty">{{#str}} no_popular_rows_notice, local_lernhive_reporting {{/str}}</p>
                     {{/haspopularrows}}
                 </div>
             </div>
-        </div>
 
-        <div class="col-lg-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="h5 mb-3">{{#str}} drilldown_completion, local_lernhive_reporting {{/str}}</h2>
+            <div class="lh-plugin-card">
+                <div class="lh-plugin-card__top">
+                    <span class="lh-plugin-card__icon lh-plugin-card__icon--tour" aria-hidden="true">
+                        <i class="fa fa-check"></i>
+                    </span>
+                    <div class="lh-plugin-card__meta">
+                        <div class="lh-plugin-card__kicker">{{#str}} drilldown_completion, local_lernhive_reporting {{/str}}</div>
+                        <div class="lh-plugin-card__title">{{#str}} tile_completion_title, local_lernhive_reporting {{/str}}</div>
+                    </div>
+                </div>
+                <div class="lh-plugin-card__body">
                     {{#hascompletionrows}}
-                    <div class="table-responsive">
-                        <table class="table table-sm table-striped mb-0">
+                    <div class="lh-reporting-table-wrap">
+                        <table class="lh-reporting-table">
                             <thead>
                                 <tr>
                                     <th>{{#str}} course_label, local_lernhive_reporting {{/str}}</th>
-                                    <th class="text-right">{{#str}} participants_label, local_lernhive_reporting {{/str}}</th>
-                                    <th class="text-right">{{#str}} completed_label, local_lernhive_reporting {{/str}}</th>
-                                    <th class="text-right">{{#str}} completion_rate_label, local_lernhive_reporting {{/str}}</th>
+                                    <th class="lh-reporting-cell--num">{{#str}} participants_label, local_lernhive_reporting {{/str}}</th>
+                                    <th class="lh-reporting-cell--num">{{#str}} completed_label, local_lernhive_reporting {{/str}}</th>
+                                    <th class="lh-reporting-cell--num">{{#str}} completion_rate_label, local_lernhive_reporting {{/str}}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#completionrows}}
                                 <tr>
                                     <td><a href="{{courseurl}}">{{coursename}}</a></td>
-                                    <td class="text-right">{{participants}}</td>
-                                    <td class="text-right">{{completed}}</td>
-                                    <td class="text-right">{{completiontext}}</td>
+                                    <td class="lh-reporting-cell--num">{{participants}}</td>
+                                    <td class="lh-reporting-cell--num">{{completed}}</td>
+                                    <td class="lh-reporting-cell--num">{{completiontext}}</td>
                                 </tr>
                                 {{/completionrows}}
                             </tbody>
@@ -149,17 +241,17 @@
                     </div>
                     {{/hascompletionrows}}
                     {{^hascompletionrows}}
-                    <p class="text-muted mb-0">{{#str}} no_completion_rows_notice, local_lernhive_reporting {{/str}}</p>
+                    <p class="lh-reporting-empty">{{#str}} no_completion_rows_notice, local_lernhive_reporting {{/str}}</p>
                     {{/hascompletionrows}}
                 </div>
             </div>
         </div>
-    </div>
-    {{/hascourses}}
+        {{/hascourses}}
 
-    {{^hascourses}}
-    <div class="alert alert-info" role="status">
-        {{#str}} no_courses_notice, local_lernhive_reporting {{/str}}
+        {{^hascourses}}
+        <p class="lh-reporting-alert" role="status">
+            {{#str}} no_courses_notice, local_lernhive_reporting {{/str}}
+        </p>
+        {{/hascourses}}
     </div>
-    {{/hascourses}}
 </div>
