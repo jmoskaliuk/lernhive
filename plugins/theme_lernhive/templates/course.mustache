@@ -24,10 +24,40 @@
                 replaces the short-lived bespoke lernhive-course-header card
                 that shipped in 0.9.45 and hid all of the above. }}
             {{#showpageheader}}
-                <div class="lernhive-page-header">
-                    <div class="lernhive-page-header__main">
-                        {{{ output.full_header }}}
-                    </div>
+                <div class="lernhive-page-header{{#hascourseheader}} lernhive-page-header--course{{/hascourseheader}}">
+                    {{! Course Plugin Shell Zone A: back ← + course title + category.
+                        0.9.58: replaces full_header on real course pages so the
+                        header matches the Plugin Shell pattern used by all local
+                        plugins. full_header is hidden via CSS on --course pages.
+                        Non-course pages (incourse/frontpage) fall back to the old
+                        full_header rendering via the {{^hascourseheader}} branch. }}
+                    {{#hascourseheader}}
+                        {{#courseheader}}
+                        <div class="lernhive-course-header">
+                            <a href="{{ backurl }}"
+                               class="lernhive-course-header__back"
+                               aria-label="{{ backlabel }}">
+                                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                            </a>
+                            <div class="lernhive-course-header__title">
+                                <h1>{{ coursename }}</h1>
+                                {{#hascategoryname}}
+                                    <span class="lernhive-course-header__category">
+                                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                        {{ categoryname }}
+                                    </span>
+                                {{/hascategoryname}}
+                            </div>
+                        </div>
+                        {{/courseheader}}
+                    {{/hascourseheader}}
+                    {{^hascourseheader}}
+                        <div class="lernhive-page-header__main">
+                            {{{ output.full_header }}}
+                        </div>
+                    {{/hascourseheader}}
                     <div class="lernhive-page-header__actions">
                         {{#hassidepanel}}
                             {{> theme_lernhive/sidepanel }}
@@ -58,13 +88,20 @@
                                    class="lernhive-user-block__action"
                                    title="{{#str}} preferences {{/str}}"
                                    aria-label="{{#str}} preferences {{/str}}">
-                                    <i class="fa fa-cog" aria-hidden="true"></i>
+                                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="3"/>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                    </svg>
                                 </a>
                                 <a href="{{ logouturl }}"
                                    class="lernhive-user-block__action lernhive-user-block__action--danger"
                                    title="{{#str}} logout {{/str}}"
                                    aria-label="{{#str}} logout {{/str}}">
-                                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16 17 21 12 16 7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
                                 </a>
                             </div>
                         {{/isloggedin}}

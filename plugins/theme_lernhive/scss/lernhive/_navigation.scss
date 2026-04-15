@@ -599,8 +599,21 @@
 
     // Reset the chevron: no border, no padding box, small icon, inherits
     // color from the sidebar palette.
+    // 0.9.58: Bootstrap 5 uses CSS custom properties (--bs-btn-*) to drive
+    // button colours — `background: transparent !important` on the CSS property
+    // alone didn't override them. Add the variable overrides too so Bootstrap's
+    // button variants (btn-secondary, btn-icon, etc.) can't restore white bg.
     .courseindex-chevron,
     .icons-collapse-expand {
+        // Kill Bootstrap 5 button CSS variables first.
+        --bs-btn-bg: transparent !important;
+        --bs-btn-border-color: transparent !important;
+        --bs-btn-active-bg: transparent !important;
+        --bs-btn-active-border-color: transparent !important;
+        --bs-btn-hover-bg: transparent !important;
+        --bs-btn-hover-border-color: transparent !important;
+        --bs-btn-focus-shadow-rgb: 0, 0, 0 !important;
+
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -608,7 +621,10 @@
         height: 1.25rem;
         padding: 0 !important;
         border: 0 !important;
+        border-color: transparent !important;
         background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
         color: rgba(255, 255, 255, 0.6);
         text-decoration: none;
         flex: 0 0 auto;
@@ -617,6 +633,14 @@
         &:focus-visible {
             color: #fff;
             background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        // Bootstrap aria-expanded="true" state override
+        &[aria-expanded="true"] {
+            background: transparent !important;
+            background-color: transparent !important;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .icon {

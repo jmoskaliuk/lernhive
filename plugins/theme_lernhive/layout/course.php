@@ -53,6 +53,45 @@ $navitems = theme_lernhive_get_primary_navitems($PAGE);
 // core course-index render path.
 $coursesidebar = theme_lernhive_get_course_sidebar_context($PAGE);
 
+// --- Course Plugin Shell header context (Zone A + Zone B) -------------------
+// Builds a lightweight header that matches the Plugin Shell pattern used by
+// all LernHive local plugins. Replaces Moodle's full_header() on course pages
+// so the course view is visually consistent with ContentHub, Copy, etc.
+//
+// Zone A: back-to-my-courses arrow, course title.
+// Zone B: category breadcrumb + participant count stub + secondary nav tabs.
+//
+// Secondary nav (Nutzer/innen / Einstellungen tabs) is rendered separately via
+// output.secondary_nav so we don't lose it when full_header is suppressed.
+$courseheaderctx = [];
+if (!empty($COURSE) && $COURSE->id > 1) {
+    $coursecontext = \core\context\course::instance($COURSE->id);
+    $coursename    = format_string($COURSE->fullname, true, ['context' => $coursecontext]);
+    $shortname     = format_string($COURSE->shortname, true, ['context' => $coursecontext]);
+
+    // Category — fetch once; guard with IGNORE_MISSING so broken data never
+    // breaks the page render.
+    $categoryname = '';
+    if (!empty($COURSE->category)) {
+        try {
+            $cat = \core_course_category::get($COURSE->category, IGNORE_MISSING);
+            $categoryname = $cat ? format_string($cat->name) : '';
+        } catch (\Throwable $e) {
+            $categoryname = '';
+        }
+    }
+
+    $courseheaderctx = [
+        'coursename'      => $coursename,
+        'shortname'       => $shortname,
+        'hascategoryname' => $categoryname !== '',
+        'categoryname'    => $categoryname,
+        'backurl'         => (new moodle_url('/my/courses.php'))->out(false),
+        'backlabel'       => get_string('mycourses'),
+        'hascourseheader' => true,
+    ];
+}
+
 $templatecontext = array_merge([
     'sitename' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'output' => $OUTPUT,
@@ -70,6 +109,8 @@ $templatecontext = array_merge([
     'hassidepanel' => !empty($sidepanelitems),
     'dockitems' => $dockitems,
     'hasdockitems' => !empty($dockitems),
+    'courseheader' => $courseheaderctx,
+    'hascourseheader' => !empty($courseheaderctx),
 ], $blockregions, $userheaderctx);
 
 echo $OUTPUT->render_from_template('theme_lernhive/course', $templatecontext);
