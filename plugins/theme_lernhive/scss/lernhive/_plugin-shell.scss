@@ -283,12 +283,13 @@
     }
 
     // Primary CTA — one per infobar, always rightmost.
+    // border-radius: 8px — alle Buttons sind 8px, Pill nur für Tags.
     &__cta {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         padding: 8px $lh-spacing-md;
-        border-radius: $lh-radius-pill;
+        border-radius: $lh-radius-sm;
         background: $lh-accent;
         color: #fff;
         font-size: $lh-font-size-sm;

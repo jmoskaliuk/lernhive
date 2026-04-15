@@ -1,0 +1,183 @@
+// =============================================================================
+// _buttons.scss — LernHive Button System (0.9.66)
+//
+// RULE: ALL buttons use border-radius: $lh-radius-sm (8px).
+// border-radius: $lh-radius-pill is EXCLUSIVELY for Tags and Progress-Bars.
+// The colour signals the hierarchy — not the shape.
+//
+// Two button families:
+//
+// 1. Plugin Card Buttons (.lh-plugin-btn--*) — used in .lh-plugin-card__actions
+//    Smaller (min-height 30px), 8px radius, auto-width.
+//    Defined in _plugin-shell.scss.
+//
+// 2. Standalone Buttons (.lh-btn-*) — used on pages, in Zone B, CTA Strip
+//    Standard size (min-height 36px), 8px radius.
+//    Defined here.
+//
+// 3. Action Icon Button (.lh-btn-action) — Typ 3 icon-only circle in cards.
+//    Defined here; shape is always a Vollkreis (border-radius 50%).
+//    This is the ONE exception to the 8px rule — circles are Typ 3 Actions.
+// =============================================================================
+
+// ─── Standalone Buttons ──────────────────────────────────────────────────────
+// For page-level CTAs, Zone B, and other surfaces outside of cards.
+// All share the same base layout; colour distinguishes intent.
+
+%lh-btn-base {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: $lh-radius-sm;   // 8px — never pill
+    font-size: $lh-font-size-sm;
+    font-weight: 700;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    font-family: $lh-font-family;
+    transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    svg {
+        width: 15px;
+        height: 15px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+    }
+
+    .fa { font-size: 0.875rem; }
+}
+
+// Primary CTA — orange, high emphasis. Max one per section.
+.lh-btn-start {
+    @extend %lh-btn-base;
+    background: $lh-accent;
+    color: #fff;
+    border-color: $lh-accent;
+    box-shadow: 0 2px 6px rgba($lh-accent, 0.30);
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-accent-dark;
+        border-color: $lh-accent-dark;
+        color: #fff;
+        box-shadow: 0 3px 10px rgba($lh-accent, 0.40);
+        text-decoration: none;
+    }
+}
+
+// Navigation CTA — navy, for "open" / "go to" actions.
+.lh-btn-open {
+    @extend %lh-btn-base;
+    background: $lh-primary;
+    color: #fff;
+    border-color: $lh-primary;
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-primary-dark;
+        border-color: $lh-primary-dark;
+        color: #fff;
+        text-decoration: none;
+    }
+}
+
+// Outline / secondary — calm, for secondary actions alongside a primary CTA.
+.lh-btn-outline {
+    @extend %lh-btn-base;
+    background: transparent;
+    color: $lh-primary;
+    border-color: $lh-primary;
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-primary-light;
+        text-decoration: none;
+    }
+}
+
+// Ghost — very quiet, for cancellation or tertiary actions.
+.lh-btn-ghost {
+    @extend %lh-btn-base;
+    background: transparent;
+    color: $lh-text-secondary;
+    border-color: $lh-border;
+
+    &:hover,
+    &:focus-visible {
+        background: $lh-bg;
+        color: $lh-text;
+        border-color: $lh-secondary-dark;
+        text-decoration: none;
+    }
+}
+
+// Size modifiers
+.lh-btn-sm {
+    padding: 6px 14px;
+    font-size: $lh-font-size-xs;
+}
+
+.lh-btn-lg {
+    padding: 12px 24px;
+    font-size: $lh-font-size-base;
+}
+
+// ─── Action Icon Button (.lh-btn-action) ─────────────────────────────────────
+// Typ 3 Action Icon used in card action strips and inline controls.
+// Shape: Vollkreis (border-radius: 50%) — this is the ONE exception to the
+// 8px button rule. Circles are the defining mark of Typ 3 Actions.
+
+.lh-btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;                         // Vollkreis — Typ 3
+    background: rgba($lh-primary, 0.08);        // immer sichtbar
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: background 0.15s ease, transform 0.12s ease;
+
+    &:hover,
+    &:focus-visible {
+        background: rgba($lh-primary, 0.15);
+        transform: scale(1.10);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $lh-accent;
+        outline-offset: 2px;
+    }
+
+    svg {
+        width: 14px;
+        height: 14px;
+        stroke: $lh-text-secondary;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .fa { font-size: 0.875rem; color: $lh-text-secondary; }
+
+    // Larger touch target for standalone usage (WCAG 2.5.5)
+    &--lg {
+        width: 36px;
+        height: 36px;
+    }
+}

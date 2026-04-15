@@ -89,6 +89,7 @@ function theme_lernhive_get_extra_scss($theme) {
         '_dock.scss',        // 0.9.21: Context Dock — floating action strip
         '_plugin-shell.scss', // 0.9.27: Plugin Shell — 2-zone page header for local plugins
         '_icons.scss',       // 0.9.32: Icon Taxonomy — nav / artifact / action / info (0.9.38) classes
+        '_buttons.scss',     // 0.9.66: Button system — lh-btn-start/open/ghost/action helper classes (all 8px)
         '_sidepanel.scss',   // 0.9.36: Header Dock + Side Panel — unified overlay system
     ];
 

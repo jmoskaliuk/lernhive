@@ -412,13 +412,13 @@
         white-space: nowrap;
     }
 
-    // CTA — action icon treatment: pill button, accent orange, hover lifts
+    // CTA — accent orange, 8px radius (alle Buttons sind 8px, Pill nur für Tags).
     &__cta {
         display: inline-flex;
         align-items: center;
         gap: 6px;
         padding: 8px $lh-spacing-md;
-        border-radius: $lh-radius-pill;
+        border-radius: $lh-radius-sm;
         background: $lh-accent;
         color: #fff;
         font-size: $lh-font-size-sm;
