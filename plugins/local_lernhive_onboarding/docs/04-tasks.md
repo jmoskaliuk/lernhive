@@ -19,6 +19,7 @@
 - [x] **LH-ONB-HOTFIX-01** Normalized Moodle tour `targettype` mapping (`selector=0`, `unattached=2`) in JSON fixtures, importer normalization, and DB upgrade migration for already imported tours.
 - [x] **LH-ONB-HOTFIX-02** Align start/replay + completion preference keys with Moodle 5.x `tool_usertours\tour` constants (`tour_reset_time_*`, `tour_completion_time_*`) with legacy fallback support.
 - [x] **LH-ONB-HOTFIX-03** Added one-shot forced-tour launch filter path (session marker + `before_serverside_filter_fetch` hook) so catalog starts ignore stale role filters and lock to the requested tour ID.
+- [x] **LH-ONB-HOTFIX-04** Added one-shot completion overlay after forced catalog tour end (`Back to onboarding` / `Stay here`).
 
 ## In progress / next (0.3.x)
 

@@ -72,6 +72,10 @@ $string['tours_unlock_text'] = 'Complete all {$a->cats} topics to unlock Level {
 $string['tours_unlock_btn'] = 'Unlock Level {$a->level}: {$a->name}';
 $string['tours_all_done'] = 'You\'ve completed all tours on this level!';
 $string['tours_nav_link'] = 'Learning Path';
+$string['tour_completion_overlay_title'] = 'Tour completed';
+$string['tour_completion_overlay_body'] = 'Great job. Do you want to return to your onboarding overview or stay on this page?';
+$string['tour_completion_overlay_overview'] = 'Back to onboarding';
+$string['tour_completion_overlay_stay'] = 'Stay here';
 
 // Tour categories (Level 1: Explorer).
 $string['tourcat_create_users'] = 'Create users';

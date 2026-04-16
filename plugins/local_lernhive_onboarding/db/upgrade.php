@@ -263,5 +263,11 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041502, 'local', 'lernhive_onboarding');
     }
 
+    // 0.3.0-dev hotfix - add one-shot completion overlay wiring after
+    // deterministic catalog-launched tours end.
+    if ($oldversion < 2026041503) {
+        upgrade_plugin_savepoint(true, 2026041503, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }

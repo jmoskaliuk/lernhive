@@ -20,6 +20,9 @@ Current primary audience:
 3. User expands a category and starts a tour
 4. User is redirected to the exact target page
 5. Tour auto-plays and progress updates after completion
+6. After tour end, an overlay offers:
+   - return to onboarding overview
+   - stay on current page
 
 ## Current constraints
 

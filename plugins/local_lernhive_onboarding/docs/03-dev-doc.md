@@ -20,6 +20,7 @@
   - consume the state via `tool_usertours` server-side filter hook:
     - remove role filter for that one request
     - enforce exact-tour filter (`local_lernhive_onboarding\local\filter\forced_tour`)
+  - queue one-shot JS completion overlay on forced starts (`tool_usertours/tourEnded`)
 - Tour step import normalization:
   - canonical Moodle mapping is `selector=0`, `block=1`, `unattached=2`
   - importer normalizes legacy swapped selector/unattached values
