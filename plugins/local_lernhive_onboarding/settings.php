@@ -31,6 +31,48 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Build the category choice list for the admin settings dropdown.
+ *
+ * Returns a flat `[id => displayname]` map of every visible course
+ * category on the site, in the same order Moodle itself presents them
+ * on the category management page. Hidden categories are skipped so
+ * admins cannot accidentally route trainers at a category that their
+ * audience cannot see.
+ *
+ * Lives in settings.php (not a class) so it only loads when the admin
+ * tree is being rendered — which is the only time we need it.
+ *
+ * admin/search.php may load plugin settings more than once while building
+ * categories/tabs, so this helper must be guarded against redefinition.
+ *
+ * @return array<int, string>
+ */
+if (!function_exists('local_lernhive_onboarding_get_course_category_choices')) {
+    function local_lernhive_onboarding_get_course_category_choices(): array {
+        global $DB;
+
+        $rows = $DB->get_records_select(
+            'course_categories',
+            'visible = 1',
+            [],
+            'path ASC, sortorder ASC, id ASC',
+            'id, name, path'
+        );
+
+        $choices = [];
+        foreach ($rows as $row) {
+            // Indent by nesting depth so admins see the hierarchy.
+            // path looks like `/1/5/12` — the number of segments minus
+            // one is the depth.
+            $depth = max(0, substr_count($row->path, '/') - 1);
+            $choices[(int) $row->id] = str_repeat('— ', $depth) . format_string($row->name);
+        }
+
+        return $choices;
+    }
+}
+
 if ($hassiteconfig) {
     $settings = new admin_settingpage(
         'local_lernhive_onboarding',
@@ -51,41 +93,4 @@ if ($hassiteconfig) {
     ));
 
     $ADMIN->add('localplugins', $settings);
-}
-
-/**
- * Build the category choice list for the admin settings dropdown.
- *
- * Returns a flat `[id => displayname]` map of every visible course
- * category on the site, in the same order Moodle itself presents them
- * on the category management page. Hidden categories are skipped so
- * admins cannot accidentally route trainers at a category that their
- * audience cannot see.
- *
- * Lives in settings.php (not a class) so it only loads when the admin
- * tree is being rendered — which is the only time we need it.
- *
- * @return array<int, string>
- */
-function local_lernhive_onboarding_get_course_category_choices(): array {
-    global $DB;
-
-    $rows = $DB->get_records_select(
-        'course_categories',
-        'visible = 1',
-        [],
-        'path ASC, sortorder ASC, id ASC',
-        'id, name, path'
-    );
-
-    $choices = [];
-    foreach ($rows as $row) {
-        // Indent by nesting depth so admins see the hierarchy.
-        // path looks like `/1/5/12` — the number of segments minus
-        // one is the depth.
-        $depth = max(0, substr_count($row->path, '/') - 1);
-        $choices[(int) $row->id] = str_repeat('— ', $depth) . format_string($row->name);
-    }
-
-    return $choices;
 }
