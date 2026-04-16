@@ -6,12 +6,15 @@ Current primary audience:
 - users assigned the `lernhive_trainer` system role
 - users with `local/lernhive_onboarding:receivelearningpath`
 
-## What users can do today (0.2.8)
+## What users can do today (0.3.0-dev)
 
 1. See a dashboard banner on `/my/` while Level 1 is incomplete
 2. Open the onboarding catalog (`/local/lernhive_onboarding/tours.php`)
 3. Start or restart tours from category cards
 4. Track completion per category and across the current level
+5. Choose directly after tour completion:
+   - `Back to onboarding`
+   - `Stay here`
 
 ## User journey
 
@@ -20,7 +23,7 @@ Current primary audience:
 3. User expands a category and starts a tour
 4. User is redirected to the exact target page
 5. Tour auto-plays and progress updates after completion
-6. After tour end, an overlay offers:
+6. After tour end, a completion dialog offers:
    - return to onboarding overview
    - stay on current page
 
@@ -33,4 +36,5 @@ Current primary audience:
 ## Support notes
 
 - If a tour opens on a wrong or invalid target, verify plugin settings and placeholder config first
+- If a tour redirects correctly but does not start, verify that tour `pathmatch` is in sync with `lh_start_url` (reimport Level-1 pack or run plugin upgrade/backfill)
 - If sandbox course was deleted, run upgrade to reprovision and restore `{DEMOCOURSEID}` targets
