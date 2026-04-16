@@ -9,6 +9,7 @@
   - level-filtered categories from `local_lhonb_cats.level`
 - Mapping model:
   - `local_lhonb_map(categoryid, tourid, feature_id, sortorder, timecreated)`
+  - Level-1 pack is fully feature-addressable (10/10 JSON definitions carry `lernhive_feature`)
 - Runtime start flow:
   - catalog link -> `starttour.php`
   - `starttour_flow::prepare_redirect_url()`
@@ -69,6 +70,9 @@ Implemented PHPUnit coverage:
 - `tests/sandbox_course_test.php`
 - `tests/tour_importer_test.php`
 - `tests/hook_callbacks_test.php`
+
+Coverage note:
+- `tour_importer_test.php` now asserts that every Level-1 source tour JSON declares a non-empty `lernhive_feature` key (guards FR-05b against regression).
 
 Open test gaps:
 - Behat for sesskey and start-flow browser behavior
