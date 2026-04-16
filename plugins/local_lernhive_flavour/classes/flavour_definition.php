@@ -110,6 +110,24 @@ abstract class flavour_definition {
     abstract public function get_defaults(): array;
 
     /**
+     * Optional LernHive feature-level overrides for this flavour.
+     *
+     * Return format:
+     *   [
+     *     'mod_assign.create' => 2,
+     *     'core.user.create' => null, // disabled
+     *   ]
+     *
+     * The default implementation returns an empty map so existing profiles
+     * remain backward compatible until explicit override packs are authored.
+     *
+     * @return array<string, int|null>
+     */
+    public function get_feature_overrides(): array {
+        return [];
+    }
+
+    /**
      * Flat list of (component, key) pairs this flavour touches. Used by
      * flavour_manager to build diff snapshots.
      *
@@ -139,6 +157,7 @@ abstract class flavour_definition {
             'maturity'    => $this->get_maturity(),
             'experimental' => $this->get_maturity() === self::MATURITY_EXPERIMENTAL,
             'defaults'    => $this->get_defaults(),
+            'featureoverrides' => $this->get_feature_overrides(),
         ];
     }
 }

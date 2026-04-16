@@ -33,7 +33,9 @@ The plugin is split into three concentric layers:
 
 There is no direct SQL anywhere except inside `flavour_audit` and the
 privacy provider. The manager calls `set_config()` / `get_config()` for
-plugin settings so that Moodle's config cache stays consistent.
+plugin settings so that Moodle's config cache stays consistent, and then
+hands feature-level override payloads to
+`local_lernhive\feature\registry::apply_flavor_preset(...)`.
 
 ## Data model
 
@@ -88,6 +90,7 @@ pattern for any new plugin integration.
 ## Integration points
 
 - **Moodle core config API** — `set_config()` / `get_config()`
+- **local_lernhive registry API** — `registry::apply_flavor_preset(...)`
 - **Moodle events API** — `flavour_applied` is a `\core\event\base` subclass
 - **Moodle privacy API** — full provider, not `null_provider`
 - **R2 consumer**: `local_lernhive_configuration` will listen to

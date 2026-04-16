@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'LernHive';
 $string['admin_dashboard'] = 'LernHive Dashboard';
 $string['settings'] = 'LernHive Settings';
+$string['setting_level_configuration'] = 'Level configuration';
 
 // Level names (English-first — canonical LernHive level names, identical in all languages).
 $string['level_explorer'] = 'Explorer';
@@ -59,9 +60,16 @@ $string['setting_default_level'] = 'Default level for new teachers';
 $string['setting_default_level_desc'] = 'Which level should new teachers receive by default?';
 $string['setting_show_levelbar'] = 'Show level bar';
 $string['setting_show_levelbar_desc'] = 'Displays the current LernHive level as a bar at the top of course pages for teachers.';
+$string['setting_heading_level_configuration'] = 'Feature level configuration';
+$string['setting_heading_level_configuration_desc'] = 'Set per-feature overrides for availability levels. "Default" keeps the registry level or flavour preset, "Disabled" hides the feature on all levels.';
+$string['setting_feature_group'] = 'Category: {$a->category}';
+$string['setting_feature_override_default'] = 'Default';
+$string['setting_feature_override_disabled'] = 'Disabled';
+$string['setting_feature_override_desc'] = 'Feature ID: {$a->featureid}<br>Default level: {$a->defaultlevel}<br>Required capability: <code>{$a->capability}</code>';
 
 // Events.
 $string['event_level_changed'] = 'LernHive level changed';
+$string['event_feature_override_changed'] = 'LernHive feature override changed';
 
 // Capabilities.
 $string['lernhive:managelevel'] = 'Manage LernHive levels';

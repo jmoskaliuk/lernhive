@@ -163,10 +163,14 @@ class tour_importer {
 
         foreach ($subdirs as $subdir) {
             $shortname = basename($subdir);
-            $category = tour_manager::get_category_by_shortname($shortname);
+            $categoryshortname = self::resolve_category_shortname_for_level($shortname, $level);
+            $category = tour_manager::get_category_by_shortname($categoryshortname);
 
             if (!$category) {
-                debugging("LernHive Onboarding tour_importer: no category for shortname '{$shortname}'", DEBUG_DEVELOPER);
+                debugging(
+                    "LernHive Onboarding tour_importer: no category for shortname '{$categoryshortname}'",
+                    DEBUG_DEVELOPER
+                );
                 continue;
             }
 
@@ -300,6 +304,50 @@ class tour_importer {
     }
 
     /**
+     * Move one tour mapping from one category to another.
+     *
+     * Keeps the underlying tour row intact and only rewires category mappings.
+     *
+     * @param string $tourname
+     * @param string $fromshortname
+     * @param string $toshortname
+     * @param int $sortorder Sort order in target category (0 = append).
+     * @return bool True when the mapping changed.
+     */
+    public static function remap_tour_to_category(
+        string $tourname,
+        string $fromshortname,
+        string $toshortname,
+        int $sortorder = 0
+    ): bool {
+        global $DB;
+
+        $tour = $DB->get_record('tool_usertours_tours', ['name' => $tourname]);
+        if (!$tour) {
+            return false;
+        }
+
+        $from = tour_manager::get_category_by_shortname($fromshortname);
+        $to = tour_manager::get_category_by_shortname($toshortname);
+        if (!$to) {
+            return false;
+        }
+
+        $changed = false;
+        if ($from) {
+            $changed = tour_manager::remove_tour_from_category((int) $from->id, (int) $tour->id) || $changed;
+        }
+
+        $existsintarget = $DB->record_exists('local_lhonb_map', [
+            'categoryid' => (int) $to->id,
+            'tourid' => (int) $tour->id,
+        ]);
+
+        tour_manager::add_tour_to_category((int) $to->id, (int) $tour->id, $sortorder);
+        return $changed || !$existsintarget;
+    }
+
+    /**
      * Re-import + backfill shortcut for a single level.
      *
      * Runs a regular `import_level()` to pick up any brand-new tours
@@ -393,6 +441,10 @@ class tour_importer {
             ['shortname' => 'course_settings',   'icon' => 'settings',       'color' => '#d97706', 'level' => 1, 'sortorder' => 4],
             ['shortname' => 'create_activities', 'icon' => 'plus-square',    'color' => '#0d9488', 'level' => 1, 'sortorder' => 5],
             ['shortname' => 'communication',     'icon' => 'message-circle', 'color' => '#dc2626', 'level' => 1, 'sortorder' => 6],
+            ['shortname' => 'assignments',       'icon' => 'clipboard-check', 'color' => '#2563eb', 'level' => 2, 'sortorder' => 1],
+            ['shortname' => 'forum_advanced',    'icon' => 'messages-square', 'color' => '#0d9488', 'level' => 2, 'sortorder' => 2],
+            ['shortname' => 'bigbluebutton',     'icon' => 'video',           'color' => '#7c3aed', 'level' => 2, 'sortorder' => 3],
+            ['shortname' => 'communication_level2', 'icon' => 'megaphone',    'color' => '#dc2626', 'level' => 2, 'sortorder' => 4],
         ];
 
         foreach ($cats as $cat) {
@@ -501,5 +553,19 @@ class tour_importer {
         }
 
         return $targettype;
+    }
+
+    /**
+     * Map authoring directory names to runtime category shortnames.
+     *
+     * @param string $shortname Directory shortname.
+     * @param int $level
+     * @return string
+     */
+    private static function resolve_category_shortname_for_level(string $shortname, int $level): string {
+        if ($level === 2 && $shortname === 'communication') {
+            return 'communication_level2';
+        }
+        return $shortname;
     }
 }

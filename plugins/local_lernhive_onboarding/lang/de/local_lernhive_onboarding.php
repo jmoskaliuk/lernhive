@@ -91,6 +91,14 @@ $string['tourcat_create_activities'] = 'Aktivitäten anlegen';
 $string['tourcat_create_activities_desc'] = 'Erstelle Aufgaben, Foren und lade Dateien hoch — die Basis jedes Kurses.';
 $string['tourcat_communication'] = 'Kommunikation';
 $string['tourcat_communication_desc'] = 'Ankündigungen posten und Nachrichten an Nutzer/innen senden.';
+$string['tourcat_assignments'] = 'Aufgaben';
+$string['tourcat_assignments_desc'] = 'Aufgaben anlegen, Abgaben einsammeln und Leistungen bewerten.';
+$string['tourcat_forum_advanced'] = 'Erweiterte Foren';
+$string['tourcat_forum_advanced_desc'] = 'Erweiterte Forum-Typen, Abos und Teilnahme-Einstellungen nutzen.';
+$string['tourcat_bigbluebutton'] = 'Live-Sitzungen (BigBlueButton)';
+$string['tourcat_bigbluebutton_desc'] = 'Live-Sitzungen und Aufzeichnungen mit BigBlueButton einsetzen.';
+$string['tourcat_communication_level2'] = 'Ankündigungen';
+$string['tourcat_communication_level2_desc'] = 'Kursankündigungen mit der Level-2-Anleitung veröffentlichen.';
 
 // Tour names (Level 1: Explorer).
 $string['tour_create_user_single'] = 'Einzelne/n Nutzer/in anlegen';

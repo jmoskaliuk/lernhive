@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_lernhive_onboarding';
-$plugin->version   = 2026041504;
+$plugin->version   = 2026041505;
 $plugin->requires  = 2024100700; // Moodle 4.5+
 $plugin->maturity  = MATURITY_ALPHA;
 $plugin->release   = '0.3.0-dev';
-$plugin->dependencies = ['local_lernhive' => 2026040321];
+$plugin->dependencies = ['local_lernhive' => 2026041602];

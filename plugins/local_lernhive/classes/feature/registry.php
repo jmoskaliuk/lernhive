@@ -135,6 +135,25 @@ final class registry {
     }
 
     /**
+     * Apply a full flavor preset payload to override storage.
+     *
+     * The payload map is interpreted as the complete set of flavor-owned
+     * overrides: missing feature keys are removed from previous flavor-owned
+     * rows, while admin-owned rows remain untouched.
+     *
+     * @param string $flavorid Flavor key (for example "school" or "lxp").
+     * @param array<string, int|null> $overrides Feature => level map.
+     * @return void
+     */
+    public static function apply_flavor_preset(string $flavorid, array $overrides): void {
+        if ($flavorid === '') {
+            throw new coding_exception('local_lernhive flavor_id must not be empty');
+        }
+
+        override_store::replace_flavor_preset_map($flavorid, $overrides);
+    }
+
+    /**
      * Resolve and cache override levels keyed by feature_id.
      *
      * @return array<string, int|null>

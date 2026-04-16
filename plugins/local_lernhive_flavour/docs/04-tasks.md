@@ -20,6 +20,7 @@
 - [x] Upgrade privacy provider from `null_provider` to full provider
 - [x] PHPUnit coverage for registry, manager and audit
 - [x] DevFlow docs sync
+- [x] Integrate `local_lernhive` feature-preset hook (`registry::apply_flavor_preset`) into flavour apply flow
 
 ## Open for R2
 - [ ] Define real Higher Education defaults (`highered_profile::get_defaults`)

@@ -167,6 +167,14 @@ function xmldb_local_lernhive_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041601, 'local', 'lernhive');
     }
 
+    if ($oldversion < 2026041602) {
+        // Code-only rollout:
+        // - feature_override_changed event emission
+        // - registry::apply_flavor_preset API
+        // - admin level-configuration page backed by override_store
+        upgrade_plugin_savepoint(true, 2026041602, 'local', 'lernhive');
+    }
+
     return true;
 }
 

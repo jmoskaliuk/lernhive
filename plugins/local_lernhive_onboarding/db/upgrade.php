@@ -344,5 +344,29 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041504, 'local', 'lernhive_onboarding');
     }
 
+    // 0.3.0-dev registry consumer rollout:
+    // - seed Level-2 runtime categories
+    // - import Level-2 tour pack
+    // - remap legacy assignment tours from Level-1 activity bucket
+    if ($oldversion < 2026041505) {
+        \local_lernhive_onboarding\tour_importer::seed_categories();
+        \local_lernhive_onboarding\tour_importer::import_level(2);
+
+        \local_lernhive_onboarding\tour_importer::remap_tour_to_category(
+            'LernHive: Aufgabe erstellen',
+            'create_activities',
+            'assignments',
+            1
+        );
+        \local_lernhive_onboarding\tour_importer::remap_tour_to_category(
+            'LernHive: Abgaben bewerten',
+            'create_activities',
+            'assignments',
+            2
+        );
+
+        upgrade_plugin_savepoint(true, 2026041505, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }

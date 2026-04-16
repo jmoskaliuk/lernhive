@@ -22,7 +22,15 @@ Guided onboarding learning path for LernHive users, currently focused on trainer
   - supports optional `lernhive_feature` in tour JSON
   - persists to `local_lhonb_map.feature_id`
   - Level-1 tour pack is fully mapped (10/10 JSONs carry canonical `lernhive_feature`)
+- Registry-aware runtime visibility:
+  - `tour_manager` filters mapped tours by `local_lernhive\feature\registry::effective_level()`
+  - null/empty `feature_id` mappings stay visible for backward compatibility
+  - consumes `local_lernhive\event\feature_override_changed` to invalidate in-process visibility caches
 - Level-1 tour content pack imported on install
+- Level-2 runtime categories + pack wiring:
+  - Level-2 categories are seeded (`assignments`, `forum_advanced`, `bigbluebutton`, `communication_level2`)
+  - Level-2 JSON pack is imported on install/upgrade
+  - legacy assignment tours are remapped from `create_activities` to `assignments` on upgrade
 - Level-1 runtime hotfixes:
   - backfilled stale `pathmatch` values from JSON source of truth
   - retargeted self-enrol selectors for `/enrol/instances.php`
@@ -31,9 +39,6 @@ Guided onboarding learning path for LernHive users, currently focused on trainer
 
 ## Planned (0.3.x)
 
-- Feature-addressable tour visibility:
-  - consume `local_lernhive\feature\registry`
-- Level-2 onboarding pack runtime activation (files exist, runtime integration incomplete)
 - Remaining Level-3..5 tour packs
 - Tour chaining across multiple pages (`prereq`, successor activation)
 - LXP flavour audience extension

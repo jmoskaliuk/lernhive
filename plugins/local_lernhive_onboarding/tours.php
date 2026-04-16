@@ -51,6 +51,10 @@ $iconmap = [
     'course_settings'   => 'settings',
     'create_activities' => 'plus-square',
     'communication'     => 'message-circle',
+    'assignments'       => 'clipboard-check',
+    'forum_advanced'    => 'messages-square',
+    'bigbluebutton'     => 'video',
+    'communication_level2' => 'megaphone',
 ];
 $colormap = [
     'create_users'      => 'blue',
@@ -59,6 +63,10 @@ $colormap = [
     'course_settings'   => 'orange',
     'create_activities' => 'teal',
     'communication'     => 'red',
+    'assignments'       => 'blue',
+    'forum_advanced'    => 'teal',
+    'bigbluebutton'     => 'purple',
+    'communication_level2' => 'red',
 ];
 
 // Status → visual mapping for the .lh-icon-info (Type 4 "Information") chip in

@@ -6,10 +6,11 @@
 
 - Progress model:
   - `tour_manager::get_level_progress($level, $userid)`
-  - level-filtered categories from `local_lhonb_cats.level`
+  - level-filtered categories from `local_lhonb_cats.level`, then per-tour registry visibility filtering
 - Mapping model:
   - `local_lhonb_map(categoryid, tourid, feature_id, sortorder, timecreated)`
   - Level-1 pack is fully feature-addressable (10/10 JSON definitions carry `lernhive_feature`)
+  - Level-2 runtime categories seeded and pack imported on install/upgrade
 - Runtime start flow:
   - catalog link -> `starttour.php`
   - `starttour_flow::prepare_redirect_url()`
@@ -29,10 +30,12 @@
   - upgrade step `2026041501` backfills existing onboarding tour rows
   - upgrade step `2026041504` backfills stale Level-1 pathmatch values from JSON definitions
 - Dashboard banner injection via output hook callback
+- Visibility cache lifecycle:
+  - in-process caches in `tour_manager` for categories and tours
+  - cache reset via mapping writes and `feature_override_changed` event observer
 
 ### Planned architecture (0.3.x)
 
-- Migrate category visibility from pure `category.level` to registry-aware per-tour filtering
 - Add chain metadata (`prereq`) and successor activation on tour end
 
 ## Data model
@@ -44,8 +47,7 @@
 
 ### Next increment
 
-- registry-aware visibility in `tour_manager` using `feature_id` when present
-- fallback path for legacy mappings with null `feature_id`
+- chain metadata and runtime successor activation
 
 ## Integration points
 
@@ -56,8 +58,6 @@ Current:
 - `tool_usertours\hook\before_serverside_filter_fetch` for one-request forced-tour launch wiring
 
 Planned:
-- `local_lernhive\feature\registry` as visibility source
-- `local_lernhive\event\feature_override_changed` for cache invalidation
 - tour-ended event/hook for chain successor activation
 
 ## Testing status
@@ -70,6 +70,7 @@ Implemented PHPUnit coverage:
 - `tests/sandbox_course_test.php`
 - `tests/tour_importer_test.php`
 - `tests/hook_callbacks_test.php`
+- `tests/tour_visibility_test.php`
 
 Coverage note:
 - `tour_importer_test.php` now asserts that every Level-1 source tour JSON declares a non-empty `lernhive_feature` key (guards FR-05b against regression).
@@ -77,4 +78,3 @@ Coverage note:
 Open test gaps:
 - Behat for sesskey and start-flow browser behavior
 - Chain activation tests (`tour_chain_test.php`)
-- Registry-driven visibility test (`tour_visibility_test.php`)

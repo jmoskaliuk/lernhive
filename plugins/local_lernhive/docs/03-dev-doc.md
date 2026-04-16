@@ -35,55 +35,15 @@ local_lernhive/classes/feature/
 └── override_store.php # DB adapter for local_lernhive_feature_overrides
 ```
 
-`registry::get_features(): array<string, definition>` returns the canonical list. `registry::effective_level(string $feature_id): int` folds defaults + overrides and returns the level a user must reach to unlock the feature. `registry::is_available_for_user(string $feature_id, int $userid): bool` additionally consults `has_capability()` so a feature that is effectively Level 1 but whose capability is not held by the user still returns `false`.
+`registry::get_features(): array<string, definition>` returns the canonical list. `registry::effective_level(string $feature_id): int` folds defaults + overrides and returns the level a user must reach to unlock the feature.
 
 ### Canonical feature IDs (R1)
 
-Flat namespace (not hierarchical — see ADR-01 open question 1). Examples:
+Authoritative source lives in code:
 
-| Category | feature_id | Default-Level | Required capability |
-|---|---|---:|---|
-| Content modules | `mod_resource.create` | 1 | `mod/resource:addinstance` |
-| Content modules | `mod_page.create` | 1 | `mod/page:addinstance` |
-| Content modules | `mod_folder.create` | 1 | `mod/folder:addinstance` |
-| Content modules | `mod_url.create` | 1 | `mod/url:addinstance` |
-| Content modules | `mod_label.create` | 1 | `mod/label:addinstance` |
-| Content modules | `mod_forum.create.announcement` | 1 | `mod/forum:addinstance` *(filtered by type)* |
-| Content modules | `mod_forum.create.full` | 2 | `mod/forum:addinstance` |
-| Content modules | `mod_assign.create` | 2 | `mod/assign:addinstance` |
-| Content modules | `mod_bigbluebuttonbn.create` | 2 | `mod/bigbluebuttonbn:addinstance` |
-| Content modules | `mod_quiz.create` | 3 | `mod/quiz:addinstance` |
-| Content modules | `mod_h5pactivity.create` | 3 | `mod/h5pactivity:addinstance` |
-| Content modules | `mod_lesson.create` | 3 | `mod/lesson:addinstance` |
-| Content modules | `mod_wiki.create` | 4 | `mod/wiki:addinstance` |
-| Content modules | `mod_glossary.create` | 4 | `mod/glossary:addinstance` |
-| Content modules | `mod_data.create` | 4 | `mod/data:addinstance` |
-| Content modules | `mod_workshop.create` | 4 | `mod/workshop:addinstance` |
-| Content modules | `mod_scorm.create` | 5 | `mod/scorm:addinstance` |
-| Content modules | `mod_lti.create` | 5 | `mod/lti:addinstance` |
-| Content modules | `mod_feedback.create` | 5 | `mod/feedback:addinstance` |
-| Content modules | `mod_choice.create` | 5 | `mod/choice:addinstance` |
-| Content modules | `mod_survey.create` | 5 | `mod/survey:addinstance` |
-| Content modules | `mod_book.create` | 5 | `mod/book:addinstance` |
-| Content modules | `mod_imscp.create` | 5 | `mod/imscp:addinstance` |
-| Content modules | `mod_subsection.create` | 5 | `mod/subsection:addinstance` |
-| Course | `core.course.create` | 1 | `moodle/course:create` |
-| Course settings | `core.course.settings.format` | 1 | `moodle/course:update` |
-| Course settings | `core.course.settings.completion` | 1 | `moodle/course:update` |
-| Users | `core.user.create` | 1 *(configurable)* | `moodle/user:create` |
-| Users | `core.user.enrol` | 1 | `enrol/manual:enrol` |
-| Communication | `core.message.send` | 1 | `moodle/site:sendmessage` |
-| Grades | `core.grade.view` | 2 | `moodle/grade:view` |
-| Grades | `core.grade.manage` | 4 | `moodle/grade:manage` |
-| Grades | `core.grade.edit` | 4 | `moodle/grade:edit` |
-| Reports | `core.site.viewreports` | 4 | `moodle/site:viewreports` |
-| Groups | `core.course.managegroups` | 3 | `moodle/course:managegroups` |
-| Enrolment | `core.course.enrolconfig` | 4 | `moodle/course:enrolconfig` |
-| Lifecycle | `core.backup.course` | 5 | `moodle/backup:backupcourse` |
-| Lifecycle | `core.restore.course` | 5 | `moodle/restore:restorecourse` |
-| Lifecycle | `core.course.import` | 5 | `moodle/course:import` |
+- `local_lernhive/classes/feature/registry.php` → `registry::build_features()`
 
-*(This table is the planning snapshot for 0.3.0. The authoritative list will live in `registry.php` once implemented; this table should then shrink to a link.)*
+Docs deliberately keep only a summary. Any change to feature IDs, default levels, capability bindings, category hints or flavour hints must be made in `registry.php` first, then reflected in docs/tasks as a changelog note.
 
 ### Override storage
 
@@ -127,6 +87,6 @@ level_manager::set_level($userid, $level)
 
 ## Consumers outside `local_lernhive`
 
-- **`local_lernhive_onboarding`.** Tour JSONs gain a `lernhive_feature` key. `tour_manager::get_categories($userid)` folds `registry::is_available_for_user()` into the lookup. Directory structure `tours/levelN/<category>/` becomes authoring convention only.
+- **`local_lernhive_onboarding`.** Tour JSONs gain a `lernhive_feature` key. `tour_manager::get_category_tours($categoryid, $level)` filters mappings via `registry::effective_level()` and keeps null legacy mappings visible. Directory structure `tours/levelN/<category>/` remains an authoring convention only.
 - **`local_lernhive_flavour`.** On flavor activation, calls `registry::apply_flavor_preset($flavor_id, $overrides)`. Shipping presets for R1: `flavor_schule`, `flavor_lxp`, `flavor_academy`.
 - **`theme_lernhive`.** Reads current level and effective feature list only for UI hints (e.g., locked-feature affordances in the activity chooser). Never writes.

@@ -70,5 +70,12 @@ function xmldb_local_lernhive_flavour_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041002, 'local', 'lernhive_flavour');
     }
 
+    if ($oldversion < 2026041508) {
+        // Code-only rollout:
+        // - hook local_lernhive flavour feature presets into apply()
+        // - expose get_feature_overrides() on flavour profiles
+        upgrade_plugin_savepoint(true, 2026041508, 'local', 'lernhive_flavour');
+    }
+
     return true;
 }

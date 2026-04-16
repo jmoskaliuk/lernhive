@@ -147,4 +147,63 @@ if ($hassiteconfig) {
     }
 
     $ADMIN->add('local_lernhive_category', $settings);
+
+    // Feature-level override UI (LH-CORE-FR-05).
+    $levelconfig = new admin_settingpage(
+        'local_lernhive_level_configuration',
+        get_string('setting_level_configuration', 'local_lernhive'),
+        'local/lernhive:managelevel'
+    );
+
+    if ($ADMIN->fulltree) {
+        $levelconfig->add(new admin_setting_heading(
+            'local_lernhive/heading_level_configuration',
+            get_string('setting_heading_level_configuration', 'local_lernhive'),
+            get_string('setting_heading_level_configuration_desc', 'local_lernhive')
+        ));
+
+        $lastcategory = '';
+        $stringmanager = get_string_manager();
+
+        $levellabels = [
+            1 => get_string('level_explorer', 'local_lernhive'),
+            2 => get_string('level_creator', 'local_lernhive'),
+            3 => get_string('level_pro', 'local_lernhive'),
+            4 => get_string('level_expert', 'local_lernhive'),
+            5 => get_string('level_master', 'local_lernhive'),
+        ];
+
+        foreach (\local_lernhive\feature\registry::get_features() as $featureid => $featuredef) {
+            $categoryhint = (string) $featuredef->categoryhint;
+            if ($categoryhint !== $lastcategory) {
+                $levelconfig->add(new admin_setting_heading(
+                    'local_lernhive/feature_group_' . $categoryhint,
+                    get_string('setting_feature_group', 'local_lernhive', (object) ['category' => $categoryhint]),
+                    ''
+                ));
+                $lastcategory = $categoryhint;
+            }
+
+            $label = $featureid;
+            if ($stringmanager->string_exists($featuredef->langkey, 'local_lernhive')) {
+                $label = get_string($featuredef->langkey, 'local_lernhive');
+            }
+
+            $safeid = preg_replace('/[^a-z0-9_]+/i', '_', $featureid);
+            $settingname = 'local_lernhive/feature_override_' . $safeid;
+
+            $levelconfig->add(new \local_lernhive\admin\feature_override_setting(
+                $settingname,
+                $label,
+                get_string('setting_feature_override_desc', 'local_lernhive', (object) [
+                    'featureid' => $featureid,
+                    'defaultlevel' => $levellabels[(int) $featuredef->defaultlevel] ?? (string) $featuredef->defaultlevel,
+                    'capability' => $featuredef->requiredcapability,
+                ]),
+                $featureid
+            ));
+        }
+    }
+
+    $ADMIN->add('local_lernhive_category', $levelconfig);
 }

@@ -12,3 +12,4 @@
 - responsive checks
 - role/permission checks where relevant
 - language string review
+- PHPUnit coverage for registry/override/capability mapper integration (`tests/feature/registry_test.php`, `tests/feature/override_store_test.php`, `tests/capability_mapper_test.php`)

@@ -94,4 +94,45 @@ final class override_store_test extends advanced_testcase {
 
         $this->assertNull(override_store::get_effective_override('mod_assign.create'));
     }
+
+    public function test_set_admin_override_triggers_feature_override_changed_event(): void {
+        $this->resetAfterTest(true);
+
+        $sink = $this->redirectEvents();
+        override_store::set_admin_override('mod_assign.create', 3);
+        $events = $sink->get_events();
+        $sink->close();
+
+        $found = false;
+        foreach ($events as $event) {
+            if (!($event instanceof \local_lernhive\event\feature_override_changed)) {
+                continue;
+            }
+            $found = true;
+            $this->assertSame('mod_assign.create', $event->other['feature_id']);
+            $this->assertSame(3, $event->other['new_level']);
+            $this->assertSame('set', $event->other['action']);
+        }
+        $this->assertTrue($found, 'feature_override_changed event was not triggered');
+    }
+
+    public function test_replace_flavor_preset_map_removes_stale_rows(): void {
+        $this->resetAfterTest(true);
+
+        override_store::replace_flavor_preset_map('school', [
+            'mod_assign.create' => 4,
+            'core.user.create' => 2,
+        ]);
+        $this->assertNotNull(override_store::get_effective_override('mod_assign.create'));
+
+        override_store::replace_flavor_preset_map('lxp', [
+            'core.user.create' => 1,
+        ]);
+
+        $this->assertNull(override_store::get_effective_override('mod_assign.create'));
+        $row = override_store::get_effective_override('core.user.create');
+        $this->assertNotNull($row);
+        $this->assertSame(1, (int) $row->override_level);
+        $this->assertSame('lxp', (string) $row->flavor_id);
+    }
 }

@@ -18,6 +18,7 @@ PHPUnit:
 - `sandbox_course_test.php`
 - `tour_importer_test.php`
 - `hook_callbacks_test.php`
+- `tour_visibility_test.php`
 
 ## Manual checks
 
@@ -34,7 +35,6 @@ PHPUnit:
 
 - missing Behat coverage for sesskey/start flow and chaining behavior
 - no automated UI regression checks for tour overview rendering
-- registry-driven visibility tests still pending until FR-03
 - no full runtime E2E assertion yet that each mapped `feature_id` resolves to an effective registry visibility gate
 
 ## Release gate (0.3.0)

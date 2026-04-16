@@ -153,6 +153,36 @@ final class registry_test extends advanced_testcase {
         $this->assertSame(definition::MAX_LEVEL + 1, registry::effective_level('mod_assign.create'));
     }
 
+    public function test_apply_flavor_preset_replaces_stale_flavor_rows(): void {
+        $this->resetAfterTest(true);
+
+        registry::apply_flavor_preset('school', [
+            'mod_assign.create' => 4,
+            'core.user.create' => 2,
+        ]);
+        $this->assertSame(4, registry::effective_level('mod_assign.create'));
+        $this->assertSame(2, registry::effective_level('core.user.create'));
+
+        registry::apply_flavor_preset('lxp', [
+            'core.user.create' => 1,
+        ]);
+
+        // mod_assign preset row was removed because it is no longer in payload.
+        $this->assertSame(2, registry::effective_level('mod_assign.create'));
+        $this->assertSame(1, registry::effective_level('core.user.create'));
+    }
+
+    public function test_apply_flavor_preset_does_not_override_admin_rows(): void {
+        $this->resetAfterTest(true);
+
+        override_store::set_admin_override('mod_assign.create', 5);
+        registry::apply_flavor_preset('school', [
+            'mod_assign.create' => 1,
+        ]);
+
+        $this->assertSame(5, registry::effective_level('mod_assign.create'));
+    }
+
     public function test_get_features_for_level_is_cumulative(): void {
         $l1 = registry::get_features_for_level(1);
         $l2 = registry::get_features_for_level(2);

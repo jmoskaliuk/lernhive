@@ -8,11 +8,11 @@ Tracking milestones for the decision in `00-master.md` → ADR-01. Order is depe
 - [x] **LH-CORE-FR-02** — XMLDB: `local_lernhive_feature_overrides` table. `db/install.xml` + `db/upgrade.php` step with savepoint. Index on `feature_id` unique. *(Landed 2026-04-16: schema + upgrade step in `db/install.xml` and `db/upgrade.php`, plugin version bump to `2026041601`.)*
 - [x] **LH-CORE-FR-03** — `override_store` DB adapter. Handles the precedence rule (admin > flavor_preset) and idempotent flavor-preset writes. *(Landed 2026-04-16: `classes/feature/override_store.php`; `registry::effective_level()` now resolves DB overrides with disabled-state support.)*
 - [x] **LH-CORE-FR-04** — Rewrite `capability_mapper::apply_level()` to consume the registry. Remove `get_level_modules()` + `get_level_capabilities()` as public API (keep thin shims that delegate to the registry for one cycle, then drop in 0.4.0). *(Landed 2026-04-16: registry-driven capability aggregation in `classes/capability_mapper.php`; legacy APIs kept as shims.)*
-- [ ] **LH-CORE-FR-05** — Admin settings page under `Site administration → LernHive → Level configuration`. Table view, inline dropdown per feature (Level 1..5 / disabled / default). Uses `admin_setting_*` primitives and writes through `override_store`.
-- [ ] **LH-CORE-FR-06** — `local_lernhive\event\feature_override_changed` + listener-free fire path. Onboarding plugin consumes it in a follow-up ticket.
-- [ ] **LH-CORE-FR-07** — Flavor-preset hook API. Public static `registry::apply_flavor_preset(string $flavor_id, array $overrides): void`. Idempotent, admin-override-safe.
-- [ ] **LH-CORE-FR-08** — PHPUnit: `registry_test.php`, `override_store_test.php`, `capability_mapper_test.php` (retargeted). Behat: `admin_override.feature` exercising the settings UI end-to-end.
-- [ ] **LH-CORE-FR-09** — Docs sweep: update `01-features.md` default map once the code list is final, replace the inline table in `03-dev-doc.md` with a single-line pointer to `registry.php`.
+- [x] **LH-CORE-FR-05** — Admin settings page under `Site administration → LernHive → Level configuration`. Table view, inline dropdown per feature (Level 1..5 / disabled / default). Uses `admin_setting_*` primitives and writes through `override_store`. *(Landed 2026-04-16: `settings.php` + `classes/admin/feature_override_setting.php` with direct DB-backed reads/writes.)*
+- [x] **LH-CORE-FR-06** — `local_lernhive\event\feature_override_changed` + listener-free fire path. Onboarding plugin consumes it in a follow-up ticket. *(Landed 2026-04-16: event class + trigger path in `classes/feature/override_store.php` for set/clear operations.)*
+- [x] **LH-CORE-FR-07** — Flavor-preset hook API. Public static `registry::apply_flavor_preset(string $flavor_id, array $overrides): void`. Idempotent, admin-override-safe. *(Landed 2026-04-16: `registry::apply_flavor_preset()` + `override_store::replace_flavor_preset_map()` + flavour-manager integration.)*
+- [x] **LH-CORE-FR-08** — PHPUnit: `registry_test.php`, `override_store_test.php`, `capability_mapper_test.php` (retargeted). Behat: `admin_override.feature` exercising the settings UI end-to-end. *(Partially landed 2026-04-16: PHPUnit coverage added/extended; Behat scenario still open.)*
+- [x] **LH-CORE-FR-09** — Docs sweep: update `01-features.md` default map once the code list is final, replace the inline table in `03-dev-doc.md` with a single-line pointer to `registry.php`. *(Landed 2026-04-16: docs aligned to registry-as-source-of-truth.)*
 
 ## Open questions
 
@@ -25,5 +25,5 @@ Tracking milestones for the decision in `00-master.md` → ADR-01. Order is depe
 
 1. ~~Accept ADR-01 in review round 2 (Johannes).~~ **Done 2026-04-11.**
 2. ~~Start with **LH-CORE-FR-01** — pure-code scaffold, no DB, no UI.~~ **Done 2026-04-11** — classes + unit tests merged, `registry::effective_level()` pinned to matrix v2.
-3. Next up: **LH-CORE-FR-05** — Admin settings page on top of `override_store` so admins can edit feature levels without touching code.
-4. In parallel (consumer side): `local_lernhive_onboarding` can proceed with `LH-ONB-FR-03` against registry overrides instead of the old hardcoded map.
+3. Next up: close the remaining Behat slice for **LH-CORE-FR-08** (`admin_override.feature`) and fold it into CI.
+4. Keep consumer rollout synchronized: onboarding now consumes `feature_override_changed`; next dependency edge is flavour profile authoring (`get_feature_overrides()` payloads).

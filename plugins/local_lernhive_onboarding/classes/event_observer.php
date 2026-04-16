@@ -14,21 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Flavour plugin version and dependencies.
- *
- * @package    local_lernhive_flavour
- * @copyright  2026 LernHive.de
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace local_lernhive_onboarding;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_flavour';
-$plugin->version = 2026041508;
-$plugin->requires = 2024100700; // Moodle 4.5+
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.2.1';
-$plugin->dependencies = [
-    'local_lernhive' => 2026041602,
-];
+/**
+ * Event observers for local_lernhive_onboarding.
+ *
+ * @package    local_lernhive_onboarding
+ * @copyright  2026 LernHive.de
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+final class event_observer {
+
+    /**
+     * Reset onboarding tour visibility cache when feature overrides change.
+     *
+     * @param \local_lernhive\event\feature_override_changed $event
+     * @return void
+     */
+    public static function feature_override_changed(\local_lernhive\event\feature_override_changed $event): void {
+        unset($event);
+        tour_manager::reset_cache();
+    }
+}

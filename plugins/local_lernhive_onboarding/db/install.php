@@ -51,6 +51,7 @@ function xmldb_local_lernhive_onboarding_install() {
 
     \local_lernhive_onboarding\tour_importer::seed_categories();
     \local_lernhive_onboarding\tour_importer::import_level(1);
+    \local_lernhive_onboarding\tour_importer::import_level(2);
     \local_lernhive_onboarding\trainer_role::ensure();
 
     // Provision the "Onboarding Sandbox" course that {DEMOCOURSEID}

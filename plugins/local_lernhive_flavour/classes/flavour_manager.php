@@ -100,6 +100,14 @@ class flavour_manager {
             }
         }
 
+        // Apply feature-level flavour overrides in local_lernhive.
+        if (class_exists(\local_lernhive\feature\registry::class)) {
+            \local_lernhive\feature\registry::apply_flavor_preset(
+                $key,
+                $profile->get_feature_overrides()
+            );
+        }
+
         // Persist the active flavour key itself.
         set_config(self::CONFIG_ACTIVE, $key, self::COMPONENT);
 

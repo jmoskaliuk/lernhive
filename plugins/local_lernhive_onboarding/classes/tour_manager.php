@@ -38,6 +38,10 @@ defined('MOODLE_INTERNAL') || die();
 class tour_manager {
     /** @var bool|null */
     private static ?bool $maphasfeatureid = null;
+    /** @var array<int, array<int, \stdClass>> */
+    private static array $categoriescache = [];
+    /** @var array<string, array<int, \stdClass>> */
+    private static array $tourcache = [];
 
     /**
      * Get all tour categories for a given level, ordered by sortorder.
@@ -46,13 +50,29 @@ class tour_manager {
      * @return array Array of category records with id, shortname, name, description, icon, color, sortorder
      */
     public static function get_categories(int $level): array {
+        if (isset(self::$categoriescache[$level])) {
+            return self::$categoriescache[$level];
+        }
+
         global $DB;
 
-        return $DB->get_records(
+        $categories = $DB->get_records(
             'local_lhonb_cats',
             ['level' => $level],
             'sortorder ASC'
         );
+
+        // Registry-aware visibility: hide empty categories after per-tour
+        // feature filtering for the current level.
+        $visible = [];
+        foreach ($categories as $id => $category) {
+            if (!empty(self::get_category_tours((int) $category->id, $level))) {
+                $visible[$id] = $category;
+            }
+        }
+
+        self::$categoriescache[$level] = $visible;
+        return $visible;
     }
 
     /**
@@ -61,14 +81,35 @@ class tour_manager {
      * @param int $categoryid The category ID from local_lhonb_cats
      * @return array Array of tour mapping records with id, tourid, sortorder
      */
-    public static function get_category_tours(int $categoryid): array {
+    public static function get_category_tours(int $categoryid, ?int $level = null): array {
+        $levelkey = ($level === null) ? 'all' : (string) $level;
+        $cachekey = $categoryid . ':' . $levelkey;
+        if (isset(self::$tourcache[$cachekey])) {
+            return self::$tourcache[$cachekey];
+        }
+
         global $DB;
 
-        return $DB->get_records(
+        $records = $DB->get_records(
             'local_lhonb_map',
             ['categoryid' => $categoryid],
             'sortorder ASC'
         );
+
+        if ($level === null || !self::map_has_feature_id_field()) {
+            self::$tourcache[$cachekey] = $records;
+            return $records;
+        }
+
+        $visible = [];
+        foreach ($records as $id => $record) {
+            if (self::is_mapping_visible_for_level($record, $level)) {
+                $visible[$id] = $record;
+            }
+        }
+
+        self::$tourcache[$cachekey] = $visible;
+        return $visible;
     }
 
     /**
@@ -91,10 +132,10 @@ class tour_manager {
      *     - 'done' => boolean, true if all tours completed
      *     - 'tours' => array of tour records with completion status
      */
-    public static function get_category_progress(int $categoryid, int $userid): array {
+    public static function get_category_progress(int $categoryid, int $userid, ?int $level = null): array {
         global $DB;
 
-        $tours = self::get_category_tours($categoryid);
+        $tours = self::get_category_tours($categoryid, $level);
         $total = count($tours);
         $completed = 0;
         $tourdata = [];
@@ -149,7 +190,7 @@ class tour_manager {
         $catdata = [];
 
         foreach ($categories as $cat) {
-            $progress = self::get_category_progress($cat->id, $userid);
+            $progress = self::get_category_progress((int) $cat->id, $userid, $level);
             $totaltours += $progress['total'];
             $completedtours += $progress['completed'];
 
@@ -290,6 +331,7 @@ class tour_manager {
                 if ($current !== $featureid) {
                     $existing->feature_id = $featureid;
                     $DB->update_record('local_lhonb_map', $existing);
+                    self::reset_cache();
                 }
             }
             return $existing->id;
@@ -315,7 +357,9 @@ class tour_manager {
             $record->feature_id = $featureid;
         }
 
-        return $DB->insert_record('local_lhonb_map', $record);
+        $id = (int) $DB->insert_record('local_lhonb_map', $record);
+        self::reset_cache();
+        return $id;
     }
 
     /**
@@ -327,10 +371,26 @@ class tour_manager {
      */
     public static function remove_tour_from_category(int $categoryid, int $tourid): bool {
         global $DB;
-        return $DB->delete_records(
-            'local_lhonb_map',
-            ['categoryid' => $categoryid, 'tourid' => $tourid]
-        );
+        $exists = $DB->record_exists('local_lhonb_map', [
+            'categoryid' => $categoryid,
+            'tourid' => $tourid,
+        ]);
+        if ($exists) {
+            $DB->delete_records('local_lhonb_map', ['categoryid' => $categoryid, 'tourid' => $tourid]);
+            self::reset_cache();
+        }
+        return $exists;
+    }
+
+    /**
+     * Reset in-process tour visibility caches.
+     *
+     * @return void
+     */
+    public static function reset_cache(): void {
+        self::$categoriescache = [];
+        self::$tourcache = [];
+        self::$maphasfeatureid = null;
     }
 
     /**
@@ -352,6 +412,37 @@ class tour_manager {
         self::$maphasfeatureid = isset($columns['feature_id']);
 
         return self::$maphasfeatureid;
+    }
+
+    /**
+     * Evaluate whether a tour mapping is visible at a given level.
+     *
+     * Null / empty feature ids stay visible for backwards compatibility.
+     *
+     * @param \stdClass $mapping
+     * @param int $level
+     * @return bool
+     */
+    private static function is_mapping_visible_for_level(\stdClass $mapping, int $level): bool {
+        $featureid = trim((string) ($mapping->feature_id ?? ''));
+        if ($featureid === '') {
+            return true;
+        }
+
+        if (!class_exists(\local_lernhive\feature\registry::class)) {
+            return true;
+        }
+
+        $feature = \local_lernhive\feature\registry::get_feature($featureid);
+        if ($feature === null) {
+            debugging(
+                'local_lernhive_onboarding: unknown feature_id in tour mapping: ' . $featureid,
+                DEBUG_DEVELOPER
+            );
+            return true;
+        }
+
+        return \local_lernhive\feature\registry::effective_level($featureid) <= $level;
     }
 
     /**

@@ -29,13 +29,13 @@
 
 ### Feature registry consumer track
 
-- [ ] **LH-ONB-FR-03** Registry-aware visibility in `tour_manager` with fallback for null `feature_id`
-- [ ] **LH-ONB-FR-04** Assignment tour migration wiring (legacy remap on upgrade)
-- [ ] **LH-ONB-FR-06** Activate and map Level-2 pack runtime categories
+- [x] **LH-ONB-FR-03** Registry-aware visibility in `tour_manager` with fallback for null `feature_id` *(Landed 2026-04-16: `tour_manager::get_category_tours(..., $level)` now filters by `local_lernhive\feature\registry::effective_level()` and keeps null/empty `feature_id` mappings visible.)*
+- [x] **LH-ONB-FR-04** Assignment tour migration wiring (legacy remap on upgrade) *(Landed 2026-04-16: upgrade step `2026041505` remaps legacy assignment tours from `create_activities` to `assignments`.)*
+- [x] **LH-ONB-FR-06** Activate and map Level-2 pack runtime categories *(Landed 2026-04-16: Level-2 categories seeded and `import_level(2)` wired for install/upgrade.)*
 - [ ] **LH-ONB-FR-07** Author and integrate Level-3..5 packs
-- [ ] **LH-ONB-FR-08** Consume `feature_override_changed` for cache invalidation
+- [x] **LH-ONB-FR-08** Consume `feature_override_changed` for cache invalidation *(Landed 2026-04-16: `db/events.php` + `event_observer::feature_override_changed()` reset onboarding visibility cache.)*
 - [ ] **LH-ONB-FR-09** LXP flavour audience grant + acceptance test
-- [ ] **LH-ONB-FR-10** Add `tour_visibility_test.php`, adjust existing tests for registry model
+- [x] **LH-ONB-FR-10** Add `tour_visibility_test.php`, adjust existing tests for registry model *(Landed 2026-04-16: dedicated visibility/cache invalidation unit tests.)*
 - [ ] **LH-ONB-FR-11** BigBlueButton soft-dependency handling at import/seed
 
 ### Start flow and chaining track
@@ -63,6 +63,6 @@
 
 ## Immediate next actions
 
-1. Deliver `LH-ONB-FR-03` once `local_lernhive` `LH-CORE-FR-02..04` are available
-2. Start `LH-ONB-QA-01` and execute one full Level-1 smoke run after each deploy/hotfix
-3. Finish `LH-ONB-START-07` (Behat)
+1. Continue with `LH-ONB-FR-07` (Level-3..5 packs) after validating Level-2 runtime behavior in staging.
+2. Start `LH-ONB-QA-01` and execute one full Level-1/2 smoke run after each deploy/hotfix.
+3. Finish `LH-ONB-START-07` (Behat).
