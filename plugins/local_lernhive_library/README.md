@@ -1,18 +1,24 @@
 # local_lernhive_library
 
-**LernHive Library** — the managed catalog of ready-to-use courses curated by eLeDia. In Release 1 this is a UI stub: the catalog page renders an empty state, with a placeholder grid layout for the entries that will arrive in a later milestone.
+**LernHive Library** — the managed catalog of ready-to-use courses curated by eLeDia. R2 phase 1 ships a read-only JSON manifest feed: the catalog page now renders configured entries, while import actions remain intentionally disabled until the backup/restore workflow lands.
 
 The plugin is reached from the [ContentHub](../local_lernhive_contenthub/) via the Library card, and from the admin tree under *Site administration → Plugins → Local plugins → LernHive Library → Open LernHive Library*.
 
-## Release 1 scope
+## Current scope (R2 phase 1)
 
 - Catalog page renders via renderer + mustache template (shared UX with ContentHub / Copy)
-- Catalog source is a class stub — `classes/catalog.php` returns an empty list by default, but accepts seeded entries via its constructor so the UI and tests can exercise the non-empty path
+- Catalog source supports:
+  - seeded in-memory entries (test mode)
+  - managed JSON manifest from plugin settings (`catalog_manifest_json`)
 - Catalog entry is an immutable value object (`classes/catalog_entry.php`) defining the contract the eventual managed backend must satisfy
-- Null privacy provider — the plugin stores no personal data in R1
+- Manifest parser accepts:
+  - top-level JSON array of entries
+  - object with `entries` array
+- Invalid manifest rows fail closed and are ignored (developer debugging notice); valid rows still render
+- Null privacy provider — the plugin stores no personal data in this phase
 - No web services, no scheduled tasks, no DB tables
 
-The import button is rendered but disabled. Wiring it up to Moodle core backup/restore is tracked in `docs/04-tasks.md`.
+The import button is still rendered but disabled. Wiring it up to Moodle core backup/restore is tracked in `docs/04-tasks.md`.
 
 ## Architecture
 
@@ -21,13 +27,13 @@ local_lernhive_library/
 ├── version.php                 depends on local_lernhive_contenthub
 ├── lib.php
 ├── index.php                   entry page (standard layout + capability gate)
-├── settings.php                admin_externalpage registration
+├── settings.php                admin category + open page + manifest setting
 ├── styles.css                  scoped .lh-library-* only
 ├── README.md
 ├── db/access.php               local/lernhive_library:import
 ├── lang/en/*.php
 ├── classes/
-│   ├── catalog.php             injectable stub catalog source
+│   ├── catalog.php             manifest parser + injectable test source
 │   ├── catalog_entry.php       immutable value object
 │   ├── output/
 │   │   ├── catalog_page.php    renderable / templatable
@@ -61,6 +67,7 @@ No dedicated `moodle-plugin-ci` matrix is currently wired for this plugin.
 
 ## Roadmap
 
-- **R2** — connect to eLeDia's managed catalog backend (read-only JSON feed), import selected entries via Moodle core backup/restore
+- **R2 phase 2** — switch from manually pasted manifest JSON to managed remote catalog backend feed
+- **R2 phase 3** — import selected entries via Moodle core backup/restore
 - **R2+** — per-user "recently imported" history (replaces the null privacy provider with a real metadata provider)
 - **R3** — flavour-aware filtering of the catalog based on the tenant's active LernHive flavour

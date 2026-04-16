@@ -17,8 +17,9 @@
 /**
  * Library catalog entry page.
  *
- * Release 1 renders an empty catalog state — the real catalog source
- * arrives with a later milestone (see docs/04-tasks.md).
+ * In R2, catalog entries are sourced from the managed JSON manifest
+ * configured in plugin settings. If no valid manifest is configured,
+ * the page falls back to the empty state.
  *
  * Library is a content creation tool, not a site configuration page —
  * it always renders as a `standard` page with the LernHive Plugin
@@ -53,8 +54,8 @@ $PAGE->set_heading(get_string('pluginname', 'local_lernhive_library'));
 /** @var \local_lernhive_library\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('local_lernhive_library');
 
-// R1 stub: empty catalog. The eventual catalog source will be built
-// from eLeDia's managed backend and live behind a separate class.
+// Catalog source: seeded test entries can be injected in tests,
+// production reads the managed manifest from plugin config.
 $catalog = new catalog();
 
 echo $OUTPUT->header();

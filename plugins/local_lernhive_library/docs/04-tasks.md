@@ -36,13 +36,22 @@ same functional scope while enforcing standard pagelayout for all users.
   `trim + strtoupper`; covered by `tests/catalog_page_test.php` and
   `tests/catalog_test.php`.
 
+## R2 progress (repo, not deployed yet)
+
+- **LH-LIB-R2-01** — Managed catalog feed phase 1 delivered:
+  `classes/catalog.php` now parses a configured JSON manifest
+  (`local_lernhive_library/catalog_manifest_json`) into `catalog_entry`
+  objects; supports top-level array or `{ "entries": [...] }`, tolerates
+  unix timestamps and parseable date strings for `updated`, and skips
+  invalid rows fail-closed. Admin setting is exposed in `settings.php`.
+
 ## Open R1 issues
 
 _None known._
 
 ## R2 backlog
 
-- Connect `catalog` to eLeDia's managed catalog backend
+- Replace pasted manifest JSON with remote managed backend feed retrieval
 - `.mbz` download + Moodle backup/restore import flow
 - Version metadata: show available vs installed version per entry
 - Safe update: import new `.mbz` version without destructive overwrite

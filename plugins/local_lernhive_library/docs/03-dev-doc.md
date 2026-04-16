@@ -2,22 +2,23 @@
 
 ## Architecture note
 
-Entry page for browsing eLeDia's managed content catalog. In R1 the page
-renders an **empty-state scaffold** — the backend catalog API and the
-`.mbz` import pipeline are not yet connected. The data model for a catalog
-entry (`catalog_entry`) is defined as a value object so the contract for
-the eventual source is stable before the source exists.
+Entry page for browsing eLeDia's managed content catalog. R2 phase 1 ships
+a **read-only JSON manifest feed** that can be configured in plugin
+settings. The `.mbz` import pipeline is still not connected. The data model
+for a catalog entry (`catalog_entry`) remains a strict value object so the
+contract with the eventual managed backend stays explicit.
 
-## R1 scope: display scaffold only
+## R2 phase 1 scope: read-only manifest feed
 
-R1 ships a UI-only placeholder:
-- `catalog` returns an empty list (constructor-injected, so tests can seed
-  fake entries without touching a network)
-- `catalog_page` renders an empty state ("No content available yet")
-- **No `.mbz` download, no import, no version comparison** — those are R2+
+R2 phase 1 ships:
+- `catalog` can parse manifest JSON from plugin settings (`catalog_manifest_json`)
+- parser accepts top-level array or `{ "entries": [...] }`
+- invalid rows are ignored (fail closed), valid rows still render
+- constructor injection of `catalog_entry[]` remains available for tests
+- `catalog_page` still renders empty state when no valid entries exist
 
-The `.mbz` delivery approach, versioning logic, and update UX that were
-discussed in earlier planning sessions apply to **R2 only** (see below).
+`.mbz` delivery approach, version comparison against installed content, and
+update execution UX are still deferred to later R2 phases (see below).
 
 ## File layout
 
@@ -26,13 +27,13 @@ local_lernhive_library/
 ├── version.php                 component + deps (local_lernhive_contenthub)
 ├── lib.php                     empty hook slot
 ├── index.php                   entry page — standard layout + capability gate
-├── settings.php                admin_externalpage: local_lernhive_library_catalog
+├── settings.php                admin category + open page + manifest setting
 ├── styles.css                  scoped .lh-library-* only
 ├── README.md
 ├── db/access.php               local/lernhive_library:import capability
 ├── lang/en/local_lernhive_library.php
 ├── classes/
-│   ├── catalog.php             in-memory catalog provider (empty by default)
+│   ├── catalog.php             manifest parser + injectable in-memory provider
 │   ├── catalog_entry.php       immutable value object — defines backend contract
 │   ├── output/catalog_page.php renderable / templatable
 │   ├── output/renderer.php     plugin renderer → render_catalog_page()
@@ -58,11 +59,17 @@ Constructor guards validate required fields (`id`, `title`, `version`,
 `language`) and reject negative `updated` timestamps with `coding_exception`.
 
 ### `catalog` (classes/catalog.php)
-Placeholder provider. Constructor accepts `catalog_entry[]` (empty by
-default). `all(): catalog_entry[]` and `is_empty(): bool`. In R2 this
-class will be replaced by or delegated to a real source (API client,
-file-based manifest, etc.); the `catalog_page` renderable is written
-against this interface already so the swap should be contained here.
+Provider with two modes:
+- constructor-seeded entries (`catalog_entry[]`) for deterministic tests
+- config-backed manifest parsing from `local_lernhive_library/catalog_manifest_json`
+
+`all(): catalog_entry[]` and `is_empty(): bool`.
+
+Manifest behaviour:
+- accepts top-level array or object with `entries`
+- supports unix timestamps and parseable date strings in `updated`
+- invalid rows are skipped with developer debug notice
+
 Seeded constructor data is validated: non-`catalog_entry` elements raise
 `coding_exception` so contract violations fail fast in tests/dev.
 
@@ -81,7 +88,7 @@ Extends `plugin_renderer_base`. Single method `render_catalog_page()`.
   - `tests/catalog_test.php`
   - `tests/catalog_page_test.php`
 - Behat:
-  - `tests/behat/library_page.feature` (admin-tree smoke test for R1 empty state)
+  - `tests/behat/library_page.feature` (admin-tree smoke test for page reachability and baseline copy)
 
 ## Access control
 
@@ -100,11 +107,12 @@ The `:import` capability is declared in `db/access.php` with
 ## Dependencies
 
 - `local_lernhive_contenthub` (hard, declared in version.php)
-- eLeDia managed catalog API — **R2 only**, not used in R1
+- Managed feed source (phase 1): admin-configured JSON manifest in plugin settings
+- eLeDia managed remote API client: planned for next R2 phase
 
 ## R2 direction
 
-- Connect `catalog` to the managed catalog backend (API or file manifest)
+- Replace pasted manifest JSON with managed remote feed retrieval
 - `.mbz` download + import via Moodle's backup/restore API
 - Version metadata: show available vs installed version per entry
 - Update workflow: safe import of a new `.mbz` without destructive overwrite
@@ -121,5 +129,5 @@ Repository-level workflows:
 - `deploy-hetzner.yml` (push to `main` + manual dispatch) deploys to Hetzner
 - `test-hetzner.yml` (nightly + manual dispatch) runs PHPUnit and Behat on Hetzner
 
-There is no dedicated `moodle-plugin-ci` matrix for this plugin in R1.
+There is no dedicated `moodle-plugin-ci` matrix for this plugin in the current phase.
 Local dev via `moodle-deploy` skill.

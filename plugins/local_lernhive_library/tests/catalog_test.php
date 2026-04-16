@@ -15,12 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the R1 library catalog stub.
+ * Unit tests for the Library catalog provider and entry contract.
  *
- * These tests lock in the contract the eventual managed catalog
- * backend must satisfy: empty state by default, ordered pass-through
- * of injected entries, and a template context shape the mustache
- * template can consume without guessing keys.
+ * These tests lock in manifest parsing behaviour, seeded-entry
+ * behaviour, and template contract assumptions used by the page
+ * renderable and template.
  *
  * @package    local_lernhive_library
  * @copyright  2026 LernHive.de
@@ -40,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
 final class catalog_test extends advanced_testcase {
 
     /**
-     * A default-constructed catalog is empty — this is the R1 guarantee.
+     * A default-constructed catalog is empty when no manifest is configured.
      */
     public function test_default_catalog_is_empty(): void {
         $this->resetAfterTest();
@@ -70,6 +69,124 @@ final class catalog_test extends advanced_testcase {
             static fn(catalog_entry $e) => $e->id,
             $catalog->all(),
         ));
+    }
+
+    /**
+     * Catalog may load entries from a JSON manifest (R2 mode).
+     */
+    public function test_catalog_loads_entries_from_manifest_array(): void {
+        $this->resetAfterTest();
+
+        $manifest = json_encode([
+            [
+                'id' => 'course-101',
+                'title' => 'Course 101',
+                'description' => 'Managed entry',
+                'version' => '1.2.3',
+                'updated' => 1700000000,
+                'language' => 'en',
+            ],
+        ]);
+
+        $catalog = new catalog(null, $manifest);
+
+        $this->assertFalse($catalog->is_empty());
+        $this->assertCount(1, $catalog->all());
+        $this->assertSame('course-101', $catalog->all()[0]->id);
+    }
+
+    /**
+     * Object manifests with an `entries` key are accepted as well.
+     */
+    public function test_catalog_loads_entries_from_manifest_entries_key(): void {
+        $this->resetAfterTest();
+
+        $manifest = json_encode([
+            'entries' => [
+                [
+                    'id' => 'course-202',
+                    'title' => 'Course 202',
+                    'description' => 'Managed entry',
+                    'version' => '2.0.0',
+                    'updated' => '2026-01-01 12:00:00 UTC',
+                    'language' => 'de',
+                ],
+            ],
+        ]);
+
+        $catalog = new catalog(null, $manifest);
+
+        $this->assertFalse($catalog->is_empty());
+        $this->assertCount(1, $catalog->all());
+        $this->assertSame('course-202', $catalog->all()[0]->id);
+    }
+
+    /**
+     * Default constructor reads manifest JSON from plugin config.
+     */
+    public function test_catalog_loads_manifest_from_plugin_config(): void {
+        $this->resetAfterTest();
+
+        $manifest = json_encode([
+            [
+                'id' => 'config-course',
+                'title' => 'Config course',
+                'description' => 'Managed entry from config',
+                'version' => '1.0.0',
+                'updated' => 1700000000,
+                'language' => 'en',
+            ],
+        ]);
+        set_config('catalog_manifest_json', $manifest, 'local_lernhive_library');
+
+        $catalog = new catalog();
+
+        $this->assertFalse($catalog->is_empty());
+        $this->assertCount(1, $catalog->all());
+        $this->assertSame('config-course', $catalog->all()[0]->id);
+    }
+
+    /**
+     * Invalid JSON manifests fail closed and return an empty catalog.
+     */
+    public function test_catalog_ignores_invalid_manifest_json(): void {
+        $this->resetAfterTest();
+
+        $catalog = new catalog(null, '{invalid json');
+
+        $this->assertTrue($catalog->is_empty());
+        $this->assertSame([], $catalog->all());
+    }
+
+    /**
+     * Invalid rows are ignored while valid rows remain available.
+     */
+    public function test_catalog_skips_invalid_manifest_rows(): void {
+        $this->resetAfterTest();
+
+        $manifest = json_encode([
+            [
+                'id' => 'ok-row',
+                'title' => 'Valid row',
+                'description' => 'desc',
+                'version' => '1.0.0',
+                'updated' => '1700000000',
+                'language' => 'en',
+            ],
+            [
+                'id' => '',
+                'title' => 'Invalid row',
+                'description' => 'desc',
+                'version' => '1.0.0',
+                'updated' => 1700000000,
+                'language' => 'en',
+            ],
+        ]);
+
+        $catalog = new catalog(null, $manifest);
+
+        $this->assertCount(1, $catalog->all());
+        $this->assertSame('ok-row', $catalog->all()[0]->id);
     }
 
     /**

@@ -29,9 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Immutable description of a library item.
  *
- * Release 1 does not yet ship a real catalog source — the registry
- * returns an empty list and the catalog page renders the empty state.
- * This class defines the contract the eventual source must satisfy.
+ * This class defines the catalog contract independent from where the
+ * entry data comes from (seeded tests, JSON manifest, remote feed).
  */
 final class catalog_entry {
 

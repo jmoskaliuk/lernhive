@@ -31,11 +31,16 @@ $string['lernhive_library:import'] = 'Import courses from the LernHive Library';
 
 // Admin tree.
 $string['open_library'] = 'Open LernHive Library';
+$string['settings_title'] = 'Library settings';
+$string['heading_catalog_feed'] = 'Managed catalog feed';
+$string['heading_catalog_feed_desc'] = 'Configure the read-only JSON manifest that provides catalog entries for the Library page.';
+$string['setting_catalog_manifest_json'] = 'Catalog manifest (JSON)';
+$string['setting_catalog_manifest_json_desc'] = 'Paste a JSON array of catalog entries or an object with an "entries" array. Required keys per entry: id, title, version, updated, language. Optional key: description. "updated" accepts unix timestamps or parseable date strings.';
 
 // Catalog page.
 $string['catalog_heading'] = 'LernHive Library';
 $string['catalog_intro'] = 'Ready-to-use courses curated and maintained by eLeDia. Import a library course to use it as a starting point — you can edit it freely afterwards, and future library updates will stay visible as a version notice.';
-$string['catalog_empty'] = 'The library catalog is empty. Your eLeDia account manager seeds the catalog with courses that match your flavour.';
+$string['catalog_empty'] = 'The library catalog is empty. Your eLeDia account manager seeds the managed catalog, or your site admin can paste a catalog manifest in Library settings.';
 
 // Catalog entry (placeholder columns for the R1 stub).
 $string['label_version'] = 'Version';
