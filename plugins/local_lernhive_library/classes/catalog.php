@@ -65,6 +65,27 @@ class catalog {
     }
 
     /**
+     * Resolve one entry by its stable catalog id.
+     *
+     * @param string $id
+     * @return catalog_entry|null
+     */
+    public function find_by_id(string $id): ?catalog_entry {
+        $id = trim($id);
+        if ($id === '') {
+            return null;
+        }
+
+        foreach ($this->entries as $entry) {
+            if ($entry->id === $id) {
+                return $entry;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return bool
      */
     public function is_empty(): bool {
@@ -138,6 +159,8 @@ class catalog {
                 continue;
             }
 
+            $sourcecourseid = $this->normalise_source_course_id($row['sourcecourseid'] ?? null);
+
             try {
                 $entries[] = new catalog_entry(
                     id: (string) ($row['id'] ?? ''),
@@ -146,6 +169,7 @@ class catalog {
                     version: (string) ($row['version'] ?? ''),
                     updated: $updated,
                     language: (string) ($row['language'] ?? ''),
+                    sourcecourseid: $sourcecourseid,
                 );
             } catch (\coding_exception $e) {
                 debugging(
@@ -180,6 +204,32 @@ class catalog {
             $parsed = strtotime($trimmed);
             if ($parsed !== false && $parsed >= 0) {
                 return $parsed;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalise optional source-course id values.
+     *
+     * @param mixed $value
+     * @return int|null
+     */
+    private function normalise_source_course_id(mixed $value): ?int {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if (is_int($value)) {
+            return $value > 0 ? $value : null;
+        }
+
+        if (is_string($value)) {
+            $trimmed = trim($value);
+            if ($trimmed !== '' && ctype_digit($trimmed)) {
+                $parsed = (int) $trimmed;
+                return $parsed > 0 ? $parsed : null;
             }
         }
 

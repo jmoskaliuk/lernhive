@@ -15,6 +15,7 @@ R2 phase 1 ships:
 - parser accepts top-level array or `{ "entries": [...] }`
 - invalid rows are ignored (fail closed), valid rows still render
 - constructor injection of `catalog_entry[]` remains available for tests
+- optional `sourcecourseid` enables template hand-off to `local_lernhive_copy`
 - `catalog_page` still renders empty state when no valid entries exist
 
 `.mbz` delivery approach, version comparison against installed content, and
@@ -51,7 +52,8 @@ local_lernhive_library/
 
 ### `catalog_entry` (classes/catalog_entry.php)
 Immutable value object. Fields: `id`, `title`, `description`, `version`
-(semver-like string), `updated` (unix timestamp), `language` (ISO code).
+(semver-like string), `updated` (unix timestamp), `language` (ISO code),
+optional `sourcecourseid` (mapped Moodle source course id).
 `to_template_context()` formats `updated` via Moodle's `userdate()` and
 normalises `language` to trimmed upper-case. This class defines what the R2 backend source must
 return — no code outside `catalog.php` should construct entries.
@@ -64,10 +66,12 @@ Provider with two modes:
 - config-backed manifest parsing from `local_lernhive_library/catalog_manifest_json`
 
 `all(): catalog_entry[]` and `is_empty(): bool`.
+Lookup helper: `find_by_id(string $id): ?catalog_entry`.
 
 Manifest behaviour:
 - accepts top-level array or object with `entries`
 - supports unix timestamps and parseable date strings in `updated`
+- supports optional positive integer `sourcecourseid`
 - invalid rows are skipped with developer debug notice
 
 Seeded constructor data is validated: non-`catalog_entry` elements raise

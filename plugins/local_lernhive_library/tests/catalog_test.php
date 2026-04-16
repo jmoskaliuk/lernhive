@@ -85,6 +85,7 @@ final class catalog_test extends advanced_testcase {
                 'version' => '1.2.3',
                 'updated' => 1700000000,
                 'language' => 'en',
+                'sourcecourseid' => 42,
             ],
         ]);
 
@@ -93,6 +94,8 @@ final class catalog_test extends advanced_testcase {
         $this->assertFalse($catalog->is_empty());
         $this->assertCount(1, $catalog->all());
         $this->assertSame('course-101', $catalog->all()[0]->id);
+        $this->assertSame(42, $catalog->all()[0]->sourcecourseid);
+        $this->assertTrue($catalog->all()[0]->has_source_course());
     }
 
     /**
@@ -180,6 +183,7 @@ final class catalog_test extends advanced_testcase {
                 'version' => '1.0.0',
                 'updated' => 1700000000,
                 'language' => 'en',
+                'sourcecourseid' => -10,
             ],
         ]);
 
@@ -187,6 +191,7 @@ final class catalog_test extends advanced_testcase {
 
         $this->assertCount(1, $catalog->all());
         $this->assertSame('ok-row', $catalog->all()[0]->id);
+        $this->assertNull($catalog->all()[0]->sourcecourseid);
     }
 
     /**
@@ -197,6 +202,20 @@ final class catalog_test extends advanced_testcase {
 
         $this->expectException(\coding_exception::class);
         new catalog([new \stdClass()]);
+    }
+
+    /**
+     * `find_by_id()` returns matching entries and null for unknown ids.
+     */
+    public function test_find_by_id_resolves_entries(): void {
+        $this->resetAfterTest();
+
+        $first = $this->make_entry('a', 'Alpha');
+        $catalog = new catalog([$first]);
+
+        $this->assertSame($first, $catalog->find_by_id('a'));
+        $this->assertNull($catalog->find_by_id('missing'));
+        $this->assertNull($catalog->find_by_id(''));
     }
 
     /**
@@ -215,6 +234,7 @@ final class catalog_test extends advanced_testcase {
         $this->assertArrayHasKey('version', $context);
         $this->assertArrayHasKey('updated', $context);
         $this->assertArrayHasKey('language', $context);
+        $this->assertArrayHasKey('hassourcecourse', $context);
     }
 
     /**

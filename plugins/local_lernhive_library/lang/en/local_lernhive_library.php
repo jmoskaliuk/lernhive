@@ -35,7 +35,7 @@ $string['settings_title'] = 'Library settings';
 $string['heading_catalog_feed'] = 'Managed catalog feed';
 $string['heading_catalog_feed_desc'] = 'Configure the read-only JSON manifest that provides catalog entries for the Library page.';
 $string['setting_catalog_manifest_json'] = 'Catalog manifest (JSON)';
-$string['setting_catalog_manifest_json_desc'] = 'Paste a JSON array of catalog entries or an object with an "entries" array. Required keys per entry: id, title, version, updated, language. Optional key: description. "updated" accepts unix timestamps or parseable date strings.';
+$string['setting_catalog_manifest_json_desc'] = 'Paste a JSON array of catalog entries or an object with an "entries" array. Required keys per entry: id, title, version, updated, language. Optional keys: description, sourcecourseid. "updated" accepts unix timestamps or parseable date strings. "sourcecourseid" maps templates to Moodle source courses for local_lernhive_copy.';
 
 // Catalog page.
 $string['catalog_heading'] = 'LernHive Library';

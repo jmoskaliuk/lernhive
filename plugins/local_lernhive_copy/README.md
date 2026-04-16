@@ -1,25 +1,49 @@
 # local_lernhive_copy
 
-**LernHive Copy** — the course copy wizard. In Release 1 this is a UI stub: the page renders the mode choices and an explicit "not yet implemented" notice. The actual wizard will delegate to Moodle core backup/restore in a later milestone.
+**LernHive Copy** is the course-copy wizard used from ContentHub. It reuses
+Moodle core backup/restore (`copy_helper`) instead of implementing custom copy
+logic.
 
-The plugin serves two content paths from the [ContentHub](../local_lernhive_contenthub/):
+Current version (`0.3.0`) ships:
+- working Simple copy flow
+- Expert mode hand-off to Moodle core copy UI
+- template selection backed by the LernHive Library catalog
+- per-user default target-category preference
 
-| Entry URL                                         | Source            | Heading                |
-|---------------------------------------------------|-------------------|------------------------|
-| `/local/lernhive_copy/index.php`                  | course (default)  | *Copy a course*        |
-| `/local/lernhive_copy/index.php?source=template`  | template          | *Start from a template*|
+## Entry paths
 
-Both paths share the same wizard code. `classes/source.php` normalises the query parameter and guards against stray values.
+| Entry URL | Source | Heading |
+|---|---|---|
+| `/local/lernhive_copy/index.php` | course (default) | *Copy a course* |
+| `/local/lernhive_copy/index.php?source=template` | template | *Start from a template* |
+
+Both paths share one wizard page. `classes/source.php` normalises `?source=`
+and defaults unknown values to `course`.
 
 ## Modes
-- **Simple** — copy structure and activities, skip participants / grades / attempt data
-- **Expert** — hand off to Moodle's core backup/restore screen with all options
 
-Both CTAs are disabled in the R1 stub — see `docs/04-tasks.md` for the wire-up plan.
+- **Simple**: guided copy form, defaults to clean copy without participants/progress.
+- **Expert**: source-picker hand-off to Moodle's full `/backup/copy.php` flow.
+
+## Template flow
+
+`?source=template` is a two-step flow:
+1. pick a template from the Library-backed catalog
+2. continue with Simple or Expert mode using the mapped source course
+
+## Runtime behavior
+
+- always requires login + `local/lernhive_copy:use`
+- always renders with `pagelayout=standard` (including site admins)
+- validates source-course backup/restore capabilities before queueing copy
+- cancel path always returns to `/local/lernhive_contenthub/index.php`
+- stores the selected target category as user preference
+- redirects to `/backup/copyprogress.php?id={sourcecourseid}` after submit
 
 ## Access
 
-Capability: `local/lernhive_copy:use`, cloned from `moodle/course:create`. Default archetypes: editingteacher, coursecreator, manager.
+Capability: `local/lernhive_copy:use`, cloned from `moodle/course:create`.
+Default archetypes: `editingteacher`, `coursecreator`, `manager`.
 
 ## Architecture
 
@@ -27,7 +51,7 @@ Capability: `local/lernhive_copy:use`, cloned from `moodle/course:create`. Defau
 local_lernhive_copy/
 ├── version.php                 depends on local_lernhive_contenthub
 ├── lib.php
-├── index.php                   entry page (dual admin/standard)
+├── index.php                   entry page + form handling
 ├── settings.php                admin_externalpage registration
 ├── styles.css                  scoped .lh-copy-* only
 ├── README.md
@@ -35,15 +59,29 @@ local_lernhive_copy/
 ├── lang/en/*.php
 ├── classes/
 │   ├── source.php              normalises ?source=course|template
+│   ├── form/copy_form.php      simple-mode form
+│   ├── form/expert_source_form.php
 │   ├── output/
 │   │   ├── wizard_page.php     renderable / templatable
 │   │   └── renderer.php
-│   └── privacy/provider.php    null_provider (delegates to backup/restore)
+│   └── privacy/provider.php    metadata + user preferences
 ├── templates/wizard_page.mustache
-├── tests/source_test.php       unit tests for source normalisation
+├── tests/source_test.php       source routing contract
+├── tests/form/copy_form_test.php
+├── tests/output/wizard_page_test.php
+├── tests/behat/copy_flow.feature
 └── docs/                       DevFlow
 ```
 
+## DevFlow
+
+- `docs/00-master.md`
+- `docs/01-features.md`
+- `docs/02-user-doc.md`
+- `docs/03-dev-doc.md`
+- `docs/04-tasks.md`
+- `docs/05-quality.md`
+
 ## CI & deployment
 
-Runs through the shared `.github/workflows/moodle-plugin-ci.yml` workflow (matrix-extended). Deployment to Hetzner is handled by the repo-wide `deploy-hetzner.yml`.
+Current automated gate is the repo-level `deploy-hetzner.yml`.

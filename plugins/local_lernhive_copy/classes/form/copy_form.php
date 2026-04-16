@@ -34,6 +34,7 @@ namespace local_lernhive_copy\form;
 use context_system;
 use core_course_category;
 use DateTime;
+use html_writer;
 use moodleform;
 
 defined('MOODLE_INTERNAL') || die();
@@ -55,22 +56,39 @@ class copy_form extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        $fixedsourcecourseid = (int) ($this->_customdata['fixedsourcecourseid'] ?? 0);
+        $fixedsourcename = trim((string) ($this->_customdata['fixedsourcename'] ?? ''));
+        $defaultcategory = (int) ($this->_customdata['defaultcategory'] ?? 0);
+        $submitlabel = trim((string) ($this->_customdata['submitlabel'] ?? ''));
 
-        // Source course picker — uses the built-in autocomplete "course"
-        // element. The element itself does not filter by capability; we
-        // re-check `moodle/backup:backupcourse` server-side in index.php
-        // before handing anything to the copy helper.
-        $mform->addElement(
-            'course',
-            'courseid',
-            get_string('form_source_course', 'local_lernhive_copy'),
-            [
-                'multiple' => false,
-                'limittoenrolled' => false,
-            ]
-        );
-        $mform->addRule('courseid', null, 'required', null, 'client');
-        $mform->addHelpButton('courseid', 'form_source_course', 'local_lernhive_copy');
+        if ($fixedsourcecourseid > 0) {
+            $mform->addElement('hidden', 'courseid', $fixedsourcecourseid);
+            $mform->setType('courseid', PARAM_INT);
+            if ($fixedsourcename !== '') {
+                $mform->addElement(
+                    'static',
+                    'selectedsource',
+                    get_string('form_source_course', 'local_lernhive_copy'),
+                    s($fixedsourcename)
+                );
+            }
+        } else {
+            // Source course picker — uses the built-in autocomplete "course"
+            // element. The element itself does not filter by capability; we
+            // re-check `moodle/backup:backupcourse` server-side in index.php
+            // before handing anything to the copy helper.
+            $mform->addElement(
+                'course',
+                'courseid',
+                get_string('form_source_course', 'local_lernhive_copy'),
+                [
+                    'multiple' => false,
+                    'limittoenrolled' => false,
+                ]
+            );
+            $mform->addRule('courseid', null, 'required', null, 'client');
+            $mform->addHelpButton('courseid', 'form_source_course', 'local_lernhive_copy');
+        }
 
         // Destination fullname.
         $mform->addElement(
@@ -107,6 +125,14 @@ class copy_form extends moodleform {
             $categorylist
         );
         $mform->addRule('category', null, 'required', null, 'client');
+        if ($defaultcategory > 0 && array_key_exists($defaultcategory, $categorylist)) {
+            $mform->setDefault('category', $defaultcategory);
+        } else if (!empty($categorylist)) {
+            $firstcategory = (int) array_key_first($categorylist);
+            if ($firstcategory > 0) {
+                $mform->setDefault('category', $firstcategory);
+            }
+        }
 
         // Visibility.
         $mform->addElement(
@@ -161,6 +187,15 @@ class copy_form extends moodleform {
         );
         $mform->setDefault('userdata', 0);
         $mform->addHelpButton('userdata', 'form_include_userdata', 'local_lernhive_copy');
+        $mform->addElement(
+            'static',
+            'userdatahint',
+            '',
+            html_writer::div(
+                get_string('form_include_userdata_hint', 'local_lernhive_copy'),
+                'lh-copy-callout lh-copy-callout--clean'
+            )
+        );
 
         $context = context_system::instance();
         $required = [
@@ -173,7 +208,10 @@ class copy_form extends moodleform {
             $mform->setConstant('userdata', 0);
         }
 
-        $this->add_action_buttons(true, get_string('form_submit', 'local_lernhive_copy'));
+        $this->add_action_buttons(
+            true,
+            $submitlabel !== '' ? $submitlabel : get_string('form_submit', 'local_lernhive_copy')
+        );
     }
 
     /**

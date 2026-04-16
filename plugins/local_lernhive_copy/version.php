@@ -25,10 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_lernhive_copy';
-$plugin->version   = 2026041105;
+$plugin->version   = 2026041501;
 $plugin->requires  = 2024100700; // Moodle 4.5+.
 $plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.2.1';
+$plugin->release   = '0.3.0';
 $plugin->dependencies = [
     'local_lernhive_contenthub' => 2026041100,
 ];
