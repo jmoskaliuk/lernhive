@@ -858,3 +858,62 @@ remains for surface-specific Explore/ContentHub composition only.
 - **Horizontal `__viewall` position on mobile** — below tablet breakpoint
   the viewall link drops onto its own full-width row under the title to
   avoid header truncation.
+
+## Course-Page Sidebar State Icons (since 0.9.72)
+
+### Why this exists
+
+On course pages the left sidebar shows the full Moodle courseindex
+(sections + activities) below the reduced primary nav. Before 0.9.72
+activity rows all looked identical — the learner had to read the text
+to figure out "which one am I on?", "which are done?", "which are
+locked?". The core `.completioninfo` dots that Moodle renders inside
+the link were tiny and got lost against the dark sidebar palette.
+
+0.9.72 adds a **Typ-2 Artifact-shaped state tile** as a CSS
+`::before` on every `.courseindex-sectioncontent .courseindex-link`.
+The tile is 20×20px with 6px radius (matches the artifact icon grammar
+in `_icons.scss`) and sits in a 2.125rem left-gutter. Its content and
+color shift based on state classes Moodle already emits, so the theme
+doesn't need any Mustache or PHP changes.
+
+### State mapping
+
+| State | Trigger | Icon | Tile color |
+|-------|---------|------|------------|
+| Pending (default) | no class | `\f111` fa-circle (dim dot) | white 6% bg, white 14% border |
+| Active | `.pageitem`, `[aria-current="page"]`, `.active` | `\f04b` fa-play | `$lh-accent` 24% bg |
+| Completed | `.completed`, `[data-completion-state="complete"]`, `.completed` on link | `\f00c` fa-check | `$lh-green` 22% bg |
+| Locked | `.courseindex-locked`, `.locked` on item | `\f023` fa-lock | neutral muted |
+
+Moodle's own `.completioninfo` chip inside the link is hidden in this
+context so the tile is the single source of truth — no double
+indicators.
+
+### Contract
+
+The theme owns:
+
+1. The 20×20 leading-tile slot before every activity link
+2. The four state colorings
+3. Hiding Moodle's inline completion chip
+
+The theme does **not** own:
+
+- Emitting the state classes — those come from Moodle core (`.pageitem`
+  for active, `.completed` for completed in Moodle 4.3+).
+- The courseindex structure itself — still rendered by
+  `core_courseformat/local/courseindex/courseindex` via AMD.
+
+If a future Moodle release changes the class it uses for "completed",
+the fallback `[data-completion-state="complete"]` selector catches the
+data-attribute alternative. Add new selectors here when needed.
+
+### Single-column course content (confirmed, not changed)
+
+Task 0.9.72 planning called out "Kein rechtes Spalten-Layout mehr —
+Content-Bereich ist einspaltig." Verification: `templates/course.mustache`
+already renders `#page-content.lernhive-course-layout` with only the
+`main#region-main-box.lernhive-course-main` child — no right block
+region is wired up. No change needed; documenting here so the next
+person doesn't accidentally re-introduce `.lernhive-blocks--side`.

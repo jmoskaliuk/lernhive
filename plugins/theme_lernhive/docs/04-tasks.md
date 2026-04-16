@@ -232,10 +232,15 @@
   - Referenz: `mockups/dashboard-curated.html` (section/sectionhead/highlightgrid Pattern 1:1 übernommen — `gap: 14px`, Header baseline-align)
   - Keine visuelle Regression — additive Primitive, bestehende `.lernhive-*` Dashboard-Klassen bleiben
 
-- [ ] **0.9.72 — Course-Page-Sidebar** (`sidebar_course.mustache`, `_navigation.scss`) — ursprünglich 0.9.69, verschoben weil 0.9.70 (Tokens) und 0.9.71 (Dashboard-Pattern) zuerst ausgeliefert wurden:
-  - Kursnavigation kommt in linke Sidebar: nach `<hr class="lernhive-nav__divider">`, Section-Label "Course Navigation", Section-Items mit Typ-2-Artifact Icons (check=abgeschlossen, play=aktiv, lock=gesperrt)
-  - Kein rechtes Spalten-Layout mehr — Content-Bereich ist einspaltig
-  - Referenz: `mockups/course-page.html`
+- [x] **0.9.72 — Course-Page-Sidebar** (shipped 2026-04-16, ursprünglich 0.9.69):
+  - Activity-State-Icons via `::before` auf `.courseindex-sectioncontent .courseindex-link` in `_navigation.scss` (Typ-2 Artifact-Stil, 20×20 Tile, 6px Radius, 2.125rem Gutter)
+  - State-Mapping: pending = `\f111` fa-circle (dim dot, white 6% bg), active = `\f04b` fa-play auf `$lh-accent` 24% bg (Trigger `.pageitem` / `[aria-current="page"]` / `.active`), completed = `\f00c` fa-check auf green 22% bg (Trigger `.completed` / `[data-completion-state="complete"]`), locked = `\f023` fa-lock neutral-muted (Trigger `.courseindex-locked` / `.locked`)
+  - Moodle's inline `.completioninfo` chip wird im Sidebar-Kontext ausgeblendet — Tile ist single source of truth, kein Double-Indicator
+  - Section-Label "Course Navigation" (Lang-String `coursenavigation`) + `<hr class="lernhive-nav__divider">` bereits seit 0.9.x vorhanden — Verifiziert
+  - Single-Column Content-Bereich bereits seit 0.9.63 — `templates/course.mustache` rendert `#page-content.lernhive-course-layout` nur mit `main.lernhive-course-main`, keine rechte Block-Region. Verifiziert und dokumentiert in `03-dev-doc.md`
+  - Keine Mustache/PHP-Änderungen — Theme nutzt bestehende Moodle-Core-State-Klassen, zukunftssicher per `[data-completion-state]` Fallback
+  - Doku: `03-dev-doc.md` § Course-Page Sidebar State Icons — Contract, State-Mapping-Tabelle, Selector-Liste
+  - Referenz: `mockups/course-page.html` (Icons-Vokabular, Farb-Tiles)
 
 - [x] **0.9.70 — ADR-P03 Phase 1: Token-Export-Contract** (shipped 2026-04-16):
   - `scss/lernhive/_tokens.scss` neu — un-scoped `:root { --lh-*: #{$lh-*}; }` Block für 54 Tokens (Brand, Semantic, Surface, Text, Border, Radius, Shadow, Typography, Spacing, Transition, Layout, Levels)
