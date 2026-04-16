@@ -1,6 +1,7 @@
 {
     "name": "LernHive: Nachrichten senden",
     "description": "Lerne, wie du private Nachrichten an einzelne Nutzer/innen sendest.",
+    "lernhive_feature": "core.message.send",
     "pathmatch": "/message/index.php%",
     "start_url": "/message/index.php",
     "enabled": 1,

@@ -399,4 +399,28 @@ final class tour_importer_test extends advanced_testcase {
 
         $this->assertFalse($removed);
     }
+
+    /**
+     * Every Level-1 source tour JSON must carry a canonical `lernhive_feature`
+     * key so FR-03 can make visibility decisions without falling back to legacy
+     * level-directory heuristics.
+     */
+    public function test_level1_tour_jsons_all_declare_lernhive_feature(): void {
+        global $CFG;
+
+        $level1dir = $CFG->dirroot . '/local/lernhive_onboarding/tours/level1';
+        $files = glob($level1dir . '/*/*.json');
+        $this->assertNotFalse($files);
+        $this->assertNotEmpty($files);
+
+        foreach ($files as $file) {
+            $raw = file_get_contents($file);
+            $this->assertNotFalse($raw, "failed to read fixture {$file}");
+
+            $json = json_decode($raw, true);
+            $this->assertIsArray($json, "invalid JSON in {$file}");
+            $this->assertArrayHasKey('lernhive_feature', $json, "{$file} missing lernhive_feature");
+            $this->assertNotSame('', trim((string) $json['lernhive_feature']), "{$file} has empty lernhive_feature");
+        }
+    }
 }

@@ -244,6 +244,14 @@ final class registry {
             'core.course.create', 1, 'moodle/course:create',
             'feature_core_course_create', 'course_basics'
         );
+        $defs[] = new definition(
+            'core.course.settings.format', 1, 'moodle/course:update',
+            'feature_core_course_settings_format', 'course_settings'
+        );
+        $defs[] = new definition(
+            'core.course.settings.completion', 1, 'moodle/course:update',
+            'feature_core_course_settings_completion', 'course_settings'
+        );
 
         // --- Users (Level 1 default, configurable — matters for flavor_schule). ---
         $defs[] = new definition(
@@ -253,6 +261,10 @@ final class registry {
         $defs[] = new definition(
             'core.user.enrol', 1, 'enrol/manual:enrol',
             'feature_core_user_enrol', 'users'
+        );
+        $defs[] = new definition(
+            'core.message.send', 1, 'moodle/site:sendmessage',
+            'feature_core_message_send', 'communication'
         );
 
         // --- Grades. ---

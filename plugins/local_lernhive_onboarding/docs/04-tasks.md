@@ -15,7 +15,8 @@
 
 - [x] **LH-ONB-FR-01** Added `feature_id` (`VARCHAR(128)`, nullable) to `local_lhonb_map` with non-unique index `ix_featureid` (install + upgrade path).
 - [x] **LH-ONB-FR-02** `tour_importer` now reads top-level `lernhive_feature` and persists it to `local_lhonb_map.feature_id` (including existing-tour remap path).
-- [x] **LH-ONB-FR-05 (phase 1)** Backfilled `lernhive_feature` on every Level-1 tour JSON with a currently canonical registry mapping (7/10 files). Remaining fallback files require new registry feature definitions: `course_settings/01_format.json`, `course_settings/02_completion.json`, `communication/02_messaging.json`.
+- [x] **LH-ONB-FR-05 (phase 1)** Backfilled `lernhive_feature` on Level-1 tour JSONs with canonical registry mappings (7/10 files).
+- [x] **LH-ONB-FR-05b** Added missing registry feature IDs for Level-1 `course_settings` + `messaging`, completed JSON mapping to 10/10 Level-1 tours, and pinned coverage with a Level-1 fixture assertion test.
 - [x] **LH-ONB-HOTFIX-01** Normalized Moodle tour `targettype` mapping (`selector=0`, `unattached=2`) in JSON fixtures, importer normalization, and DB upgrade migration for already imported tours.
 - [x] **LH-ONB-HOTFIX-02** Align start/replay + completion preference keys with Moodle 5.x `tool_usertours\tour` constants (`tour_reset_time_*`, `tour_completion_time_*`) with legacy fallback support.
 - [x] **LH-ONB-HOTFIX-03** Added one-shot forced-tour launch filter path (session marker + `before_serverside_filter_fetch` hook) so catalog starts ignore stale role filters and lock to the requested tour ID.
@@ -29,7 +30,6 @@
 
 - [ ] **LH-ONB-FR-03** Registry-aware visibility in `tour_manager` with fallback for null `feature_id`
 - [ ] **LH-ONB-FR-04** Assignment tour migration wiring (legacy remap on upgrade)
-- [ ] **LH-ONB-FR-05b** Define missing registry features for Level-1 `course_settings` + `messaging`, then remove remaining fallback JSONs without `lernhive_feature`
 - [ ] **LH-ONB-FR-06** Activate and map Level-2 pack runtime categories
 - [ ] **LH-ONB-FR-07** Author and integrate Level-3..5 packs
 - [ ] **LH-ONB-FR-08** Consume `feature_override_changed` for cache invalidation
@@ -62,7 +62,6 @@
 
 ## Immediate next actions
 
-1. Deliver `LH-ONB-FR-05b` (registry additions for remaining Level-1 JSONs without canonical mapping)
-2. Deliver `LH-ONB-FR-03` once `local_lernhive` `LH-CORE-FR-02..04` are available
-3. Start `LH-ONB-QA-01` and execute one full Level-1 smoke run after each deploy/hotfix
-4. Finish `LH-ONB-START-07` (Behat)
+1. Deliver `LH-ONB-FR-03` once `local_lernhive` `LH-CORE-FR-02..04` are available
+2. Start `LH-ONB-QA-01` and execute one full Level-1 smoke run after each deploy/hotfix
+3. Finish `LH-ONB-START-07` (Behat)

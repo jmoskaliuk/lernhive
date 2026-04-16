@@ -25,7 +25,7 @@ Base plugin for the LernHive level system and cross-plugin helpers. Owns the fea
 
 The full table lives in `local_lernhive_onboarding/docs/level-tour-matrix.md` (review v2). High-level summary:
 
-- **Level 1 (Explorer).** Basic content modules (Resource, Page, Label, URL, Folder, announcement-only Forum), Kurs anlegen, Einschreiben. `create_users` is a *configurable default-on* feature so the Schul-Flavor keeps it visible out of the box.
+- **Level 1 (Explorer).** Basic content modules (Resource, Page, Label, URL, Folder, announcement-only Forum), Kurs anlegen, Kurs-Einstellungen (Format + Abschlussverfolgung), Einschreiben, Nachrichten senden. `create_users` is a *configurable default-on* feature so the Schul-Flavor keeps it visible out of the box.
 - **Level 2 (Creator).** Assignment, full forum, BigBlueButton. Plus `grade:view` for grading assignments (no gradebook-setup yet).
 - **Level 3 (Pro).** Quiz, H5P, Lesson. Plus group management.
 - **Level 4 (Expert).** Wiki, Glossary, Database, Workshop. Plus gradebook setup, reports, enrolment method configuration.

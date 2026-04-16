@@ -21,6 +21,7 @@ Guided onboarding learning path for LernHive users, currently focused on trainer
 - Feature-mapping groundwork:
   - supports optional `lernhive_feature` in tour JSON
   - persists to `local_lhonb_map.feature_id`
+  - Level-1 tour pack is fully mapped (10/10 JSONs carry canonical `lernhive_feature`)
 - Level-1 tour content pack imported on install
 - Level-1 runtime hotfixes:
   - backfilled stale `pathmatch` values from JSON source of truth
