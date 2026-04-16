@@ -544,8 +544,27 @@ behat_diag_and_init() {
     fi
     log "Behat: init (diag rc=$diag_rc, force=$FORCE_REINIT, args=${init_args[*]:-<full install>})"
     if ! in_container_workdir php admin/tool/behat/cli/init.php "${init_args[@]}"; then
-      err "Behat init failed. Check container logs and Selenium reachability."
-      err "Selenium URL expected in config.php: \$CFG->behat_profiles['default']['wd_host']"
+      err "Behat init failed. Dumping infra diagnostics (see playbooks/testing-hetzner.md §1+§3)."
+      # Moodle's CLI messages ("This is not a behat test site!" /
+      # "Unknown error 1") don't tell us WHICH invariant failed — config
+      # block missing? dataroot unwritable? Selenium unreachable? So we
+      # dump all three here so the next red run is self-diagnosing and
+      # nobody has to SSH in just to run grep + curl.
+      echo "----- config.php test keys (expect 6 lines) -----" >&2
+      in_container_repo_root grep -E '^\s*\$CFG->(phpunit|behat)_' config.php >&2 \
+        || echo "  (no phpunit_*/behat_* keys found — §1 block missing)" >&2
+      echo "----- /var/www/moodledata_behat -----" >&2
+      in_container bash -lc '
+        if [ -d /var/www/moodledata_behat ]; then
+          ls -ld /var/www/moodledata_behat
+          ls -la /var/www/moodledata_behat 2>/dev/null | head -5
+        else
+          echo "  (missing: /var/www/moodledata_behat — §1 bottom step)"
+        fi' >&2 || true
+      echo "----- selenium /status -----" >&2
+      in_container curl -fsS --max-time 5 http://selenium:4444/status >&2 \
+        || echo "  (selenium:4444 not reachable from $CONTAINER — §3)" >&2
+      err "Remediation: run 'sudo bash /opt/lernhive/playbooks/hetzner-behat-fix.sh' on the Hetzner host."
       exit 2
     fi
   else

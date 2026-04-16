@@ -169,6 +169,22 @@ Actions tab → "Test on Hetzner" → Run workflow. Available inputs:
 
 ## Troubleshooting
 
+**Quickest fix for any of the "init failed" modes below** — run the
+one-shot remediation script on the Hetzner host. It's idempotent and
+covers §1, §2, §3 in a single SSH trip:
+
+```bash
+ssh deploy@dev.lernhive.de 'cd /opt/lernhive && git pull --quiet && sudo bash playbooks/hetzner-behat-fix.sh'
+```
+
+The script probes Selenium, adds the six `$CFG->{phpunit,behat}_*`
+keys to `/var/www/html/config.php` if missing, creates the datarooots
+with the right owner, and runs `init.php`. If Selenium isn't running
+it prints the docker network members so you can see what the actual
+hostname should be, and re-run with `SELENIUM_WD_HOST=...` overridden.
+
+---
+
 **`PHPUnit config keys missing in config.php`** — step 1 was skipped or
 edited the wrong file. Make sure you edited `/var/www/html/config.php`,
 not the `public/` stub.
