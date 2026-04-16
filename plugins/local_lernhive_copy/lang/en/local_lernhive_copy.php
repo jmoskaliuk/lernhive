@@ -76,6 +76,7 @@ $string['template_select'] = 'Use template';
 $string['template_unavailable'] = 'Unavailable';
 $string['template_unavailable_hint'] = 'This template is listed in the catalog but has no source-course mapping yet.';
 $string['template_library_missing'] = 'Template mode requires the LernHive Library backend. Ask your admin to install and configure local_lernhive_library.';
+$string['template_library_unsupported'] = 'Template mode requires a newer local_lernhive_library version with template mapping support. Please upgrade the Library plugin.';
 $string['template_not_found'] = 'The selected template is not available: {$a}';
 $string['template_source_missing'] = 'The selected template currently has no usable source course.';
 $string['template_source_deleted'] = 'The selected template points to a course that no longer exists.';
