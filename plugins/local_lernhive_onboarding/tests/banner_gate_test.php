@@ -99,7 +99,7 @@ final class banner_gate_test extends advanced_testcase {
         }
         foreach (array_keys($tourids) as $tourid) {
             set_user_preference(
-                'tool_usertours_' . $tourid . '_completed',
+                $this->completed_pref_name((int) $tourid),
                 time(),
                 $user->id
             );
@@ -122,5 +122,17 @@ final class banner_gate_test extends advanced_testcase {
         $roleid = trainer_role::get_id();
         $this->assertNotNull($roleid, 'Trainer role must be provisioned by install.php');
         role_assign($roleid, $userid, \context_system::instance()->id);
+    }
+
+    /**
+     * Resolve the completion preference key for this Moodle version.
+     */
+    private function completed_pref_name(int $tourid): string {
+        if (class_exists(\tool_usertours\tour::class)
+            && defined(\tool_usertours\tour::class . '::TOUR_LAST_COMPLETED_BY_USER')
+        ) {
+            return \tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER . $tourid;
+        }
+        return 'tool_usertours_' . $tourid . '_completed';
     }
 }

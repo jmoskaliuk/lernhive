@@ -38,14 +38,16 @@ defined('MOODLE_INTERNAL') || die();
  *
  * ## Primed preferences
  *
- * - `tool_usertours_{id}_requested = 1`
- *   Moodle's own replay flag — the same one the admin
- *   "Reset Tour on this page" button sets. Works even for tours the
- *   user has already completed, and survives the page redirect.
- * - `tool_usertours_{id}_completed` is **unset** so the tour fires again.
- * - `tool_usertours_{id}_lastStep` is **unset** so the tour starts from
- *   step 1 (otherwise a replay would jump back to wherever the user
- *   abandoned last time).
+ * Moodle 5.x stores replay/completion using
+ * `\tool_usertours\tour::TOUR_REQUESTED_BY_USER` and
+ * `\tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER`
+ * (e.g. `tool_usertours_tour_reset_time_{id}`).
+ *
+ * For compatibility with older installs where onboarding data may still
+ * carry legacy preference keys, we also prime/clear:
+ * - `tool_usertours_{id}_requested`
+ * - `tool_usertours_{id}_completed`
+ * - `tool_usertours_{id}_lastStep`
  *
  * We never touch the `tool_usertours` player's internals and we never
  * redirect mid-tour — all we do is set the same preferences the player
@@ -100,19 +102,48 @@ class starttour_flow {
             $redirect = self::fallback_redirect_url($tour);
         }
 
-        // 2. Prime the user tour preferences. ORDER MATTERS:
-        //    `_requested = 1` is what actually makes Moodle replay the
-        //    tour; the two `unset_user_preference()` calls just clear
-        //    stale state from a prior run so the replay starts from
-        //    step 1. If we cleared _completed *before* setting
-        //    _requested and the page redirect failed mid-way, we would
-        //    leave the user in a weird half-state — set first, clear
-        //    after.
+        // 2. Prime the user tour preferences (current + legacy keyspace).
+        self::prime_tour_preferences($tourid, $userid);
+
+        return $redirect;
+    }
+
+    /**
+     * Prime replay preferences for the given tour/user.
+     *
+     * On Moodle 5.x the authoritative replay signal is
+     * `tool_usertours_tour_reset_time_{tourid}` and must be set to a
+     * timestamp (`time()`). Completion is stored under
+     * `tool_usertours_tour_completion_time_{tourid}` and must be cleared.
+     *
+     * Legacy keys are still touched for backward compatibility with older
+     * Moodle deployments and older tests:
+     * - `tool_usertours_{id}_requested` is set to 1
+     * - `tool_usertours_{id}_completed` and `_lastStep` are unset
+     *
+     * @param int $tourid
+     * @param int $userid
+     * @return void
+     */
+    private static function prime_tour_preferences(int $tourid, int $userid): void {
+        // Moodle 5.x / current tool_usertours keys.
+        if (class_exists(\tool_usertours\tour::class)
+            && defined(\tool_usertours\tour::class . '::TOUR_REQUESTED_BY_USER')
+        ) {
+            $requestedkey = \tool_usertours\tour::TOUR_REQUESTED_BY_USER . $tourid;
+            set_user_preference($requestedkey, time(), $userid);
+        }
+        if (class_exists(\tool_usertours\tour::class)
+            && defined(\tool_usertours\tour::class . '::TOUR_LAST_COMPLETED_BY_USER')
+        ) {
+            $completedkey = \tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER . $tourid;
+            unset_user_preference($completedkey, $userid);
+        }
+
+        // Legacy fallback keyspace used by earlier LernHive iterations.
         set_user_preference('tool_usertours_' . $tourid . '_requested', 1, $userid);
         unset_user_preference('tool_usertours_' . $tourid . '_completed', $userid);
         unset_user_preference('tool_usertours_' . $tourid . '_lastStep', $userid);
-
-        return $redirect;
     }
 
     /**
