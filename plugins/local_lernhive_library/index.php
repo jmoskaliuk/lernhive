@@ -17,9 +17,9 @@
 /**
  * Library catalog entry page.
  *
- * In R2, catalog entries are sourced from the managed JSON manifest
- * configured in plugin settings. If no valid manifest is configured,
- * the page falls back to the empty state.
+ * In R2, catalog entries are sourced from the managed remote feed
+ * when configured. Otherwise the plugin falls back to the local JSON
+ * manifest setting. Invalid source payloads fail closed to an empty state.
  *
  * Library is a content creation tool, not a site configuration page —
  * it always renders as a `standard` page with the LernHive Plugin
@@ -54,8 +54,9 @@ $PAGE->set_heading(get_string('pluginname', 'local_lernhive_library'));
 /** @var \local_lernhive_library\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('local_lernhive_library');
 
-// Catalog source: seeded test entries can be injected in tests,
-// production reads the managed manifest from plugin config.
+// Catalog source: seeded test entries can be injected in tests.
+// Production resolves source via catalog defaults:
+// remote feed (if configured) -> local manifest fallback.
 $catalog = new catalog();
 
 echo $OUTPUT->header();

@@ -15,20 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library plugin version and dependencies.
+ * Catalog source contract for local_lernhive_library.
  *
  * @package    local_lernhive_library
  * @copyright  2026 LernHive.de
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_lernhive_library;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_lernhive_library';
-$plugin->version   = 2026041600;
-$plugin->requires  = 2024100700; // Moodle 4.5+.
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.3.0';
-$plugin->dependencies = [
-    'local_lernhive_contenthub' => 2026041002,
-];
+/**
+ * Source abstraction for catalog entries.
+ */
+interface catalog_source {
+    /**
+     * @return catalog_entry[]
+     */
+    public function load_entries(): array;
+}
+

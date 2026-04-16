@@ -35,6 +35,9 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @covers \local_lernhive_library\catalog
  * @covers \local_lernhive_library\catalog_entry
+ * @covers \local_lernhive_library\catalog_manifest_parser
+ * @covers \local_lernhive_library\manifest_catalog_source
+ * @covers \local_lernhive_library\remote_catalog_source
  */
 final class catalog_test extends advanced_testcase {
 
@@ -69,6 +72,60 @@ final class catalog_test extends advanced_testcase {
             static fn(catalog_entry $e) => $e->id,
             $catalog->all(),
         ));
+    }
+
+    /**
+     * Catalog can be fed from any source implementation.
+     */
+    public function test_catalog_uses_explicit_source_override(): void {
+        $this->resetAfterTest();
+
+        $source = new class implements catalog_source {
+            /**
+             * @return catalog_entry[]
+             */
+            public function load_entries(): array {
+                return [
+                    new catalog_entry(
+                        id: 'from-source',
+                        title: 'Source entry',
+                        description: 'desc',
+                        version: '1.0.0',
+                        updated: 1700000000,
+                        language: 'en',
+                    ),
+                ];
+            }
+        };
+
+        $catalog = new catalog(null, null, $source);
+
+        $this->assertCount(1, $catalog->all());
+        $this->assertSame('from-source', $catalog->all()[0]->id);
+    }
+
+    /**
+     * Explicit manifest overrides should bypass remote source selection.
+     */
+    public function test_catalog_prefers_explicit_manifest_override_over_feed_config(): void {
+        $this->resetAfterTest();
+
+        set_config('catalog_feed_url', 'https://invalid.example.invalid/feed.json', 'local_lernhive_library');
+        $manifest = json_encode([
+            [
+                'id' => 'manifest-wins',
+                'title' => 'Manifest wins',
+                'description' => 'desc',
+                'version' => '1.0.0',
+                'updated' => 1700000000,
+                'language' => 'en',
+            ],
+        ]);
+
+        $catalog = new catalog(null, $manifest);
+
+        $this->assertCount(1, $catalog->all());
+        $this->assertSame('manifest-wins', $catalog->all()[0]->id);
     }
 
     /**
@@ -150,6 +207,31 @@ final class catalog_test extends advanced_testcase {
     }
 
     /**
+     * Parser keeps a valid row even if sourcecourseid is invalid.
+     */
+    public function test_catalog_ignores_invalid_sourcecourseid_value(): void {
+        $this->resetAfterTest();
+
+        $manifest = json_encode([
+            [
+                'id' => 'ok-row',
+                'title' => 'Valid row',
+                'description' => 'desc',
+                'version' => '1.0.0',
+                'updated' => 1700000000,
+                'language' => 'en',
+                'sourcecourseid' => -10,
+            ],
+        ]);
+
+        $catalog = new catalog(null, $manifest);
+
+        $this->assertCount(1, $catalog->all());
+        $this->assertSame('ok-row', $catalog->all()[0]->id);
+        $this->assertNull($catalog->all()[0]->sourcecourseid);
+    }
+
+    /**
      * Invalid JSON manifests fail closed and return an empty catalog.
      */
     public function test_catalog_ignores_invalid_manifest_json(): void {
@@ -195,6 +277,94 @@ final class catalog_test extends advanced_testcase {
     }
 
     /**
+     * Remote source can decode managed feed payloads.
+     */
+    public function test_remote_catalog_source_loads_entries_from_fetcher(): void {
+        $this->resetAfterTest();
+
+        $remote = new remote_catalog_source(
+            feedurl: 'https://catalog.example/feed.json',
+            apitoken: 'secret',
+            fetcher: static function(string $url, string $token): ?string {
+                if ($url !== 'https://catalog.example/feed.json') {
+                    return null;
+                }
+                if ($token !== 'secret') {
+                    return null;
+                }
+                return json_encode([
+                    [
+                        'id' => 'remote-course',
+                        'title' => 'Remote course',
+                        'description' => 'desc',
+                        'version' => '3.0.0',
+                        'updated' => 1700000200,
+                        'language' => 'en',
+                    ],
+                ]);
+            },
+        );
+
+        $entries = $remote->load_entries();
+
+        $this->assertCount(1, $entries);
+        $this->assertSame('remote-course', $entries[0]->id);
+    }
+
+    /**
+     * Remote source remains empty when no URL is configured.
+     */
+    public function test_remote_catalog_source_returns_empty_without_url(): void {
+        $this->resetAfterTest();
+
+        $remote = new remote_catalog_source(
+            feedurl: '',
+            fetcher: static fn(string $url, string $token): ?string => '[]',
+        );
+
+        $this->assertSame([], $remote->load_entries());
+    }
+
+    /**
+     * Remote source fails closed when fetching fails.
+     */
+    public function test_remote_catalog_source_fails_closed_on_fetch_error(): void {
+        $this->resetAfterTest();
+
+        $remote = new remote_catalog_source(
+            feedurl: 'https://catalog.example/feed.json',
+            fetcher: static fn(string $url, string $token): ?string => null,
+        );
+
+        $this->assertSame([], $remote->load_entries());
+    }
+
+    /**
+     * Remote source reads URL/token from plugin config when omitted.
+     */
+    public function test_remote_catalog_source_uses_config_when_not_overridden(): void {
+        $this->resetAfterTest();
+
+        set_config('catalog_feed_url', 'https://catalog.example/feed.json', 'local_lernhive_library');
+        set_config('catalog_feed_token', 'from-config', 'local_lernhive_library');
+
+        $seenurl = '';
+        $seentoken = '';
+        $remote = new remote_catalog_source(
+            fetcher: static function(string $url, string $token) use (&$seenurl, &$seentoken): ?string {
+                $seenurl = $url;
+                $seentoken = $token;
+                return '[]';
+            },
+        );
+
+        $remote->load_entries();
+
+        $this->assertSame('https://catalog.example/feed.json', $seenurl);
+        $this->assertSame('from-config', $seentoken);
+    }
+
+    /**
      * Seed lists must contain catalog_entry objects only.
      */
     public function test_catalog_rejects_invalid_seed_entry_types(): void {
@@ -216,6 +386,107 @@ final class catalog_test extends advanced_testcase {
         $this->assertSame($first, $catalog->find_by_id('a'));
         $this->assertNull($catalog->find_by_id('missing'));
         $this->assertNull($catalog->find_by_id(''));
+    }
+
+    /**
+     * Copy template mode: selected template id resolves to a usable
+     * source-course mapping when catalog data contains sourcecourseid.
+     */
+    public function test_copy_template_lookup_resolves_source_course_mapping(): void {
+        $this->resetAfterTest();
+
+        $catalog = new catalog(null, json_encode([
+            [
+                'id' => 'template-a',
+                'title' => 'Template A',
+                'description' => 'Template with source mapping',
+                'version' => '1.0.0',
+                'updated' => 1700000000,
+                'language' => 'en',
+                'sourcecourseid' => 123,
+            ],
+        ]));
+
+        $selected = $catalog->find_by_id('template-a');
+
+        $this->assertInstanceOf(catalog_entry::class, $selected);
+        $this->assertTrue($selected->has_source_course());
+        $this->assertSame(123, $selected->sourcecourseid);
+    }
+
+    /**
+     * Copy template mode: selected template without sourcecourseid must
+     * remain non-actionable (findable entry, but no source mapping).
+     */
+    public function test_copy_template_lookup_rejects_entry_without_source_course_mapping(): void {
+        $this->resetAfterTest();
+
+        $catalog = new catalog(null, json_encode([
+            [
+                'id' => 'template-b',
+                'title' => 'Template B',
+                'description' => 'Template without source mapping',
+                'version' => '1.0.0',
+                'updated' => 1700000000,
+                'language' => 'en',
+            ],
+        ]));
+
+        $selected = $catalog->find_by_id('template-b');
+
+        $this->assertInstanceOf(catalog_entry::class, $selected);
+        $this->assertFalse($selected->has_source_course());
+        $this->assertNull($selected->sourcecourseid);
+    }
+
+    /**
+     * Copy template mode: unknown template id must fail closed.
+     */
+    public function test_copy_template_lookup_returns_null_for_unknown_template_id(): void {
+        $this->resetAfterTest();
+
+        $catalog = new catalog(null, json_encode([
+            [
+                'id' => 'template-a',
+                'title' => 'Template A',
+                'description' => 'Template with source mapping',
+                'version' => '1.0.0',
+                'updated' => 1700000000,
+                'language' => 'en',
+                'sourcecourseid' => 123,
+            ],
+        ]));
+
+        $this->assertNull($catalog->find_by_id('template-missing'));
+    }
+
+    /**
+     * Copy template mode should keep working for remote-feed sourced data.
+     */
+    public function test_copy_template_lookup_works_with_remote_feed_source(): void {
+        $this->resetAfterTest();
+
+        $remote = new remote_catalog_source(
+            feedurl: 'https://catalog.example/feed.json',
+            fetcher: static fn(string $url, string $token): ?string => json_encode([
+                [
+                    'id' => 'template-remote',
+                    'title' => 'Remote template',
+                    'description' => 'Remote mapped template',
+                    'version' => '4.0.0',
+                    'updated' => 1700000300,
+                    'language' => 'en',
+                    'sourcecourseid' => 999,
+                ],
+            ]),
+        );
+
+        $catalog = new catalog(null, null, $remote);
+        $selected = $catalog->find_by_id('template-remote');
+
+        $this->assertInstanceOf(catalog_entry::class, $selected);
+        $this->assertTrue($selected->has_source_course());
+        $this->assertSame(999, $selected->sourcecourseid);
     }
 
     /**

@@ -2,19 +2,21 @@
 
 ## Architecture note
 
-Entry page for browsing eLeDia's managed content catalog. R2 phase 1 ships
-a **read-only JSON manifest feed** that can be configured in plugin
-settings. The `.mbz` import pipeline is still not connected. The data model
-for a catalog entry (`catalog_entry`) remains a strict value object so the
-contract with the eventual managed backend stays explicit.
+Entry page for browsing eLeDia's managed content catalog. R2 phase 2 ships
+a **read-only remote feed source** with local manifest fallback. The `.mbz`
+import pipeline is still not connected. The data model for a catalog entry
+(`catalog_entry`) remains a strict value object so the contract with the
+managed backend stays explicit.
 
-## R2 phase 1 scope: read-only manifest feed
+## R2 phase 2 scope: source abstraction + remote feed
 
-R2 phase 1 ships:
-- `catalog` can parse manifest JSON from plugin settings (`catalog_manifest_json`)
-- parser accepts top-level array or `{ "entries": [...] }`
+R2 phase 2 ships:
+- `catalog_source` abstraction for pluggable catalog providers
+- `remote_catalog_source` as primary source when `catalog_feed_url` is configured
+- `manifest_catalog_source` as fallback when no remote feed URL is configured
+- shared `catalog_manifest_parser` for strict value-object decoding
 - invalid rows are ignored (fail closed), valid rows still render
-- constructor injection of `catalog_entry[]` remains available for tests
+- constructor injection of `catalog_entry[]` and `catalog_source` remains available for tests
 - optional `sourcecourseid` enables template hand-off to `local_lernhive_copy`
 - `catalog_page` still renders empty state when no valid entries exist
 
@@ -28,13 +30,17 @@ local_lernhive_library/
 ├── version.php                 component + deps (local_lernhive_contenthub)
 ├── lib.php                     empty hook slot
 ├── index.php                   entry page — standard layout + capability gate
-├── settings.php                admin category + open page + manifest setting
+├── settings.php                admin category + open page + feed/fallback settings
 ├── styles.css                  scoped .lh-library-* only
 ├── README.md
 ├── db/access.php               local/lernhive_library:import capability
 ├── lang/en/local_lernhive_library.php
 ├── classes/
-│   ├── catalog.php             manifest parser + injectable in-memory provider
+│   ├── catalog.php             source selection + injectable in-memory provider
+│   ├── catalog_source.php      source interface
+│   ├── catalog_manifest_parser.php shared strict parser
+│   ├── manifest_catalog_source.php local manifest source
+│   ├── remote_catalog_source.php remote feed source
 │   ├── catalog_entry.php       immutable value object — defines backend contract
 │   ├── output/catalog_page.php renderable / templatable
 │   ├── output/renderer.php     plugin renderer → render_catalog_page()
@@ -55,20 +61,25 @@ Immutable value object. Fields: `id`, `title`, `description`, `version`
 (semver-like string), `updated` (unix timestamp), `language` (ISO code),
 optional `sourcecourseid` (mapped Moodle source course id).
 `to_template_context()` formats `updated` via Moodle's `userdate()` and
-normalises `language` to trimmed upper-case. This class defines what the R2 backend source must
-return — no code outside `catalog.php` should construct entries.
+normalises `language` to trimmed upper-case. This class defines what the R2
+backend source must return — entries are created only inside source/parsing
+classes (`catalog_manifest_parser` and source implementations).
 Constructor guards validate required fields (`id`, `title`, `version`,
 `language`) and reject negative `updated` timestamps with `coding_exception`.
 
 ### `catalog` (classes/catalog.php)
-Provider with two modes:
+Provider with three modes:
 - constructor-seeded entries (`catalog_entry[]`) for deterministic tests
-- config-backed manifest parsing from `local_lernhive_library/catalog_manifest_json`
+- explicit source injection (`catalog_source`) for deterministic tests/integration
+- production source selection:
+  - explicit manifest override argument
+  - remote feed when `catalog_feed_url` is configured
+  - local manifest fallback from `catalog_manifest_json`
 
 `all(): catalog_entry[]` and `is_empty(): bool`.
 Lookup helper: `find_by_id(string $id): ?catalog_entry`.
 
-Manifest behaviour:
+Parsing behaviour:
 - accepts top-level array or object with `entries`
 - supports unix timestamps and parseable date strings in `updated`
 - supports optional positive integer `sourcecourseid`
@@ -76,6 +87,14 @@ Manifest behaviour:
 
 Seeded constructor data is validated: non-`catalog_entry` elements raise
 `coding_exception` so contract violations fail fast in tests/dev.
+
+### `remote_catalog_source` (classes/remote_catalog_source.php)
+Read-only remote source for managed catalog feeds. Reads:
+- `catalog_feed_url` (required for remote mode)
+- `catalog_feed_token` (optional bearer token)
+
+HTTP failures or invalid payloads fail closed and return an empty set
+instead of rendering broken entries.
 
 ### `catalog_page` (classes/output/catalog_page.php)
 Renderable + templatable. Constructor receives a `catalog` instance;
@@ -111,16 +130,17 @@ The `:import` capability is declared in `db/access.php` with
 ## Dependencies
 
 - `local_lernhive_contenthub` (hard, declared in version.php)
-- Managed feed source (phase 1): admin-configured JSON manifest in plugin settings
-- eLeDia managed remote API client: planned for next R2 phase
+- Managed feed source (phase 2): remote feed URL + optional token
+- Local manifest fallback: admin-configured JSON in plugin settings
 
 ## R2 direction
 
-- Replace pasted manifest JSON with managed remote feed retrieval
-- `.mbz` download + import via Moodle's backup/restore API
-- Version metadata: show available vs installed version per entry
-- Update workflow: safe import of a new `.mbz` without destructive overwrite
-- Richer update UX: lifecycle comparison, update decision dialog
+Execution order for next increments:
+1. Define import-service boundaries before wiring Moodle backup/restore
+2. Add `.mbz` download + import via Moodle's backup/restore API
+3. Version metadata: show available vs installed version per entry
+4. Update workflow: safe import of a new `.mbz` without destructive overwrite
+5. Richer update UX: lifecycle comparison, update decision dialog
 
 ## Privacy
 

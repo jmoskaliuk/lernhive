@@ -49,6 +49,22 @@ if ($hassiteconfig) {
             get_string('heading_catalog_feed_desc', 'local_lernhive_library')
         ));
 
+        $settings->add(new admin_setting_configtext(
+            'local_lernhive_library/catalog_feed_url',
+            get_string('setting_catalog_feed_url', 'local_lernhive_library'),
+            get_string('setting_catalog_feed_url_desc', 'local_lernhive_library'),
+            '',
+            PARAM_URL,
+            80
+        ));
+
+        $settings->add(new admin_setting_configpasswordunmask(
+            'local_lernhive_library/catalog_feed_token',
+            get_string('setting_catalog_feed_token', 'local_lernhive_library'),
+            get_string('setting_catalog_feed_token_desc', 'local_lernhive_library'),
+            ''
+        ));
+
         $settings->add(new admin_setting_configtextarea(
             'local_lernhive_library/catalog_manifest_json',
             get_string('setting_catalog_manifest_json', 'local_lernhive_library'),

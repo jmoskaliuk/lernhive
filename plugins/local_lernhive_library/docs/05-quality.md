@@ -20,10 +20,16 @@
 - PHPUnit contract checks:
   - `tests/catalog_test.php` (catalog + catalog_entry value contract)
   - `tests/catalog_page_test.php` (catalog_page mustache context contract)
-  - manifest parser checks: valid array/object inputs are accepted,
+  - parser checks: valid array/object inputs are accepted,
     invalid JSON/rows are skipped fail-closed
-  - manifest parser checks: optional `sourcecourseid` is normalised and
+  - parser checks: optional `sourcecourseid` is normalised and
     invalid/non-positive mappings are ignored safely
+  - remote source checks: feed URL/token wiring and fetch failure paths
+    fail closed without rendering broken data
+  - source abstraction checks: explicit source overrides are supported
+  - copy-template handoff checks:
+    `find_by_id()` + `has_source_course()` + `sourcecourseid` contract for
+    `local_lernhive_copy` template-mode lookups (including remote source mode)
   - constructor guard: seeded catalog data must be `catalog_entry[]`
     (invalid element types fail fast with `coding_exception`)
   - constructor guard: `catalog_entry` required fields must be non-blank
@@ -41,3 +47,9 @@ Repository-level gates for current phase:
 
 A dedicated `moodle-plugin-ci` matrix is deferred until plugin/API churn
 stabilises — see contenthub `05-quality.md` for rationale.
+
+## Next quality gate (R2 phase 3)
+
+Before enabling import execution, we require:
+- import preflight validation tests (permissions + source availability)
+- at least one end-to-end Behat path for safe import initiation UX
