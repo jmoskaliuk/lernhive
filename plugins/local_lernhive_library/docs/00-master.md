@@ -1,7 +1,7 @@
 # local_lernhive_library — Master Document
 
 **Plugin type:** local plugin
-**Release target:** R2 (phase 1)
+**Release target:** R2 (phase 2)
 
 ## Purpose
 
@@ -30,6 +30,11 @@ local_lernhive_contenthub
 - managed .mbz source
 - version metadata
 - import workflow
+
+## Current status
+- R2 phase 2 is implemented with remote managed feed as primary source
+- local JSON manifest remains as fallback source when no feed URL is configured
+- import execution remains planned for a later R2 phase
 
 ## DevFlow files
 - 00-master.md

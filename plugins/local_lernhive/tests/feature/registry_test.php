@@ -25,8 +25,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Unit tests for the feature registry.
  *
- * LH-CORE-FR-01 scope: pure defaults, no DB, no overrides. Tests here pin the
- * matrix v2 level assignments decided in ADR-01 so a regression stays loud.
+ * Tests pin the default matrix and verify override resolution from
+ * local_lernhive_feature_overrides (LH-CORE-FR-03).
  *
  * @package    local_lernhive
  * @copyright  2026 LernHive.de
@@ -128,6 +128,29 @@ final class registry_test extends advanced_testcase {
     public function test_effective_level_throws_on_unknown_feature(): void {
         $this->expectException(coding_exception::class);
         registry::effective_level('does.not.exist');
+    }
+
+    public function test_effective_level_uses_flavor_override_when_present(): void {
+        $this->resetAfterTest(true);
+
+        override_store::apply_flavor_preset('mod_assign.create', 4, 'lxp');
+        $this->assertSame(4, registry::effective_level('mod_assign.create'));
+    }
+
+    public function test_effective_level_admin_override_wins_over_flavor_preset(): void {
+        $this->resetAfterTest(true);
+
+        override_store::apply_flavor_preset('mod_assign.create', 4, 'lxp');
+        override_store::set_admin_override('mod_assign.create', 2);
+
+        $this->assertSame(2, registry::effective_level('mod_assign.create'));
+    }
+
+    public function test_effective_level_returns_max_plus_one_for_disabled_override(): void {
+        $this->resetAfterTest(true);
+
+        override_store::set_admin_override('mod_assign.create', null);
+        $this->assertSame(definition::MAX_LEVEL + 1, registry::effective_level('mod_assign.create'));
     }
 
     public function test_get_features_for_level_is_cumulative(): void {

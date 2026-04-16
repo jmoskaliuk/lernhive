@@ -48,6 +48,31 @@ same functional scope while enforcing standard pagelayout for all users.
   optional `sourcecourseid` in catalog entries is now parsed and validated,
   and `catalog::find_by_id()` supports downstream resolution by
   `local_lernhive_copy` template mode.
+- **LH-LIB-R2-03** — Managed feed source abstraction delivered:
+  catalog loading now uses `catalog_source` with dedicated source classes
+  (`remote_catalog_source`, `manifest_catalog_source`) and shared parser
+  (`catalog_manifest_parser`). Existing seeded-entry mode remains intact.
+- **LH-LIB-R2-04** — Remote feed retrieval MVP delivered:
+  plugin settings now provide `catalog_feed_url` and optional
+  `catalog_feed_token`; remote feed is used as primary source in production,
+  while local manifest remains fallback when no feed URL is configured.
+  Remote fetch/parsing failures are fail-closed.
+- **LH-LIB-R2-05** — Copy-template handoff path hardened:
+  explicit PHPUnit scenarios now lock template-mode lookups used by
+  `local_lernhive_copy`:
+  - `find_by_id()` resolves mapped template ids
+  - `has_source_course()` + `sourcecourseid` expose actionable mappings
+  - unknown template ids fail closed (`null`)
+  - lookup behaviour remains stable for remote-feed sourced entries
+
+## Next execution plan (R2 phase 3 prep)
+
+1. **LH-LIB-R2-06** — Prepare import-flow boundary (still no execution yet):
+   define import service contracts and UI handoff points so phase 3 can wire
+   Moodle backup/restore without breaking existing catalog UX.
+2. **LH-LIB-R2-07** — Import UX + safety checks:
+   add preflight validation and explicit confirmation flow before first
+   executable import wiring.
 
 ## Open R1 issues
 
@@ -55,7 +80,6 @@ _None known._
 
 ## R2 backlog
 
-- Replace pasted manifest JSON with remote managed backend feed retrieval
 - `.mbz` download + Moodle backup/restore import flow
 - Version metadata: show available vs installed version per entry
 - Safe update: import new `.mbz` version without destructive overwrite

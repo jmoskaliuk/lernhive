@@ -179,6 +179,7 @@
 
 - [x] **Design System Reference** (`mockups/design-system-reference.html`) — kanonisches Referenzdokument mit allen Tokens, Icon-Taxonomie (4 Typen), Buttons, Tags, CTA Strip, Plugin Shell (Zone A+B), Cards, App Shell 5-Ebenen-Diagramm. Dient als einzige Wahrheitsquelle für alle künftigen Implementierungen.
 - [x] **Design Vocabulary + Icon Matrix** aktualisiert — `docs/design-vocabulary.md` + `mockups/icon-matrix.md` spiegeln die finalisierten Regeln.
+- [x] **Course header action parity (core-preserving)** — `layout/course.php` + `templates/course.mustache` nutzen jetzt wie Boost die `secondarymoremenu`/`overflow`-Pipeline (`core/moremenu` + `core/url_select`) im Zone-B-Aktionsbereich. Dadurch bleiben Course-Reuse-Aktionen (Import / Backup / Restore / Copy / Reset) capability-gesteuert sichtbar; zusätzlich rendert das `course`/`incourse`-Layout wieder `core/activity_header` und `output.activity_navigation`.
 - [x] **Neue Mockups** erstellt:
   - `mockups/dashboard.html` — Dashboard ohne Plugin Shell (Zone 0), Launcher-Panel, CTA Strip, Today/My Courses/Recommended
   - `mockups/course-page.html` — voller Plugin Shell (Zone A+B), Kursnavigation links in Sidebar

@@ -18,12 +18,14 @@ namespace local_lernhive;
 
 defined('MOODLE_INTERNAL') || die();
 
+use local_lernhive\feature\definition;
+use local_lernhive\feature\registry;
+
 /**
- * Maps LernHive levels to Moodle module capabilities.
+ * Maps LernHive levels to Moodle capabilities.
  *
- * Uses the activity chooser's built-in capability checking:
- * if a user lacks mod/xxx:addinstance, the module won't appear
- * in the activity chooser.
+ * After LH-CORE-FR-04 this class is a pure consumer of the feature registry.
+ * The legacy level map APIs are kept as compatibility shims for one cycle.
  *
  * @package    local_lernhive
  * @copyright  2026 LernHive.de
@@ -32,173 +34,122 @@ defined('MOODLE_INTERNAL') || die();
 class capability_mapper {
 
     /**
-     * Defines which modules are available at each level.
-     * Each level includes all modules from previous levels.
+     * Legacy shim: module unlock map grouped by level.
      *
-     * @return array Level => array of module component names.
+     * @return array<int, array<int, string>> Level => module components.
      */
     public static function get_level_modules(): array {
-        return [
-            1 => [
-                'mod_resource',     // Datei hochladen
-                'mod_page',         // Textseite
-                'mod_label',        // Textfeld / Label
-                'mod_url',          // Link / URL
-                'mod_forum',        // Ankündigungsforum (filtered by type)
-                'mod_folder',       // Verzeichnis
-            ],
-            2 => [
-                'mod_assign',       // Aufgabe
-                // mod_forum already in level 1, but now full forum use
-            ],
-            3 => [
-                'mod_quiz',         // Quiz / Test
-                'mod_h5pactivity',  // H5P
-                'mod_lesson',       // Lektion
-            ],
-            4 => [
-                'mod_wiki',         // Wiki
-                'mod_glossary',     // Glossar
-                'mod_data',         // Datenbank
-                'mod_workshop',     // Workshop (Peer-Bewertung)
-            ],
-            5 => [
-                'mod_scorm',        // SCORM-Pakete
-                'mod_lti',          // LTI (externe Tools)
-                'mod_feedback',     // Feedback
-                'mod_choice',       // Abstimmung
-                'mod_chat',         // Chat
-                'mod_survey',       // Umfrage
-                'mod_book',         // Buch
-                'mod_imscp',        // IMS Content Package
-                'mod_subsection',   // Subsections (PROHIBIT < Level 5, so + opens Activity Chooser directly)
-            ],
-        ];
+        $bylevel = [];
+
+        foreach (self::get_module_unlock_levels() as $module => $unlocklevel) {
+            if ($unlocklevel < definition::MIN_LEVEL || $unlocklevel > definition::MAX_LEVEL) {
+                continue;
+            }
+            $bylevel[$unlocklevel][] = $module;
+        }
+
+        ksort($bylevel);
+        foreach ($bylevel as &$modules) {
+            sort($modules);
+        }
+        unset($modules);
+
+        return $bylevel;
     }
 
     /**
-     * Defines additional (non-module) capabilities to PROHIBIT at each level.
-     * Each level REMOVES restrictions from previous levels (cumulative unlock).
+     * Legacy shim: non-module capability unlock map grouped by level.
      *
-     * These capabilities control Moodle UI elements like navigation tabs,
-     * section management, grades visibility, etc.
-     *
-     * @return array Level => array of capability strings to PROHIBIT.
-     *               A capability listed at level N means it is PROHIBITED
-     *               for levels < N and ALLOWED for levels >= N.
+     * @return array<int, array<int, string>> Level => capabilities.
      */
     public static function get_level_capabilities(): array {
-        return [
-            // Level 1 (Explorer): these are PROHIBITED.
-            // Unlocked at level 2:
-            2 => [
-                'moodle/grade:view',              // Hides Grades tab from navigation.
-                'moodle/grade:viewall',           // Also needed to fully hide Grades.
-                'moodle/site:viewreports',        // Hides Reports from navigation.
-                'moodle/course:managegroups',      // Hides group management.
-            ],
-            // Unlocked at level 3:
-            3 => [
-                'moodle/grade:manage',             // Grade editing.
-                'moodle/grade:edit',               // Grade editing.
-                'moodle/course:enrolconfig',       // Enrolment method config.
-            ],
-            // Unlocked at level 4:
-            4 => [
-                // Dashboard customisation ("/my/" block editing).
-                // Keep this hidden for Levels 1-3 to reduce setup complexity.
-                'moodle/my:manageblocks',
-            ],
-            // Unlocked at level 5:
-            5 => [
-                'moodle/backup:backupcourse',     // Backup.
-                'moodle/restore:restorecourse',   // Restore.
-                'moodle/course:import',           // Course import.
-            ],
-            // NOTE: Do NOT prohibit these — they break core editing functionality:
-            // - moodle/course:manageactivities — needed for Add activity button + Edit mode
-            // - moodle/course:createsection — needed for basic section management
-            // - moodle/course:viewhiddensections — needed for course editing
-            // Instead, use JS/CSS to hide "Subsection" option in the + menu.
-        ];
+        $bylevel = [];
+
+        foreach (self::get_capability_unlock_levels() as $capability => $unlocklevel) {
+            if (self::capability_to_module_component($capability) !== null) {
+                continue;
+            }
+            if ($unlocklevel < definition::MIN_LEVEL || $unlocklevel > definition::MAX_LEVEL) {
+                continue;
+            }
+            $bylevel[$unlocklevel][] = $capability;
+        }
+
+        ksort($bylevel);
+        foreach ($bylevel as &$caps) {
+            sort($caps);
+        }
+        unset($caps);
+
+        return $bylevel;
     }
 
     /**
-     * Get all additional capabilities that should be PROHIBITED for a given level.
+     * Get all non-module capabilities that should be prohibited at this level.
      *
-     * @param int $level The LernHive level (1-5).
-     * @return array Capability strings that should be PROHIBITED at this level.
+     * @param int $level LernHive level (1-5).
+     * @return array<int, string>
      */
     public static function get_prohibited_capabilities(int $level): array {
-        $levelcaps = self::get_level_capabilities();
         $prohibited = [];
-
-        // Capabilities are PROHIBITED if they unlock at a level ABOVE the current one.
-        foreach ($levelcaps as $unlockLevel => $caps) {
-            if ($unlockLevel > $level) {
+        foreach (self::get_level_capabilities() as $unlocklevel => $caps) {
+            if ($unlocklevel > $level) {
                 $prohibited = array_merge($prohibited, $caps);
             }
         }
-
-        return array_unique($prohibited);
+        return array_values(array_unique($prohibited));
     }
 
     /**
-     * Get all additional capabilities that should be ALLOWED (unrestricted) for a given level.
+     * Get all non-module capabilities that are allowed at this level.
      *
-     * @param int $level The LernHive level (1-5).
-     * @return array Capability strings that should be unrestricted at this level.
+     * @param int $level LernHive level (1-5).
+     * @return array<int, string>
      */
     public static function get_allowed_capabilities(int $level): array {
-        $levelcaps = self::get_level_capabilities();
         $allowed = [];
-
-        foreach ($levelcaps as $unlockLevel => $caps) {
-            if ($unlockLevel <= $level) {
+        foreach (self::get_level_capabilities() as $unlocklevel => $caps) {
+            if ($unlocklevel <= $level) {
                 $allowed = array_merge($allowed, $caps);
             }
         }
-
-        return array_unique($allowed);
+        return array_values(array_unique($allowed));
     }
 
     /**
-     * Get all additional capability strings across all levels.
+     * Get all known non-module capabilities.
      *
-     * @return array All capability strings.
+     * @return array<int, string>
      */
     public static function get_all_capabilities(): array {
         $all = [];
         foreach (self::get_level_capabilities() as $caps) {
             $all = array_merge($all, $caps);
         }
-        return array_unique($all);
+        return array_values(array_unique($all));
     }
 
     /**
      * Get all modules allowed for a given level (cumulative).
      *
-     * @param int $level The LernHive level (1-5).
-     * @return array Module component names allowed at this level.
+     * @param int $level LernHive level (1-5).
+     * @return array<int, string> Module components.
      */
     public static function get_allowed_modules(int $level): array {
-        $levelmodules = self::get_level_modules();
         $allowed = [];
-
-        for ($i = 1; $i <= $level; $i++) {
-            if (isset($levelmodules[$i])) {
-                $allowed = array_merge($allowed, $levelmodules[$i]);
+        foreach (self::get_level_modules() as $unlocklevel => $modules) {
+            if ($unlocklevel <= $level) {
+                $allowed = array_merge($allowed, $modules);
             }
         }
-
-        return array_unique($allowed);
+        return array_values(array_unique($allowed));
     }
 
     /**
-     * Get the addinstance capability for a module.
+     * Build addinstance capability from module component.
      *
-     * @param string $modcomponent The module component name (e.g., 'mod_quiz').
-     * @return string The capability string (e.g., 'mod/quiz:addinstance').
+     * @param string $modcomponent Module component like mod_quiz.
+     * @return string Capability string.
      */
     public static function get_addinstance_cap(string $modcomponent): string {
         $modname = str_replace('mod_', '', $modcomponent);
@@ -206,117 +157,91 @@ class capability_mapper {
     }
 
     /**
-     * Get all known module components across all levels.
+     * Get all known module components.
      *
-     * @return array All module component names.
+     * @return array<int, string>
      */
     public static function get_all_modules(): array {
         $all = [];
         foreach (self::get_level_modules() as $modules) {
             $all = array_merge($all, $modules);
         }
-        return array_unique($all);
+        return array_values(array_unique($all));
     }
 
     /**
      * Apply level capabilities for a user.
      *
-     * Strategy: We use a dedicated `lernhive_filter` role with CAP_PROHIBIT
-     * to block module addinstance capabilities. CAP_PROHIBIT is the ONLY
-     * permission that overrides CAP_ALLOW from other roles (like editingteacher).
+     * Strategy: user gets dedicated `lernhive_filter` role with CAP_PROHIBIT
+     * for all capabilities whose unlock-level is above the user's level.
      *
-     * IMPORTANT: Site admins NEVER get this role assigned — they bypass
-     * capability checks via Moodle's $doanything mechanism. We remove the
-     * role if an admin already has it.
-     *
-     * @param int $userid The user ID.
-     * @param int $level The LernHive level (1-5).
+     * @param int $userid User id.
+     * @param int $level LernHive level (1-5).
      */
     public static function apply_level(int $userid, int $level): void {
+        global $DB;
+
         $context = \context_system::instance();
         $roleid = self::get_or_create_lernhive_role();
 
-        // NEVER assign the filter role to site admins — CAP_PROHIBIT
-        // would break their admin capabilities.
         if (is_siteadmin($userid)) {
-            // Remove the role if it was previously assigned.
             if (user_has_role_assignment($userid, $roleid, $context->id)) {
                 role_unassign($roleid, $userid, $context->id);
             }
             return;
         }
 
-        $allowed = self::get_allowed_modules($level);
-        $allmodules = self::get_all_modules();
-
-        // Ensure user has the LernHive role assigned.
         if (!user_has_role_assignment($userid, $roleid, $context->id)) {
             role_assign($roleid, $userid, $context->id);
         }
 
-        // --- 1. Module capabilities (addinstance) ---
-        // We use CAP_PROHIBIT to override editingteacher's CAP_ALLOW.
-        // CAP_PREVENT does NOT work here because editingteacher grants
-        // CAP_ALLOW, which takes precedence over CAP_PREVENT from other roles.
-        foreach ($allmodules as $mod) {
-            $cap = self::get_addinstance_cap($mod);
+        $unlocklevels = self::get_capability_unlock_levels();
 
-            // Check if this capability actually exists in Moodle.
-            if (!get_capability_info($cap)) {
+        // Clean up stale prohibitions from legacy maps so we stay single-source
+        // with registry-driven capabilities.
+        $existing = $DB->get_records(
+            'role_capabilities',
+            ['roleid' => $roleid, 'contextid' => $context->id],
+            '',
+            'id, capability, permission'
+        );
+        foreach ($existing as $record) {
+            if ((int) $record->permission !== CAP_PROHIBIT) {
+                continue;
+            }
+            if (!array_key_exists($record->capability, $unlocklevels)) {
+                unassign_capability($record->capability, $roleid, $context->id);
+            }
+        }
+
+        foreach ($unlocklevels as $capability => $unlocklevel) {
+            if (!get_capability_info($capability)) {
                 continue;
             }
 
-            if (in_array($mod, $allowed)) {
-                // Remove any restriction — let the base role's permission apply.
-                unassign_capability($cap, $roleid, $context->id);
+            if ($unlocklevel <= $level) {
+                unassign_capability($capability, $roleid, $context->id);
             } else {
-                // PROHIBIT this capability — the only way to block editingteacher's ALLOW.
-                assign_capability($cap, CAP_PROHIBIT, $roleid, $context->id, true);
+                assign_capability($capability, CAP_PROHIBIT, $roleid, $context->id, true);
             }
         }
-
-        // --- 2. Additional capabilities (navigation, grades, sections, etc.) ---
-        // Also use CAP_PROHIBIT for these — same reason.
-        $prohibitedcaps = self::get_prohibited_capabilities($level);
-        $allowedcaps = self::get_allowed_capabilities($level);
-
-        foreach ($prohibitedcaps as $cap) {
-            if (!get_capability_info($cap)) {
-                continue;
-            }
-            assign_capability($cap, CAP_PROHIBIT, $roleid, $context->id, true);
-        }
-
-        foreach ($allowedcaps as $cap) {
-            if (!get_capability_info($cap)) {
-                continue;
-            }
-            // Remove restriction — let base role's permission apply.
-            unassign_capability($cap, $roleid, $context->id);
-        }
-
-        // Note: assign_capability() and unassign_capability() already call
-        // accesslib_clear_role_cache($roleid) internally, so no manual cache
-        // purge is needed here. mark_context_dirty() does NOT exist in Moodle 5.x.
     }
 
     /**
-     * Remove all LernHive capability restrictions for a user.
+     * Remove all LernHive restrictions for a user.
      *
-     * @param int $userid The user ID.
+     * @param int $userid User id.
      */
     public static function remove_restrictions(int $userid): void {
         $context = \context_system::instance();
         $roleid = self::get_or_create_lernhive_role();
-
-        // Unassign the LernHive role.
         role_unassign($roleid, $userid, $context->id);
     }
 
     /**
      * Get or create the special LernHive role used for capability overrides.
      *
-     * @return int The role ID.
+     * @return int Role id.
      */
     public static function get_or_create_lernhive_role(): int {
         global $DB;
@@ -326,7 +251,6 @@ class capability_mapper {
             return (int) $role->id;
         }
 
-        // Create the role.
         $roleid = create_role(
             'LernHive Filter',
             'lernhive_filter',
@@ -334,33 +258,87 @@ class capability_mapper {
             ''
         );
 
-        // Allow this role to be assigned in system context.
         set_role_contextlevels($roleid, [CONTEXT_SYSTEM]);
-
         return $roleid;
     }
 
     /**
      * Get modules that are locked (not yet available) for a given level.
      *
-     * @param int $level The current level.
-     * @return array Array of ['module' => string, 'unlocks_at' => int]
+     * @param int $level Current level.
+     * @return array<int, array{module: string, unlocks_at: int}>
      */
     public static function get_locked_modules(int $level): array {
-        $levelmodules = self::get_level_modules();
         $locked = [];
+        $levelmodules = self::get_level_modules();
 
         for ($i = $level + 1; $i <= level_manager::LEVEL_MAX; $i++) {
-            if (isset($levelmodules[$i])) {
-                foreach ($levelmodules[$i] as $mod) {
-                    $locked[] = [
-                        'module' => $mod,
-                        'unlocks_at' => $i,
-                    ];
-                }
+            if (!isset($levelmodules[$i])) {
+                continue;
+            }
+            foreach ($levelmodules[$i] as $module) {
+                $locked[] = [
+                    'module' => $module,
+                    'unlocks_at' => $i,
+                ];
             }
         }
 
         return $locked;
+    }
+
+    /**
+     * Resolve capability -> unlock level from the feature registry.
+     *
+     * If multiple features share one capability, the earliest unlock level wins.
+     *
+     * @return array<string, int> Capability => unlock level.
+     */
+    private static function get_capability_unlock_levels(): array {
+        $map = [];
+
+        foreach (registry::get_features() as $featureid => $definition) {
+            $capability = $definition->requiredcapability;
+            $unlocklevel = registry::effective_level($featureid);
+            if (!isset($map[$capability]) || $unlocklevel < $map[$capability]) {
+                $map[$capability] = $unlocklevel;
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * Resolve module component -> unlock level from registry capabilities.
+     *
+     * @return array<string, int> Module component => unlock level.
+     */
+    private static function get_module_unlock_levels(): array {
+        $map = [];
+
+        foreach (self::get_capability_unlock_levels() as $capability => $unlocklevel) {
+            $module = self::capability_to_module_component($capability);
+            if ($module === null) {
+                continue;
+            }
+            if (!isset($map[$module]) || $unlocklevel < $map[$module]) {
+                $map[$module] = $unlocklevel;
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * Convert addinstance capability to module component.
+     *
+     * @param string $capability Capability string.
+     * @return string|null Module component or null for non-module capabilities.
+     */
+    private static function capability_to_module_component(string $capability): ?string {
+        if (!preg_match('#^mod/([a-z0-9_]+):addinstance$#', $capability, $matches)) {
+            return null;
+        }
+        return 'mod_' . $matches[1];
     }
 }

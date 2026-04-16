@@ -29,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Catalog provider.
  *
- * In R2 this class can build entries from a managed JSON manifest
- * configured in plugin settings. Tests may still inject in-memory
- * entries directly to keep rendering logic deterministic.
+ * In R2 phase 2 this class delegates loading to dedicated source
+ * implementations (manifest / remote feed). Tests may still inject
+ * in-memory entries directly to keep rendering deterministic.
  */
 class catalog {
     /**
@@ -42,19 +42,26 @@ class catalog {
     /**
      * @param catalog_entry[]|null $entries Optional seed list (primarily for tests).
      * @param string|null $manifestjson Optional raw JSON manifest override.
+     * @param catalog_source|null $source Optional catalog source override.
      * @throws \coding_exception If a seeded entry is not a catalog_entry.
      */
-    public function __construct(?array $entries = null, ?string $manifestjson = null) {
+    public function __construct(
+        ?array $entries = null,
+        ?string $manifestjson = null,
+        ?catalog_source $source = null,
+    ) {
         if ($entries !== null) {
             $this->entries = $this->validate_seed_entries($entries);
             return;
         }
 
-        if ($manifestjson === null) {
-            $manifestjson = (string) (get_config('local_lernhive_library', 'catalog_manifest_json') ?? '');
+        if ($source !== null) {
+            $this->entries = $source->load_entries();
+            return;
         }
 
-        $this->entries = $this->parse_manifest_json($manifestjson);
+        $source = $this->build_default_source($manifestjson);
+        $this->entries = $source->load_entries();
     }
 
     /**
@@ -111,128 +118,26 @@ class catalog {
     }
 
     /**
-     * Parse a managed catalog manifest into catalog_entry objects.
+     * Select the production source:
+     * - explicit manifest override (tests / explicit local mode)
+     * - remote managed feed when configured
+     * - plugin-configured manifest fallback
      *
-     * Accepted JSON structures:
-     * - top-level array of entries
-     * - object with `entries` array
-     *
-     * @param string $manifestjson
-     * @return catalog_entry[]
+     * @param string|null $manifestjson
+     * @return catalog_source
      */
-    private function parse_manifest_json(string $manifestjson): array {
-        $manifestjson = trim($manifestjson);
-        if ($manifestjson === '') {
-            return [];
+    private function build_default_source(?string $manifestjson): catalog_source {
+        $parser = new catalog_manifest_parser();
+
+        if ($manifestjson !== null) {
+            return new manifest_catalog_source($parser, $manifestjson);
         }
 
-        $decoded = json_decode($manifestjson, true);
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
-            debugging(
-                'LernHive Library catalog manifest is not valid JSON: ' . json_last_error_msg(),
-                DEBUG_DEVELOPER
-            );
-            return [];
+        $feedurl = trim((string) (get_config('local_lernhive_library', 'catalog_feed_url') ?? ''));
+        if ($feedurl !== '') {
+            return new remote_catalog_source($parser, $feedurl);
         }
 
-        $rows = $decoded;
-        if (array_key_exists('entries', $decoded) && is_array($decoded['entries'])) {
-            $rows = $decoded['entries'];
-        }
-
-        $entries = [];
-        foreach ($rows as $index => $row) {
-            if (!is_array($row)) {
-                debugging(
-                    'LernHive Library manifest entry at index ' . $index . ' is not an object and was ignored.',
-                    DEBUG_DEVELOPER
-                );
-                continue;
-            }
-
-            $updated = $this->normalise_updated($row['updated'] ?? null);
-            if ($updated === null) {
-                debugging(
-                    'LernHive Library manifest entry at index ' . $index . ' has an invalid "updated" value and was ignored.',
-                    DEBUG_DEVELOPER
-                );
-                continue;
-            }
-
-            $sourcecourseid = $this->normalise_source_course_id($row['sourcecourseid'] ?? null);
-
-            try {
-                $entries[] = new catalog_entry(
-                    id: (string) ($row['id'] ?? ''),
-                    title: (string) ($row['title'] ?? ''),
-                    description: (string) ($row['description'] ?? ''),
-                    version: (string) ($row['version'] ?? ''),
-                    updated: $updated,
-                    language: (string) ($row['language'] ?? ''),
-                    sourcecourseid: $sourcecourseid,
-                );
-            } catch (\coding_exception $e) {
-                debugging(
-                    'LernHive Library manifest entry at index ' . $index . ' is invalid and was ignored: ' . $e->getMessage(),
-                    DEBUG_DEVELOPER
-                );
-            }
-        }
-
-        return $entries;
-    }
-
-    /**
-     * @param mixed $value
-     * @return int|null
-     */
-    private function normalise_updated(mixed $value): ?int {
-        if (is_int($value)) {
-            return $value >= 0 ? $value : null;
-        }
-
-        if (is_string($value)) {
-            $trimmed = trim($value);
-            if ($trimmed === '') {
-                return null;
-            }
-
-            if (ctype_digit($trimmed)) {
-                return (int) $trimmed;
-            }
-
-            $parsed = strtotime($trimmed);
-            if ($parsed !== false && $parsed >= 0) {
-                return $parsed;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Normalise optional source-course id values.
-     *
-     * @param mixed $value
-     * @return int|null
-     */
-    private function normalise_source_course_id(mixed $value): ?int {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        if (is_int($value)) {
-            return $value > 0 ? $value : null;
-        }
-
-        if (is_string($value)) {
-            $trimmed = trim($value);
-            if ($trimmed !== '' && ctype_digit($trimmed)) {
-                $parsed = (int) $trimmed;
-                return $parsed > 0 ? $parsed : null;
-            }
-        }
-
-        return null;
+        return new manifest_catalog_source($parser);
     }
 }

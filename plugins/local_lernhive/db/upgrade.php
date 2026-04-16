@@ -146,6 +146,27 @@ function xmldb_local_lernhive_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041600, 'local', 'lernhive');
     }
 
+    if ($oldversion < 2026041601) {
+        // Create local_lernhive_feature_overrides (LH-CORE-FR-02).
+        $table = new xmldb_table('local_lernhive_feature_overrides');
+        if (!$dbman->table_exists($table)) {
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('feature_id', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('override_level', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+            $table->add_field('source', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'admin');
+            $table->add_field('flavor_id', XMLDB_TYPE_CHAR, '64', null, null, null, null);
+            $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('updated_by', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $table->add_index('feature_id_uix', XMLDB_INDEX_UNIQUE, ['feature_id']);
+
+            $dbman->create_table($table);
+        }
+
+        upgrade_plugin_savepoint(true, 2026041601, 'local', 'lernhive');
+    }
+
     return true;
 }
 
