@@ -26,6 +26,7 @@ namespace local_lernhive_onboarding;
 
 use core\hook\output\before_standard_top_of_body_html_generation;
 use local_lernhive_onboarding\output\dashboard_banner;
+use tool_usertours\hook\before_serverside_filter_fetch;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -89,5 +90,47 @@ class hook_callbacks {
         }
 
         $hook->add_html($html);
+    }
+
+    /**
+     * Configure server-side tour filters for one-request forced starts.
+     *
+     * When a user launches a tour from `starttour.php`, we store the target
+     * tour id in session. On the very next page request, this callback:
+     * - consumes that state (one-shot),
+     * - disables the core role filter for that one request, and
+     * - injects a custom filter that allows only the requested tour id.
+     *
+     * This keeps legacy role-filtered tours launchable from the LernHive
+     * catalog while preserving standard filter behaviour for normal page loads.
+     *
+     * @param before_serverside_filter_fetch $hook
+     * @return void
+     */
+    public static function configure_forced_tour_filter(
+        before_serverside_filter_fetch $hook
+    ): void {
+        global $SESSION;
+
+        if (empty($SESSION->local_lhonb_forced_tour_launch)
+            || !is_array($SESSION->local_lhonb_forced_tour_launch)) {
+            return;
+        }
+
+        $state = $SESSION->local_lhonb_forced_tour_launch;
+        unset($SESSION->local_lhonb_forced_tour_launch);
+
+        $tourid = (int) ($state['tourid'] ?? 0);
+        $expires = (int) ($state['expires'] ?? 0);
+        if ($tourid <= 0 || $expires < time()) {
+            return;
+        }
+
+        forced_tour_state::set_forced_tour_id($tourid);
+
+        // Legacy onboarding tours often carry hard-coded role filters that
+        // don't reflect the current capability-based access model.
+        $hook->remove_filter_by_classname(\tool_usertours\local\filter\role::class);
+        $hook->add_filter_by_classname(\local_lernhive_onboarding\local\filter\forced_tour::class);
     }
 }

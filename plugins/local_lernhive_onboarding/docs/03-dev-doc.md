@@ -16,6 +16,10 @@
   - set replay preference via `\tool_usertours\tour::TOUR_REQUESTED_BY_USER`
   - clear completion preference via `\tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER`
   - clear legacy `_completed` / `_lastStep` fallback keys for backward compatibility
+  - write one-shot session state (`local_lhonb_forced_tour_launch`) for deterministic launch
+  - consume the state via `tool_usertours` server-side filter hook:
+    - remove role filter for that one request
+    - enforce exact-tour filter (`local_lernhive_onboarding\local\filter\forced_tour`)
 - Tour step import normalization:
   - canonical Moodle mapping is `selector=0`, `block=1`, `unattached=2`
   - importer normalizes legacy swapped selector/unattached values
@@ -45,6 +49,7 @@ Current:
 - `local_lernhive\level_manager` for user level retrieval
 - `tool_usertours` as delivery engine
 - `core\hook\output\before_standard_top_of_body_html_generation` for banner injection
+- `tool_usertours\hook\before_serverside_filter_fetch` for one-request forced-tour launch wiring
 
 Planned:
 - `local_lernhive\feature\registry` as visibility source
@@ -60,6 +65,7 @@ Implemented PHPUnit coverage:
 - `tests/starttour_flow_test.php`
 - `tests/sandbox_course_test.php`
 - `tests/tour_importer_test.php`
+- `tests/hook_callbacks_test.php`
 
 Open test gaps:
 - Behat for sesskey and start-flow browser behavior

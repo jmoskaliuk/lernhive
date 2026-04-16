@@ -77,6 +77,27 @@ final class starttour_flow_test extends advanced_testcase {
     }
 
     /**
+     * Catalog starts must arm a one-request forced-tour state in session so
+     * the destination page can lock matching to the requested tour only.
+     */
+    public function test_start_sets_forced_tour_session_state(): void {
+        $this->resetAfterTest();
+        global $SESSION;
+
+        $user = $this->getDataGenerator()->create_user();
+        $tour = $this->create_tour([
+            'lh_start_url' => '/user/editadvanced.php?id={USERID}',
+        ]);
+
+        starttour_flow::prepare_redirect_url((int) $tour->id, (int) $user->id);
+
+        $this->assertObjectHasProperty('local_lhonb_forced_tour_launch', $SESSION);
+        $this->assertIsArray($SESSION->local_lhonb_forced_tour_launch);
+        $this->assertSame((int) $tour->id, (int) ($SESSION->local_lhonb_forced_tour_launch['tourid'] ?? 0));
+        $this->assertGreaterThan(time(), (int) ($SESSION->local_lhonb_forced_tour_launch['expires'] ?? 0));
+    }
+
+    /**
      * Replay after completion: the user finished the tour yesterday
      * (both `_completed` and `_lastStep` are set), they click "Start"
      * again in the catalog. Flow must clear both stale markers AND
