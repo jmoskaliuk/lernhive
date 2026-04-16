@@ -28,6 +28,8 @@ LernHive visual layer and design system for a calm, guided Moodle experience.
   - The course-index chrome is re-skinned for the LernHive dark palette: no `text-transform: uppercase` on the "Course navigation" heading, `fa-sitemap` icon prefix on the heading, all `.courseindex*` backgrounds / borders / shadows reset to transparent inside `.lernhive-course-index__body`, active section gets a soft `$lh-accent` tint + a `2 px` inset left rail, chevrons become borderless `1.25 rem` inline-flex boxes, and Boost's "current" pill (`.current-badge`) is hidden because the accent treatment already signals the active item
   - No more skeleton flash: the core placeholder loader (`#course-index-placeholder` / `.placeholders` — four grey pulse rows shipped in `core_courseformat/local/courseindex/placeholders.mustache`) is `display: none !important` inside the sidebar, so the ~50–300 ms gap between first paint and the `core_courseformat/courseeditor` AMD hydration shows an empty region instead of mangled-for-light-mode grey boxes
   - Graceful fail: if AMD hydration ever fails the sidebar degrades to just the heading, never leaks back the light-palette skeleton
+  - Course actions stay core-driven: Zone B renders Moodle's canonical secondary `moremenu` and the course-admin overflow `url_select` (including Course reuse actions such as Import / Backup / Restore / Copy / Reset), styled but not reimplemented
+  - In-course activity UX parity: the layout renders `core/activity_header` and `output.activity_navigation` so module pages keep completion/header controls and prev/next activity navigation
 
 ## Planned feature set
 - design tokens for color, typography, spacing, and surfaces

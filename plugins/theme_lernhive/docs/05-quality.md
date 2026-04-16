@@ -39,9 +39,12 @@
   - the sidebar shows a reduced primary nav with exactly three items — Dashboard, My Courses, Explore — followed by a horizontal divider
   - below the divider, a "Course navigation" heading appears with an `fa-sitemap` icon prefix (icon is `$lh-accent` coloured, heading text is sentence-case — **not** `COURSE NAVIGATION`)
   - below the heading, the core Moodle course index renders the course's sections and activities; collapsing/expanding a section works (chevron rotates, content shows/hides)
+  - in the course header infobar, secondary navigation tabs still render via core `moremenu` (e.g. participants/settings depending on role)
+  - when course-admin overflow is active (e.g. on `/backup/restore.php` with course context), the overflow selector is visible and includes Course reuse actions (Import / Backup / Restore / Copy / Reset based on capabilities)
   - clicking an activity navigates to it; the currently-active section/activity in the sidebar gets a soft `$lh-accent` background tint + a 2 px inset left rail in `$lh-accent`, text in white-bold — no grey "button box" from Boost defaults
   - no `.current-badge` pill is visible next to the active section (hidden by `display: none`)
   - chevrons on section headers are small (~`1.25 rem`), borderless, inline-flex — not Boost's rectangular button chrome
   - hard-reload the page: there must be **no visible grey skeleton flash** before the course index hydrates. If JS is disabled or breaks, the region degrades to just the heading — never to the core 4-row placeholder template
   - regression check for the `$COURSE` fallback: the diagnostic HTML comment from 0.9.48 (`<!-- lernhive-course-idx-diag: courseid=X … -->`) is no longer in the DOM; an HTML-comment diag in the shipped theme would indicate the 0.9.52 scaffolding cleanup did not land
   - inspect `getComputedStyle(...)`: `.courseindex-item.pageitem` should have `background-color: rgba(22, 163, 74, 0.18)` (or equivalent from `$lh-accent`), `box-shadow: inset 2px 0 0 …`, and `background-color` explicitly not `rgb(240, 240, 240)` (Boost `$gray-100` leakage)
+  - on an in-course module page (`/mod/*/view.php`), `core/activity_header` is visible above content and `output.activity_navigation` (previous/next activity) still renders

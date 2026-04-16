@@ -190,6 +190,15 @@ On the `course` pagelayout the theme swaps `sidebar.mustache` for a dedicated `s
 
 `theme_lernhive_get_course_sidebar_context()` walks the same primary-nav source as `sidebar.mustache` but filters down to a fixed set of nav keys — `home`, `myhome`, `courses` (standard Moodle site nav, named `Dashboard`, `My Courses`, `Explore` in the LernHive language pack). Any other nav item is dropped for the course layout. The whitelist is enforced in PHP so a later core navigation refactor can add or rename keys without breaking the sidebar.
 
+### Course action plumbing (secondary nav + overflow)
+
+`layout/course.php` now follows the same canonical pipeline as Boost/admin for course actions:
+
+- `secondarymoremenu` is built from `$PAGE->secondarynav` via `\core\navigation\output\more_menu(...)`.
+- `overflow` is built from `$PAGE->secondarynav->get_overflow_menu_data()`.
+
+`templates/course.mustache` renders both in Zone B (`.lh-plugin-infobar__course-actions`) using core partials (`core/moremenu`, `core/url_select`). This preserves course-admin actions (including Course reuse nodes like Import / Backup / Restore / Copy / Reset) without reimplementing capability logic in the theme.
+
 ### The `$PAGE->course` vs `$COURSE` divergence (fixed 0.9.51)
 
 On the `course` pagelayout, a naive `$page->course->id > SITEID` guard inside the helper short-circuits because `$PAGE->course` reports as SITE (`id = 1`) even though `require_login($course)` has already run upstream. Diagnostic HTML-comment instrumentation in 0.9.48 captured this directly: `courseid=none status=skipped`, in a context where the course *obviously* existed.
