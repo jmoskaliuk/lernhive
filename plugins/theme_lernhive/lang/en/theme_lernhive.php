@@ -72,6 +72,11 @@ $string['exploresearch'] = 'Search courses, snacks, communities, and topics';
 $string['exploretools'] = 'Explore tools';
 $string['exploredownload'] = 'Download Explore list';
 $string['exploremore'] = 'More Explore actions';
+$string['explorefilterbar'] = 'Filter and sort Explore';
+$string['explorefiltersactive'] = 'Active filters';
+$string['explorefilterremove'] = 'Remove filter';
+$string['explorefilterclear'] = 'Clear all';
+$string['exploresortlabel'] = 'Sort';
 
 $string['contenthubeyebrow'] = 'Orchestration layer';
 $string['contenthubtitle'] = 'ContentHub';

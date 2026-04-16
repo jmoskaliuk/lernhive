@@ -1,0 +1,571 @@
+// =============================================================================
+// _explore.scss — LernHive Explore surface (since 0.9.73)
+// =============================================================================
+//
+// Styles the Explore page rendered by local_lernhive_discovery via
+// `theme_lernhive/explore_shell` → `theme_lernhive/explore_hero`.
+//
+// Structure:
+//
+//   .lernhive-explore                               ← page container
+//       .lernhive-explore-hero                      ← Zone A: title + summary + search + chips
+//       .lernhive-explore__filterbar                ← Zone B: active-filter chips + search + sort (0.9.73)
+//       .lernhive-explore__sections                 ← results area
+//           .lernhive-card-section                  ← each feed block
+//               .lernhive-card-section--featured    ← optional modifier: full-width hero-card
+//               .lernhive-card-section__grid        ← 3-col grid of cards
+//
+// The Explore page is a TOPLEVEL destination from the sidebar nav — Zone A
+// has NO back button (unlike the plugin-shell pages under ContentHub / Snack).
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// Container
+// -----------------------------------------------------------------------------
+
+.lernhive-explore {
+    display: grid;
+    gap: $lh-spacing-md;
+    padding: 0;
+
+    // Stack everything single-column on tight viewports.
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        gap: $lh-spacing-sm;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Zone A — Explore Hero
+// -----------------------------------------------------------------------------
+
+.lernhive-explore-hero {
+    padding: $lh-spacing-lg;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius-lg;
+    background:
+        radial-gradient(circle at 80% 0%, rgba($lh-accent, 0.12) 0, transparent 60%),
+        linear-gradient(135deg, #ffffff 0, $lh-bg 100%);
+    box-shadow: $lh-shadow;
+    position: relative;
+
+    &__eyebrow {
+        margin: 0 0 $lh-spacing-xs;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: $lh-accent;
+    }
+
+    &__head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: $lh-spacing-lg;
+
+        @media (min-width: $lh-bp-desktop) {
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
+            align-items: start;
+        }
+    }
+
+    &__copy {
+        min-width: 0;
+    }
+
+    &__title {
+        margin: 0 0 $lh-spacing-xs;
+        font-size: 2rem;
+        font-weight: 700;
+        color: $lh-text;
+        line-height: 1.15;
+    }
+
+    &__summary {
+        margin: 0 0 $lh-spacing-md;
+        color: $lh-text-secondary;
+        line-height: 1.55;
+        max-width: 60ch;
+    }
+
+    // Hero inline search — decorative surface, real search lives in __filterbar below.
+    &__search {
+        display: inline-flex;
+        align-items: center;
+        gap: $lh-spacing-sm;
+        padding: $lh-spacing-sm $lh-spacing-md;
+        border-radius: $lh-radius-pill;
+        border: 1px solid $lh-border;
+        background: $lh-bg-white;
+        color: $lh-text-secondary;
+        font-weight: 500;
+        cursor: text;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover,
+        &:focus-within {
+            border-color: $lh-accent;
+            box-shadow: 0 0 0 3px rgba($lh-accent, 0.15);
+        }
+    }
+
+    &__search-icon {
+        display: inline-flex;
+        align-items: center;
+        color: $lh-text-secondary;
+
+        svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 1.9;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    }
+
+    // Side note — editorial explanation, e.g. "Why items appear".
+    &__note {
+        padding: $lh-spacing-md;
+        border-radius: $lh-radius;
+        background: rgba($lh-accent, 0.06);
+        border: 1px solid rgba($lh-accent, 0.18);
+        color: $lh-text;
+
+        &-title {
+            margin: 0 0 $lh-spacing-xs;
+            font-size: 1rem;
+            font-weight: 600;
+            color: $lh-text;
+        }
+
+        &-copy {
+            margin: 0;
+            color: $lh-text-secondary;
+            line-height: 1.5;
+            font-size: 0.875rem;
+        }
+    }
+
+    // Tool buttons — top-right, download + more.
+    &__tools {
+        position: absolute;
+        top: $lh-spacing-md;
+        right: $lh-spacing-md;
+        display: inline-flex;
+        gap: $lh-spacing-xs;
+
+        @media (max-width: #{$lh-bp-tablet - 1px}) {
+            position: static;
+            margin-bottom: $lh-spacing-sm;
+        }
+    }
+
+    &__tool {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $lh-radius-pill;
+        border: 1px solid $lh-border;
+        background: $lh-bg-white;
+        color: $lh-text;
+        cursor: pointer;
+        padding: 0;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+        svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        &:hover,
+        &:focus-visible {
+            border-color: $lh-accent;
+            color: $lh-accent;
+            background: rgba($lh-accent, 0.08);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+    }
+
+    // Topic chips under the search — related topics / ranking principles.
+    &__chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $lh-spacing-xs;
+        margin-top: $lh-spacing-md;
+    }
+
+    &__chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: $lh-radius-pill;
+        background: rgba($lh-primary, 0.06);
+        color: $lh-primary;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Zone B — Filter Bar (since 0.9.73)
+// -----------------------------------------------------------------------------
+// Horizontal band between hero and results. Shows active filter ghost-chips
+// (clickable × to dismiss), a search input, and a sort dropdown. The chips
+// persist across reloads via query-string params wired on the plugin side.
+
+.lernhive-explore__filterbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $lh-spacing-sm;
+    padding: $lh-spacing-sm $lh-spacing-md;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    background: $lh-bg-white;
+    box-shadow: $lh-shadow;
+
+    &__label {
+        margin-right: $lh-spacing-xs;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: $lh-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    &__chips {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: $lh-spacing-xs;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    // Active filter chip — ghost-button with × to dismiss. Matches the
+    // button grammar established in _buttons.scss (.lh-btn-ghost).
+    &__chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px 6px 12px;
+        border-radius: $lh-radius-pill;
+        background: transparent;
+        border: 1px solid $lh-border;
+        color: $lh-text;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1;
+        cursor: pointer;
+        transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            border-color: $lh-accent;
+            color: $lh-accent;
+            background: rgba($lh-accent, 0.06);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+
+        // The × affordance — larger than the label for easy hit area.
+        &-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: $lh-radius-pill;
+            font-size: 14px;
+            line-height: 1;
+            color: currentColor;
+            opacity: 0.7;
+            transition: opacity 0.15s ease;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &::before {
+                content: "\00d7";  // ×
+            }
+        }
+    }
+
+    // Clear-all link — text-style, right of the chips.
+    &__clear {
+        margin-left: $lh-spacing-xs;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: $lh-primary;
+        background: none;
+        border: 0;
+        padding: 6px 4px;
+        cursor: pointer;
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            color: $lh-accent;
+            text-decoration: underline;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+            border-radius: $lh-radius-sm;
+        }
+    }
+
+    &__divider {
+        width: 1px;
+        align-self: stretch;
+        background: $lh-border;
+        margin: 0 $lh-spacing-xs;
+
+        @media (max-width: #{$lh-bp-tablet - 1px}) {
+            display: none;
+        }
+    }
+
+    // Search input — borderless, inline icon.
+    &__search {
+        display: inline-flex;
+        align-items: center;
+        gap: $lh-spacing-xs;
+        padding: 6px 12px;
+        border-radius: $lh-radius-pill;
+        border: 1px solid $lh-border;
+        background: $lh-bg;
+        min-width: 180px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &:focus-within {
+            border-color: $lh-accent;
+            box-shadow: 0 0 0 3px rgba($lh-accent, 0.15);
+        }
+
+        .fa {
+            color: $lh-text-secondary;
+            font-size: 0.875rem;
+        }
+
+        input {
+            flex: 1 1 auto;
+            min-width: 0;
+            border: 0;
+            background: transparent;
+            outline: none;
+            padding: 2px 0;
+            font: inherit;
+            color: $lh-text;
+
+            &::placeholder {
+                color: $lh-text-secondary;
+            }
+        }
+    }
+
+    // Sort dropdown — small native select wrapped in pill chrome.
+    &__sort {
+        display: inline-flex;
+        align-items: center;
+        gap: $lh-spacing-xs;
+        padding: 4px 8px 4px 12px;
+        border-radius: $lh-radius-pill;
+        border: 1px solid $lh-border;
+        background: $lh-bg-white;
+        color: $lh-text;
+        font-size: 0.8125rem;
+        font-weight: 600;
+
+        &-label {
+            color: $lh-text-secondary;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: 0.75rem;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: transparent;
+            border: 0;
+            color: inherit;
+            font: inherit;
+            padding: 2px 1.5rem 2px 0.25rem;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6368' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 0.25rem center;
+            background-size: 14px 14px;
+
+            &:focus-visible {
+                outline: 2px solid $lh-accent;
+                outline-offset: 2px;
+                border-radius: $lh-radius-sm;
+            }
+        }
+    }
+
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        &__sort,
+        &__search {
+            flex: 1 1 100%;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Sections grid
+// -----------------------------------------------------------------------------
+
+.lernhive-explore__sections {
+    display: grid;
+    gap: $lh-spacing-md;
+}
+
+// -----------------------------------------------------------------------------
+// Card section — the legacy per-section wrapper (templates/card_section.mustache).
+// Explore composes the results from these; dashboards use `.lh-dashboard-section`
+// (0.9.71) instead. These two patterns coexist — don't mix their classes.
+// -----------------------------------------------------------------------------
+
+.lernhive-card-section {
+    padding: $lh-spacing-md;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    background: $lh-bg-white;
+    box-shadow: $lh-shadow;
+
+    &__head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: $lh-spacing-md;
+        margin-bottom: $lh-spacing-md;
+        flex-wrap: wrap;
+    }
+
+    &__title {
+        margin: 0 0 $lh-spacing-xs;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $lh-text;
+        line-height: 1.25;
+    }
+
+    &__description {
+        margin: 0;
+        color: $lh-text-secondary;
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    &__head-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: $lh-spacing-xs;
+        flex-shrink: 0;
+    }
+
+    &__tool {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $lh-radius-pill;
+        border: 1px solid $lh-border;
+        background: $lh-bg-white;
+        color: $lh-text;
+        cursor: pointer;
+        padding: 0;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+        svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        &:hover,
+        &:focus-visible {
+            border-color: $lh-accent;
+            color: $lh-accent;
+            background: rgba($lh-accent, 0.08);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+    }
+
+    &__link {
+        color: $lh-primary;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus-visible {
+            color: $lh-accent;
+            text-decoration: underline;
+        }
+    }
+
+    // Default results grid — 3-col on desktop, 2 on tablet, 1 on mobile.
+    &__grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: 1fr;
+
+        @media (min-width: $lh-bp-tablet) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (min-width: $lh-bp-desktop) {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    // --- Featured variant (since 0.9.73) -----------------------------------
+    // First section on the Explore page can be marked `--featured`; its grid
+    // collapses to 1 column so the content reads as a hero-card banner.
+    // Plugins opt in by setting `featured: true` on the section context
+    // (explore_shell reads it and applies the modifier class).
+    &--featured {
+        background:
+            radial-gradient(circle at 0% 0%, rgba($lh-accent, 0.08) 0, transparent 45%),
+            linear-gradient(135deg, #ffffff 0, $lh-bg 100%);
+
+        .lernhive-card-section__grid {
+            grid-template-columns: 1fr;
+
+            @media (min-width: $lh-bp-desktop) {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+}

@@ -917,3 +917,103 @@ already renders `#page-content.lernhive-course-layout` with only the
 `main#region-main-box.lernhive-course-main` child — no right block
 region is wired up. No change needed; documenting here so the next
 person doesn't accidentally re-introduce `.lernhive-blocks--side`.
+
+## Explore Surface (since 0.9.73)
+
+### Why this exists
+
+The Explore page (rendered by `local_lernhive_discovery` for the LXP
+Flavour, where Explore replaces Dashboard) had Mustache templates
+shipping `.lernhive-explore-*` and `.lernhive-card-section` class names
+since 0.9.x, but **no SCSS defined any of them** — those classes did
+nothing. The page rendered with raw Moodle chrome and the hero/filter/
+grid structure was invisible to the learner. Task 0.9.73 closes that
+gap and adds the spec-required Zone-B filter-bar.
+
+### Surface anatomy
+
+```
+.lernhive-explore
+├── .lernhive-explore-hero                   ← Zone A (title, summary, search, chips, side-note)
+├── .lernhive-explore__filterbar             ← Zone B (active filters + search + sort)  [NEW 0.9.73]
+└── .lernhive-explore__sections
+    ├── .lernhive-card-section--featured     ← optional first-section banner          [NEW 0.9.73]
+    └── .lernhive-card-section               ← standard 3-col grid of cards
+```
+
+Zone A (hero) has **no back button** — Explore is a toplevel
+destination from the sidebar nav, so a back affordance would be
+meaningless. This differs from every plugin-shell page under
+ContentHub / Snack that DOES render a back button in Zone A.
+
+### Zone B — filter-bar contract
+
+The `explore_shell` Mustache consumes a `filterbar` context sub-object:
+
+```php
+$data['filterbar'] = [
+    'hasactivefilters'   => count($active) > 0,
+    'activefilters'      => array_map(fn($f) => [
+        'label' => $f->label,
+        'url'   => $f->dismiss_url->out(false),
+    ], $active),
+    'clearurl'           => $clear_url->out(false),
+    'searchurl'          => $page_url->out(false),
+    'searchinputname'    => 'q',
+    'searchvalue'        => $current_q,
+    'searchplaceholder'  => get_string('exploresearch', 'theme_lernhive'),
+    'sortoptions'        => [
+        ['value' => 'relevance', 'label' => 'Relevance', 'selected' => true],
+        ['value' => 'recent',    'label' => 'Recent'],
+        ['value' => 'az',        'label' => 'A-Z'],
+    ],
+    'sortinputname'      => 'sort',
+];
+```
+
+All sub-contexts are optional:
+
+- Omit `hasactivefilters` / `activefilters` → the filter-chip row disappears.
+- Omit `searchurl` → no search form.
+- Omit `sortoptions` (empty array) → no sort dropdown.
+
+Omitting the entire `filterbar` context hides Zone B entirely, so
+downstream plugins can adopt the bar incrementally.
+
+### Featured section modifier
+
+Pass `'featured' => true` on a section context to render it with a
+full-width single-column grid and a subtle accent radial-gradient
+background:
+
+```php
+$data['sections'] = [
+    [
+        'sectionid'   => 'featured',
+        'title'       => get_string('featuredthisweek', 'local_lernhive_discovery'),
+        'description' => 'Hand-picked content you shouldn\'t miss.',
+        'featured'    => true,             // ← opt-in
+        'cards'       => [$hero_card],
+    ],
+    // ... normal 3-col sections
+];
+```
+
+`card_section.mustache` writes `lernhive-card-section--featured` onto
+its `<section>` element when this flag is truthy; the theme SCSS then
+collapses the grid to 1 column and tints the surface background.
+
+### Coexistence with `.lh-dashboard-section`
+
+The LernHive codebase now has **two** section primitives:
+
+- `.lh-dashboard-section` (0.9.71) — dashboard surfaces, aligned to the
+  new 0.9.x Design System (`lh-*` naming).
+- `.lernhive-card-section` (this task, 0.9.73) — legacy pattern for
+  Explore / ContentHub where the section header has extra tool-buttons
+  (download, more) in the SVG vocabulary used by `explore_hero`.
+
+Don't mix class names — `.lernhive-card-section__grid` and
+`.lh-dashboard-section__grid` have different internal rhythms. A future
+task may unify them; for 0.9.73 the two surfaces ship separately so
+neither forces a change on the other.

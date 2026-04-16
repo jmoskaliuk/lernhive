@@ -252,8 +252,14 @@
   - **Nicht** exportiert: `--bs-*` (bleibt in lib.php CSSVARS für Moodle-Core/Boost), `--mds-*` (bleibt in `pre.scss` scoped, Moodle Design System Overrides), legacy `--lernhive-*` in `pre.scss` (Backward-Compat)
   - Keine visuelle Regression — reiner Additive-Layer
 
-- [ ] **0.9.73 — Explore-Surface** (`explore_shell.mustache`, `_layout.scss`) — ursprünglich 0.9.70, zweimal verschoben (0.9.70 = Tokens ADR-P03 Phase 1, 0.9.71 = Dashboard-Content-Muster, 0.9.72 = Course-Page-Sidebar):
-  - Zone A ohne Back-Button (Explore ist Toplevel in der Sidebar-Nav)
-  - Zone B mit Filter-Bar (aktive Filter als Ghost-Buttons mit ×, Search, Sort)
-  - Grid-Inhalt: Featured (full-width Hero-Card) + Results (3-spaltig, gemischte Typen)
-  - Referenz: `mockups/explore.html`
+- [x] **0.9.73 — Explore-Surface** (shipped 2026-04-16, ursprünglich 0.9.70, zweimal verschoben):
+  - Neue `scss/lernhive/_explore.scss` Partial — vollständige Styling-Lücke geschlossen: vorher hatten die `.lernhive-explore-*` / `.lernhive-card-section` Templates seit 0.9.x KEIN CSS
+  - Zone A ohne Back-Button — `.lernhive-explore-hero`: title, summary, inline-search (dekorativ), chips, side-note, top-right tool-buttons (download/more). Explore ist Toplevel in der Sidebar-Nav, daher keine Zurück-Affordance
+  - Zone B NEU als `.lernhive-explore__filterbar` — horizontale Band zwischen Hero und Sections: active-filter ghost-chips mit × (Clear per Link), Clear-all-Link, Search-Input (form, GET), Sort-`<select>` mit custom chevron SVG. Gesamter filterbar-Kontext ist optional (incremental adoption)
+  - Featured-Modifier: `.lernhive-card-section--featured` (card_section.mustache schreibt die Klasse wenn `featured: true` am Section-Context). Grid kollabiert zu 1 Spalte, subtiler accent-radial-gradient als Background
+  - Standard-Grid: `.lernhive-card-section__grid` 3-spaltig auf Desktop, 2 auf Tablet, 1 auf Mobile — `$lh-bp-*` Breakpoints
+  - Lang-Strings neu (en/de): `explorefilterbar`, `explorefiltersactive`, `explorefilterremove`, `explorefilterclear`, `exploresortlabel`
+  - `lib.php` — `_explore.scss` in partials-Liste registriert (nach `_sidepanel.scss`)
+  - `explore_shell.mustache` — filterbar Section (optional) zwischen Hero und Sections eingefügt, featured-Branching im sections-Loop vereinfacht (card_section kennt jetzt den Modifier)
+  - Doku: `03-dev-doc.md` § Explore Surface — Anatomie-Diagramm, filterbar Context-Contract, Featured-Modifier, Coexistenz-Regel mit `.lh-dashboard-section` (beide Patterns bleiben nebeneinander, nicht mischen)
+  - Referenz: `mockups/explore.html` (hero gradient, chip grammar, ghost-button filter chips)

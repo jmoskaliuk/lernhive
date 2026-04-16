@@ -1,7 +1,83 @@
+{{!
+    @template theme_lernhive/explore_shell
+
+    Explore page shell rendered by local_lernhive_discovery for the
+    LXP Flavour (Explore replaces Dashboard). Since 0.9.73 it ships
+    Zone A (hero), Zone B (filter-bar), and a sections grid with
+    an optional Featured modifier.
+
+    Context variables:
+        *                     — all context passed through to the hero partial
+        sections              — array of section contexts (see card_section.mustache)
+        sections.*.featured   — optional; truthy sections render with .lernhive-card-section--featured
+        filterbar             — optional Zone B context:
+            activefilters     — array of {label, url} entries (chip + × dismiss)
+            hasactivefilters  — bool (controls "Clear all" visibility)
+            clearurl          — URL for the "Clear all" link
+            searchplaceholder — input placeholder
+            searchvalue       — current query value
+            searchurl         — form action URL
+            searchinputname   — form input name (default: "q")
+            sortoptions       — array of {value, label, selected} for the sort <select>
+            sorturl           — form action URL for sort (can reuse searchurl if combined)
+            sortinputname     — form input name (default: "sort")
+
+    Since: theme_lernhive 0.9.73
+}}
 <div class="lernhive-explore">
     {{> theme_lernhive/explore_hero }}
 
+    {{#filterbar}}
+        <div class="lernhive-explore__filterbar" role="region" aria-label="{{#str}} explorefilterbar, theme_lernhive {{/str}}">
+            {{#hasactivefilters}}
+                <span class="lernhive-explore__filterbar__label">{{#str}} explorefiltersactive, theme_lernhive {{/str}}</span>
+                <div class="lernhive-explore__filterbar__chips">
+                    {{#activefilters}}
+                        <a class="lernhive-explore__filterbar__chip" href="{{ url }}" aria-label="{{#str}} explorefilterremove, theme_lernhive {{/str}}: {{ label }}">
+                            {{ label }}
+                            <span class="lernhive-explore__filterbar__chip-close" aria-hidden="true"></span>
+                        </a>
+                    {{/activefilters}}
+                </div>
+                {{#clearurl}}
+                    <a class="lernhive-explore__filterbar__clear" href="{{ clearurl }}">{{#str}} explorefilterclear, theme_lernhive {{/str}}</a>
+                {{/clearurl}}
+                <div class="lernhive-explore__filterbar__divider" aria-hidden="true"></div>
+            {{/hasactivefilters}}
+
+            {{#searchurl}}
+                <form class="lernhive-explore__filterbar__search" role="search" action="{{ searchurl }}" method="get">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <label class="sr-only" for="lernhive-explore-search">{{#str}} exploresearch, theme_lernhive {{/str}}</label>
+                    <input
+                        id="lernhive-explore-search"
+                        type="search"
+                        name="{{#searchinputname}}{{ searchinputname }}{{/searchinputname}}{{^searchinputname}}q{{/searchinputname}}"
+                        value="{{ searchvalue }}"
+                        placeholder="{{#searchplaceholder}}{{ searchplaceholder }}{{/searchplaceholder}}{{^searchplaceholder}}{{#str}} exploresearch, theme_lernhive {{/str}}{{/searchplaceholder}}">
+                </form>
+            {{/searchurl}}
+
+            {{#sortoptions.0}}
+                <form class="lernhive-explore__filterbar__sort" action="{{#sorturl}}{{ sorturl }}{{/sorturl}}{{^sorturl}}{{ searchurl }}{{/sorturl}}" method="get">
+                    <span class="lernhive-explore__filterbar__sort-label">{{#str}} exploresortlabel, theme_lernhive {{/str}}</span>
+                    <label class="sr-only" for="lernhive-explore-sort">{{#str}} exploresortlabel, theme_lernhive {{/str}}</label>
+                    <select
+                        id="lernhive-explore-sort"
+                        name="{{#sortinputname}}{{ sortinputname }}{{/sortinputname}}{{^sortinputname}}sort{{/sortinputname}}"
+                        onchange="this.form.submit()">
+                        {{#sortoptions}}
+                            <option value="{{ value }}"{{#selected}} selected{{/selected}}>{{ label }}</option>
+                        {{/sortoptions}}
+                    </select>
+                </form>
+            {{/sortoptions.0}}
+        </div>
+    {{/filterbar}}
+
     <div class="lernhive-explore__sections">
+        {{! card_section applies .lernhive-card-section--featured when `featured`
+            is truthy on the section context — no wrapping needed here. }}
         {{#sections}}
             {{> theme_lernhive/card_section }}
         {{/sections}}

@@ -73,6 +73,11 @@ $string['exploresearch'] = 'Kurse, Snacks, Communities und Themen durchsuchen';
 $string['exploretools'] = 'Explore-Werkzeuge';
 $string['exploredownload'] = 'Explore-Liste herunterladen';
 $string['exploremore'] = 'Weitere Explore-Aktionen';
+$string['explorefilterbar'] = 'Explore filtern und sortieren';
+$string['explorefiltersactive'] = 'Aktive Filter';
+$string['explorefilterremove'] = 'Filter entfernen';
+$string['explorefilterclear'] = 'Alle zurücksetzen';
+$string['exploresortlabel'] = 'Sortierung';
 
 // ContentHub.
 $string['contenthubeyebrow'] = 'Orchestrierungsebene';
