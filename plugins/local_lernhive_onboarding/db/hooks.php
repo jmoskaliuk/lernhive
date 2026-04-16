@@ -32,4 +32,10 @@ $callbacks = [
         // already exists when our trainer banner is appended below it.
         'priority' => 400,
     ],
+    [
+        'hook' => \tool_usertours\hook\before_serverside_filter_fetch::class,
+        'callback' => \local_lernhive_onboarding\hook_callbacks::class . '::configure_forced_tour_filter',
+        // Run late so other plugins can still add filters first.
+        'priority' => 100,
+    ],
 ];

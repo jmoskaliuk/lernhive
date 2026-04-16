@@ -105,6 +105,12 @@ class starttour_flow {
         // 2. Prime the user tour preferences (current + legacy keyspace).
         self::prime_tour_preferences($tourid, $userid);
 
+        // 3. Mark the next page request as a forced launch for this tour.
+        // This lets us bypass mismatched hard-coded role filters on legacy
+        // tours and ensures only the requested tour can match on pages that
+        // share a broad pathmatch (e.g. /course/modedit.php%).
+        self::mark_forced_launch_for_next_request($tourid);
+
         return $redirect;
     }
 
@@ -144,6 +150,25 @@ class starttour_flow {
         set_user_preference('tool_usertours_' . $tourid . '_requested', 1, $userid);
         unset_user_preference('tool_usertours_' . $tourid . '_completed', $userid);
         unset_user_preference('tool_usertours_' . $tourid . '_lastStep', $userid);
+    }
+
+    /**
+     * Persist one-time "force this tour" state into session.
+     *
+     * The state is consumed by a `tool_usertours` hook callback on the next
+     * real destination page request and then removed from the session.
+     *
+     * @param int $tourid
+     * @return void
+     */
+    private static function mark_forced_launch_for_next_request(int $tourid): void {
+        global $SESSION;
+
+        $SESSION->local_lhonb_forced_tour_launch = [
+            'tourid' => $tourid,
+            // Tight TTL to avoid stale starts after long idle times.
+            'expires' => time() + 300,
+        ];
     }
 
     /**

@@ -17,6 +17,7 @@ PHPUnit:
 - `starttour_flow_test.php`
 - `sandbox_course_test.php`
 - `tour_importer_test.php`
+- `hook_callbacks_test.php`
 
 ## Manual checks
 

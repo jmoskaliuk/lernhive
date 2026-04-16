@@ -256,5 +256,12 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041501, 'local', 'lernhive_onboarding');
     }
 
+    // 0.3.0-dev hotfix - consume one-shot forced-tour launches through a
+    // tool_usertours filter hook. No DB schema/data changes required; the
+    // savepoint exists to register the code version on upgraded sites.
+    if ($oldversion < 2026041502) {
+        upgrade_plugin_savepoint(true, 2026041502, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }
