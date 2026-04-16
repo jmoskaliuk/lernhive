@@ -21,10 +21,12 @@
     - remove role filter for that one request
     - enforce exact-tour filter (`local_lernhive_onboarding\local\filter\forced_tour`)
   - queue one-shot JS completion overlay on forced starts (`tool_usertours/tourEnded`)
+  - completion confirmation uses Moodle core modal pattern (`core/notification.confirm`)
 - Tour step import normalization:
   - canonical Moodle mapping is `selector=0`, `block=1`, `unattached=2`
   - importer normalizes legacy swapped selector/unattached values
   - upgrade step `2026041501` backfills existing onboarding tour rows
+  - upgrade step `2026041504` backfills stale Level-1 pathmatch values from JSON definitions
 - Dashboard banner injection via output hook callback
 
 ### Planned architecture (0.3.x)

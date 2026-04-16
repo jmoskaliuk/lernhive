@@ -316,7 +316,63 @@ class tour_importer {
     public static function reimport_level(int $level): int {
         $imported = self::import_level($level);
         $backfilled = self::backfill_start_urls($level);
-        return $imported + $backfilled;
+        $pathmatches = self::backfill_pathmatches($level);
+        return $imported + $backfilled + $pathmatches;
+    }
+
+    /**
+     * Backfill pathmatch from canonical tour JSON definitions.
+     *
+     * Existing sites may carry older pathmatch values because `import_tour()`
+     * intentionally skips existing rows by name. If start URLs were updated
+     * later but pathmatch stayed old, Moodle cannot match the tour on the
+     * redirected page. This pass aligns `tool_usertours_tours.pathmatch` with
+     * the JSON source of truth for each known tour name.
+     *
+     * @param int $level LernHive level whose JSON files drive the backfill.
+     * @return int Number of updated tour rows.
+     */
+    public static function backfill_pathmatches(int $level): int {
+        global $CFG, $DB;
+
+        $tourdir = $CFG->dirroot . '/local/lernhive_onboarding/tours/level' . $level;
+        if (!is_dir($tourdir)) {
+            return 0;
+        }
+
+        $files = glob($tourdir . '/*/*.json');
+        if (empty($files)) {
+            return 0;
+        }
+        sort($files);
+
+        $updated = 0;
+        foreach ($files as $file) {
+            $json = @file_get_contents($file);
+            if ($json === false) {
+                continue;
+            }
+            $data = json_decode($json, true);
+            if (!is_array($data) || empty($data['name']) || empty($data['pathmatch'])) {
+                continue;
+            }
+
+            $tour = $DB->get_record('tool_usertours_tours', ['name' => $data['name']]);
+            if (!$tour) {
+                continue;
+            }
+
+            $canonical = (string) $data['pathmatch'];
+            if ((string) $tour->pathmatch === $canonical) {
+                continue;
+            }
+
+            $tour->pathmatch = $canonical;
+            $DB->update_record('tool_usertours_tours', $tour);
+            $updated++;
+        }
+
+        return $updated;
     }
 
     /**

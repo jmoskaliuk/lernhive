@@ -269,5 +269,80 @@ function xmldb_local_lernhive_onboarding_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026041503, 'local', 'lernhive_onboarding');
     }
 
+    // 0.3.0-dev hotfix - align stale pathmatch values with JSON source of
+    // truth and tune a few Level-1 step anchors for better runtime usability.
+    if ($oldversion < 2026041504) {
+        // Keep Level-1 pathmatch in sync on upgraded sites where the tour row
+        // already existed before JSON path updates landed.
+        \local_lernhive_onboarding\tour_importer::backfill_pathmatches(1);
+
+        // "Create course" intro should not block the fullname field.
+        $coursetour = $DB->get_record('tool_usertours_tours', [
+            'name' => 'LernHive: Kurs erstellen',
+        ]);
+        if ($coursetour) {
+            $step0 = $DB->get_record('tool_usertours_steps', [
+                'tourid' => (int) $coursetour->id,
+                'sortorder' => 0,
+            ]);
+            if ($step0 && (int) $step0->targettype === 2
+                && trim((string) $step0->targetvalue) === '') {
+                $step0->targettype = 0;
+                $step0->targetvalue = '#id_generalhdr';
+                $cfg = json_decode((string) $step0->configdata, true);
+                if (!is_array($cfg)) {
+                    $cfg = [];
+                }
+                $cfg['placement'] = 'right';
+                $step0->configdata = json_encode($cfg);
+                $DB->update_record('tool_usertours_steps', $step0);
+            }
+        }
+
+        // "Self enrolment" steps should target stable elements on
+        // /enrol/instances.php instead of missing edit-form IDs.
+        $selftour = $DB->get_record('tool_usertours_tours', [
+            'name' => 'LernHive: Selbsteinschreibung einrichten',
+        ]);
+        if ($selftour) {
+            $selfstepupdates = [
+                1 => [
+                    'targetvalue' => 'form.urlselect select',
+                    'content' => '<p>Wähle unten bei "Methode hinzufügen" die Option "Selbsteinschreibung", um sie im Kurs zu aktivieren.</p>',
+                ],
+                2 => [
+                    'targetvalue' => 'a[href*="/enrol/editinstance.php"][href*="type=self"]',
+                    'content' => '<p>Wenn Selbsteinschreibung schon vorhanden ist, öffne sie über das Bearbeiten-Symbol, um Schlüssel und Optionen anzupassen.</p>',
+                ],
+                3 => [
+                    'targetvalue' => '.generaltable',
+                    'content' => '<p>Hier siehst du alle Einschreibemethoden deines Kurses und kannst die Selbsteinschreibung später jederzeit erneut bearbeiten.</p>',
+                ],
+            ];
+
+            foreach ($selfstepupdates as $sortorder => $update) {
+                $step = $DB->get_record('tool_usertours_steps', [
+                    'tourid' => (int) $selftour->id,
+                    'sortorder' => (int) $sortorder,
+                ]);
+                if (!$step) {
+                    continue;
+                }
+                $step->targettype = 0;
+                $step->targetvalue = $update['targetvalue'];
+                $step->content = $update['content'];
+                $cfg = json_decode((string) $step->configdata, true);
+                if (!is_array($cfg)) {
+                    $cfg = [];
+                }
+                $cfg['placement'] = 'bottom';
+                $step->configdata = json_encode($cfg);
+                $DB->update_record('tool_usertours_steps', $step);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2026041504, 'local', 'lernhive_onboarding');
+    }
+
     return true;
 }

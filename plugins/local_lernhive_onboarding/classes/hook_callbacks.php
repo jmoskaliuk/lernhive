@@ -181,89 +181,18 @@ class hook_callbacks {
     window.__lhOnbCompletionOverlayWired = true;
 
     const showOverlay = function() {
-        if (document.getElementById('lh-onb-tour-completion-overlay')) {
-            return;
-        }
-
-        const overlay = document.createElement('div');
-        overlay.id = 'lh-onb-tour-completion-overlay';
-        overlay.setAttribute('role', 'dialog');
-        overlay.setAttribute('aria-modal', 'true');
-        overlay.setAttribute('aria-labelledby', 'lh-onb-tour-completion-title');
-        overlay.style.cssText = [
-            'position:fixed',
-            'inset:0',
-            'z-index:1090',
-            'display:flex',
-            'align-items:center',
-            'justify-content:center',
-            'padding:16px',
-            'background:rgba(15,23,42,0.48)'
-        ].join(';');
-
-        const panel = document.createElement('div');
-        panel.style.cssText = [
-            'width:min(92vw,520px)',
-            'background:#ffffff',
-            'border-radius:14px',
-            'box-shadow:0 20px 50px rgba(15,23,42,0.35)',
-            'padding:24px'
-        ].join(';');
-
-        const title = document.createElement('h3');
-        title.id = 'lh-onb-tour-completion-title';
-        title.textContent = config.title;
-        title.style.cssText = 'margin:0 0 8px 0;font-size:1.2rem;line-height:1.35;color:#0f172a;';
-
-        const body = document.createElement('p');
-        body.textContent = config.body;
-        body.style.cssText = 'margin:0;color:#334155;';
-
-        const actions = document.createElement('div');
-        actions.style.cssText = 'margin-top:18px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;';
-
-        const stayButton = document.createElement('button');
-        stayButton.type = 'button';
-        stayButton.className = 'btn btn-secondary';
-        stayButton.textContent = config.stayCta;
-
-        const overviewButton = document.createElement('button');
-        overviewButton.type = 'button';
-        overviewButton.className = 'btn btn-primary';
-        overviewButton.textContent = config.overviewCta;
-
-        const closeOverlay = function() {
-            if (overlay.parentNode) {
-                overlay.parentNode.removeChild(overlay);
-            }
-            document.removeEventListener('keydown', onEscKey);
-        };
-
-        const onEscKey = function(event) {
-            if (event.key === 'Escape') {
-                closeOverlay();
-            }
-        };
-
-        stayButton.addEventListener('click', closeOverlay);
-        overviewButton.addEventListener('click', function() {
-            window.location.assign(config.overviewUrl);
+        require(['core/notification'], function(Notification) {
+            Notification.confirm(
+                config.title,
+                config.body,
+                config.overviewCta,
+                config.stayCta,
+                function() {
+                    window.location.assign(config.overviewUrl);
+                },
+                function() {}
+            );
         });
-        overlay.addEventListener('click', function(event) {
-            if (event.target === overlay) {
-                closeOverlay();
-            }
-        });
-        document.addEventListener('keydown', onEscKey);
-
-        actions.appendChild(stayButton);
-        actions.appendChild(overviewButton);
-        panel.appendChild(title);
-        panel.appendChild(body);
-        panel.appendChild(actions);
-        overlay.appendChild(panel);
-        document.body.appendChild(overlay);
-        overviewButton.focus();
     };
 
     document.addEventListener('tool_usertours/tourEnded', showOverlay, {once: true});

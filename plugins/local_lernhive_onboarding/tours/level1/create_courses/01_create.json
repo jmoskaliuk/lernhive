@@ -13,10 +13,10 @@
         {
             "title": "Willkommen zur Kurserstellung",
             "content": "<p>Mit wenigen Schritten erstellst du einen neuen Kurs in LernHive. Hier legst du die grundlegenden Informationen fest.</p>",
-            "targettype": 2,
-            "targetvalue": "",
+            "targettype": 0,
+            "targetvalue": "#id_generalhdr",
             "sortorder": 0,
-            "configdata": "{\"placement\":\"bottom\"}"
+            "configdata": "{\"placement\":\"right\"}"
         },
         {
             "title": "Kursname eingeben",

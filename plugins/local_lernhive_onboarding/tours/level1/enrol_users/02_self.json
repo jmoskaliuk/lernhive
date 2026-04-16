@@ -19,26 +19,26 @@
             "configdata": "{\"placement\":\"bottom\"}"
         },
         {
-            "title": "Einschreibemethode auswählen",
-            "content": "<p>Stelle sicher, dass 'Selbsteinschreibung' als Methode aktiviert ist. Du findest diese Option in den Kurseinstellungen unter 'Einschreibemethoden'.</p>",
+            "title": "Methode hinzufügen",
+            "content": "<p>Wähle unten bei „Methode hinzufügen“ die Option „Selbsteinschreibung“, um sie im Kurs zu aktivieren.</p>",
             "targettype": 0,
-            "targetvalue": "#id_enrol",
+            "targetvalue": "form.urlselect select",
             "sortorder": 1,
             "configdata": "{\"placement\":\"bottom\"}"
         },
         {
-            "title": "Einschreibeschlüssel setzen",
-            "content": "<p>Gib einen Einschreibeschlüssel ein. Nutzer/innen müssen diesen Schlüssel eingeben, um sich selbst einzuschreiben. Wähle etwas Einfaches und Einprägsames.</p>",
+            "title": "Selbsteinschreibung bearbeiten",
+            "content": "<p>Wenn Selbsteinschreibung bereits vorhanden ist, öffne sie über das Bearbeiten-Symbol, um Schlüssel und Optionen anzupassen.</p>",
             "targettype": 0,
-            "targetvalue": "#id_password",
+            "targetvalue": "a[href*=\"/enrol/editinstance.php\"][href*=\"type=self\"]",
             "sortorder": 2,
             "configdata": "{\"placement\":\"bottom\"}"
         },
         {
-            "title": "Einstellungen speichern",
-            "content": "<p>Klick auf 'Änderungen speichern'. Die Selbsteinschreibung ist jetzt aktiv und deine Nutzer/innen können sich mit dem Schlüssel anmelden.</p>",
+            "title": "Übersicht prüfen",
+            "content": "<p>In dieser Tabelle siehst du alle Einschreibemethoden deines Kurses und kannst die Selbsteinschreibung jederzeit erneut anpassen.</p>",
             "targettype": 0,
-            "targetvalue": "#id_submitbutton",
+            "targetvalue": ".generaltable",
             "sortorder": 3,
             "configdata": "{\"placement\":\"bottom\"}"
         }
