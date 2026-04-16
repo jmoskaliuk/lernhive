@@ -1,0 +1,62 @@
+{{\!
+    @template theme_lernhive/dashboard_section
+
+    Generic dashboard section primitive — content-agnostic wrapper that
+    plugins use to render titled content zones on the LernHive dashboard.
+    Per ADR-P01 the theme provides structure only; plugins fill `content`
+    with their own markup (course cards, CTA strips, etc.).
+
+    Context variables:
+        icon             (optional) — Font Awesome fa-* class, e.g. "fa-graduation-cap"
+        iconurl          (optional) — destination URL if the icon should link (Typ-1 Nav)
+        title            (required) — section heading
+        titleid          (optional) — explicit id for aria-labelledby wiring
+        subtitle         (optional) — baseline muted subtitle
+        viewallurl       (optional) — "View all →" link destination
+        viewalllabel     (optional) — link label; defaults to "View all →"
+        cols             (optional) — "2" or "3" for grid modifier; omit for auto layout
+        splitgrid        (optional) — truthy to use the 1.2fr/0.8fr split layout
+        content          (required) — pre-rendered HTML injected into the grid
+
+    Example:
+        $data = [
+            'icon' => 'fa-graduation-cap',
+            'title' => get_string('mycourses', 'local_lernhive'),
+            'subtitle' => '3 ' . get_string('inprogress', 'local_lernhive'),
+            'viewallurl' => (new moodle_url('/my/courses.php'))->out(false),
+            'cols' => '3',
+            'content' => $OUTPUT->render_from_template('format_lernhive_community/course_grid', $grid),
+        ];
+        echo $OUTPUT->render_from_template('theme_lernhive/dashboard_section', $data);
+
+    Since: theme_lernhive 0.9.71
+}}
+<section class="lh-dashboard-section"{{#titleid}} aria-labelledby="{{titleid}}"{{/titleid}}>
+    <header class="lh-dashboard-section__header">
+        {{#icon}}
+            {{#iconurl}}
+                <a class="lh-dashboard-section__icon lh-icon-nav" href="{{iconurl}}" aria-hidden="true" tabindex="-1">
+                    <i class="fa {{icon}}"></i>
+                </a>
+            {{/iconurl}}
+            {{^iconurl}}
+                <span class="lh-dashboard-section__icon lh-icon-nav" aria-hidden="true">
+                    <i class="fa {{icon}}"></i>
+                </span>
+            {{/iconurl}}
+        {{/icon}}
+        <h3 class="lh-dashboard-section__title"{{#titleid}} id="{{titleid}}"{{/titleid}}>{{title}}</h3>
+        {{#subtitle}}
+            <span class="lh-dashboard-section__subtitle">{{subtitle}}</span>
+        {{/subtitle}}
+        {{#viewallurl}}
+            <a class="lh-dashboard-section__viewall" href="{{viewallurl}}">
+                {{#viewalllabel}}{{viewalllabel}}{{/viewalllabel}}
+                {{^viewalllabel}}{{#str}} viewall, theme_lernhive {{/str}} &rarr;{{/viewalllabel}}
+            </a>
+        {{/viewallurl}}
+    </header>
+    <div class="lh-dashboard-section__grid{{#splitgrid}} lh-dashboard-section__grid--split{{/splitgrid}}{{^splitgrid}}{{#cols}} lh-dashboard-section__grid--cols-{{cols}}{{/cols}}{{/splitgrid}}">
+        {{{content}}}
+    </div>
+</section>

@@ -761,3 +761,100 @@ Under a totally unknown theme missing both: the inline literals in the
   a deprecation shim.
 - **Phase 4 (local_lernhive 0.6.2)**: Explicit plugin-side fallbacks
   for every theme-only surface referenced from plugin templates.
+
+## Dashboard Section Primitive (since 0.9.71)
+
+### Why this exists
+
+The LernHive dashboard is a **composite surface**: per ADR-P01 the
+theme does not ship course content — content comes from plugins (most
+prominently `local_lernhive` via the dashboard hook and
+`format_lernhive_*` for curated lanes). Before 0.9.71 every content
+source invented its own wrapper markup, so the dashboard looked
+stylistically fragmented: different paddings, different header
+spacing, different type sizes per plugin.
+
+0.9.71 introduces a **single shared primitive** — `.lh-dashboard-section`
+— that the theme owns and every plugin opts into. The theme guarantees
+the visual language (padding, radius, header baseline, grid rhythm);
+the plugin owns what goes into the grid.
+
+### Markup contract
+
+```html
+<section class="lh-dashboard-section" aria-labelledby="mysection">
+    <header class="lh-dashboard-section__header">
+        <a class="lh-dashboard-section__icon lh-icon-nav" href="/my/courses.php" aria-hidden="true" tabindex="-1">
+            <i class="fa fa-graduation-cap"></i>
+        </a>
+        <h3 id="mysection" class="lh-dashboard-section__title">My Courses</h3>
+        <span class="lh-dashboard-section__subtitle">3 in progress</span>
+        <a class="lh-dashboard-section__viewall" href="/my/courses.php">View all &rarr;</a>
+    </header>
+    <div class="lh-dashboard-section__grid lh-dashboard-section__grid--cols-3">
+        <\!-- plugin-owned content -->
+    </div>
+</section>
+```
+
+All sub-elements except `__grid` are optional. The section-header icon
+uses **Typ-1 Navigation** semantics (`.lh-icon-nav`, destination link)
+— it is *not* an artifact badge. Per icon-taxonomy: the icon in a
+dashboard-section header represents "take me to the full view of this
+content type", which is a destination.
+
+### Grid modifiers
+
+| Modifier | Desktop | Tablet | Mobile |
+|----------|---------|--------|--------|
+| (none)   | 1 col   | 1 col  | 1 col  |
+| `--cols-2` | 2 col | 2 col  | 1 col  |
+| `--cols-3` | 3 col | 2 col  | 1 col  |
+| `--split`  | 1.2fr / 0.8fr | 1 col | 1 col |
+
+Gap is constant at `14px` across all modifiers, matching the
+`mockups/dashboard-curated.html` reference. Breakpoints match the rest
+of the theme: `$lh-bp-tablet = 768px`, `$lh-bp-desktop = 1024px`.
+
+### Mustache partial
+
+The theme ships `theme_lernhive/dashboard_section` as an opt-in render
+helper for plugins that prefer templating over hand-rolled HTML:
+
+```php
+$section = [
+    'icon'         => 'fa-graduation-cap',
+    'iconurl'      => (new moodle_url('/my/courses.php'))->out(false),
+    'title'        => get_string('mycourses', 'local_lernhive'),
+    'subtitle'     => $progress_summary,
+    'viewallurl'   => (new moodle_url('/my/courses.php'))->out(false),
+    'cols'         => '3',
+    'content'      => $OUTPUT->render_from_template(
+        'format_lernhive_community/course_grid', $grid
+    ),
+];
+echo $OUTPUT->render_from_template('theme_lernhive/dashboard_section', $section);
+```
+
+The plugin never sets `.lh-dashboard-section` CSS itself; it only
+renders what goes inside `content`. Upgrading the visual language (e.g.
+tweaking header baseline, adjusting grid gap) is a pure theme-side
+change and ripples through every section automatically.
+
+### Relationship to legacy `.lernhive-card-section`
+
+`.lernhive-card-section` (with its own `card_section.mustache`) is the
+**legacy** section pattern — heavier chrome, SVG tool buttons baked
+into the header, still used on the ContentHub / Explore surfaces. It
+stays in place; do not mix-and-match classes. New dashboard integration
+points MUST use `.lh-dashboard-section`; `.lernhive-card-section`
+remains for surface-specific Explore/ContentHub composition only.
+
+### Not part of the contract
+
+- **Cards inside the grid** — each plugin decides whether it renders
+  `.lh-plugin-card` items, `.lernhive-course-item` rows, raw `[data-block]`
+  chrome, or anything else. The primitive cares only about outer spacing.
+- **Horizontal `__viewall` position on mobile** — below tablet breakpoint
+  the viewall link drops onto its own full-width row under the title to
+  avoid header truncation.

@@ -554,3 +554,160 @@ body.pagelayout-mycourses {
         box-shadow: $lh-shadow;
     }
 }
+
+
+// ============================================================================
+// .lh-dashboard-section — generic section primitive (since 0.9.71)
+// ============================================================================
+//
+// Content-agnostic section wrapper for dashboard-style content zones.
+// Plugins inject HTML that matches this markup contract; the theme owns the
+// visual language so all dashboards on the platform share rhythm, spacing,
+// and type scale. Per ADR-P01 the theme does NOT ship dashboard content —
+// content lives in format_lernhive_* / local_lernhive plugins via the
+// dashboard hook. The theme only provides this primitive.
+//
+// Markup contract:
+//
+//   <section class="lh-dashboard-section">
+//       <header class="lh-dashboard-section__header">
+//           <a class="lh-dashboard-section__icon lh-icon-nav" href="...">
+//               <i class="fa fa-graduation-cap"></i>
+//           </a>
+//           <h3 class="lh-dashboard-section__title">My Courses</h3>
+//           <span class="lh-dashboard-section__subtitle">3 in progress</span>
+//           <a class="lh-dashboard-section__viewall" href="...">View all →</a>
+//       </header>
+//       <div class="lh-dashboard-section__grid lh-dashboard-section__grid--cols-3">
+//           <\!-- content cards injected by plugin -->
+//       </div>
+//   </section>
+//
+// All sub-elements except .__grid are optional. The icon uses Typ-1 Navigation
+// semantics (.lh-icon-nav) — it's a destination link, not an artifact badge.
+// The subtitle sits on the baseline with the title per the mockup spec
+// (dashboard-curated.html .sectionhead rule).
+//
+// Grid modifiers: --cols-2 (Today / two-column layouts), --cols-3 (My Courses /
+// Recommended / Continue-and-return). Both collapse to 1-col below tablet.
+// ----------------------------------------------------------------------------
+
+.lh-dashboard-section {
+    padding: $lh-spacing-md $lh-spacing-md;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius;
+    background: $lh-bg-white;
+    box-shadow: $lh-shadow;
+
+    // Sections stack with gap when multiple are rendered in sequence.
+    & + & {
+        margin-top: $lh-spacing-md;
+    }
+
+    &__header {
+        display: flex;
+        align-items: baseline;
+        gap: $lh-spacing-sm;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+
+    // Typ-1 Navigation icon sized inline for header use (16px vs default 36px).
+    // Consumers pair this with .lh-icon-nav; the size override here is local
+    // to the section header.
+    &__icon {
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+        align-self: center;
+
+        .fa { font-size: 0.875rem; }
+    }
+
+    &__title {
+        margin: 0;
+        font-size: 1.25rem;        // 20px — sits between body and hero size
+        font-weight: 600;
+        color: $lh-text;
+        line-height: 1.25;
+    }
+
+    &__subtitle {
+        color: $lh-text-secondary;
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    // "View all →" link pinned to the right side of the header.
+    &__viewall {
+        margin-left: auto;
+        align-self: center;
+        color: $lh-primary;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus-visible {
+            color: $lh-accent;
+            text-decoration: underline;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+            border-radius: $lh-radius-sm;
+        }
+    }
+
+    // Content grid — gap matches mockup spec (14px).
+    &__grid {
+        display: grid;
+        gap: 14px;
+
+        &--cols-2 {
+            grid-template-columns: 1fr;
+
+            @media (min-width: $lh-bp-tablet) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        &--cols-3 {
+            grid-template-columns: 1fr;
+
+            @media (min-width: $lh-bp-tablet) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            @media (min-width: $lh-bp-desktop) {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        // Optional variant: split grid with primary + aside column
+        // (mockup's "Required for you" pattern). Reserved for future use.
+        &--split {
+            grid-template-columns: 1fr;
+
+            @media (min-width: $lh-bp-desktop) {
+                grid-template-columns: 1.2fr 0.8fr;
+            }
+        }
+    }
+
+    // Mobile: tighter padding
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        padding: $lh-spacing-sm $lh-spacing-md;
+
+        &__header {
+            row-gap: 4px;
+        }
+
+        &__viewall {
+            margin-left: 0;
+            flex-basis: 100%;
+        }
+    }
+}

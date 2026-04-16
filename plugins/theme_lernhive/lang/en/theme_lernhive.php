@@ -96,6 +96,8 @@ $string['coursemore'] = 'More course actions';
 $string['sectiondownload'] = 'Download section list';
 $string['sectionmore'] = 'More section actions';
 
+$string['viewall'] = 'View all';
+
 $string['snacktools'] = 'Snack tools';
 $string['snackdownload'] = 'Download Snack overview';
 $string['snackprint'] = 'Print Snack page';

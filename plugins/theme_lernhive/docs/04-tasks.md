@@ -222,13 +222,17 @@
   - **Deviation (PR #13, 2026-04-16)**: Zone 0 bleibt auf Plugin-Shell-Seiten sichtbar (statt verstecken). Grund: vollständiger CI-Shell-Stack Zone 0 (Identity) + Zone A (Context) + Zone B (Info) — Breadcrumb bleibt erhalten. Kommentar in `_layout.scss` beschreibt die Entscheidung.
   - **Deviation (kosmetisch)**: Row-Highlight auf aktivem Nav-Item ist `rgba(255,255,255,0.18)` statt `0.10` aus Spec — bessere Sichtbarkeit bei transparentem Icon-Tint.
 
-- [ ] **0.9.68 — Dashboard-Content-Muster** (`_dashboard.scss`, `drawers.mustache`/Dashboard-Block) — ⚠️ Version-Digit 0.9.68 wurde am 2026-04-16 auf einen reinen Docs-Bump (`607e0d9`) verbrannt; Dashboard-Content-Muster bleibt offen und erhält beim Ship ein neues Version-Slot:
-  - Abschnitte: "Today" (fällige + laufende Items), "My Courses" (Fortschrittskarten), "Recommended" (Snacks)
-  - Section-Header-Muster: Icon (Typ 1 Nav, inline 16px) + Titel + optionaler "View all →"-Link
-  - Card-Grid: `display: grid; gap: 14px` — 2-spaltig für Today, 3-spaltig für My Courses
-  - Referenz: `mockups/dashboard.html`
+- [x] **0.9.71 — Dashboard-Content-Muster** (shipped 2026-04-16, ursprünglich 0.9.68 — Version-Digit auf Docs-Bump `607e0d9` verbrannt):
+  - `.lh-dashboard-section` primitive in `scss/lernhive/_dashboard.scss` — content-agnostischer Wrapper: `__header` (flex, align-items: baseline) mit `__icon`/`__title`/`__subtitle`/`__viewall`, `__grid` mit Modifiern `--cols-2` / `--cols-3` / `--split`, gap 14px, responsive 1-col < $lh-bp-tablet
+  - Section-Header-Muster: Icon (Typ 1 Nav 28×28 inline, `.lh-icon-nav`) + Titel (h3, 1.25rem) + optionaler Subtitle (baseline, muted) + optionaler `__viewall` (right-aligned, primary→accent hover)
+  - `templates/dashboard_section.mustache` neu — opt-in Render-Helper mit Context-Variablen `icon`, `iconurl`, `title`, `titleid`, `subtitle`, `viewallurl`, `viewalllabel`, `cols`, `splitgrid`, `content`
+  - Lang-Strings: `viewall` in en/de (`View all` / `Alle anzeigen`)
+  - Doku: `03-dev-doc.md` § Dashboard Section Primitive — Contract, Grid-Modifier-Tabelle, Consumer-Pattern, Beziehung zu legacy `.lernhive-card-section` (bleibt für ContentHub/Explore)
+  - Per ADR-P01: theme liefert nur das Primitive, Plugin-Content-Rendering bleibt in `local_lernhive::inject_dashboard_content` / `format_lernhive_*`
+  - Referenz: `mockups/dashboard-curated.html` (section/sectionhead/highlightgrid Pattern 1:1 übernommen — `gap: 14px`, Header baseline-align)
+  - Keine visuelle Regression — additive Primitive, bestehende `.lernhive-*` Dashboard-Klassen bleiben
 
-- [ ] **0.9.69 — Course-Page-Sidebar** (`sidebar_course.mustache`, `_navigation.scss`):
+- [ ] **0.9.72 — Course-Page-Sidebar** (`sidebar_course.mustache`, `_navigation.scss`) — ursprünglich 0.9.69, verschoben weil 0.9.70 (Tokens) und 0.9.71 (Dashboard-Pattern) zuerst ausgeliefert wurden:
   - Kursnavigation kommt in linke Sidebar: nach `<hr class="lernhive-nav__divider">`, Section-Label "Course Navigation", Section-Items mit Typ-2-Artifact Icons (check=abgeschlossen, play=aktiv, lock=gesperrt)
   - Kein rechtes Spalten-Layout mehr — Content-Bereich ist einspaltig
   - Referenz: `mockups/course-page.html`
@@ -243,7 +247,7 @@
   - **Nicht** exportiert: `--bs-*` (bleibt in lib.php CSSVARS für Moodle-Core/Boost), `--mds-*` (bleibt in `pre.scss` scoped, Moodle Design System Overrides), legacy `--lernhive-*` in `pre.scss` (Backward-Compat)
   - Keine visuelle Regression — reiner Additive-Layer
 
-- [ ] **0.9.71 — Explore-Surface** (`explore_shell.mustache`, `_layout.scss`) — ursprünglich 0.9.70, verschoben weil ADR-P03 Phase 1 das Slot belegt:
+- [ ] **0.9.73 — Explore-Surface** (`explore_shell.mustache`, `_layout.scss`) — ursprünglich 0.9.70, zweimal verschoben (0.9.70 = Tokens ADR-P03 Phase 1, 0.9.71 = Dashboard-Content-Muster, 0.9.72 = Course-Page-Sidebar):
   - Zone A ohne Back-Button (Explore ist Toplevel in der Sidebar-Nav)
   - Zone B mit Filter-Bar (aktive Filter als Ghost-Buttons mit ×, Search, Sort)
   - Grid-Inhalt: Featured (full-width Hero-Card) + Results (3-spaltig, gemischte Typen)

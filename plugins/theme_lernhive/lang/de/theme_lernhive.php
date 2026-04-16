@@ -99,6 +99,8 @@ $string['coursemore'] = 'Weitere Kursaktionen';
 $string['sectiondownload'] = 'Abschnittsliste herunterladen';
 $string['sectionmore'] = 'Weitere Abschnittsaktionen';
 
+$string['viewall'] = 'Alle anzeigen';
+
 // Snack surfaces.
 $string['snacktools'] = 'Snack-Werkzeuge';
 $string['snackdownload'] = 'Snack-Übersicht herunterladen';
