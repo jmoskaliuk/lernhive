@@ -106,10 +106,9 @@ if (!empty($COURSE) && $COURSE->id > 1) {
     $participantcount = '';
     try {
         $enrolcount = count_enrolled_users($coursecontext);
-        $participantcount = $enrolcount . ' ' .
-            ($enrolcount === 1
-                ? get_string('participant', 'moodle')
-                : get_string('participants', 'moodle'));
+        // Core ships `participants` but no singular `participant` string.
+        // Use the canonical label to avoid raw [[participant]] placeholders.
+        $participantcount = $enrolcount . ' ' . get_string('participants', 'moodle');
     } catch (\Throwable $e) {
         $participantcount = '';
     }
