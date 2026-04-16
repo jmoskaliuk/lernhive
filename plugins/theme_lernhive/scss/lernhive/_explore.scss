@@ -569,3 +569,217 @@
         }
     }
 }
+
+// ---------------------------------------------------------------------------
+// .lernhive-card — result card primitive (since 0.9.74)
+//
+// Rendered inside `.lernhive-card-section__grid` by `card.mustache` — one
+// card per result (Explore, Dashboard recommendations, search results).
+//
+// Anatomy:
+//   .lernhive-card
+//   ├─ __eyebrow            — optional small label above the top row
+//   ├─ __top                — flex row: type-chip left, action-icons right
+//   │   ├─ __type           — small pill with 14×14 type icon + label
+//   │   └─ __actions        — follow / bookmark circular icon buttons (Typ-3)
+//   ├─ __title              — h3 card heading
+//   ├─ __summary            — prose summary
+//   ├─ __meta               — date / stats line (muted)
+//   └─ __cta                — primary action link, arrow icon + label
+//
+// Fix for the 0.9.73 surface: before this block existed, SVGs inside
+// __type-icon / __cta-icon / __icon had no explicit size, so they expanded
+// to the full container width (visible as a giant black circle on live).
+// Every SVG must now pin width+height explicitly to avoid regression if a
+// new variant is added.
+// ---------------------------------------------------------------------------
+.lernhive-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 18px;
+    background: $lh-bg-white;
+    border: 1px solid $lh-border;
+    border-radius: $lh-radius-lg;
+    box-shadow: $lh-shadow;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+        box-shadow: $lh-shadow-hover;
+        border-color: rgba($lh-primary, 0.18);
+    }
+
+    &__eyebrow {
+        margin: 0;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: $lh-text-light;
+    }
+
+    &__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    &__type {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px 4px 8px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: $lh-primary;
+        background: rgba($lh-primary, 0.08);
+        border-radius: $lh-radius-pill;
+        line-height: 1.2;
+    }
+
+    &__type-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+
+        svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            // Close-path play-triangle uses fill; keep it filled with currentColor.
+            path { fill: currentColor; }
+            circle { fill: none; }
+        }
+    }
+
+    &__actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    // Follow / bookmark — Typ-3 Action icon, always visible, primary tint.
+    &__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        background: rgba($lh-primary, 0.08);
+        color: $lh-primary;
+        border: 0;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+
+        svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background: rgba($lh-primary, 0.16);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-accent;
+            outline-offset: 2px;
+        }
+
+        // Active follow state — accent filled.
+        &.is-following {
+            background: rgba($lh-accent, 0.18);
+            color: $lh-accent;
+
+            svg { fill: currentColor; }
+
+            &:hover,
+            &:focus-visible {
+                background: rgba($lh-accent, 0.26);
+            }
+        }
+    }
+
+    &__title {
+        margin: 2px 0 0;
+        font-size: 1.0625rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: $lh-text;
+    }
+
+    &__summary {
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: $lh-text-secondary;
+    }
+
+    &__meta {
+        margin: 0;
+        font-size: 0.8125rem;
+        color: $lh-text-light;
+    }
+
+    &__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: auto;
+        padding: 8px 14px;
+        align-self: flex-start;
+        background: $lh-accent;
+        color: #fff;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: $lh-radius-sm;
+        transition: background 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            background: $lh-accent-dark;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $lh-primary;
+            outline-offset: 2px;
+        }
+    }
+
+    &__cta-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+
+        svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    }
+}

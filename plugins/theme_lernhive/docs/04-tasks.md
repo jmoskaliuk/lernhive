@@ -263,3 +263,10 @@
   - `explore_shell.mustache` — filterbar Section (optional) zwischen Hero und Sections eingefügt, featured-Branching im sections-Loop vereinfacht (card_section kennt jetzt den Modifier)
   - Doku: `03-dev-doc.md` § Explore Surface — Anatomie-Diagramm, filterbar Context-Contract, Featured-Modifier, Coexistenz-Regel mit `.lh-dashboard-section` (beide Patterns bleiben nebeneinander, nicht mischen)
   - Referenz: `mockups/explore.html` (hero gradient, chip grammar, ghost-button filter chips)
+
+- [x] **0.9.74 — Explore-Card-Primitive** (shipped 2026-04-16, Hotfix für 0.9.73-Lücke):
+  - Live-Screenshot auf `dev.lernhive.de` zeigte riesigen schwarzen Kreis im Card-Grid + "Optional LXP Flavour" als Plain-Text statt Pill. Root cause: `.lernhive-card` / `.lernhive-card__*` hatten NIE CSS bekommen — 0.9.73 hat `.lernhive-explore-*` und `.lernhive-card-section*` gestylt, aber die von `card.mustache` gerenderten Karten blieben naked, und ein ungezähmtes SVG (`.lernhive-card__type-icon svg`) hat sich auf volle Spaltenbreite aufgebläht
+  - `.lernhive-card` Block in `_explore.scss` nachgezogen (+214 Zeilen am Ende): Container (white, border, radius-lg, shadow, flex-col, gap), `__eyebrow`, `__top` (flex space-between), `__type` (primary-tint pill mit 14×14 Icon), `__type-icon` (16×16 Wrapper, SVG explicit 14×14), `__actions`, `__icon` (32×32 circular button, Typ-3 Action, `.is-following` accent-Variante), `__title`/`__summary`/`__meta`, `__cta` (orange primary link), `__cta-icon` (16×16)
+  - **SVG sizing rule** festgeschrieben — alle SVGs unter `.lernhive-card` müssen durch einen explizit-dimensionierten Wrapper rendern, SVG selbst pinnt width/height. Regel in `03-dev-doc.md` dokumentiert
+  - Keine Änderung am `card.mustache` Template nötig — Markup war schon korrekt
+  - Doku: `03-dev-doc.md` § Explore Card Primitive — Anatomie, SVG-Rule, Namespace-Begründung (bleibt `.lernhive-*`, nicht `.lh-card-*`, bis eine dedizierte Unification-Task ansteht)

@@ -1017,3 +1017,56 @@ Don't mix class names — `.lernhive-card-section__grid` and
 `.lh-dashboard-section__grid` have different internal rhythms. A future
 task may unify them; for 0.9.73 the two surfaces ship separately so
 neither forces a change on the other.
+
+## Explore Card Primitive (since 0.9.74)
+
+**Fix for the silent gap in 0.9.73.** The Explore surface landed with
+full styling on `.lernhive-explore-*` and `.lernhive-card-section*`, but
+the individual cards rendered inside each section grid
+(`card.mustache`) had no CSS at all. On live that surfaced as:
+
+- `.lernhive-card__type-icon svg` expanding to the full grid column
+  width — a 200px-tall black circle, because browsers give unsized SVG
+  `width: 100%` and the default fill is black.
+- `.lernhive-card__type` label rendering as plain inline text instead of
+  a pill.
+- No hover/spacing/shape for the card container itself.
+
+This section documents the now-stable card contract. Consumers must not
+rely on anything outside this contract.
+
+### Anatomy
+
+```
+.lernhive-card
+├─ .lernhive-card__eyebrow         (optional small label)
+├─ .lernhive-card__top             (flex row, space-between)
+│   ├─ .lernhive-card__type        (pill: 14×14 svg + label)
+│   │   └─ .lernhive-card__type-icon > svg
+│   └─ .lernhive-card__actions     (inline-flex)
+│       └─ .lernhive-card__icon    (32×32 circular button, Typ-3)
+│           (+ .is-following → accent-tint variant)
+├─ .lernhive-card__title           (h3)
+├─ .lernhive-card__summary
+├─ .lernhive-card__meta
+└─ .lernhive-card__cta             (primary action link)
+    └─ .lernhive-card__cta-icon > svg
+```
+
+### SVG sizing rule
+
+**All SVGs inside `.lernhive-card` slots must be rendered by a wrapper
+element with explicit `width` + `height`, and the SVG itself must pin
+its dimensions.** The type-icon wrapper is 16×16, the icon buttons are
+32×32, the cta-icon is 16×16. Adding a new slot? Copy one of these
+patterns — never leave an SVG unsized, or it inherits the grid cell
+width.
+
+### Relationship to `.lh-*` / `.lernhive-card-section`
+
+`.lernhive-card` is intentionally still in the legacy `.lernhive-*`
+namespace. It is consumed by both the Explore surface and (eventually)
+dashboard recommendation grids. Do not alias to `.lh-card-*` until a
+design-system unification task explicitly schedules it — the class name
+is part of the plugin contract with `local_lernhive_discovery`.
+
