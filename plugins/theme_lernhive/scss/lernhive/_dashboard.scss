@@ -184,12 +184,35 @@
 // and various Bootstrap card patterns internally.
 
 [data-block="myoverview"] {
+    // Remove the outer Moodle block chrome to avoid "card-in-card".
+    > .card {
+        border: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    > .card > .card-header {
+        display: none;
+    }
+
+    > .card > .card-body {
+        padding: 0 !important;
+    }
+
     [data-region="filter"] {
         margin: 0 0 $lh-spacing-md;
         padding: $lh-spacing-sm;
         border: 1px solid $lh-border;
         border-radius: $lh-radius;
         background: #fff;
+    }
+
+    // Remove view-mode selector (Card/List/Summary) for a calmer R1 UX.
+    #displaydropdown,
+    #displaydropdown + .dropdown-menu,
+    .dropdown:has(#displaydropdown),
+    [data-filter="display"] {
+        display: none !important;
     }
 
     [data-region="filter"] .btn-outline-secondary {
