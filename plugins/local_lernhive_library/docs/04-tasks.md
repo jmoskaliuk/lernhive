@@ -44,6 +44,10 @@ same functional scope while enforcing standard pagelayout for all users.
   objects; supports top-level array or `{ "entries": [...] }`, tolerates
   unix timestamps and parseable date strings for `updated`, and skips
   invalid rows fail-closed. Admin setting is exposed in `settings.php`.
+- **LH-LIB-R2-02** — Copy-template handoff support delivered:
+  optional `sourcecourseid` in catalog entries is now parsed and validated,
+  and `catalog::find_by_id()` supports downstream resolution by
+  `local_lernhive_copy` template mode.
 
 ## Open R1 issues
 
