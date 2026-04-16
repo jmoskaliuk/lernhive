@@ -231,7 +231,17 @@
   - Kein rechtes Spalten-Layout mehr — Content-Bereich ist einspaltig
   - Referenz: `mockups/course-page.html`
 
-- [ ] **0.9.70 — Explore-Surface** (`explore_shell.mustache`, `_layout.scss`):
+- [x] **0.9.70 — ADR-P03 Phase 1: Token-Export-Contract** (shipped 2026-04-16):
+  - `scss/lernhive/_tokens.scss` neu — un-scoped `:root { --lh-*: #{$lh-*}; }` Block für 54 Tokens (Brand, Semantic, Surface, Text, Border, Radius, Shadow, Typography, Spacing, Transition, Layout, Levels)
+  - Naming-Konvention: `--lh-<group>-<variant>` spiegelt `$lh-*` 1:1 für visuell beobachtbare Variablen
+  - Un-scoped (nicht `.theme-lernhive`) damit `local_lernhive`-Plugin-Shell-CSS die Tokens auch unter Boost / Boost Union konsumieren kann — dort liefert das Plugin in Phase 2 eigene neutrale Fallbacks unter demselben Namen
+  - Neuer Token `--lh-radius-btn` (semantisch, purpose-named) zusätzlich zu den strukturellen `--lh-radius-{sm,lg,pill}` — bindet Plugin-Button-Radius an eine Design-Entscheidung, nicht an eine Zahl
+  - Partial-Reihenfolge in `lib.php`: `_tokens.scss` BEFORE alle anderen Partials, damit Konsumenten die Custom Properties bereits vorfinden
+  - Doku: `docs/03-dev-doc.md` § Tokens — Contract guarantees, Consumer pattern (`var(--lh-primary, #1a2332)`), Migration-Phasen-Referenz
+  - **Nicht** exportiert: `--bs-*` (bleibt in lib.php CSSVARS für Moodle-Core/Boost), `--mds-*` (bleibt in `pre.scss` scoped, Moodle Design System Overrides), legacy `--lernhive-*` in `pre.scss` (Backward-Compat)
+  - Keine visuelle Regression — reiner Additive-Layer
+
+- [ ] **0.9.71 — Explore-Surface** (`explore_shell.mustache`, `_layout.scss`) — ursprünglich 0.9.70, verschoben weil ADR-P03 Phase 1 das Slot belegt:
   - Zone A ohne Back-Button (Explore ist Toplevel in der Sidebar-Nav)
   - Zone B mit Filter-Bar (aktive Filter als Ghost-Buttons mit ×, Search, Sort)
   - Grid-Inhalt: Featured (full-width Hero-Card) + Results (3-spaltig, gemischte Typen)

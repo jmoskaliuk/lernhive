@@ -78,6 +78,13 @@ function theme_lernhive_get_extra_scss($theme) {
     // _course     → course page shell only (NO section/activity content — ADR-P01)
     // _login      → login page (full-screen, does NOT use app-shell grid)
     $partials = [
+        // 0.9.70: Token export contract — un-scoped `:root { --lh-* }` so
+        // `local_lernhive` plugin-shell CSS can reference `--lh-primary`,
+        // `--lh-radius-btn`, etc. even under Boost/Boost Union where no
+        // `.theme-lernhive` body class exists (ADR-P03 Phase 1).
+        // Must load BEFORE every consuming partial so the custom
+        // properties are declared before any rule that reads them.
+        '_tokens.scss',
         '_base.scss',
         '_layout.scss',
         '_navigation.scss',

@@ -1,0 +1,146 @@
+// =============================================================================
+// _tokens.scss — LernHive Design Token Export Contract (0.9.70)
+//
+// This file is the public, UN-SCOPED CSS custom property export for every
+// LernHive design token. It exists specifically so that code outside the
+// theme — in particular the Plugin Shell CSS that ships with
+// `local_lernhive` — can consume `--lh-*` properties directly, without
+// needing access to the `$lh-*` SCSS source.
+//
+// Why UN-SCOPED (`:root`, not `.theme-lernhive`)?
+//   ADR-P03 ("Plugin / Theme UX decoupling", 2026-04-16) requires that
+//   LernHive plugins render correctly under Boost, Boost Union, and any
+//   other Moodle theme — not just `theme_lernhive`. Under a non-LernHive
+//   theme the <body> will NOT carry the `.theme-lernhive` class, so any
+//   scoped token declarations (`.theme-lernhive { --lh-*: … }`) would be
+//   invisible to plugin CSS. `local_lernhive` ships its own neutral
+//   fallbacks for the same names; when `theme_lernhive` IS active, this
+//   file's values win because it loads AFTER the plugin stylesheet in
+//   Moodle's asset cascade.
+//
+// Contract guarantees:
+//   1. Every token name declared here is STABLE — once published, its
+//      name does not change. Values CAN change (re-branding), but names
+//      cannot be renamed or removed without a plugin-side deprecation
+//      path.
+//   2. Every `$lh-*` SCSS variable in `_variables.scss` that is visually
+//      observable (colour, radius, spacing, font, shadow) has a matching
+//      `--lh-*` CSS custom property here. Internal-only Sass variables
+//      (derived intermediate values, maps, mixins) stay Sass-only.
+//   3. Plugins MUST reference tokens as `var(--lh-token, fallback)` —
+//      never assume the theme is present. The fallback is what ships in
+//      `local_lernhive/scss/plugin-shell/_tokens.scss` (neutral greyscale
+//      baseline, see ADR-P03 Phase 2).
+//   4. Naming convention: `--lh-<group>-<variant>` (kebab-case). No
+//      camelCase, no underscores. Matches `$lh-*` SCSS names one-to-one
+//      where a direct mapping exists.
+//
+// Order-of-load note: `_tokens.scss` is loaded via `theme_lernhive_get_
+// extra_scss()` AFTER the `_variables.scss` force-inject (so `$lh-*`
+// resolves). It is loaded BEFORE the other partials so that any partial
+// that wants to read tokens can too, even though the existing partials
+// consume the Sass variable directly.
+//
+// Related files:
+//   - `scss/lernhive/_variables.scss` — source of truth for `$lh-*` values
+//   - `scss/pre.scss` — scoped `.theme-lernhive { --lernhive-*, --mds-* }`
+//     for branded token overrides (Moodle Design System + LernHive-internal)
+//   - `plugins/local_lernhive/scss/plugin-shell/_tokens.scss` — planned
+//     (Phase 2) neutral fallback declaration
+// =============================================================================
+
+:root {
+    // ── Brand — primary (LernHive blue) ──────────────────────────────────────
+    --lh-primary:           #{$lh-primary};
+    --lh-primary-dark:      #{$lh-primary-dark};
+    --lh-primary-light:     #{$lh-primary-light};
+
+    // ── Brand — accent (orange) ──────────────────────────────────────────────
+    --lh-accent:            #{$lh-accent};
+    --lh-accent-dark:       #{$lh-accent-dark};
+    --lh-accent-light:      #{$lh-accent-light};
+
+    // ── Brand — secondary (light blue) ───────────────────────────────────────
+    --lh-secondary:         #{$lh-secondary};
+    --lh-secondary-dark:    #{$lh-secondary-dark};
+    --lh-secondary-light:   #{$lh-secondary-light};
+
+    // ── Semantic — success / warning / danger / info / green ─────────────────
+    --lh-success:           #{$lh-success};
+    --lh-success-light:     #{$lh-success-light};
+    --lh-warning:           #{$lh-warning};
+    --lh-warning-light:     #{$lh-warning-light};
+    --lh-danger:            #{$lh-danger};
+    --lh-danger-light:      #{$lh-danger-light};
+    --lh-info:              #{$lh-info};
+    --lh-green:             #{$lh-green};
+
+    // ── Surface — backgrounds ────────────────────────────────────────────────
+    --lh-bg:                #{$lh-bg};
+    --lh-bg-white:          #{$lh-bg-white};
+    --lh-bg-dark:           #{$lh-bg-dark};
+
+    // ── Text ─────────────────────────────────────────────────────────────────
+    --lh-text:              #{$lh-text};
+    --lh-text-secondary:    #{$lh-text-secondary};
+    --lh-text-light:        #{$lh-text-light};
+
+    // ── Border ───────────────────────────────────────────────────────────────
+    --lh-border:            #{$lh-border};
+    --lh-border-light:      #{$lh-border-light};
+
+    // ── Radius ───────────────────────────────────────────────────────────────
+    // --lh-radius-btn is the canonical button-corner radius used by all
+    // LernHive buttons (Design System decision 2026-04-15: 8px for every
+    // button, pill reserved for `.lh-plugin-tag` only). Equals $lh-radius-sm
+    // today; the name is intentionally semantic (what it's for) rather than
+    // structural (what size), so ADR-P03 Phase 2 plugin-side buttons can
+    // depend on it without caring about the size digit.
+    --lh-radius:            #{$lh-radius};
+    --lh-radius-sm:         #{$lh-radius-sm};
+    --lh-radius-lg:         #{$lh-radius-lg};
+    --lh-radius-pill:       #{$lh-radius-pill};
+    --lh-radius-btn:        #{$lh-radius-sm};
+
+    // ── Shadow ───────────────────────────────────────────────────────────────
+    --lh-shadow:            #{$lh-shadow};
+    --lh-shadow-md:         #{$lh-shadow-md};
+    --lh-shadow-hover:      #{$lh-shadow-hover};
+
+    // ── Typography ───────────────────────────────────────────────────────────
+    --lh-font-family:       #{inspect($lh-font-family)};
+    --lh-font-size-xs:      #{$lh-font-size-xs};
+    --lh-font-size-sm:      #{$lh-font-size-sm};
+    --lh-font-size-base:    #{$lh-font-size-base};
+    --lh-font-size-lg:      #{$lh-font-size-lg};
+    --lh-font-size-xl:      #{$lh-font-size-xl};
+    --lh-font-size-2xl:     #{$lh-font-size-2xl};
+    --lh-font-size-3xl:     #{$lh-font-size-3xl};
+
+    // ── Spacing ──────────────────────────────────────────────────────────────
+    --lh-spacing-xs:        #{$lh-spacing-xs};
+    --lh-spacing-sm:        #{$lh-spacing-sm};
+    --lh-spacing-md:        #{$lh-spacing-md};
+    --lh-spacing-lg:        #{$lh-spacing-lg};
+    --lh-spacing-xl:        #{$lh-spacing-xl};
+    --lh-spacing-2xl:       #{$lh-spacing-2xl};
+
+    // ── Transition ───────────────────────────────────────────────────────────
+    --lh-transition:        #{$lh-transition};
+
+    // ── Layout ───────────────────────────────────────────────────────────────
+    // --lh-page-header-height is explicitly exported so plugins that need
+    // a sticky-offset for their own sticky surfaces (Plugin Shell Zone A)
+    // can reference it. Under non-LernHive themes `local_lernhive` ships a
+    // neutral fallback of 0px (see ADR-P03 Phase 4).
+    --lh-sidebar-width:     #{$lh-sidebar-width};
+    --lh-header-height:     #{$lh-header-height};
+    --lh-page-header-height: #{$lh-header-height};
+
+    // ── Levels (gamification) ────────────────────────────────────────────────
+    --lh-level-1-color:     #{$lh-level-1-color};
+    --lh-level-2-color:     #{$lh-level-2-color};
+    --lh-level-3-color:     #{$lh-level-3-color};
+    --lh-level-4-color:     #{$lh-level-4-color};
+    --lh-level-5-color:     #{$lh-level-5-color};
+}

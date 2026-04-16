@@ -636,3 +636,128 @@ Dieser Abschnitt beschreibt die SCSS-Umsetzung der finalisierten Design-Entschei
   border-radius: 0; // kein Card-Rahmen!
 }
 ```
+
+## Design Tokens (§ Tokens) — Plugin Consumption Contract (since 0.9.70)
+
+### Why this exists
+
+LernHive plugins (`local_lernhive`, `local_lernhive_onboarding`,
+`local_lernhive_reporting`, `local_lernhive_contenthub`, …) must render
+under Boost and Boost Union — not only under `theme_lernhive`. That is a
+hard requirement from `product/01-architecture.md` R1 and is formalised
+by ADR-P03 ("Plugin / Theme UX decoupling", 2026-04-16).
+
+Before 0.9.70 the theme exported brand tokens only inside
+`.theme-lernhive { --lernhive-*: … }` (`scss/pre.scss`). Under any other
+theme the `.theme-lernhive` class does not land on `<body>`, so any
+plugin CSS that referenced those tokens got an empty `var()` fallback
+chain and rendered colour-less.
+
+Phase 1 of ADR-P03 solves this by shipping an **un-scoped** `:root` block
+that exports every visually observable `$lh-*` SCSS variable as a
+`--lh-*` CSS custom property. The block loads as part of
+`theme_lernhive`'s stylesheet cascade, so its values win whenever
+`theme_lernhive` is active. When the active theme is Boost (or anyone
+else) the plugin ships its own neutral fallback for the same names
+(Phase 2 work, target `local_lernhive` 0.6.0).
+
+### File layout
+
+```
+plugins/theme_lernhive/scss/lernhive/
+├── _variables.scss   ← Sass source of truth — `$lh-*` definitions
+├── _tokens.scss      ← :root { --lh-*: #{$lh-*}; } export (0.9.70)
+└── pre.scss          ← `.theme-lernhive { --lernhive-*, --mds-* }` — branded
+                         overrides scoped to LernHive theme only
+```
+
+The partial load order in `lib.php` guarantees `_tokens.scss` ships
+BEFORE any partial that might read a `--lh-*` value. `_variables.scss`
+is prepended via `theme_lernhive_get_pre_scss()` (before Bootstrap) and
+force-re-injected at the top of `get_extra_scss()` with `!default`
+stripped, so `#{$lh-*}` interpolation inside `_tokens.scss` resolves.
+
+### Contract guarantees
+
+1. **Stable names.** Once a `--lh-*` name is published, it is not
+   renamed or removed without a plugin-side deprecation path.
+2. **Visual observability.** Every `$lh-*` token whose purpose is
+   visual (colour, radius, spacing, font, shadow, level colours, layout
+   dimension) has a matching `--lh-*` custom property. Internal-only
+   Sass (mixins, maps, derived intermediates) stays Sass-only.
+3. **Consumer contract.** Plugins MUST reference tokens with an
+   inline fallback: `color: var(--lh-primary, #1a2332);`. Never assume
+   the theme is active.
+4. **Un-scoped export.** `_tokens.scss` declares tokens on `:root`
+   — not on `.theme-lernhive`. This is intentional: un-scoped means
+   the tokens are available regardless of which theme is rendering the
+   page, which is the whole point.
+
+### Token catalog (0.9.70)
+
+| Group           | Tokens |
+|-----------------|--------|
+| Brand primary   | `--lh-primary`, `--lh-primary-dark`, `--lh-primary-light` |
+| Brand accent    | `--lh-accent`, `--lh-accent-dark`, `--lh-accent-light` |
+| Brand secondary | `--lh-secondary`, `--lh-secondary-dark`, `--lh-secondary-light` |
+| Semantic        | `--lh-success`(`-light`), `--lh-warning`(`-light`), `--lh-danger`(`-light`), `--lh-info`, `--lh-green` |
+| Surface         | `--lh-bg`, `--lh-bg-white`, `--lh-bg-dark` |
+| Text            | `--lh-text`, `--lh-text-secondary`, `--lh-text-light` |
+| Border          | `--lh-border`, `--lh-border-light` |
+| Radius          | `--lh-radius`, `--lh-radius-sm`, `--lh-radius-lg`, `--lh-radius-pill`, `--lh-radius-btn` |
+| Shadow          | `--lh-shadow`, `--lh-shadow-md`, `--lh-shadow-hover` |
+| Typography      | `--lh-font-family`, `--lh-font-size-{xs,sm,base,lg,xl,2xl,3xl}` |
+| Spacing         | `--lh-spacing-{xs,sm,md,lg,xl,2xl}` |
+| Transition      | `--lh-transition` |
+| Layout          | `--lh-sidebar-width`, `--lh-header-height`, `--lh-page-header-height` |
+| Levels          | `--lh-level-{1..5}-color` |
+
+`--lh-radius-btn` is semantic (purpose-named), not structural (size-named),
+so plugin-side buttons can rely on it without caring about the size digit.
+Today it equals `--lh-radius-sm` (8px) per the 2026-04-15 Design System
+decision.
+
+### How to consume from a plugin
+
+```scss
+// plugins/local_lernhive/scss/plugin-shell/_example.scss
+.lh-plugin-card {
+    background: var(--lh-bg-white, #fff);
+    border: 1px solid var(--lh-border, #e9e9e9);
+    border-radius: var(--lh-radius-btn, 8px);
+    color: var(--lh-text, #353535);
+}
+```
+
+Under `theme_lernhive`: the `--lh-*` values win.
+Under Boost / Boost Union: the `local_lernhive` Phase 2 neutral
+fallbacks win (greyscale baseline).
+Under a totally unknown theme missing both: the inline literals in the
+`var()` second argument keep the CSS syntactically valid.
+
+### Not exported
+
+- **`--bs-*`** — stays in `lib.php`'s inline CSSVARS heredoc. Bootstrap
+  tokens are consumed by Moodle core / Boost components, not by
+  `local_lernhive` directly.
+- **`--mds-*`** — stays in `scss/pre.scss` under `.theme-lernhive`.
+  Moodle Design System overrides are theme-branding, not a plugin
+  contract.
+- **`--lernhive-*`** — legacy name-space inside `scss/pre.scss`; kept
+  for backward-compatibility with existing LernHive-internal code that
+  already binds to those names.
+
+### Migration phases (ADR-P03)
+
+- **Phase 1 (this, theme 0.9.70)**: `_tokens.scss` exports `--lh-*` on
+  `:root`. No visual change.
+- **Phase 2 (local_lernhive 0.6.0)**: Plugin Shell SCSS moves from
+  `theme_lernhive/scss/lernhive/_plugin-shell.scss` into
+  `local_lernhive/scss/plugin-shell/`, compiled to
+  `local_lernhive/styles/plugin-shell.css`. Plugin side ships neutral
+  fallbacks for every `--lh-*` name declared here.
+- **Phase 3 (local_lernhive 0.6.1)**: Move
+  `theme_lernhive/templates/plugin_shell_header.mustache` → plugin with
+  a deprecation shim.
+- **Phase 4 (local_lernhive 0.6.2)**: Explicit plugin-side fallbacks
+  for every theme-only surface referenced from plugin templates.
