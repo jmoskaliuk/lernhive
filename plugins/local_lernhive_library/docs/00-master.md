@@ -19,6 +19,12 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 ## Main dependencies
 local_lernhive_contenthub
 
+## Integration notes
+
+- catalog entries can optionally expose `sourcecourseid`
+- `local_lernhive_copy` consumes that mapping for template-based copy flows
+- Library remains read-only in this phase (no import execution yet)
+
 ## Main features
 - library catalog
 - managed .mbz source

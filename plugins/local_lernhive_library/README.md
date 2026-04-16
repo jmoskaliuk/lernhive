@@ -14,6 +14,8 @@ The plugin is reached from the [ContentHub](../local_lernhive_contenthub/) via t
 - Manifest parser accepts:
   - top-level JSON array of entries
   - object with `entries` array
+- Optional `sourcecourseid` entry field enables template hand-off in
+  `local_lernhive_copy`
 - Invalid manifest rows fail closed and are ignored (developer debugging notice); valid rows still render
 - Null privacy provider — the plugin stores no personal data in this phase
 - No web services, no scheduled tasks, no DB tables
@@ -56,6 +58,9 @@ Capability: `local/lernhive_library:import`, cloned from `moodle/course:create`.
 ## Dependencies
 
 `local_lernhive_contenthub ≥ 2026041002` — the Library card in the Hub needs a target URL that resolves to this plugin, so the hub's detection logic uses `local_lernhive_library` as a signal.
+
+Downstream integration:
+- `local_lernhive_copy` can consume catalog `sourcecourseid` mappings in template mode.
 
 ## CI & deployment
 
