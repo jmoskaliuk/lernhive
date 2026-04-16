@@ -9,6 +9,15 @@
   - Grid changed from `lh-plugin-grid--cols-2` → `lh-plugin-grid--cols-3` (3-column layout is now the standard for LernHive content card grids on desktop)
 - **LH-HUB-CARD-01** — `classes/card.php`: `default` branch of icon_color switch changed from `''` → `'generic'` so cards without an explicit type get the `--generic` blue-gray artifact icon fallback instead of no colour class
 
+## Done (0.1.4 — 2026-04-16)
+
+- **LH-HUB-HEAD-01** — restored a clear Zone A back action in
+  `templates/hub_page.mustache` (`Dashboard` nav button) for consistent
+  shell orientation across ContentHub entry pages.
+- **LH-HUB-ICON-01** — card action strips now include a dedicated rightmost
+  info action icon (`lh-btn-action`) so action icon placement matches the
+  CI shell/button guidance.
+
 ## Done (0.1.0–0.1.2 — 2026-04-10)
 - scaffolded the plugin (version.php, lib.php, db/access.php, lang/en,
   settings.php, styles.css, README, null privacy provider)

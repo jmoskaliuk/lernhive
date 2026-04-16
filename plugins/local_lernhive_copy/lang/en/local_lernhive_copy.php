@@ -33,10 +33,16 @@ $string['lernhive_copy:use'] = 'Use the LernHive Copy wizard';
 $string['open_wizard'] = 'Open copy wizard';
 
 // Page headings.
+$string['page_title_course'] = 'Copy a course';
+$string['page_intro_course'] = 'Pick an existing course to reuse as a starting point. The Simple copy wizard hands the source course to Moodle backup and restore, which run asynchronously in the background.';
 $string['page_title_copy'] = 'Copy a course';
 $string['page_title_template'] = 'Start from a template';
 $string['page_intro_copy'] = 'Pick an existing course to reuse as a starting point. The Simple copy wizard hands the source course to Moodle backup and restore, which run asynchronously in the background.';
 $string['page_intro_template'] = 'Pick a curated template from the Library catalog. After selecting one, continue in Simple or Expert mode.';
+$string['shell_tag_copy'] = 'Copy workflow';
+$string['shell_tag_course'] = 'Course source';
+$string['shell_tag_template'] = 'Template source';
+$string['infobar_hint'] = 'Pick Simple for the guided flow or Expert for Moodle core copy controls.';
 
 // Modes (stub / template fallback).
 $string['mode_simple'] = 'Simple';
@@ -73,6 +79,7 @@ $string['template_meta_version'] = 'Version';
 $string['template_meta_updated'] = 'Last updated';
 $string['template_meta_language'] = 'Language';
 $string['template_select'] = 'Use template';
+$string['template_info'] = 'Template details';
 $string['template_unavailable'] = 'Unavailable';
 $string['template_unavailable_hint'] = 'This template is listed in the catalog but has no source-course mapping yet.';
 $string['template_library_missing'] = 'Template mode requires the LernHive Library backend. Ask your admin to install and configure local_lernhive_library.';

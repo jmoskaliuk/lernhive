@@ -82,6 +82,7 @@ $string['backtodashboard']       = 'Dashboard';
 $string['tag_content_creation']  = 'Content Creation';
 $string['tag_paths_available']   = 'paths available';
 $string['infobar_hint']          = 'ContentHub guides you to the right plugin — all actual work happens there.';
+$string['card_info']             = 'Path details';
 
 // Privacy.
 $string['privacy:metadata'] = 'The LernHive ContentHub plugin does not store any personal data. It only renders a unified entry screen and delegates all actions to sibling plugins.';

@@ -17,8 +17,13 @@
   checks for backup/restore before queueing
 - layout consistency:
   page always renders in standard LernHive shell layout (also for site admins)
+  and now exposes the full shell stack (Zone A + Zone B) without
+  duplicate intro cards
 - language string review:
   `page_title_*` and `page_intro_*` keys cover course/template source modes
+- icon/button consistency:
+  mode switch buttons and template/mode info actions follow the shared
+  LernHive button taxonomy (`lh-btn-outline`, `lh-btn-open`, `lh-btn-action`)
 - regression checks:
   `source_test.php`, `copy_form_test.php`, and `wizard_page_test.php` stay green
 - template-catalog checks:

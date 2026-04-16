@@ -44,113 +44,182 @@
         "notice": "Under construction."
     }
 }}
-<div class="lh-copy-container{{#istemplate}} lh-copy-container--template{{/istemplate}}">
-    <div class="lh-copy-actions">
+{{! ── Zone A: sticky header ─────────────────────────────────────────────── }}
+<div class="lh-plugin-header">
+    <div class="lh-plugin-header__row">
         {{#hasreturnurl}}
-            <a class="lh-copy-back" href="{{returnurl}}">
+            <a class="lh-plugin-header__nav-btn" href="{{returnurl}}">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
                 {{returnlabel}}
             </a>
         {{/hasreturnurl}}
 
-        {{#showmodetoggle}}
-            <nav class="lh-copy-mode-toggle" aria-label="{{#str}} pluginname, local_lernhive_copy {{/str}}">
-                <a href="{{simpleurl}}" class="lh-copy-mode-pill{{#modeissimple}} lh-copy-mode-pill--active{{/modeissimple}}">
-                    {{mode_simple}}
-                </a>
-                <a href="{{experturl}}" class="lh-copy-mode-pill{{#modeisexpert}} lh-copy-mode-pill--active{{/modeisexpert}}">
-                    {{mode_expert}}
-                </a>
-            </nav>
-        {{/showmodetoggle}}
+        <div class="lh-plugin-header__title-block">
+            <div class="lh-plugin-header__name">
+                {{#str}} pluginname, local_lernhive_copy {{/str}}
+                <span class="lh-plugin-header__sep" aria-hidden="true">|</span>
+                <span class="lh-plugin-header__tagline">{{heading}}</span>
+            </div>
+            <p class="lh-plugin-header__subtitle">{{intro}}</p>
+            <div class="lh-plugin-header__tags" aria-label="{{#str}} tags {{/str}}">
+                <span class="lh-plugin-tag lh-plugin-tag--type">
+                    <i class="fa fa-copy" aria-hidden="true"></i>
+                    {{#str}} shell_tag_copy, local_lernhive_copy {{/str}}
+                </span>
+                {{#istemplate}}
+                    <span class="lh-plugin-tag lh-plugin-tag--active">
+                        <i class="fa fa-th-large" aria-hidden="true"></i>
+                        {{#str}} shell_tag_template, local_lernhive_copy {{/str}}
+                    </span>
+                {{/istemplate}}
+                {{^istemplate}}
+                    <span class="lh-plugin-tag lh-plugin-tag--active">
+                        <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+                        {{#str}} shell_tag_course, local_lernhive_copy {{/str}}
+                    </span>
+                {{/istemplate}}
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="lh-copy-intro">
-        <h2>{{heading}}</h2>
-        <p>{{intro}}</p>
+{{! ── Zone B: hint + mode controls ──────────────────────────────────────── }}
+<div class="lh-plugin-infobar">
+    <div class="lh-plugin-infobar__stats">
+        <span class="lh-plugin-infobar__stat">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            {{#str}} infobar_hint, local_lernhive_copy {{/str}}
+        </span>
+        {{#active_template}}
+            <span class="lh-plugin-infobar__stat">
+                <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                <strong>{{active_template_label}}</strong>
+                {{active_template}}
+            </span>
+        {{/active_template}}
     </div>
+    {{#showmodetoggle}}
+        <nav class="lh-copy-shell-actions" aria-label="{{#str}} pluginname, local_lernhive_copy {{/str}}">
+            <a href="{{simpleurl}}" class="lh-btn-outline lh-copy-shell-action{{#modeissimple}} lh-copy-shell-action--active{{/modeissimple}}">
+                <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+                {{mode_simple}}
+            </a>
+            <a href="{{experturl}}" class="lh-btn-outline lh-copy-shell-action{{#modeisexpert}} lh-copy-shell-action--active{{/modeisexpert}}">
+                <i class="fa fa-sliders" aria-hidden="true"></i>
+                {{mode_expert}}
+            </a>
+        </nav>
+    {{/showmodetoggle}}
+</div>
 
-    {{#active_template}}
-        <div class="lh-copy-note lh-copy-note--template" role="status">
-            <strong>{{active_template_label}}</strong> {{active_template}}
-        </div>
-    {{/active_template}}
+{{! ── Content ────────────────────────────────────────────────────────────── }}
+<div class="lh-plugin-content-area">
+    <div class="lh-copy-container{{#istemplate}} lh-copy-container--template{{/istemplate}}">
+        {{#template_warning}}
+            <div class="lh-copy-note lh-copy-note--warning" role="alert">
+                {{template_warning}}
+            </div>
+        {{/template_warning}}
 
-    {{#template_warning}}
-        <div class="lh-copy-note lh-copy-note--warning" role="alert">
-            {{template_warning}}
-        </div>
-    {{/template_warning}}
+        {{#hasform}}
+            <div class="lh-copy-form">
+                {{{formhtml}}}
+            </div>
+        {{/hasform}}
 
-    {{#hasform}}
-        <div class="lh-copy-form">
-            {{{formhtml}}}
-        </div>
-    {{/hasform}}
+        {{#showtemplatelist}}
+            <section class="lh-copy-template-list" aria-label="{{template_heading}}">
+                <h3 class="lh-copy-template-title">{{template_heading}}</h3>
 
-    {{#showtemplatelist}}
-        <section class="lh-copy-template-list" aria-label="{{template_heading}}">
-            <h3 class="lh-copy-template-title">{{template_heading}}</h3>
+                {{#templateempty}}
+                    <div class="lh-copy-notice" role="status">
+                        {{template_empty}}
+                    </div>
+                {{/templateempty}}
 
-            {{#templateempty}}
-                <div class="lh-copy-notice" role="status">
-                    {{template_empty}}
+                {{^templateempty}}
+                    <ul class="lh-copy-template-grid" role="list">
+                        {{#templateentries}}
+                            <li class="lh-copy-template-card{{#isactive}} lh-copy-template-card--active{{/isactive}}" role="listitem" data-template-id="{{id}}">
+                                <h4 class="lh-copy-template-card-title">{{title}}</h4>
+                                <p class="lh-copy-template-card-desc">{{description}}</p>
+
+                                <dl class="lh-copy-template-meta">
+                                    <dt>{{template_meta_version}}</dt>
+                                    <dd>{{version}}</dd>
+                                    <dt>{{template_meta_updated}}</dt>
+                                    <dd>{{updated}}</dd>
+                                    <dt>{{template_meta_language}}</dt>
+                                    <dd>{{language}}</dd>
+                                </dl>
+
+                                <div class="lh-copy-template-card-actions">
+                                    {{#hasaction}}
+                                        <a href="{{actionurl}}" class="lh-btn-open">
+                                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                            {{template_select}}
+                                        </a>
+                                    {{/hasaction}}
+                                    {{^hasaction}}
+                                        <button type="button" class="lh-btn-ghost lh-copy-btn-disabled" disabled aria-disabled="true">
+                                            <i class="fa fa-lock" aria-hidden="true"></i>
+                                            {{template_unavailable}}
+                                        </button>
+                                    {{/hasaction}}
+                                    <span class="lh-copy-template-card-actions-gap"></span>
+                                    <button type="button"
+                                            class="lh-btn-action"
+                                            aria-label="{{#str}} template_info, local_lernhive_copy {{/str}}"
+                                            title="{{#str}} template_info, local_lernhive_copy {{/str}}">
+                                        <i class="fa fa-info" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+
+                                {{^hasaction}}
+                                    <p class="lh-copy-template-hint">{{template_unavailable_hint}}</p>
+                                {{/hasaction}}
+                            </li>
+                        {{/templateentries}}
+                    </ul>
+                {{/templateempty}}
+            </section>
+        {{/showtemplatelist}}
+
+        {{#showstub}}
+            <div class="lh-copy-modes" role="list">
+                <div class="lh-copy-mode lh-copy-mode--simple" role="listitem">
+                    <h3 class="lh-copy-mode-title">{{mode_simple}}</h3>
+                    <p class="lh-copy-mode-desc">{{mode_simple_desc}}</p>
+                    <div class="lh-copy-mode-actions">
+                        <button type="button" class="lh-btn-open lh-copy-btn-disabled" disabled aria-disabled="true">
+                            <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                            {{cta_simple}}
+                        </button>
+                        <span class="lh-copy-mode-actions-gap"></span>
+                        <button type="button" class="lh-btn-action" aria-label="{{mode_simple}}" title="{{mode_simple}}">
+                            <i class="fa fa-info" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
-            {{/templateempty}}
-
-            {{^templateempty}}
-                <ul class="lh-copy-template-grid" role="list">
-                    {{#templateentries}}
-                        <li class="lh-copy-template-card{{#isactive}} lh-copy-template-card--active{{/isactive}}" role="listitem" data-template-id="{{id}}">
-                            <h4 class="lh-copy-template-card-title">{{title}}</h4>
-                            <p class="lh-copy-template-card-desc">{{description}}</p>
-
-                            <dl class="lh-copy-template-meta">
-                                <dt>{{template_meta_version}}</dt>
-                                <dd>{{version}}</dd>
-                                <dt>{{template_meta_updated}}</dt>
-                                <dd>{{updated}}</dd>
-                                <dt>{{template_meta_language}}</dt>
-                                <dd>{{language}}</dd>
-                            </dl>
-
-                            {{#hasaction}}
-                                <a href="{{actionurl}}" class="btn btn-primary">
-                                    {{template_select}}
-                                </a>
-                            {{/hasaction}}
-                            {{^hasaction}}
-                                <button type="button" class="btn btn-secondary disabled" disabled aria-disabled="true">
-                                    {{template_unavailable}}
-                                </button>
-                                <p class="lh-copy-template-hint">{{template_unavailable_hint}}</p>
-                            {{/hasaction}}
-                        </li>
-                    {{/templateentries}}
-                </ul>
-            {{/templateempty}}
-        </section>
-    {{/showtemplatelist}}
-
-    {{#showstub}}
-        <div class="lh-copy-modes" role="list">
-            <div class="lh-copy-mode lh-copy-mode--simple" role="listitem">
-                <h3 class="lh-copy-mode-title">{{mode_simple}}</h3>
-                <p class="lh-copy-mode-desc">{{mode_simple_desc}}</p>
-                <button type="button" class="btn btn-primary disabled" disabled aria-disabled="true">
-                    {{cta_simple}}
-                </button>
+                <div class="lh-copy-mode lh-copy-mode--expert" role="listitem">
+                    <h3 class="lh-copy-mode-title">{{mode_expert}}</h3>
+                    <p class="lh-copy-mode-desc">{{mode_expert_desc}}</p>
+                    <div class="lh-copy-mode-actions">
+                        <button type="button" class="lh-btn-ghost lh-copy-btn-disabled" disabled aria-disabled="true">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                            {{cta_expert}}
+                        </button>
+                        <span class="lh-copy-mode-actions-gap"></span>
+                        <button type="button" class="lh-btn-action" aria-label="{{mode_expert}}" title="{{mode_expert}}">
+                            <i class="fa fa-info" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="lh-copy-mode lh-copy-mode--expert" role="listitem">
-                <h3 class="lh-copy-mode-title">{{mode_expert}}</h3>
-                <p class="lh-copy-mode-desc">{{mode_expert_desc}}</p>
-                <button type="button" class="btn btn-secondary disabled" disabled aria-disabled="true">
-                    {{cta_expert}}
-                </button>
-            </div>
-        </div>
 
-        <div class="lh-copy-notice" role="note">
-            {{notice}}
-        </div>
-    {{/showstub}}
+            <div class="lh-copy-notice" role="note">
+                {{notice}}
+            </div>
+        {{/showstub}}
+    </div>
 </div>

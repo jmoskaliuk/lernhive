@@ -45,6 +45,10 @@
 {{! ── Zone A: sticky page header ─────────────────────────────────────────── }}
 <div class="lh-plugin-header">
     <div class="lh-plugin-header__row">
+        <a class="lh-plugin-header__nav-btn" href="{{ backurl }}">
+            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            {{#str}} backtodashboard, local_lernhive_contenthub {{/str}}
+        </a>
 
         <div class="lh-plugin-header__title-block">
             <div class="lh-plugin-header__name">
@@ -127,9 +131,16 @@
                             disabled
                             aria-disabled="true">
                         <i class="fa fa-lock" aria-hidden="true"></i>
-                        {{ cta }}
+                            {{ cta }}
                     </button>
                 {{/hasurl}}
+                <span class="lh-plugin-card__actions-gap"></span>
+                <button type="button"
+                        class="lh-btn-action"
+                        aria-label="{{#str}} card_info, local_lernhive_contenthub {{/str}}"
+                        title="{{#str}} card_info, local_lernhive_contenthub {{/str}}">
+                    <i class="fa fa-info" aria-hidden="true"></i>
+                </button>
             </div>
 
         </div>
