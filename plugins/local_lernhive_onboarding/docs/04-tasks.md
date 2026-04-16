@@ -21,6 +21,7 @@
 - [x] **LH-ONB-HOTFIX-03** Added one-shot forced-tour launch filter path (session marker + `before_serverside_filter_fetch` hook) so catalog starts ignore stale role filters and lock to the requested tour ID.
 - [x] **LH-ONB-HOTFIX-04** Added one-shot completion overlay after forced catalog tour end (`Back to onboarding` / `Stay here`).
 - [x] **LH-ONB-HOTFIX-05** Backfilled stale Level-1 `pathmatch` values from JSON source of truth, retargeted self-enrol tour selectors for `/enrol/instances.php`, and moved course-create intro anchor away from the `fullname` input.
+- [x] **LH-ONB-HOTFIX-06** Switched completion dialog to `core/modal_factory` save/cancel modal with explicit CTA labels and LernHive-scoped styling (`.lh-onboarding-completion-modal`) to align the end screen with UX/UI pattern.
 
 ## In progress / next (0.3.x)
 

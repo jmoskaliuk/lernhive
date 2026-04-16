@@ -181,17 +181,41 @@ class hook_callbacks {
     window.__lhOnbCompletionOverlayWired = true;
 
     const showOverlay = function() {
-        require(['core/notification'], function(Notification) {
-            Notification.confirm(
-                config.title,
-                config.body,
-                config.overviewCta,
-                config.stayCta,
-                function() {
+        require(['core/modal_factory', 'core/modal_events', 'core/notification'], function(ModalFactory, ModalEvents, Notification) {
+            ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+                title: config.title,
+                body: config.body
+            }).then(function(modal) {
+                const root = modal.getRoot();
+                root.addClass('lh-onboarding-completion-modal');
+
+                if (typeof modal.setSaveButtonText === 'function') {
+                    modal.setSaveButtonText(config.overviewCta);
+                } else {
+                    root.find('[data-action="save"]').text(config.overviewCta);
+                }
+                if (typeof modal.setCancelButtonText === 'function') {
+                    modal.setCancelButtonText(config.stayCta);
+                } else {
+                    root.find('[data-action="cancel"]').text(config.stayCta);
+                }
+
+                root.on(ModalEvents.save, function() {
                     window.location.assign(config.overviewUrl);
-                },
-                function() {}
-            );
+                });
+                root.on(ModalEvents.hidden, function() {
+                    modal.destroy();
+                });
+
+                modal.show();
+            }).catch(function(error) {
+                if (Notification && typeof Notification.exception === 'function') {
+                    Notification.exception(error);
+                    return;
+                }
+                window.console && window.console.error(error);
+            });
         });
     };
 
