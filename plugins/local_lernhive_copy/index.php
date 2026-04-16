@@ -123,10 +123,20 @@ if ($source->is_template()) {
     } else {
         /** @var \local_lernhive_library\catalog $catalog */
         $catalog = new \local_lernhive_library\catalog();
+        $supportstemplatemapping = method_exists($catalog, 'find_by_id')
+            && class_exists('\\local_lernhive_library\\catalog_entry')
+            && method_exists('\\local_lernhive_library\\catalog_entry', 'has_source_course');
+
+        if (!$supportstemplatemapping) {
+            $templatewarning = get_string('template_library_unsupported', 'local_lernhive_copy');
+        }
 
         foreach ($catalog->all() as $entry) {
             $entryctx = $entry->to_template_context();
-            $hasaction = $entry->has_source_course();
+            $hasaction = false;
+            if ($supportstemplatemapping && $entry->has_source_course()) {
+                $hasaction = true;
+            }
             if ($hasaction && !$DB->record_exists('course', ['id' => (int) $entry->sourcecourseid])) {
                 $hasaction = false;
             }
@@ -144,19 +154,23 @@ if ($source->is_template()) {
         }
 
         if ($templateid !== '') {
-            $selected = $catalog->find_by_id($templateid);
-            if ($selected === null) {
-                $templatewarning = get_string('template_not_found', 'local_lernhive_copy', $templateid);
-            } else if (!$selected->has_source_course()) {
-                $templatewarning = get_string('template_source_missing', 'local_lernhive_copy');
+            if (!$supportstemplatemapping) {
+                $templatewarning = get_string('template_library_unsupported', 'local_lernhive_copy');
             } else {
-                $fixedsourcecourseid = (int) $selected->sourcecourseid;
-                if (!$DB->record_exists('course', ['id' => $fixedsourcecourseid])) {
-                    $templatewarning = get_string('template_source_deleted', 'local_lernhive_copy');
-                    $fixedsourcecourseid = 0;
+                $selected = $catalog->find_by_id($templateid);
+                if ($selected === null) {
+                    $templatewarning = get_string('template_not_found', 'local_lernhive_copy', $templateid);
+                } else if (!$selected->has_source_course()) {
+                    $templatewarning = get_string('template_source_missing', 'local_lernhive_copy');
                 } else {
-                    $fixedsourcename = $selected->title;
-                    $activetemplate = $selected->title;
+                    $fixedsourcecourseid = (int) $selected->sourcecourseid;
+                    if (!$DB->record_exists('course', ['id' => $fixedsourcecourseid])) {
+                        $templatewarning = get_string('template_source_deleted', 'local_lernhive_copy');
+                        $fixedsourcecourseid = 0;
+                    } else {
+                        $fixedsourcename = $selected->title;
+                        $activetemplate = $selected->title;
+                    }
                 }
             }
         }

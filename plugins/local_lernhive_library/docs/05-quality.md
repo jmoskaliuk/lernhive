@@ -22,6 +22,8 @@
   - `tests/catalog_page_test.php` (catalog_page mustache context contract)
   - manifest parser checks: valid array/object inputs are accepted,
     invalid JSON/rows are skipped fail-closed
+  - manifest parser checks: optional `sourcecourseid` is normalised and
+    invalid/non-positive mappings are ignored safely
   - constructor guard: seeded catalog data must be `catalog_entry[]`
     (invalid element types fail fast with `coding_exception`)
   - constructor guard: `catalog_entry` required fields must be non-blank
