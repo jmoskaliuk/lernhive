@@ -139,5 +139,206 @@ function xmldb_local_lernhive_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026040343, 'local', 'lernhive');
     }
 
+    if ($oldversion < 2026041600) {
+        // Roll out a stable default dashboard block baseline.
+        // Users keep editing control via Moodle's own "Reset for all users" flow.
+        local_lernhive_upgrade_seed_dashboard_blocks();
+        upgrade_plugin_savepoint(true, 2026041600, 'local', 'lernhive');
+    }
+
+    if ($oldversion < 2026041601) {
+        // Create local_lernhive_feature_overrides (LH-CORE-FR-02).
+        $table = new xmldb_table('local_lernhive_feature_overrides');
+        if (!$dbman->table_exists($table)) {
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('feature_id', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('override_level', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+            $table->add_field('source', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'admin');
+            $table->add_field('flavor_id', XMLDB_TYPE_CHAR, '64', null, null, null, null);
+            $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('updated_by', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $table->add_index('feature_id_uix', XMLDB_INDEX_UNIQUE, ['feature_id']);
+
+            $dbman->create_table($table);
+        }
+
+        upgrade_plugin_savepoint(true, 2026041601, 'local', 'lernhive');
+    }
+
     return true;
+}
+
+/**
+ * Seed and reorder the system default dashboard blocks for /my/.
+ *
+ * The layout is intentionally non-destructive: we add missing core blocks and
+ * reorder the recommended baseline, but keep any extra admin-added blocks.
+ *
+ * @return void
+ */
+function local_lernhive_upgrade_seed_dashboard_blocks(): void {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/my/lib.php');
+    require_once($CFG->libdir . '/blocklib.php');
+
+    $defaultpage = my_get_page(null, MY_PAGE_PRIVATE);
+    if (!$defaultpage) {
+        return;
+    }
+
+    $context = \context_system::instance();
+    $subpagepattern = (string) $defaultpage->id;
+
+    // Top dashboard baseline for Release 1:
+    // 1) My courses, 2) Timeline, 3) Recent courses, 4) Recent items,
+    // 5) Calendar, 6) Starred courses, 7) Private files, 8) Completion status.
+    $recommended = [
+        'myoverview',
+        'timeline',
+        'recentlyaccessedcourses',
+        'recentlyaccesseditems',
+        'calendar_month',
+        'starredcourses',
+        'private_files',
+        'completionstatus',
+    ];
+
+    $installedblocks = array_keys(\core_component::get_plugin_list('block'));
+    $recommended = array_values(array_filter($recommended, static function(string $blockname) use ($installedblocks): bool {
+        return in_array($blockname, $installedblocks, true);
+    }));
+
+    if (empty($recommended)) {
+        return;
+    }
+
+    $pagetype = 'my-index';
+    $instances = $DB->get_records(
+        'block_instances',
+        [
+            'parentcontextid' => $context->id,
+            'pagetypepattern' => $pagetype,
+            'subpagepattern' => $subpagepattern,
+        ],
+        'id ASC',
+        'id, blockname, defaultregion, defaultweight, timemodified'
+    );
+
+    $byname = [];
+    foreach ($instances as $instance) {
+        if (!isset($byname[$instance->blockname])) {
+            $byname[$instance->blockname] = $instance;
+        }
+    }
+
+    // Add any missing recommended block to the system dashboard.
+    $page = new \moodle_page();
+    $page->set_context($context);
+
+    foreach ($recommended as $weight => $blockname) {
+        if (isset($byname[$blockname])) {
+            continue;
+        }
+        try {
+            $page->blocks->add_block($blockname, 'content', $weight, false, $pagetype, $subpagepattern);
+        } catch (\Throwable $e) {
+            // Keep upgrade resilient even if one block cannot be added.
+            debugging(
+                'local_lernhive: dashboard block "' . $blockname . '" could not be added: ' . $e->getMessage(),
+                DEBUG_DEVELOPER
+            );
+        }
+    }
+
+    // Reload after inserts and enforce a predictable order for recommended blocks.
+    $instances = $DB->get_records(
+        'block_instances',
+        [
+            'parentcontextid' => $context->id,
+            'pagetypepattern' => $pagetype,
+            'subpagepattern' => $subpagepattern,
+        ],
+        'id ASC',
+        'id, blockname, defaultregion, defaultweight, timemodified'
+    );
+
+    $byname = [];
+    foreach ($instances as $instance) {
+        if (!isset($byname[$instance->blockname])) {
+            $byname[$instance->blockname] = $instance;
+        }
+    }
+
+    $weight = 0;
+    $now = time();
+    foreach ($recommended as $blockname) {
+        if (!isset($byname[$blockname])) {
+            continue;
+        }
+        $instance = $byname[$blockname];
+        $changed = false;
+
+        if ($instance->defaultregion !== 'content') {
+            $instance->defaultregion = 'content';
+            $changed = true;
+        }
+        if ((int) $instance->defaultweight !== $weight) {
+            $instance->defaultweight = $weight;
+            $changed = true;
+        }
+
+        if ($changed) {
+            $instance->timemodified = $now;
+            $DB->update_record('block_instances', $instance);
+        }
+        $weight++;
+    }
+
+    // Keep /my/courses.php aligned with /my/: the page should always expose
+    // the myoverview block (same course cards + same native filter controls).
+    $mycoursespage = my_get_page(null, MY_PAGE_PUBLIC, MY_PAGE_COURSES);
+    if (!$mycoursespage) {
+        return;
+    }
+
+    $mycoursessubpage = (string) $mycoursespage->id;
+    $myoverview = $DB->get_record(
+        'block_instances',
+        [
+            'parentcontextid' => $context->id,
+            'pagetypepattern' => $pagetype,
+            'subpagepattern' => $mycoursessubpage,
+            'blockname' => 'myoverview',
+        ],
+        'id, blockname, defaultregion, defaultweight, timemodified',
+        IGNORE_MULTIPLE
+    );
+
+    if (!$myoverview && in_array('myoverview', $installedblocks, true)) {
+        try {
+            $page->blocks->add_block('myoverview', 'content', 0, false, $pagetype, $mycoursessubpage);
+        } catch (\Throwable $e) {
+            debugging(
+                'local_lernhive: mycourses myoverview block could not be added: ' . $e->getMessage(),
+                DEBUG_DEVELOPER
+            );
+        }
+    } else if ($myoverview) {
+        $changed = false;
+        if ($myoverview->defaultregion !== 'content') {
+            $myoverview->defaultregion = 'content';
+            $changed = true;
+        }
+        if ((int) $myoverview->defaultweight !== 0) {
+            $myoverview->defaultweight = 0;
+            $changed = true;
+        }
+        if ($changed) {
+            $myoverview->timemodified = $now;
+            $DB->update_record('block_instances', $myoverview);
+        }
+    }
 }

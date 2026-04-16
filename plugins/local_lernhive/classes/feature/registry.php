@@ -24,10 +24,8 @@ use coding_exception;
  * Canonical feature registry for the LernHive level system (ADR-01).
  *
  * This class is the single source of truth for "which feature lives on which
- * level". In LH-CORE-FR-01 the feature list is hardcoded, {@see effective_level()}
- * returns pure defaults, and no DB is involved. Later milestones layer an
- * override store and flavor presets on top — the public API defined here is
- * designed to remain stable across those changes.
+ * level". The canonical feature list is hardcoded in this class while effective
+ * levels are resolved via {@see override_store} (admin + flavor presets).
  *
  * The class is static-only and cached in-process. Use {@see reset_cache()} in
  * tests after mutating state.
@@ -40,6 +38,9 @@ final class registry {
 
     /** @var array<string, definition>|null In-process cache of the feature list. */
     private static ?array $features = null;
+
+    /** @var array<string, int|null>|null Cached overrides keyed by feature_id. */
+    private static ?array $overridelevels = null;
 
     /**
      * Registry is static-only; prevent instantiation.
@@ -73,18 +74,30 @@ final class registry {
     /**
      * Return the effective level at which a feature currently unlocks.
      *
-     * In LH-CORE-FR-01 this is always the feature's default level. Future
-     * milestones (LH-CORE-FR-02+) will consult the override store and flavor
-     * presets here, which is why the method exists already.
+     * Override resolution order is:
+     * 1) explicit admin override
+     * 2) flavor preset override
+     * 3) registry default
+     *
+     * A NULL override value means "disabled", which is represented as
+     * MAX_LEVEL + 1 so the feature is never unlocked in levels 1..5.
      *
      * @param string $featureid Canonical feature ID.
-     * @return int 1..5.
+     * @return int 1..(MAX_LEVEL+1).
      * @throws coding_exception If the feature is not registered.
      */
     public static function effective_level(string $featureid): int {
         $definition = self::get_feature($featureid);
         if ($definition === null) {
             throw new coding_exception("local_lernhive unknown feature '{$featureid}'");
+        }
+        $overrides = self::get_override_levels();
+        if (array_key_exists($featureid, $overrides)) {
+            $overridelevel = $overrides[$featureid];
+            if ($overridelevel === null) {
+                return definition::MAX_LEVEL + 1;
+            }
+            return $overridelevel;
         }
         return $definition->defaultlevel;
     }
@@ -114,11 +127,23 @@ final class registry {
     }
 
     /**
-     * Reset the in-process cache. Intended for unit tests and after override
-     * writes once LH-CORE-FR-02 introduces the override store.
+     * Reset in-process caches. Intended for unit tests and override writes.
      */
     public static function reset_cache(): void {
         self::$features = null;
+        self::$overridelevels = null;
+    }
+
+    /**
+     * Resolve and cache override levels keyed by feature_id.
+     *
+     * @return array<string, int|null>
+     */
+    private static function get_override_levels(): array {
+        if (self::$overridelevels === null) {
+            self::$overridelevels = override_store::get_effective_levels();
+        }
+        return self::$overridelevels;
     }
 
     /**
@@ -251,6 +276,10 @@ final class registry {
         $defs[] = new definition(
             'core.course.settings.completion', 1, 'moodle/course:update',
             'feature_core_course_settings_completion', 'course_settings'
+        );
+        $defs[] = new definition(
+            'core.my.manageblocks', 4, 'moodle/my:manageblocks',
+            'feature_core_my_manageblocks', 'dashboard'
         );
 
         // --- Users (Level 1 default, configurable — matters for flavor_schule). ---

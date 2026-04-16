@@ -5,9 +5,9 @@
 Tracking milestones for the decision in `00-master.md` → ADR-01. Order is dependency-driven, not calendar-driven.
 
 - [x] **LH-CORE-FR-01** — Scaffold `local_lernhive\feature\definition` value object + `registry` class with a hardcoded initial feature list *(see `03-dev-doc.md` → "Canonical feature IDs")*. No DB yet. Unit tests against the pure `effective_level()` path. *(Landed 2026-04-11: `classes/feature/definition.php`, `classes/feature/registry.php`, `tests/feature/definition_test.php`, `tests/feature/registry_test.php`. 38 features registered after FR-05b extension for onboarding course-settings + messaging tours. `registry::effective_level()` returns pure defaults — override layer arrives in LH-CORE-FR-03.)*
-- [ ] **LH-CORE-FR-02** — XMLDB: `local_lernhive_feature_overrides` table. `db/install.xml` + `db/upgrade.php` step with savepoint. Index on `feature_id` unique.
-- [ ] **LH-CORE-FR-03** — `override_store` DB adapter. Handles the precedence rule (admin > flavor_preset) and idempotent flavor-preset writes.
-- [ ] **LH-CORE-FR-04** — Rewrite `capability_mapper::apply_level()` to consume the registry. Remove `get_level_modules()` + `get_level_capabilities()` as public API (keep thin shims that delegate to the registry for one cycle, then drop in 0.4.0).
+- [x] **LH-CORE-FR-02** — XMLDB: `local_lernhive_feature_overrides` table. `db/install.xml` + `db/upgrade.php` step with savepoint. Index on `feature_id` unique. *(Landed 2026-04-16: schema + upgrade step in `db/install.xml` and `db/upgrade.php`, plugin version bump to `2026041601`.)*
+- [x] **LH-CORE-FR-03** — `override_store` DB adapter. Handles the precedence rule (admin > flavor_preset) and idempotent flavor-preset writes. *(Landed 2026-04-16: `classes/feature/override_store.php`; `registry::effective_level()` now resolves DB overrides with disabled-state support.)*
+- [x] **LH-CORE-FR-04** — Rewrite `capability_mapper::apply_level()` to consume the registry. Remove `get_level_modules()` + `get_level_capabilities()` as public API (keep thin shims that delegate to the registry for one cycle, then drop in 0.4.0). *(Landed 2026-04-16: registry-driven capability aggregation in `classes/capability_mapper.php`; legacy APIs kept as shims.)*
 - [ ] **LH-CORE-FR-05** — Admin settings page under `Site administration → LernHive → Level configuration`. Table view, inline dropdown per feature (Level 1..5 / disabled / default). Uses `admin_setting_*` primitives and writes through `override_store`.
 - [ ] **LH-CORE-FR-06** — `local_lernhive\event\feature_override_changed` + listener-free fire path. Onboarding plugin consumes it in a follow-up ticket.
 - [ ] **LH-CORE-FR-07** — Flavor-preset hook API. Public static `registry::apply_flavor_preset(string $flavor_id, array $overrides): void`. Idempotent, admin-override-safe.
@@ -25,5 +25,5 @@ Tracking milestones for the decision in `00-master.md` → ADR-01. Order is depe
 
 1. ~~Accept ADR-01 in review round 2 (Johannes).~~ **Done 2026-04-11.**
 2. ~~Start with **LH-CORE-FR-01** — pure-code scaffold, no DB, no UI.~~ **Done 2026-04-11** — classes + unit tests merged, `registry::effective_level()` pinned to matrix v2.
-3. Next up: **LH-CORE-FR-02** — XMLDB table `local_lernhive_feature_overrides`, paired with the `override_store` DB adapter in **LH-CORE-FR-03**. These unblock the admin UI (**LH-CORE-FR-05**) and `capability_mapper` rewrite (**LH-CORE-FR-04**).
-4. In parallel (consumer side): `local_lernhive_onboarding` opens its own ticket to thread `lernhive_feature` IDs into existing Level-1 tour JSONs — can start now against the hardcoded registry.
+3. Next up: **LH-CORE-FR-05** — Admin settings page on top of `override_store` so admins can edit feature levels without touching code.
+4. In parallel (consumer side): `local_lernhive_onboarding` can proceed with `LH-ONB-FR-03` against registry overrides instead of the old hardcoded map.
