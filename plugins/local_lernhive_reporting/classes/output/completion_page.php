@@ -90,6 +90,7 @@ class completion_page implements renderable, templatable {
 
         return [
             'hascourses' => !empty($coursemap),
+            'hasselectedcourse' => ($selectedcourseid > 0),
             'hasrows' => !empty($rows),
             'rowcount' => count($rows),
             'courseoptions' => $courseoptions,
@@ -103,6 +104,10 @@ class completion_page implements renderable, templatable {
             'selectedcompletionratetext' => $metrics['completionrate'] . '%',
             'completionisempty' => $completionisempty,
             'completionnotstarted' => $completionnotstarted,
+            'exporturl' => (new \moodle_url('/local/lernhive_reporting/completion.php', [
+                'export' => 'csv',
+                'sesskey' => sesskey(),
+            ]))->out(false),
             'selecturl' => (new \moodle_url('/local/lernhive_reporting/completion.php'))->out(false),
             'backurl' => (new \moodle_url('/local/lernhive_reporting/index.php', ['courseid' => $selectedcourseid]))->out(false),
         ];

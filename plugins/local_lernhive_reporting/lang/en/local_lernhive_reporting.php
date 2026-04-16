@@ -62,6 +62,7 @@ $string['drilldown_completion'] = 'Completion by course';
 $string['open_users_report'] = 'Open users report';
 $string['open_popular_report'] = 'Open popular courses report';
 $string['open_completion_report'] = 'Open completion report';
+$string['export_csv'] = 'Export CSV';
 $string['back_to_dashboard'] = 'Back to dashboard';
 $string['participants_label'] = 'Participants';
 $string['completed_label'] = 'Completed';

@@ -81,6 +81,7 @@ class users_page implements renderable, templatable {
 
         return [
             'hascourses' => !empty($coursemap),
+            'hasselectedcourse' => ($selectedcourseid > 0),
             'hasrows' => !empty($rows),
             'rowcount' => count($rows),
             'courseoptions' => $courseoptions,
@@ -89,6 +90,11 @@ class users_page implements renderable, templatable {
                 ? $coursemap[$selectedcourseid]
                 : get_string('no_course_available', 'local_lernhive_reporting'),
             'backurl' => (new \moodle_url('/local/lernhive_reporting/index.php', ['courseid' => $selectedcourseid]))->out(false),
+            'exporturl' => (new \moodle_url('/local/lernhive_reporting/users.php', [
+                'courseid' => $selectedcourseid,
+                'export' => 'csv',
+                'sesskey' => sesskey(),
+            ]))->out(false),
             'selecturl' => (new \moodle_url('/local/lernhive_reporting/users.php'))->out(false),
         ];
     }

@@ -24,13 +24,20 @@
 
 require_once(__DIR__ . '/../../config.php');
 
+use local_lernhive_reporting\export_service;
 use local_lernhive_reporting\output\users_page;
 
 $context = \core\context\system::instance();
 $courseid = optional_param('courseid', 0, PARAM_INT);
+$export = optional_param('export', '', PARAM_ALPHA);
 
 require_login();
 require_capability('local/lernhive_reporting:view', $context);
+
+if ($export === 'csv') {
+    require_sesskey();
+    (new export_service())->download_users_csv($courseid);
+}
 
 $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/local/lernhive_reporting/users.php', ['courseid' => $courseid]));

@@ -11,6 +11,7 @@ R1 implementation is intentionally lightweight and Moodle-native.
 - `popular.php` — popular-courses drilldown page
 - `completion.php` — completion drilldown page
 - `classes/report_service.php` — KPI data access from Moodle core tables
+- `classes/export_service.php` — CSV export builder/streamer for drilldowns
 - `classes/output/dashboard_page.php` — template context builder
 - `classes/output/users_page.php` — users drilldown context builder
 - `classes/output/popular_page.php` — popular drilldown context builder
@@ -31,6 +32,7 @@ R1 implementation is intentionally lightweight and Moodle-native.
 - avoid custom schema in R1
 - keep plugin logic independent from theme
 - follow the LernHive plugin-shell visual pattern in templates (`lh-plugin-header`, `lh-plugin-infobar`, `lh-plugin-card`)
+- keep export lightweight: drilldown pages accept `export=csv` and stream CSV via Moodle CSV writer (`csv_export_writer`)
 
 ## Current data sources
 
@@ -47,4 +49,4 @@ R1 implementation is intentionally lightweight and Moodle-native.
 
 ## Open technical follow-ups
 
-- optional export strategy decision (R2)
+- add deeper integration coverage for CSV payload content/headers in full request flow

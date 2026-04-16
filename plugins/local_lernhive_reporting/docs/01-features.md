@@ -30,6 +30,11 @@ Offer a simple reporting dashboard on top of Moodle reports and analytics.
 - KPI tiles and detail tables use consistent card spacing, typography, and action styling
 - course filter and alerts follow the same visual language as other LernHive plugin screens
 
+7. **CSV export actions (R1 lightweight)**
+- users, popular, and completion drilldowns provide an explicit CSV export action in the infobar
+- exports are read-only snapshots of the currently shown drilldown data
+- export requests keep Moodle capability checks and require a valid `sesskey`
+
 ## Data model policy (R1)
 
 - read-only access to Moodle core tables

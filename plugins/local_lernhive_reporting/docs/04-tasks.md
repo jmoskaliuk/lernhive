@@ -12,11 +12,14 @@
 - [x] add explicit UX empty states for no participants/no completion data
 - [x] strengthen global reporting visibility (show all courses for global roles)
 - [x] align dashboard and drilldowns to the LernHive design-system shell and card patterns
+- [x] add lightweight CSV export actions for users/popular/completion drilldowns (sesskey-protected)
+- [x] add automated tests for export endpoint security and routing
 
 ## Next tasks
 
-- [ ] define whether R1 needs CSV export or keeps on-screen only
+- [ ] review row limits for large instances (users: 200, popular/completion: 25)
+- [ ] decide if completion export should include only top list or an optional selected-course summary block
 
 ## Open questions
 
-- Is export explicitly out of R1 or a deferred option within R1?
+- Should completion export remain a top-list snapshot or include selected-course summary rows by default?
