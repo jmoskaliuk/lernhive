@@ -199,13 +199,13 @@
 
 ## Open — R1 scope (nach Design-Session ergänzt)
 
-- [ ] **0.9.65 — Icon-Taxonomie implementieren** (`_icons.scss` + alle Templates):
+- [x] **0.9.65 — Icon-Taxonomie implementieren** (shipped 2026-04 in `828b952`) (`_icons.scss` + alle Templates):
   - **Typ 1 Navigation** — `.lh-icon-nav--active`: `background: transparent !important` — nur Farbwechsel, nie Quadrat/Kreis
   - **Typ 3 Action** — `.lh-icon-action`: Default `background: rgba($lh-primary, .08)` (nicht `transparent`). `.lh-icon-action--on-dark`: Default `background: rgba(#fff, .12)`. Gilt für alle Vorkommen: User Block, Context Dock, Topbar Actions, Card Buttons (Info-Icon)
   - **Typ 4 Information** — `.lh-icon-info` neu einführen: 28px, 6px radius, `cursor: help`, immer sichtbarer Kasten, kein scale/shadow beim Hover. Modifiers: `--help`, `--warning`, `--success`, `--error`, `--locked`, `--new`, `--pending`
   - Referenz: `mockups/design-system-reference.html` Sektion 3
 
-- [ ] **0.9.66 — Button-System vereinheitlichen** (`_buttons.scss` + alle Templates):
+- [x] **0.9.66 — Button-System vereinheitlichen** (shipped 2026-04 in `0fb237a`) (`_buttons.scss` + alle Templates):
   - Standalone-Buttons (`.lh-btn`): `border-radius: 8px` statt `$lh-radius-pill`
   - CTA Strip Button (`.lh-cta-strip__cta`): `border-radius: 8px`
   - Zone B CTA (`.lh-plugin-infobar__cta`): `border-radius: 8px`
@@ -213,14 +213,16 @@
   - Tags (`.lh-plugin-tag`): behalten `border-radius: $lh-radius-pill` — **einzige Pills im System**
   - Referenz: `mockups/design-system-reference.html` Sektion 5
 
-- [ ] **0.9.67 — App Shell Header refaktorieren** (`_layout.scss`, `drawers.mustache`):
+- [x] **0.9.67 — App Shell Header refaktorieren** (shipped 2026-04-15 in `feca95f`, Zone-0-Regel angepasst in PR #13 / `7b7698f`) (`_layout.scss`, `drawers.mustache`):
   - **Sidebar Brand Row**: LernHive-Wordmark links, Launcher-Trigger rechts als oranger Vollkreis (`background: $lh-accent; border-radius: 50%`). Kein Icon-Kasten (Quadrat), kein weiß-transparentes Pseudo-Quadrat.
   - **Sidebar Nav Items**: Icon in `.lh-nav-icon` Wrapper (24px, border-radius 6px, rgba-weißer Tint). Aktives Item: Row-Highlight `rgba(#fff, .10)` + Icon-Box `rgba($lh-accent, .22)`. Text weiß. Kein Border/Rahmen.
   - **Topbar** (48px): Linke Hälfte = Launcher-Panel (`.lh-launcher-icon` als Vollkreis-Buttons, `rgba(primary,.07)`). Rechte Hälfte = Action Icons (Bell, Avatar, Settings, Logout). Border-Right zwischen beiden Hälften als Trenner.
   - **Zone 0**: `background: $lh-bg`, Breadcrumb links, h1, Page-Action-Icons rechts. Auf Plugin-Shell-Seiten ausgeblendet (`:has(.lh-plugin-header)`).
   - Referenz: `mockups/design-system-reference.html` Sektion 0 + alle drei neuen Mockups
+  - **Deviation (PR #13, 2026-04-16)**: Zone 0 bleibt auf Plugin-Shell-Seiten sichtbar (statt verstecken). Grund: vollständiger CI-Shell-Stack Zone 0 (Identity) + Zone A (Context) + Zone B (Info) — Breadcrumb bleibt erhalten. Kommentar in `_layout.scss` beschreibt die Entscheidung.
+  - **Deviation (kosmetisch)**: Row-Highlight auf aktivem Nav-Item ist `rgba(255,255,255,0.18)` statt `0.10` aus Spec — bessere Sichtbarkeit bei transparentem Icon-Tint.
 
-- [ ] **0.9.68 — Dashboard-Content-Muster** (`_dashboard.scss`, `drawers.mustache`/Dashboard-Block):
+- [ ] **0.9.68 — Dashboard-Content-Muster** (`_dashboard.scss`, `drawers.mustache`/Dashboard-Block) — ⚠️ Version-Digit 0.9.68 wurde am 2026-04-16 auf einen reinen Docs-Bump (`607e0d9`) verbrannt; Dashboard-Content-Muster bleibt offen und erhält beim Ship ein neues Version-Slot:
   - Abschnitte: "Today" (fällige + laufende Items), "My Courses" (Fortschrittskarten), "Recommended" (Snacks)
   - Section-Header-Muster: Icon (Typ 1 Nav, inline 16px) + Titel + optionaler "View all →"-Link
   - Card-Grid: `display: grid; gap: 14px` — 2-spaltig für Today, 3-spaltig für My Courses
