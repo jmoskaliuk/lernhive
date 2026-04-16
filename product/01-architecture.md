@@ -60,6 +60,9 @@ Base system for levels, shared UI logic hooks, and common helper services.
 ### `theme_lernhive`
 Visual layer and responsive design system.
 
+### `format_lernhive_snack`
+Snack-specific short-form course presentation as a Moodle course format plugin.
+
 ### `local_lernhive_flavour`
 Flavour selection, setup defaults and profile loading.
 

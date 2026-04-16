@@ -96,14 +96,6 @@ $string['coursemore'] = 'More course actions';
 $string['sectiondownload'] = 'Download section list';
 $string['sectionmore'] = 'More section actions';
 
-$string['snacktools'] = 'Snack tools';
-$string['snackdownload'] = 'Download Snack overview';
-$string['snackprint'] = 'Print Snack page';
-$string['snackmore'] = 'More Snack actions';
-$string['snackpromise'] = 'Snack promises';
-$string['snackreleasenote'] = 'Release 1 note';
-$string['snackhelperarea'] = 'Snack helper area';
-
 $string['actioncreatecourse'] = 'Create course';
 $string['actioncreatecoursedesc'] = 'Start the main course creation flow.';
 $string['actioncontenthub'] = 'ContentHub';

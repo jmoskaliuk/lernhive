@@ -132,6 +132,7 @@ plugins/
   local_lernhive_reporting/
   local_lernhive_notifications/
   theme_lernhive/
+  format_lernhive_snack/
 
 mockups/
   explore-home.html

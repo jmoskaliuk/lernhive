@@ -1,0 +1,11 @@
+/*
+ * Minimal styles for format_lernhive_snack.
+ *
+ * Snack-specific component styling is intentionally lightweight in this first
+ * scaffold. The visual system keeps relying on the active Moodle theme while
+ * the format owns snack content templates.
+ */
+
+.format-lernhive-snack .lernhive-snack-shell {
+    display: block;
+}

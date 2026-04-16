@@ -99,15 +99,6 @@ $string['coursemore'] = 'Weitere Kursaktionen';
 $string['sectiondownload'] = 'Abschnittsliste herunterladen';
 $string['sectionmore'] = 'Weitere Abschnittsaktionen';
 
-// Snack surfaces.
-$string['snacktools'] = 'Snack-Werkzeuge';
-$string['snackdownload'] = 'Snack-Übersicht herunterladen';
-$string['snackprint'] = 'Snack-Seite drucken';
-$string['snackmore'] = 'Weitere Snack-Aktionen';
-$string['snackpromise'] = 'Snack-Versprechen';
-$string['snackreleasenote'] = 'Release-1-Hinweis';
-$string['snackhelperarea'] = 'Snack-Hilfsbereich';
-
 // Action labels.
 $string['actioncreatecourse'] = 'Kurs erstellen';
 $string['actioncreatecoursedesc'] = 'Den zentralen Kurs-Erstellungsfluss starten.';

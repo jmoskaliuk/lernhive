@@ -30,7 +30,7 @@ LernHive theme implementation target on top of Moodle theme APIs.
 - Explore shell components in the theme should remain generic enough for `local_lernhive_discovery` to supply the actual block content
 - ContentHub shell components in the theme should support orchestration UI only and avoid absorbing Copy or Library logic
 - course/incourse layouts provide chrome only (header, sidebar, footer, block regions) — course content rendering moves to course format plugins per ADR-01
-- short-form Snack presentation is **not** owned by the theme; planned `format_lernhive_snack` plugin will own snack templates (0.10.0)
+- short-form Snack presentation is **not** owned by the theme; `format_lernhive_snack` owns snack templates (since 0.10.0)
 
 ## Page header (since 0.9.26)
 
@@ -396,11 +396,11 @@ Don't, unless a product requirement cannot be satisfied with the current six. Ad
 ## Course format migration (post-0.9.3)
 Per ADR-01, course-specific rendering leaves the theme. The migration order is:
 1. **0.9.3 (this release)** — block regions in place; theme chrome is format-agnostic.
-2. **0.10.0** — scaffold `format_lernhive_snack`, move `snack_*.mustache` out of the theme, drop snack-specific rules from `_course.scss`.
+2. **0.10.0** — scaffold `format_lernhive_snack` and move `snack_*.mustache` out of the theme.
 3. **0.11.0** — scaffold `format_lernhive_community` for community feeds.
 4. **Later** — decide whether `format_lernhive_classic` is needed or if `format_topics` covers the baseline.
 
-Until the format plugins ship, the theme's existing `snack_*.mustache` partials and `_course.scss` rules remain in place as dead code gated by the current `course.mustache` — they will be removed in 0.10.0.
+`format_lernhive_snack` now ships as the Snack format baseline, and the theme no longer carries `snack_*.mustache`. Remaining course-format migration work is focused on `format_lernhive_community` and the optional `format_lernhive_classic` decision.
 
 ## Current dependencies
 - Moodle theme APIs

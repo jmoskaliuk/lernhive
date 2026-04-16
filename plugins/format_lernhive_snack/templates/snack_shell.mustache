@@ -1,10 +1,10 @@
 <div class="lernhive-snack-shell">
-    {{> theme_lernhive/snack_header }}
+    {{> format_lernhive_snack/snack_header }}
 
     <div class="lernhive-snack-shell__layout">
         <div class="lernhive-snack-shell__main">
             {{#promiseitems.0}}
-                <section class="lernhive-snack-promise" aria-label="{{#str}} snackpromise, theme_lernhive {{/str}}">
+                <section class="lernhive-snack-promise" aria-label="{{#str}} snackpromise, format_lernhive_snack {{/str}}">
                     {{#promiseitems}}
                         <article class="lernhive-snack-promise__item">
                             <h2 class="lernhive-snack-promise__title">{{ title }}</h2>
@@ -14,18 +14,18 @@
                 </section>
             {{/promiseitems.0}}
 
-            {{> theme_lernhive/snack_flow }}
+            {{> format_lernhive_snack/snack_flow }}
 
             {{#releasenote}}
                 <section class="lernhive-snack-shell__note">
-                    <h2 class="lernhive-snack-shell__note-title">{{#str}} snackreleasenote, theme_lernhive {{/str}}</h2>
+                    <h2 class="lernhive-snack-shell__note-title">{{#str}} snackreleasenote, format_lernhive_snack {{/str}}</h2>
                     <p class="lernhive-snack-shell__note-copy">{{ releasenote }}</p>
                 </section>
             {{/releasenote}}
         </div>
 
         {{#asidepanels.0}}
-            <aside class="lernhive-snack-shell__aside" aria-label="{{#str}} snackhelperarea, theme_lernhive {{/str}}">
+            <aside class="lernhive-snack-shell__aside" aria-label="{{#str}} snackhelperarea, format_lernhive_snack {{/str}}">
                 {{#asidepanels}}
                     <section class="lernhive-snack-shell__panel">
                         <h2 class="lernhive-snack-shell__panel-title">{{ title }}</h2>

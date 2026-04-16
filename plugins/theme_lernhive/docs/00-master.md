@@ -31,7 +31,7 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 
 ## Out of scope — things the theme must NOT own
 - course content rendering (belongs in course format plugins — see Architecture decision ADR-01 below)
-- snack-specific presentation logic (target: `format_lernhive_snack` in 0.10.0)
+- snack-specific presentation logic (owned by `format_lernhive_snack` since 0.10.0)
 - community feed rendering (target: `format_lernhive_community` in 0.11.0)
 - any business logic; the theme is a pure presentation layer
 
@@ -39,16 +39,16 @@ This plugin is part of the LernHive ecosystem and should fit the core rules:
 
 **Decision.** LernHive will move course-specific presentation (Snack, Community, classic course) out of `theme_lernhive` and into dedicated course format plugins. The theme keeps site chrome (shell, sidebar, header, blocks) and stops rendering course-content surfaces.
 
-**Why.** Moodle's canonical separation of concerns places course content rendering in course format plugins (e.g., `format_topics`, `format_grid`), not in themes. The current setup — Snack rendering in `theme_lernhive/templates/snack_*.mustache` and course-specific CSS in `_course.scss` — fights Moodle's grain, blocks per-course customization, and makes the theme non-reusable.
+**Why.** Moodle's canonical separation of concerns places course content rendering in course format plugins (e.g., `format_topics`, `format_grid`), not in themes. The former setup — Snack rendering in `theme_lernhive/templates/snack_*.mustache` and course-specific CSS in `_course.scss` — fought Moodle's grain, blocked per-course customization, and made the theme less reusable.
 
 **Consequences.**
 - The theme becomes format-agnostic and smaller. Any Moodle theme will be able to host LernHive courses once the formats ship.
-- A new `format_lernhive_snack` plugin owns the short-form experience (target 0.10.0). Templates move from `theme_lernhive/templates/snack_*.mustache` into the format's `templates/`.
+- `format_lernhive_snack` owns the short-form experience (shipped in 0.10.0). Templates moved from `theme_lernhive/templates/snack_*.mustache` into the format's `templates/`.
 - A new `format_lernhive_community` plugin owns community feeds (target 0.11.0). "Community" is treated as a course format because community lifecycle (enrol, sections, completion, gradebook) aligns with Moodle course semantics.
 - `_course.scss` selectors scoped to `body.path-course-view` get migrated into the format plugins' own styles.
 - Optional `format_lernhive_classic` only if required — core `format_topics` may suffice.
 
-**Status.** Accepted. Implementation begins post-0.9.3 block-regions refactor.
+**Status.** Accepted. Snack format migration shipped in 0.10.0; community format migration remains pending.
 
 ## Architecture decision ADR-02 — Block regions replace the right-hand drawer (2026-04-11, shipped in 0.9.3)
 

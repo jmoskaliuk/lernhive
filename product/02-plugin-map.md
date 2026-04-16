@@ -10,6 +10,7 @@ All plugins listed below are documented in this repository. Release labels indic
 |---|---|---:|---|
 | `local_lernhive` | local | R1 | levels, shared hooks, base helpers |
 | `theme_lernhive` | theme | R1 | design system and responsive UX |
+| `format_lernhive_snack` | format | R1 | Snack course presentation and short-form templates |
 | `local_lernhive_flavour` | local | R1 | flavour setup and defaults |
 | `local_lernhive_configuration` | local | R1 | config history and override tracking |
 | `local_lernhive_launcher` | local | R1 | global action launcher |
@@ -28,6 +29,7 @@ All plugins listed below are documented in this repository. Release labels indic
 ## Dependencies
 
 - `theme_lernhive` should remain independently usable
+- `format_lernhive_snack` owns Snack-specific course rendering while `theme_lernhive` stays shell/chrome-only
 - `local_lernhive` is the shared base for several LernHive plugins
 - `local_lernhive_discovery` integrates with:
   - `local_lernhive_follow`
