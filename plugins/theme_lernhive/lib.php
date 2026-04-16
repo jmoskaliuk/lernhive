@@ -600,32 +600,45 @@ function theme_lernhive_get_block_regions_context($output): array {
  * `hint` string for Zone B. Strings are resolved to the current language via
  * get_string() up front — the partial stays purely presentational.
  *
- * Handled core pagetypes (0.9.40):
+ * Handled core pagetypes (0.9.40+):
  *   - my-index           → /my/                  (Dashboard)
  *   - my-courses         → /my/courses.php       (My courses)
  *   - user-profile       → /user/profile.php     (Profile)
  *   - user-preferences   → /user/preferences.php (Preferences — admin layout)
  *
+ * Note: some Moodle setups still expose /my/courses.php as pagetype "my-index".
+ * We therefore resolve "mycourses" via URL path and pagelayout first, then fall
+ * back to pagetype mapping.
+ *
  * @param moodle_page $page The current $PAGE object.
  * @return array<string, mixed>|null Shell context, or null when not applicable.
  */
 function theme_lernhive_get_plugin_shell_context(\moodle_page $page): ?array {
-    // Whitelist of core Moodle pagetypes that should receive the Plugin Shell
-    // treatment. Each entry maps to the lang-string suffix used below, keeping
-    // this list the single source of truth for "which core page belongs where".
-    $map = [
-        'my-index'         => 'dashboard',
-        'my-courses'       => 'mycourses',
-        'user-profile'     => 'profile',
-        'user-preferences' => 'preferences',
-    ];
-
     $pagetype = $page->pagetype ?? '';
-    if (!isset($map[$pagetype])) {
-        return null;
-    }
+    $pagelayout = $page->pagelayout ?? '';
+    $pagepath = $page->url ? $page->url->get_path() : '';
 
-    $key = $map[$pagetype];
+    // Resolve page family with robust fallbacks:
+    // 1) my/courses.php by path/layout (some installs report pagetype my-index),
+    // 2) explicit pagetype whitelist for everything else.
+    if ($pagepath === '/my/courses.php' || $pagelayout === 'mycourses' || strpos($pagetype, 'my-courses') === 0) {
+        $key = 'mycourses';
+    } else {
+        // Whitelist of core Moodle pagetypes that should receive the Plugin Shell
+        // treatment. Each entry maps to the lang-string suffix used below.
+        $map = [
+            'my-index'         => 'dashboard',
+            'user-profile'     => 'profile',
+            'user-preferences' => 'preferences',
+        ];
+        if ($pagelayout === 'mydashboard') {
+            $key = 'dashboard';
+        } else if (isset($map[$pagetype])) {
+            $key = $map[$pagetype];
+        } else {
+            return null;
+        }
+    }
 
     // Page-specific tag row. Keep it to one contextual pill per page — the
     // Plugin Shell SCSS (`_plugin-shell.scss`) caps tag density at 4 and the

@@ -185,17 +185,17 @@
 
 [data-block="myoverview"] {
     // Remove the outer Moodle block chrome to avoid "card-in-card".
-    > .card {
+    &.card {
         border: 0;
         box-shadow: none;
         background: transparent;
     }
 
-    > .card > .card-header {
+    > .card-header {
         display: none;
     }
 
-    > .card > .card-body {
+    > .card-body {
         padding: 0 !important;
     }
 
