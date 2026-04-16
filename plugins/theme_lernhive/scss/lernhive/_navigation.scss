@@ -86,7 +86,7 @@
 }
 
 // Icon-only launcher actions — label hidden, tooltip via title attribute.
-.lernhive-launcher__action--icon-only {
+.lernhive-launcher__action.lernhive-launcher__action--icon-only {
     width: 2.5rem;
     height: 2.5rem;
     flex-direction: column;

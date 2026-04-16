@@ -153,19 +153,17 @@
   - ContentHub renders 3-column card grid with `lh-plugin-content-area` gutter
 - [ ] **Smoke-test 0.9.34/0.9.36** — superseded by the 0.9.37 smoke-test above
 - [ ] **Smoke-test 0.9.33** — superseded by the 0.9.37 smoke-test above
-- [ ] **0.9.40 — Icon taxonomy Type 4 `.lh-icon-info`** (scaffolded but not yet shipped):
-  - `scss/lernhive/_icons.scss` — rewrite the file-header comment from a three-type to a four-type taxonomy (Navigation / Artifact / Action / **Information**). The new Type 4 documents intent explicitly: "passive signal — does NOT navigate, does NOT classify content, does NOT trigger a function; communicates state, help, warning, or error".
-  - New `.lh-icon-info` class: 28 × 28 px rounded square (6 px radius), `cursor: help`, NO transform/scale/lift on hover, NO box-shadow on hover — visually distinct from both `.lh-icon-action` (circle, grows) and `.lh-icon-artifact` (9 px tile, metadata). Subtle background-tint deepen on hover is the only visual feedback.
-  - Semantic modifiers: `--locked`, `--complete`, `--new`, `--pending` (status), `--help`, `--warning`, `--error`, `--success`, `--info` (form/alert signals). All modifiers use the existing `$lh-*-light` / accent palette so nothing is introduced outside the brand tokens.
-  - Size variants: `--sm` (20 × 20, borderless, for inline use in body copy + table cells), `--lg` (36 × 36, for alert banners + empty states).
-  - `lib.php` — partial-list comment updated: `nav / artifact / action / info`.
-  - Template rewire (status badges, help marks in forms, alert icons) comes in a follow-up so each surface can be reviewed individually.
-  - **Note:** the rule additions currently sit uncommitted in the workspace; needs its own commit + version bump.
+- [x] **0.9.38 — Icon taxonomy Type 4 `.lh-icon-info`** (shipped on main, 2026-04):
+  - `scss/lernhive/_icons.scss` — header comment rewritten from three-type to four-type taxonomy (Navigation / Artifact / Action / **Information**). Type 4 documents intent explicitly: "passive signal — does NOT navigate, does NOT classify content, does NOT trigger a function; communicates state, help, warning, or error".
+  - `.lh-icon-info` class landed at lines 324–461: 28 × 28 px rounded square (6 px radius), `cursor: help`, NO transform/scale/lift on hover, NO box-shadow on hover — visually distinct from both `.lh-icon-action` (circle, grows) and `.lh-icon-artifact` (9 px tile, metadata). Subtle background-tint deepen on hover is the only visual feedback.
+  - Semantic modifiers shipped: `--locked`, `--complete`, `--new`, `--pending` (status), `--help`, `--warning`, `--error`, `--success`, `--info` (form/alert signals); all modifiers use the existing `$lh-*-light` / accent palette.
+  - Size variants shipped: `--sm` (20 × 20, borderless), `--lg` (36 × 36).
+  - Template rewire (status badges, help marks in forms, alert icons) tracked separately under 0.9.65 — CSS is live, but no Mustache currently references `.lh-icon-info`.
 - [ ] `regionmainsettingsmenu` must stay — Teachers use it to add blocks to courses (block positions still unclear after right-hand drawer removal). Keep until an explicit block-placement UX replaces it.
 - [ ] Student dock items: progress overview shortcut, continue-learning button (post-flavour integration)
 - [ ] PHPUnit @covers deprecations in non-onboarding plugins (contenthub, copy, flavour, library — 41 remaining)
-- [ ] PHPUnit failure: `flavour_manager_test::test_apply_on_fresh_site_does_not_flag_overrides` (assertFalse fails, overrides_detected = true on fresh site)
-- [ ] Behat init_failed on Hetzner (wwwroot / Selenium config issue)
+- [x] ~~PHPUnit failure: `flavour_manager_test::test_apply_on_fresh_site_does_not_flag_overrides`~~ — fixed in `local_lernhive_flavour` 0.2.1: `has_pending_overrides()` now requires `$current !== null` to treat a diff row as an override, matching `detect_overrides()`. Last full PHPUnit run (2026-04-16, sha ded40269) green with 14 tests / 43 assertions.
+- [x] ~~Behat init_failed on Hetzner~~ — fixed in `playbooks/test.sh` (Session 1, 2026-04-16): first-time init now calls plain `init.php` (no `--add-core-features-to-theme`) when `diag_rc != 0`, matching the working PHPUnit path. Second-pass re-syncs keep the flag. Runbook entry updated in `playbooks/testing-hetzner.md`.
 
 ## Deferred — post-R1
 

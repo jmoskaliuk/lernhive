@@ -35,6 +35,18 @@
   two-step template UX implemented
   (pick template -> run Simple or Expert mode).
 
+### R2.3: shipped (0.3.1, 2026-04-16)
+
+- **LH-COPY-STR-01** done:
+  restored `page_title_course` and `page_intro_course` lang keys so
+  `source::TYPE_COURSE` pages no longer render missing-string placeholders.
+- **LH-COPY-SHELL-01** done:
+  wizard page moved to a full Plugin Shell stack (Zone A + Zone B) with
+  mode controls in the infobar and no extra page-intro block duplication.
+- **LH-COPY-UI-01** done:
+  button variants and card-action icons aligned to the LernHive button
+  system (`lh-btn-*`, `lh-btn-action`) for smoother visual consistency.
+
 ## Next steps
 
 1. Add automated coverage for template edge cases:

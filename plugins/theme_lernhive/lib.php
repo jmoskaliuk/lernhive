@@ -229,6 +229,8 @@ function theme_lernhive_get_context_dock_items(): array {
 
     $items = [];
     $layout = $PAGE->pagelayout;
+    $pagepath = $PAGE->url->get_path();
+    $isdashboardpage = (($PAGE->pagetype ?? '') === 'my-index');
 
     $editingon = $PAGE->user_is_editing();
 
@@ -302,6 +304,37 @@ function theme_lernhive_get_context_dock_items(): array {
             'url'     => $blockediturl->out(false),
             'active'  => $editingon,
             'divider' => false,
+        ];
+    }
+
+    // Site-admin dashboard controls:
+    // 1) On /my/, jump into the default-dashboard editor.
+    // 2) On /my/indexsys.php while editing, expose "save for everyone" in the dock.
+    if (is_siteadmin() && $isdashboardpage && $pagepath === '/my/index.php') {
+        $items[] = [
+            'key'     => 'default_dashboard_edit',
+            'icon'    => 'cog',
+            'label'   => get_string('mypage', 'admin'),
+            'url'     => (new moodle_url('/my/indexsys.php', [
+                'sesskey' => sesskey(),
+                'edit' => 'on',
+            ]))->out(false),
+            'active'  => false,
+            'divider' => false,
+        ];
+    }
+
+    if (is_siteadmin() && $isdashboardpage && $pagepath === '/my/indexsys.php' && $editingon) {
+        $items[] = [
+            'key'     => 'default_dashboard_save_all',
+            'icon'    => 'save',
+            'label'   => get_string('reseteveryonesdashboard', 'my'),
+            'url'     => (new moodle_url('/my/indexsys.php', [
+                'resetall' => 1,
+                'sesskey'  => sesskey(),
+            ]))->out(false),
+            'active'  => false,
+            'divider' => !empty($items),
         ];
     }
 
@@ -567,32 +600,45 @@ function theme_lernhive_get_block_regions_context($output): array {
  * `hint` string for Zone B. Strings are resolved to the current language via
  * get_string() up front — the partial stays purely presentational.
  *
- * Handled core pagetypes (0.9.40):
+ * Handled core pagetypes (0.9.40+):
  *   - my-index           → /my/                  (Dashboard)
  *   - my-courses         → /my/courses.php       (My courses)
  *   - user-profile       → /user/profile.php     (Profile)
  *   - user-preferences   → /user/preferences.php (Preferences — admin layout)
  *
+ * Note: some Moodle setups still expose /my/courses.php as pagetype "my-index".
+ * We therefore resolve "mycourses" via URL path and pagelayout first, then fall
+ * back to pagetype mapping.
+ *
  * @param moodle_page $page The current $PAGE object.
  * @return array<string, mixed>|null Shell context, or null when not applicable.
  */
 function theme_lernhive_get_plugin_shell_context(\moodle_page $page): ?array {
-    // Whitelist of core Moodle pagetypes that should receive the Plugin Shell
-    // treatment. Each entry maps to the lang-string suffix used below, keeping
-    // this list the single source of truth for "which core page belongs where".
-    $map = [
-        'my-index'         => 'dashboard',
-        'my-courses'       => 'mycourses',
-        'user-profile'     => 'profile',
-        'user-preferences' => 'preferences',
-    ];
-
     $pagetype = $page->pagetype ?? '';
-    if (!isset($map[$pagetype])) {
-        return null;
-    }
+    $pagelayout = $page->pagelayout ?? '';
+    $pagepath = $page->url ? $page->url->get_path() : '';
 
-    $key = $map[$pagetype];
+    // Resolve page family with robust fallbacks:
+    // 1) my/courses.php by path/layout (some installs report pagetype my-index),
+    // 2) explicit pagetype whitelist for everything else.
+    if ($pagepath === '/my/courses.php' || $pagelayout === 'mycourses' || strpos($pagetype, 'my-courses') === 0) {
+        $key = 'mycourses';
+    } else {
+        // Whitelist of core Moodle pagetypes that should receive the Plugin Shell
+        // treatment. Each entry maps to the lang-string suffix used below.
+        $map = [
+            'my-index'         => 'dashboard',
+            'user-profile'     => 'profile',
+            'user-preferences' => 'preferences',
+        ];
+        if ($pagelayout === 'mydashboard') {
+            $key = 'dashboard';
+        } else if (isset($map[$pagetype])) {
+            $key = $map[$pagetype];
+        } else {
+            return null;
+        }
+    }
 
     // Page-specific tag row. Keep it to one contextual pill per page — the
     // Plugin Shell SCSS (`_plugin-shell.scss`) caps tag density at 4 and the

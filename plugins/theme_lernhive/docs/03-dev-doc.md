@@ -199,6 +199,8 @@ On the `course` pagelayout the theme swaps `sidebar.mustache` for a dedicated `s
 
 `templates/course.mustache` renders both in Zone B (`.lh-plugin-infobar__course-actions`) using core partials (`core/moremenu`, `core/url_select`). This preserves course-admin actions (including Course reuse nodes like Import / Backup / Restore / Copy / Reset) without reimplementing capability logic in the theme.
 
+Visual treatment (0.9.68) is intentionally lightweight: the Zone-B course nav is styled as compact text tabs with an active underline, not as boxed button pills. This keeps Moodle's action/navigation semantics intact while reducing visual weight in the header strip. On narrower widths, the action row wraps below the participant stat and the tab rail remains horizontally scrollable.
+
 ### The `$PAGE->course` vs `$COURSE` divergence (fixed 0.9.51)
 
 On the `course` pagelayout, a naive `$page->course->id > SITEID` guard inside the helper short-circuits because `$PAGE->course` reports as SITE (`id = 1`) even though `require_login($course)` has already run upstream. Diagnostic HTML-comment instrumentation in 0.9.48 captured this directly: `courseid=none status=skipped`, in a context where the course *obviously* existed.
@@ -615,13 +617,11 @@ Dieser Abschnitt beschreibt die SCSS-Umsetzung der finalisierten Design-Entschei
 // Topbar
 .lernhive-page-header { height: 48px; /* statt 60px */ }
 
-// Zone 0 (nur auf Nicht-Plugin-Shell-Seiten)
+// Zone 0 (auf allen Seiten sichtbar, inklusive Plugin Shell)
 .lh-zone0 {
   background: $lh-bg;
   padding: 14px 24px 12px;
   border-bottom: 1px solid rgba($lh-border, .6);
-  // Auf Plugin-Shell-Seiten ausblenden:
-  .lernhive-page:has(.lh-plugin-header) & { display: none; }
 }
 
 // Zone A (bereits als .lh-plugin-header vorhanden — CSS-Klassen angleichen)
