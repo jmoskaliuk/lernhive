@@ -66,6 +66,10 @@ class popular_page implements renderable, templatable {
             'topcoursename' => $toprow['coursename'] ?? get_string('no_data', 'local_lernhive_reporting'),
             'topcourseusers' => $toprow['usercount'] ?? 0,
             'rows' => $rows,
+            'exporturl' => (new \moodle_url('/local/lernhive_reporting/popular.php', [
+                'export' => 'csv',
+                'sesskey' => sesskey(),
+            ]))->out(false),
             'backurl' => (new \moodle_url('/local/lernhive_reporting/index.php'))->out(false),
         ];
     }

@@ -13,6 +13,7 @@ A quick reporting entry point that answers common everyday questions without ope
 - most popular courses
 - completion rate
 4. Use drilldowns for detail lists
+5. Optional: export the currently open drilldown as CSV
 
 ## UX behavior
 
@@ -22,9 +23,10 @@ A quick reporting entry point that answers common everyday questions without ope
 - consistent LernHive plugin-shell layout (header, infobar, and content cards)
 - responsive table/card behavior
 - explicit empty states when there are no participants or no completion records
+- explicit export action in drilldowns (users, popular, completion)
 
 ## R1 limitations
 
 - no advanced segmentation
-- no custom exports
+- CSV only; no scheduled exports and no custom export builder
 - no personalized recommendations

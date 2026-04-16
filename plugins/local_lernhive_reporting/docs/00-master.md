@@ -2,7 +2,7 @@
 
 **Plugin type:** local plugin  
 **Release target:** R1  
-**Current implementation status:** v0.1.1 (dashboard + 3 tiles + drilldowns + design-system-aligned UI shell)
+**Current implementation status:** v0.1.2 (dashboard + 3 tiles + drilldowns + design-system-aligned UI shell + CSV export actions)
 
 ## Purpose
 
@@ -25,6 +25,7 @@ Provide a simple, tile-based reporting dashboard on top of Moodle core reporting
   3. course completion
 - course filter
 - lightweight drilldowns for popularity and completion
+- lightweight CSV export on drilldown pages (`users`, `popular`, `completion`)
 
 ## Main dependencies
 
