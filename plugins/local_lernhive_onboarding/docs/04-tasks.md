@@ -23,6 +23,7 @@
 - [x] **LH-ONB-HOTFIX-04** Added one-shot completion overlay after forced catalog tour end (`Back to onboarding` / `Stay here`).
 - [x] **LH-ONB-HOTFIX-05** Backfilled stale Level-1 `pathmatch` values from JSON source of truth, retargeted self-enrol tour selectors for `/enrol/instances.php`, and moved course-create intro anchor away from the `fullname` input.
 - [x] **LH-ONB-HOTFIX-06** Switched completion dialog to `core/modal_factory` save/cancel modal with explicit CTA labels and LernHive-scoped styling (`.lh-onboarding-completion-modal`) to align the end screen with UX/UI pattern.
+- [x] **Deployment checkpoint (April 16, 2026)** FR-05b + aligned DevFlow docs are on `main` (`e24a4a9`) and deployed to Hetzner via `lernhive-deploy` (cache purge included).
 
 ## In progress / next (0.3.x)
 
