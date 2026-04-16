@@ -26,6 +26,7 @@ PHPUnit:
 - verify completed tours replay from step 1 after restart
 - verify step progression after welcome step (selector targets resolve, next-step flow works)
 - verify completion overlay appears after catalog-started tour end and both actions work
+- verify completion dialog is design-conform (`Stay here` + `Back to onboarding`, no modal close `X`, no global focus ring around dialog container)
 - verify enrolment tours match on their redirected pages (`/user/index.php%`, `/enrol/instances.php%`)
 - verify sandbox course exists and stays hidden by default
 
