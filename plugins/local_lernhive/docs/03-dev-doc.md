@@ -68,8 +68,11 @@ Flat namespace (not hierarchical — see ADR-01 open question 1). Examples:
 | Content modules | `mod_imscp.create` | 5 | `mod/imscp:addinstance` |
 | Content modules | `mod_subsection.create` | 5 | `mod/subsection:addinstance` |
 | Course | `core.course.create` | 1 | `moodle/course:create` |
+| Course settings | `core.course.settings.format` | 1 | `moodle/course:update` |
+| Course settings | `core.course.settings.completion` | 1 | `moodle/course:update` |
 | Users | `core.user.create` | 1 *(configurable)* | `moodle/user:create` |
 | Users | `core.user.enrol` | 1 | `enrol/manual:enrol` |
+| Communication | `core.message.send` | 1 | `moodle/site:sendmessage` |
 | Grades | `core.grade.view` | 2 | `moodle/grade:view` |
 | Grades | `core.grade.manage` | 4 | `moodle/grade:manage` |
 | Grades | `core.grade.edit` | 4 | `moodle/grade:edit` |

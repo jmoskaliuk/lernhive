@@ -1,6 +1,7 @@
 {
     "name": "LernHive: Abschlussverfolgung",
     "description": "Lerne, wie du Abschlussverfolgung in deinem Kurs aktivierst und nutzt.",
+    "lernhive_feature": "core.course.settings.completion",
     "pathmatch": "/course/edit.php%",
     "start_url": "/course/edit.php?id={DEMOCOURSEID}",
     "enabled": 1,
