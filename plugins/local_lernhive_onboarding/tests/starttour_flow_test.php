@@ -42,7 +42,7 @@ final class starttour_flow_test extends advanced_testcase {
 
     /**
      * Fresh start: tour has a `lh_start_url` in configdata, the user
-     * has never run it before. Flow must prime `_requested=1`, return
+     * has never run it before. Flow must prime the replay preference, return
      * the fully-resolved URL, and not leave any stale _completed /
      * _lastStep state behind (they never existed — just verifying
      * the unset is harmless).
@@ -61,13 +61,13 @@ final class starttour_flow_test extends advanced_testcase {
         $this->assertSame('/user/editadvanced.php', $url->get_path());
         $this->assertSame((string) $user->id, $url->get_param('id'));
 
-        $this->assertEquals(
-            1,
-            get_user_preferences('tool_usertours_' . $tour->id . '_requested', 0, $user->id),
-            'Fresh start must set the _requested replay flag to 1'
+        $this->assertGreaterThan(
+            0,
+            (int) get_user_preferences($this->requested_pref_name((int) $tour->id), 0, $user->id),
+            'Fresh start must set the replay preference'
         );
         $this->assertNull(
-            get_user_preferences('tool_usertours_' . $tour->id . '_completed', null, $user->id),
+            get_user_preferences($this->completed_pref_name((int) $tour->id), null, $user->id),
             '_completed must be absent on a fresh start'
         );
         $this->assertNull(
@@ -95,7 +95,7 @@ final class starttour_flow_test extends advanced_testcase {
         ]);
 
         // User finished the tour previously.
-        set_user_preference('tool_usertours_' . $tour->id . '_completed', time(), $user->id);
+        set_user_preference($this->completed_pref_name((int) $tour->id), time(), $user->id);
         set_user_preference('tool_usertours_' . $tour->id . '_lastStep', 3, $user->id);
 
         set_config('democourseid', 42, 'local_lernhive_onboarding');
@@ -105,12 +105,12 @@ final class starttour_flow_test extends advanced_testcase {
         $this->assertSame('/course/view.php', $url->get_path());
         $this->assertSame('42', $url->get_param('id'));
 
-        $this->assertEquals(
-            1,
-            get_user_preferences('tool_usertours_' . $tour->id . '_requested', 0, $user->id)
+        $this->assertGreaterThan(
+            0,
+            (int) get_user_preferences($this->requested_pref_name((int) $tour->id), 0, $user->id)
         );
         $this->assertNull(
-            get_user_preferences('tool_usertours_' . $tour->id . '_completed', null, $user->id),
+            get_user_preferences($this->completed_pref_name((int) $tour->id), null, $user->id),
             '_completed must be cleared so the tour plays again'
         );
         $this->assertNull(
@@ -144,9 +144,9 @@ final class starttour_flow_test extends advanced_testcase {
         // Fallback strips the `%` and returns `/course/view.php` literal.
         $this->assertSame('/course/view.php', $url->get_path());
         // Replay flag is set regardless of which path produced the URL.
-        $this->assertEquals(
-            1,
-            get_user_preferences('tool_usertours_' . $tour->id . '_requested', 0, $user->id)
+        $this->assertGreaterThan(
+            0,
+            (int) get_user_preferences($this->requested_pref_name((int) $tour->id), 0, $user->id)
         );
     }
 
@@ -216,5 +216,29 @@ final class starttour_flow_test extends advanced_testcase {
         ];
         $tour->id = $DB->insert_record('tool_usertours_tours', $tour);
         return $tour;
+    }
+
+    /**
+     * Resolve the replay preference key for this Moodle version.
+     */
+    private function requested_pref_name(int $tourid): string {
+        if (class_exists(\tool_usertours\tour::class)
+            && defined(\tool_usertours\tour::class . '::TOUR_REQUESTED_BY_USER')
+        ) {
+            return \tool_usertours\tour::TOUR_REQUESTED_BY_USER . $tourid;
+        }
+        return 'tool_usertours_' . $tourid . '_requested';
+    }
+
+    /**
+     * Resolve the completion preference key for this Moodle version.
+     */
+    private function completed_pref_name(int $tourid): string {
+        if (class_exists(\tool_usertours\tour::class)
+            && defined(\tool_usertours\tour::class . '::TOUR_LAST_COMPLETED_BY_USER')
+        ) {
+            return \tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER . $tourid;
+        }
+        return 'tool_usertours_' . $tourid . '_completed';
     }
 }

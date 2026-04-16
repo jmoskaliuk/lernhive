@@ -13,8 +13,9 @@
   - catalog link -> `starttour.php`
   - `starttour_flow::prepare_redirect_url()`
   - resolve `lh_start_url` via `start_url_resolver`
-  - set `tool_usertours_{id}_requested = 1`
-  - clear `_completed` and `_lastStep`
+  - set replay preference via `\tool_usertours\tour::TOUR_REQUESTED_BY_USER`
+  - clear completion preference via `\tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER`
+  - clear legacy `_completed` / `_lastStep` fallback keys for backward compatibility
 - Tour step import normalization:
   - canonical Moodle mapping is `selector=0`, `block=1`, `unattached=2`
   - importer normalizes legacy swapped selector/unattached values

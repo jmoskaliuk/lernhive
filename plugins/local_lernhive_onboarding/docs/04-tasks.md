@@ -17,6 +17,7 @@
 - [x] **LH-ONB-FR-02** `tour_importer` now reads top-level `lernhive_feature` and persists it to `local_lhonb_map.feature_id` (including existing-tour remap path).
 - [x] **LH-ONB-FR-05 (phase 1)** Backfilled `lernhive_feature` on every Level-1 tour JSON with a currently canonical registry mapping (7/10 files). Remaining fallback files require new registry feature definitions: `course_settings/01_format.json`, `course_settings/02_completion.json`, `communication/02_messaging.json`.
 - [x] **LH-ONB-HOTFIX-01** Normalized Moodle tour `targettype` mapping (`selector=0`, `unattached=2`) in JSON fixtures, importer normalization, and DB upgrade migration for already imported tours.
+- [x] **LH-ONB-HOTFIX-02** Align start/replay + completion preference keys with Moodle 5.x `tool_usertours\tour` constants (`tour_reset_time_*`, `tour_completion_time_*`) with legacy fallback support.
 
 ## In progress / next (0.3.x)
 

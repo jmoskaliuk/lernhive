@@ -75,7 +75,12 @@ class tour_manager {
      * Get completion status for a user's tours in a category.
      *
      * Checks Moodle's user_preferences table for tour completion records.
-     * The preference key format is: tool_usertours_{tourid}_completed
+     * On Moodle 5.x this is based on:
+     * - \tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER
+     * - \tool_usertours\tour::TOUR_REQUESTED_BY_USER
+     *
+     * Legacy fallback keys from older LernHive iterations are still honored:
+     * tool_usertours_{tourid}_completed / _requested.
      *
      * @param int $categoryid The category ID from local_lhonb_cats
      * @param int $userid The user ID
@@ -174,17 +179,53 @@ class tour_manager {
     /**
      * Check if a specific Moodle user tour is completed by a user.
      *
-     * Moodle stores tour completion in user_preferences with key format:
-     * tool_usertours_{tourid}_completed
+     * Moodle 5.x stores completion in user_preferences under
+     * `tool_usertours_tour_completion_time_{tourid}` and treats a tour as
+     * complete only when completion time is newer than reset/request time.
+     *
+     * Legacy fallback keys `tool_usertours_{tourid}_completed` and
+     * `tool_usertours_{tourid}_requested` are still read for backward
+     * compatibility.
      *
      * @param int $tourid The tour ID from tool_usertours_tours
      * @param int $userid The user ID
      * @return bool True if the tour has been completed by the user
      */
     public static function is_tour_completed(int $tourid, int $userid): bool {
-        $prefname = 'tool_usertours_' . $tourid . '_completed';
-        $pref = get_user_preferences($prefname, null, $userid);
-        return !empty($pref);
+        // Preferred Moodle 5.x keyspace.
+        $completionkey = null;
+        $requestedkey = null;
+        if (class_exists(\tool_usertours\tour::class)
+            && defined(\tool_usertours\tour::class . '::TOUR_LAST_COMPLETED_BY_USER')
+            && defined(\tool_usertours\tour::class . '::TOUR_REQUESTED_BY_USER')
+        ) {
+            $completionkey = \tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER . $tourid;
+            $requestedkey = \tool_usertours\tour::TOUR_REQUESTED_BY_USER . $tourid;
+        }
+
+        if ($completionkey !== null) {
+            $completiontime = get_user_preferences($completionkey, null, $userid);
+            if (!empty($completiontime)) {
+                $requesttime = get_user_preferences($requestedkey, null, $userid);
+                if (!empty($requesttime)) {
+                    return (int) $completiontime > (int) $requesttime;
+                }
+                return true;
+            }
+        }
+
+        // Legacy fallback keyspace.
+        $legacycompletion = get_user_preferences('tool_usertours_' . $tourid . '_completed', null, $userid);
+        if (empty($legacycompletion)) {
+            return false;
+        }
+
+        $legacyrequested = get_user_preferences('tool_usertours_' . $tourid . '_requested', null, $userid);
+        if (!empty($legacyrequested) && is_numeric($legacycompletion) && is_numeric($legacyrequested)) {
+            return (int) $legacycompletion > (int) $legacyrequested;
+        }
+
+        return true;
     }
 
     /**
