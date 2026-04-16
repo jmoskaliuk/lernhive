@@ -2,6 +2,13 @@
 
 ## Done (shipped)
 
+- [x] 0.9.68 — Course Zone-B navigation polish + cache-safe theme bump (2026-04-16):
+  - `scss/lernhive/_plugin-shell.scss` — restyled `.lh-plugin-infobar--course .lh-plugin-infobar__course-actions` from boxed mockup-like button pills to compact text tabs with active underline.
+  - Kept core Moodle behavior unchanged (`core/moremenu` + overflow handling): this is visual only, no capability or navigation logic rewrite.
+  - Added resilient responsive behavior: on narrower widths, course actions wrap to a second line and keep horizontal scrolling support for the tab rail.
+  - `version.php` — `2026041516 → 2026041517` / `0.9.67 → 0.9.68` so Moodle invalidates cached compiled CSS and picks up the new navigation styling reliably after deploy.
+  - DevFlow sync in the same change: `03-dev-doc.md` and `05-quality.md` updated with the new visual contract and validation checks.
+
 - [x] 0.9.56 — DevFlow docs alignment for the 0.9.51/0.9.52/0.9.54 course-page sidebar fix cycle (2026-04-11):
   - `docs/01-features.md` — new "Course-page sidebar (since 0.9.45, render-guard fix 0.9.51, visual polish 0.9.52, placeholder-flash fix 0.9.54)" bullet documents that logged-in users on a course page see a reduced primary nav (Dashboard / My Courses / Explore) followed by a divider and the core Moodle course index with LernHive dark-palette styling, without uppercase and with a `fa-sitemap` icon on the heading.
   - `docs/02-user-doc.md` — new R1 experience bullet: "on a course page, the sidebar shows an icon-prefixed 'Course navigation' section (sections + activities) under the primary nav — no skeleton flash, no uppercase labels, no rectangular buttons bleeding through from Boost defaults".

@@ -40,6 +40,8 @@
   - below the divider, a "Course navigation" heading appears with an `fa-sitemap` icon prefix (icon is `$lh-accent` coloured, heading text is sentence-case — **not** `COURSE NAVIGATION`)
   - below the heading, the core Moodle course index renders the course's sections and activities; collapsing/expanding a section works (chevron rotates, content shows/hides)
   - in the course header infobar, secondary navigation tabs still render via core `moremenu` (e.g. participants/settings depending on role)
+  - visual contract for Zone-B course tabs (since 0.9.68): tabs are compact text-first links with an active underline; no boxed/pill button chrome around each tab
+  - resize check for Zone-B tabs: below desktop widths, the action rail can move to a second row under participant stats and remains horizontally scrollable (no clipped/overlapping tab labels)
   - when course-admin overflow is active (e.g. on `/backup/restore.php` with course context), the overflow selector is visible and includes Course reuse actions (Import / Backup / Restore / Copy / Reset based on capabilities)
   - clicking an activity navigates to it; the currently-active section/activity in the sidebar gets a soft `$lh-accent` background tint + a 2 px inset left rail in `$lh-accent`, text in white-bold — no grey "button box" from Boost defaults
   - no `.current-badge` pill is visible next to the active section (hidden by `display: none`)
