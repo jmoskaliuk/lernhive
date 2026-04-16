@@ -385,6 +385,16 @@
     }
 }
 
+// --- Usertour step dialog focus treatment -----------------------------------
+// tool_usertours focuses the whole step dialog container for screen-reader
+// announcement. Suppress the global focus ring on that container only;
+// button-level focus styles remain untouched.
+[data-role="flexitour-step"]:focus,
+[data-role="flexitour-step"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 // --- Moodle notification badges on icons ------------------------------------
 
 .count-container {
