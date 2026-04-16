@@ -103,6 +103,12 @@ class capability_mapper {
                 'moodle/grade:edit',               // Grade editing.
                 'moodle/course:enrolconfig',       // Enrolment method config.
             ],
+            // Unlocked at level 4:
+            4 => [
+                // Dashboard customisation ("/my/" block editing).
+                // Keep this hidden for Levels 1-3 to reduce setup complexity.
+                'moodle/my:manageblocks',
+            ],
             // Unlocked at level 5:
             5 => [
                 'moodle/backup:backupcourse',     // Backup.

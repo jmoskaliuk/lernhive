@@ -229,6 +229,8 @@ function theme_lernhive_get_context_dock_items(): array {
 
     $items = [];
     $layout = $PAGE->pagelayout;
+    $pagepath = $PAGE->url->get_path();
+    $isdashboardpage = (($PAGE->pagetype ?? '') === 'my-index');
 
     $editingon = $PAGE->user_is_editing();
 
@@ -302,6 +304,37 @@ function theme_lernhive_get_context_dock_items(): array {
             'url'     => $blockediturl->out(false),
             'active'  => $editingon,
             'divider' => false,
+        ];
+    }
+
+    // Site-admin dashboard controls:
+    // 1) On /my/, jump into the default-dashboard editor.
+    // 2) On /my/indexsys.php while editing, expose "save for everyone" in the dock.
+    if (is_siteadmin() && $isdashboardpage && $pagepath === '/my/index.php') {
+        $items[] = [
+            'key'     => 'default_dashboard_edit',
+            'icon'    => 'cog',
+            'label'   => get_string('mypage', 'admin'),
+            'url'     => (new moodle_url('/my/indexsys.php', [
+                'sesskey' => sesskey(),
+                'edit' => 'on',
+            ]))->out(false),
+            'active'  => false,
+            'divider' => false,
+        ];
+    }
+
+    if (is_siteadmin() && $isdashboardpage && $pagepath === '/my/indexsys.php' && $editingon) {
+        $items[] = [
+            'key'     => 'default_dashboard_save_all',
+            'icon'    => 'save',
+            'label'   => get_string('reseteveryonesdashboard', 'my'),
+            'url'     => (new moodle_url('/my/indexsys.php', [
+                'resetall' => 1,
+                'sesskey'  => sesskey(),
+            ]))->out(false),
+            'active'  => false,
+            'divider' => !empty($items),
         ];
     }
 

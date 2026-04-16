@@ -61,7 +61,7 @@ class hook_callbacks {
         $level = level_manager::get_level($USER->id);
 
         // --- Dashboard Content (Welcome Banner, Stats, Tour-Tiles, Buttons) ---
-        if ($PAGE->pagetype === 'my-index') {
+        if ($PAGE->pagetype === 'my-index' && ($PAGE->theme->name ?? '') !== 'lernhive') {
             self::inject_dashboard_content($hook, $level);
         }
 

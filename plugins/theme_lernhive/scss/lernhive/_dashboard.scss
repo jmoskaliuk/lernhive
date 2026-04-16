@@ -184,6 +184,46 @@
 // and various Bootstrap card patterns internally.
 
 [data-block="myoverview"] {
+    [data-region="filter"] {
+        margin: 0 0 $lh-spacing-md;
+        padding: $lh-spacing-sm;
+        border: 1px solid $lh-border;
+        border-radius: $lh-radius;
+        background: #fff;
+    }
+
+    [data-region="filter"] .btn-outline-secondary {
+        border-color: $lh-border;
+        color: $lh-text;
+        border-radius: $lh-radius-sm;
+        font-size: $lh-font-size-sm;
+
+        &:hover,
+        &:focus {
+            border-color: $lh-primary;
+            color: $lh-primary;
+            background: rgba($lh-primary, 0.04);
+        }
+    }
+
+    [data-region="filter"] .searchbar .form-control {
+        border-color: $lh-border;
+        border-radius: $lh-radius-sm;
+        font-size: $lh-font-size-sm;
+
+        &:focus {
+            border-color: $lh-primary;
+            box-shadow: 0 0 0 0.2rem rgba($lh-primary, 0.12);
+        }
+    }
+
+    [data-region="filter"] .searchbar .btn-clear {
+        border-color: $lh-border;
+        border-left: 0;
+        border-radius: 0 $lh-radius-sm $lh-radius-sm 0;
+        background: #fff;
+    }
+
     .card-deck,
     .card-columns {
         display: grid;
@@ -208,6 +248,15 @@
 
         &:hover {
             box-shadow: $lh-shadow-hover;
+        }
+    }
+
+    @media (max-width: #{$lh-bp-tablet - 1px}) {
+        [data-region="filter"] .dropdown,
+        [data-region="filter"] .flex-grow-1,
+        [data-region="filter"] .simplesearchform,
+        [data-region="filter"] .searchbar {
+            width: 100%;
         }
     }
 }
@@ -468,6 +517,14 @@
 
 body.pagelayout-mydashboard {
     // Dashboard blocks should blend in, not have heavy card chrome
+    [data-block] > .card {
+        border: 1px solid $lh-border;
+        border-radius: $lh-radius;
+        box-shadow: $lh-shadow;
+    }
+}
+
+body.pagelayout-mycourses {
     [data-block] > .card {
         border: 1px solid $lh-border;
         border-radius: $lh-radius;
