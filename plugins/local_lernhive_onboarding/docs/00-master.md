@@ -7,13 +7,15 @@
 
 Guided onboarding journeys for LernHive users through Moodle user tours (`tool_usertours`).
 
-## Current delivery status (0.2.8)
+## Current delivery status (0.3.0-dev)
 
 Implemented and shipped:
 - Trainer learning-path dashboard banner on `/my/`
 - Dedicated `lernhive_trainer` role + capability gate
 - Tours overview page with Level-1 progress cards
 - Deterministic tour start (`start_url` -> `starttour.php` -> `_requested` replay flag)
+- One-shot forced-tour launch filter on catalog starts (exact requested tour, stale role filters bypassed for that request)
+- Completion dialog after tour end (LernHive-styled save/cancel modal with `Back to onboarding` and `Stay here`)
 - Onboarding Sandbox course (`{DEMOCOURSEID}`)
 - Admin setting for trainer target course category (`{TRAINERCOURSECATEGORYID}`)
 

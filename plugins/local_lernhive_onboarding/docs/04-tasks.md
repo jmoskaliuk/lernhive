@@ -50,6 +50,10 @@
 - [ ] **LH-ONB-CHAIN-07** Behat for chained UX flow
 - [ ] **LH-ONB-CHAIN-08** Update user-doc for cross-page learning units
 
+### QA hardening track
+
+- [ ] **LH-ONB-QA-01** Add a Level-1 smoke checklist (all start URLs + first two selector targets + completion dialog) and run it after each onboarding tour import/hotfix.
+
 ## Dependencies and order
 
 - `LH-ONB-FR-03` depends on `local_lernhive` milestones `LH-CORE-FR-02..04`
@@ -58,7 +62,7 @@
 
 ## Immediate next actions
 
-1. Deliver `LH-ONB-FR-03` once `local_lernhive` `LH-CORE-FR-02..04` are available
-2. Deliver `LH-ONB-FR-05b` (registry additions for remaining Level-1 JSONs without canonical mapping)
-3. Finish `LH-ONB-START-07` (Behat)
-4. Close `LH-ONB-START-08` (sandbox announcements forum + remap)
+1. Deliver `LH-ONB-FR-05b` (registry additions for remaining Level-1 JSONs without canonical mapping)
+2. Deliver `LH-ONB-FR-03` once `local_lernhive` `LH-CORE-FR-02..04` are available
+3. Start `LH-ONB-QA-01` and execute one full Level-1 smoke run after each deploy/hotfix
+4. Finish `LH-ONB-START-07` (Behat)
