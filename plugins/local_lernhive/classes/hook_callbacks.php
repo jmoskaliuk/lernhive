@@ -59,6 +59,7 @@ class hook_callbacks {
         }
 
         $level = level_manager::get_level($USER->id);
+        $islernhivetheme = (($PAGE->theme->name ?? '') === 'lernhive');
 
         // --- Dashboard Content (Welcome Banner, Stats, Tour-Tiles, Buttons) ---
         if ($PAGE->pagetype === 'my-index' && ($PAGE->theme->name ?? '') !== 'lernhive') {
@@ -78,7 +79,7 @@ class hook_callbacks {
         }
 
         // --- Course page: navbar icons + sidebar with course index ---
-        if ($level <= 1 && strpos($PAGE->pagetype, 'course-view') === 0) {
+        if ($level <= 1 && strpos($PAGE->pagetype, 'course-view') === 0 && !$islernhivetheme) {
             self::inject_course_navbar_icons($hook);
             self::inject_course_view_redesign($hook, $level);
         }
@@ -128,6 +129,7 @@ class hook_callbacks {
             || ($PAGE->pagetype === 'user-editadvanced');
         $isuserpage = (strpos($PAGE->pagetype, 'user-') === 0);
         $needssidebar = $level <= 1
+            && !$islernhivetheme
             && $PAGE->pagetype !== 'my-index'
             && (!$onadminpage || $isuseredit || $isuserpage)
             && (!$oncourserelatedpage || $PAGE->pagetype === 'course-edit');
@@ -141,13 +143,16 @@ class hook_callbacks {
 
         // --- UI Simplification (always active, independent of level bar) ---
 
-        // Course Navigation Filter (on ALL course pages — hide Grades, Activities, More).
-        self::inject_course_navigation_filter($hook, $level);
+        // Course Navigation Filter (legacy Explorer simplification).
+        // On theme_lernhive pages we preserve full core course navigation.
+        if (!$islernhivetheme) {
+            self::inject_course_navigation_filter($hook, $level);
+        }
 
         // Course Settings Filter (for course-edit pages).
         if ($PAGE->pagetype === 'course-edit') {
             self::inject_course_settings_filter($hook, $level);
-            if ($level <= 1) {
+            if ($level <= 1 && !$islernhivetheme) {
                 self::inject_course_edit_heading($hook, $level);
             }
         }
