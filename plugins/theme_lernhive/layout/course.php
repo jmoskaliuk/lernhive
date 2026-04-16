@@ -14,10 +14,31 @@
 defined('MOODLE_INTERNAL') || die();
 
 $bodyattributes = $OUTPUT->body_attributes(['theme-lernhive', 'theme-lernhive-course']);
-$regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
+// Match Boost behaviour: do not duplicate the region-main settings menu when
+// secondary navigation is present on the page.
+$buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions() && !$PAGE->has_secondary_navigation();
+$regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 $hasregionmainsettingsmenu = !empty($regionmainsettingsmenu);
 $launcherstyle = get_config('theme_lernhive', 'launcherstyle') ?: 'base';
 $showlauncher = isloggedin() && !isguestuser();
+
+// Course secondary navigation + overflow (Course reuse, Restore, etc.).
+$secondarymoremenu = false;
+$overflow = '';
+if ($PAGE->has_secondary_navigation()) {
+    $tablistnav = $PAGE->has_tablist_secondary_navigation();
+    $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
+    $secondarymoremenu = $moremenu->export_for_template($OUTPUT);
+    $overflowdata = $PAGE->secondarynav->get_overflow_menu_data();
+    if (!is_null($overflowdata)) {
+        $overflow = $overflowdata->export_for_template($OUTPUT);
+    }
+}
+
+// Activity header payload (incourse pages, module context).
+$renderer = $PAGE->get_renderer('core');
+$header = $PAGE->activityheader;
+$headercontent = $header->export_for_template($renderer);
 
 $launchercontext = theme_lernhive_get_launcher_context();
 $launchercontext['launcherisbase'] = $launcherstyle === 'base';
@@ -93,15 +114,6 @@ if (!empty($COURSE) && $COURSE->id > 1) {
         $participantcount = '';
     }
 
-    // Secondary navigation (Nutzer/innen, Einstellungen, etc.) —
-    // rendered by Moodle's secondary_nav output; appears in Zone B.
-    $secondarynavhtml = '';
-    try {
-        $secondarynavhtml = $OUTPUT->secondary_nav();
-    } catch (\Throwable $e) {
-        $secondarynavhtml = '';
-    }
-
     $courseheaderctx = [
         'coursename'          => $coursename,
         'shortname'           => $shortname,
@@ -110,8 +122,6 @@ if (!empty($COURSE) && $COURSE->id > 1) {
         'backurl'             => (new moodle_url('/my/courses.php'))->out(false),
         'backlabel'           => get_string('mycourses'),
         'participantcount'    => $participantcount,
-        'secondarynavhtml'    => $secondarynavhtml,
-        'hassecondarynavhtml' => $secondarynavhtml !== '',
         'hascourseheader'     => true,
     ];
 }
@@ -129,6 +139,10 @@ $templatecontext = array_merge([
     'launcher' => $launchercontext,
     'navitems' => $navitems,
     'coursesidebar' => $coursesidebar,
+    'secondarymoremenu' => $secondarymoremenu ?: false,
+    'overflow' => $overflow,
+    'hascourseactions' => (!empty($secondarymoremenu) || !empty($overflow)),
+    'headercontent' => $headercontent,
     'sidepanelitems' => $sidepanelitems,
     'hassidepanel' => !empty($sidepanelitems),
     'dockitems' => $dockitems,

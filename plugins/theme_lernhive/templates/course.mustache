@@ -148,11 +148,20 @@
                                         </span>
                                         {{/participantcount}}
                                     </div>
-                                    {{#hassecondarynavhtml}}
+                                    {{#hascourseactions}}
                                     <div class="lh-plugin-infobar__course-actions">
-                                        {{{ secondarynavhtml }}}
+                                        {{#secondarymoremenu}}
+                                            <div class="secondary-navigation d-print-none">
+                                                {{> core/moremenu }}
+                                            </div>
+                                        {{/secondarymoremenu}}
+                                        {{#overflow}}
+                                            <div class="lh-plugin-infobar__overflow navitem d-print-none">
+                                                {{> core/url_select }}
+                                            </div>
+                                        {{/overflow}}
                                     </div>
-                                    {{/hassecondarynavhtml}}
+                                    {{/hascourseactions}}
                                 </div>
 
                                 {{/courseheader}}
@@ -160,7 +169,11 @@
                             {{^hascourseheader}}
                                 {{{ output.course_content_header }}}
                             {{/hascourseheader}}
+                            {{#headercontent}}
+                                {{> core/activity_header }}
+                            {{/headercontent}}
                             {{{ output.main_content }}}
+                            {{{ output.activity_navigation }}}
                             {{{ output.course_content_footer }}}
                         </div>
                     </section>

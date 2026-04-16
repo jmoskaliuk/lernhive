@@ -576,6 +576,9 @@
         flex-shrink: 0;
         display: flex;
         align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        row-gap: 0.375rem;
         gap: $lh-spacing-xs;
 
         // Moodle secondary nav renders tabs or a Bootstrap moremenu.
@@ -631,6 +634,35 @@
 
             .fa {
                 font-size: 0.8125rem;
+            }
+        }
+
+        // Overflow select for Course reuse / Restore / Backup / Import / Copy / Reset.
+        .lh-plugin-infobar__overflow {
+            margin: 0;
+
+            > div,
+            form {
+                margin: 0;
+            }
+
+            .custom-select {
+                min-height: 2rem;
+                border-radius: 8px;
+                border: 1px solid $lh-border;
+                background: $lh-bg-white;
+                color: $lh-text-secondary;
+                font-size: $lh-font-size-sm;
+                font-weight: 600;
+                padding: 0.3125rem 2rem 0.3125rem 0.75rem;
+
+                &:hover,
+                &:focus {
+                    border-color: $lh-secondary;
+                    color: $lh-primary;
+                    background: $lh-bg;
+                    box-shadow: none;
+                }
             }
         }
     }
