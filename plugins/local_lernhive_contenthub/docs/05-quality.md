@@ -17,6 +17,10 @@
 - responsive checks
   - cards collapse to a single column below 600px (see styles.css
     media query)
+- shell/action consistency
+  - Zone A keeps a visible back action for orientation
+  - card action strips keep the rightmost info icon (`lh-btn-action`)
+    so icon semantics stay consistent across LernHive plugin pages
 - role/permission checks
   - `local/lernhive_contenthub:view` is cloned from
     `moodle/course:create` so sites that already customised the

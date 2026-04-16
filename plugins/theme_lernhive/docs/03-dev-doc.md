@@ -615,13 +615,11 @@ Dieser Abschnitt beschreibt die SCSS-Umsetzung der finalisierten Design-Entschei
 // Topbar
 .lernhive-page-header { height: 48px; /* statt 60px */ }
 
-// Zone 0 (nur auf Nicht-Plugin-Shell-Seiten)
+// Zone 0 (auf allen Seiten sichtbar, inklusive Plugin Shell)
 .lh-zone0 {
   background: $lh-bg;
   padding: 14px 24px 12px;
   border-bottom: 1px solid rgba($lh-border, .6);
-  // Auf Plugin-Shell-Seiten ausblenden:
-  .lernhive-page:has(.lh-plugin-header) & { display: none; }
 }
 
 // Zone A (bereits als .lh-plugin-header vorhanden — CSS-Klassen angleichen)

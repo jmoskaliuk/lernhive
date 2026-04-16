@@ -219,7 +219,7 @@
   - **Sidebar Brand Row**: LernHive-Wordmark links, Launcher-Trigger rechts als oranger Vollkreis (`background: $lh-accent; border-radius: 50%`). Kein Icon-Kasten (Quadrat), kein weiß-transparentes Pseudo-Quadrat.
   - **Sidebar Nav Items**: Icon in `.lh-nav-icon` Wrapper (24px, border-radius 6px, rgba-weißer Tint). Aktives Item: Row-Highlight `rgba(#fff, .10)` + Icon-Box `rgba($lh-accent, .22)`. Text weiß. Kein Border/Rahmen.
   - **Topbar** (48px): Linke Hälfte = Launcher-Panel (`.lh-launcher-icon` als Vollkreis-Buttons, `rgba(primary,.07)`). Rechte Hälfte = Action Icons (Bell, Avatar, Settings, Logout). Border-Right zwischen beiden Hälften als Trenner.
-  - **Zone 0**: `background: $lh-bg`, Breadcrumb links, h1, Page-Action-Icons rechts. Auf Plugin-Shell-Seiten ausgeblendet (`:has(.lh-plugin-header)`).
+  - **Zone 0**: `background: $lh-bg`, Breadcrumb links, h1, Page-Action-Icons rechts. Seit 0.9.69 bleibt Zone 0 auch auf Plugin-Shell-Seiten sichtbar, damit die komplette CI-Header-Staffel (Zone 0 + Zone A + Zone B) konsistent ist.
   - Referenz: `mockups/design-system-reference.html` Sektion 0 + alle drei neuen Mockups
 
 - [ ] **0.9.68 — Dashboard-Content-Muster** (`_dashboard.scss`, `drawers.mustache`/Dashboard-Block):

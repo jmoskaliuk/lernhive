@@ -832,10 +832,8 @@ $lh-bp-tablet:   768px;
     }
 }
 
-// Zone 0 is hidden on Plugin Shell pages — Zone A takes over as orientation anchor.
-.lernhive-page:has(.lh-plugin-header) .lh-zone0 {
-    display: none;
-}
+// Zone 0 stays visible on Plugin Shell pages so the CI shell stack
+// remains complete: Zone 0 (identity) + Zone A (context) + Zone B (info).
 
 // ─── Zone A sticky offset ────────────────────────────────────────────────────
 // Zone A was at top: 3rem (≈ 48px) — now explicitly tied to the topbar height.
