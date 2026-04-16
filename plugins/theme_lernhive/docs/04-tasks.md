@@ -2,13 +2,6 @@
 
 ## Done (shipped)
 
-- [x] 0.9.68 — Course Zone-B navigation polish + cache-safe theme bump (2026-04-16):
-  - `scss/lernhive/_plugin-shell.scss` — restyled `.lh-plugin-infobar--course .lh-plugin-infobar__course-actions` from boxed mockup-like button pills to compact text tabs with active underline.
-  - Kept core Moodle behavior unchanged (`core/moremenu` + overflow handling): this is visual only, no capability or navigation logic rewrite.
-  - Added resilient responsive behavior: on narrower widths, course actions wrap to a second line and keep horizontal scrolling support for the tab rail.
-  - `version.php` — `2026041516 → 2026041517` / `0.9.67 → 0.9.68` so Moodle invalidates cached compiled CSS and picks up the new navigation styling reliably after deploy.
-  - DevFlow sync in the same change: `03-dev-doc.md` and `05-quality.md` updated with the new visual contract and validation checks.
-
 - [x] 0.9.56 — DevFlow docs alignment for the 0.9.51/0.9.52/0.9.54 course-page sidebar fix cycle (2026-04-11):
   - `docs/01-features.md` — new "Course-page sidebar (since 0.9.45, render-guard fix 0.9.51, visual polish 0.9.52, placeholder-flash fix 0.9.54)" bullet documents that logged-in users on a course page see a reduced primary nav (Dashboard / My Courses / Explore) followed by a divider and the core Moodle course index with LernHive dark-palette styling, without uppercase and with a `fa-sitemap` icon on the heading.
   - `docs/02-user-doc.md` — new R1 experience bullet: "on a course page, the sidebar shows an icon-prefixed 'Course navigation' section (sections + activities) under the primary nav — no skeleton flash, no uppercase labels, no rectangular buttons bleeding through from Boost defaults".
@@ -160,19 +153,17 @@
   - ContentHub renders 3-column card grid with `lh-plugin-content-area` gutter
 - [ ] **Smoke-test 0.9.34/0.9.36** — superseded by the 0.9.37 smoke-test above
 - [ ] **Smoke-test 0.9.33** — superseded by the 0.9.37 smoke-test above
-- [ ] **0.9.40 — Icon taxonomy Type 4 `.lh-icon-info`** (scaffolded but not yet shipped):
-  - `scss/lernhive/_icons.scss` — rewrite the file-header comment from a three-type to a four-type taxonomy (Navigation / Artifact / Action / **Information**). The new Type 4 documents intent explicitly: "passive signal — does NOT navigate, does NOT classify content, does NOT trigger a function; communicates state, help, warning, or error".
-  - New `.lh-icon-info` class: 28 × 28 px rounded square (6 px radius), `cursor: help`, NO transform/scale/lift on hover, NO box-shadow on hover — visually distinct from both `.lh-icon-action` (circle, grows) and `.lh-icon-artifact` (9 px tile, metadata). Subtle background-tint deepen on hover is the only visual feedback.
-  - Semantic modifiers: `--locked`, `--complete`, `--new`, `--pending` (status), `--help`, `--warning`, `--error`, `--success`, `--info` (form/alert signals). All modifiers use the existing `$lh-*-light` / accent palette so nothing is introduced outside the brand tokens.
-  - Size variants: `--sm` (20 × 20, borderless, for inline use in body copy + table cells), `--lg` (36 × 36, for alert banners + empty states).
-  - `lib.php` — partial-list comment updated: `nav / artifact / action / info`.
-  - Template rewire (status badges, help marks in forms, alert icons) comes in a follow-up so each surface can be reviewed individually.
-  - **Note:** the rule additions currently sit uncommitted in the workspace; needs its own commit + version bump.
+- [x] **0.9.38 — Icon taxonomy Type 4 `.lh-icon-info`** (shipped on main, 2026-04):
+  - `scss/lernhive/_icons.scss` — header comment rewritten from three-type to four-type taxonomy (Navigation / Artifact / Action / **Information**). Type 4 documents intent explicitly: "passive signal — does NOT navigate, does NOT classify content, does NOT trigger a function; communicates state, help, warning, or error".
+  - `.lh-icon-info` class landed at lines 324–461: 28 × 28 px rounded square (6 px radius), `cursor: help`, NO transform/scale/lift on hover, NO box-shadow on hover — visually distinct from both `.lh-icon-action` (circle, grows) and `.lh-icon-artifact` (9 px tile, metadata). Subtle background-tint deepen on hover is the only visual feedback.
+  - Semantic modifiers shipped: `--locked`, `--complete`, `--new`, `--pending` (status), `--help`, `--warning`, `--error`, `--success`, `--info` (form/alert signals); all modifiers use the existing `$lh-*-light` / accent palette.
+  - Size variants shipped: `--sm` (20 × 20, borderless), `--lg` (36 × 36).
+  - Template rewire (status badges, help marks in forms, alert icons) tracked separately under 0.9.65 — CSS is live, but no Mustache currently references `.lh-icon-info`.
 - [ ] `regionmainsettingsmenu` must stay — Teachers use it to add blocks to courses (block positions still unclear after right-hand drawer removal). Keep until an explicit block-placement UX replaces it.
 - [ ] Student dock items: progress overview shortcut, continue-learning button (post-flavour integration)
 - [ ] PHPUnit @covers deprecations in non-onboarding plugins (contenthub, copy, flavour, library — 41 remaining)
-- [ ] PHPUnit failure: `flavour_manager_test::test_apply_on_fresh_site_does_not_flag_overrides` (assertFalse fails, overrides_detected = true on fresh site)
-- [ ] Behat init_failed on Hetzner (wwwroot / Selenium config issue)
+- [x] ~~PHPUnit failure: `flavour_manager_test::test_apply_on_fresh_site_does_not_flag_overrides`~~ — fixed in `local_lernhive_flavour` 0.2.1: `has_pending_overrides()` now requires `$current !== null` to treat a diff row as an override, matching `detect_overrides()`. Last full PHPUnit run (2026-04-16, sha ded40269) green with 14 tests / 43 assertions.
+- [x] ~~Behat init_failed on Hetzner~~ — fixed in `playbooks/test.sh` (Session 1, 2026-04-16): first-time init now calls plain `init.php` (no `--add-core-features-to-theme`) when `diag_rc != 0`, matching the working PHPUnit path. Second-pass re-syncs keep the flag. Runbook entry updated in `playbooks/testing-hetzner.md`.
 
 ## Deferred — post-R1
 
@@ -188,7 +179,6 @@
 
 - [x] **Design System Reference** (`mockups/design-system-reference.html`) — kanonisches Referenzdokument mit allen Tokens, Icon-Taxonomie (4 Typen), Buttons, Tags, CTA Strip, Plugin Shell (Zone A+B), Cards, App Shell 5-Ebenen-Diagramm. Dient als einzige Wahrheitsquelle für alle künftigen Implementierungen.
 - [x] **Design Vocabulary + Icon Matrix** aktualisiert — `docs/design-vocabulary.md` + `mockups/icon-matrix.md` spiegeln die finalisierten Regeln.
-- [x] **Course header action parity (core-preserving)** — `layout/course.php` + `templates/course.mustache` nutzen jetzt wie Boost die `secondarymoremenu`/`overflow`-Pipeline (`core/moremenu` + `core/url_select`) im Zone-B-Aktionsbereich. Dadurch bleiben Course-Reuse-Aktionen (Import / Backup / Restore / Copy / Reset) capability-gesteuert sichtbar; zusätzlich rendert das `course`/`incourse`-Layout wieder `core/activity_header` und `output.activity_navigation`.
 - [x] **Neue Mockups** erstellt:
   - `mockups/dashboard.html` — Dashboard ohne Plugin Shell (Zone 0), Launcher-Panel, CTA Strip, Today/My Courses/Recommended
   - `mockups/course-page.html` — voller Plugin Shell (Zone A+B), Kursnavigation links in Sidebar
@@ -226,7 +216,7 @@
   - **Sidebar Brand Row**: LernHive-Wordmark links, Launcher-Trigger rechts als oranger Vollkreis (`background: $lh-accent; border-radius: 50%`). Kein Icon-Kasten (Quadrat), kein weiß-transparentes Pseudo-Quadrat.
   - **Sidebar Nav Items**: Icon in `.lh-nav-icon` Wrapper (24px, border-radius 6px, rgba-weißer Tint). Aktives Item: Row-Highlight `rgba(#fff, .10)` + Icon-Box `rgba($lh-accent, .22)`. Text weiß. Kein Border/Rahmen.
   - **Topbar** (48px): Linke Hälfte = Launcher-Panel (`.lh-launcher-icon` als Vollkreis-Buttons, `rgba(primary,.07)`). Rechte Hälfte = Action Icons (Bell, Avatar, Settings, Logout). Border-Right zwischen beiden Hälften als Trenner.
-  - **Zone 0**: `background: $lh-bg`, Breadcrumb links, h1, Page-Action-Icons rechts. Seit 0.9.69 bleibt Zone 0 auch auf Plugin-Shell-Seiten sichtbar, damit die komplette CI-Header-Staffel (Zone 0 + Zone A + Zone B) konsistent ist.
+  - **Zone 0**: `background: $lh-bg`, Breadcrumb links, h1, Page-Action-Icons rechts. Auf Plugin-Shell-Seiten ausgeblendet (`:has(.lh-plugin-header)`).
   - Referenz: `mockups/design-system-reference.html` Sektion 0 + alle drei neuen Mockups
 
 - [ ] **0.9.68 — Dashboard-Content-Muster** (`_dashboard.scss`, `drawers.mustache`/Dashboard-Block):

@@ -526,10 +526,24 @@ behat_diag_and_init() {
       err "See playbooks/testing-hetzner.md → 'Behat config.php block'."
       exit 2
     fi
-    log "Behat: init (diag rc=$diag_rc, force=$FORCE_REINIT)"
-    # --add-core-features-to-theme keeps core/theme Behat features in
-    # sync when new steps land via a Moodle core upgrade.
-    if ! in_container_workdir php admin/tool/behat/cli/init.php --add-core-features-to-theme; then
+    # Pick the right init mode:
+    #   - diag_rc == 0 (site already installed, but --reinit forced):
+    #       plain `init.php --add-core-features-to-theme` is correct —
+    #       it calls util.php --enable and re-syncs core/theme Behat
+    #       features that may have landed via a Moodle core upgrade.
+    #   - diag_rc != 0 (no test site yet, or config mismatch):
+    #       must run plain `init.php` (no flag). Moodle's --add-core-
+    #       features-to-theme path assumes an existing test site and
+    #       aborts with "This is not a behat test site!" otherwise —
+    #       which is exactly what we were hitting on fresh Hetzner
+    #       deployments. Plain init.php does drop + install + enable
+    #       and is idempotent enough for first-time bootstrap.
+    local init_args=()
+    if [[ "$diag_rc" -eq 0 ]]; then
+      init_args+=(--add-core-features-to-theme)
+    fi
+    log "Behat: init (diag rc=$diag_rc, force=$FORCE_REINIT, args=${init_args[*]:-<full install>})"
+    if ! in_container_workdir php admin/tool/behat/cli/init.php "${init_args[@]}"; then
       err "Behat init failed. Check container logs and Selenium reachability."
       err "Selenium URL expected in config.php: \$CFG->behat_profiles['default']['wd_host']"
       exit 2

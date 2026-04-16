@@ -173,10 +173,20 @@ Actions tab → "Test on Hetzner" → Run workflow. Available inputs:
 edited the wrong file. Make sure you edited `/var/www/html/config.php`,
 not the `public/` stub.
 
-**`Behat init failed`** — almost always either missing datarooot (step
-1 bottom), Selenium unreachable (step 3), or `behat_wwwroot` pointing
-at a URL Selenium can't resolve. Use `docker exec selenium curl -v
-$CFG->behat_wwwroot` inside the selenium container to debug.
+**`Behat init failed`** / **`This is not a behat test site!`** — check
+in this order:
+
+1. **First-time bootstrap.** If the server has never run Behat before,
+   the test site simply doesn't exist yet. `test.sh` auto-detects this
+   (diag → rc ≠ 0 → plain `init.php` full install, no flag), so a
+   manual reinit is no longer required — a clean push to main is
+   enough. If you need to force it, run step 5 above.
+2. **Missing datarooot** — step 1 bottom (`/var/www/moodledata_behat`
+   owned by `www-data`).
+3. **Selenium unreachable** — step 3. Use `docker exec selenium curl
+   -v $CFG->behat_wwwroot` inside the selenium container to debug.
+4. **`behat_wwwroot` pointing at a URL Selenium can't resolve** — use
+   the internal docker hostname, not the public dev URL.
 
 **Stale DB after plugin schema change** — run with `--reinit` (from CI:
 check the `reinit` input in workflow_dispatch).
