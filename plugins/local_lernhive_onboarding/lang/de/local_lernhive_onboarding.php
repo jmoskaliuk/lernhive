@@ -73,6 +73,10 @@ $string['tours_unlock_text'] = 'Schließe alle {$a->cats} Themen ab, um Level {$
 $string['tours_unlock_btn'] = 'Level {$a->level}: {$a->name} freischalten';
 $string['tours_all_done'] = 'Du hast alle Touren auf diesem Level abgeschlossen!';
 $string['tours_nav_link'] = 'Lernpfad';
+$string['tour_completion_overlay_title'] = 'Tour abgeschlossen';
+$string['tour_completion_overlay_body'] = 'Sehr gut. Möchtest du zur Onboarding-Übersicht zurück oder auf dieser Seite bleiben?';
+$string['tour_completion_overlay_overview'] = 'Zur Onboarding-Übersicht';
+$string['tour_completion_overlay_stay'] = 'Hier bleiben';
 
 // Tour categories (Level 1: Explorer).
 $string['tourcat_create_users'] = 'Nutzer/innen anlegen';

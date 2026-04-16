@@ -13,6 +13,9 @@ Guided onboarding learning path for LernHive users, currently focused on trainer
   - reads `lh_start_url` from tour `configdata`
   - resolves placeholders (`{USERID}`, `{SITEID}`, `{SYSCONTEXTID}`, `{DEMOCOURSEID}`, `{TRAINERCOURSECATEGORYID}`)
   - primes replay state using Moodle-native `_requested`
+  - shows a completion overlay after tour end with:
+    - `Back to onboarding`
+    - `Stay here`
 - Feature-mapping groundwork:
   - supports optional `lernhive_feature` in tour JSON
   - persists to `local_lhonb_map.feature_id`

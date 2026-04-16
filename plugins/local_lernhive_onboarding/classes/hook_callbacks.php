@@ -34,6 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  * Top-of-body hook callbacks that inject Onboarding UI elements.
  */
 class hook_callbacks {
+    /** @var bool Guard against duplicate overlay wiring per request. */
+    private static bool $completionoverlayqueued = false;
 
     /**
      * Inject the Trainer learning-path banner at the top of the dashboard.
@@ -132,5 +134,142 @@ class hook_callbacks {
         // don't reflect the current capability-based access model.
         $hook->remove_filter_by_classname(\tool_usertours\local\filter\role::class);
         $hook->add_filter_by_classname(\local_lernhive_onboarding\local\filter\forced_tour::class);
+
+        self::queue_tour_completion_overlay();
+    }
+
+    /**
+     * Wire a one-shot completion overlay shown after `tool_usertours/tourEnded`.
+     *
+     * Only queued for deterministic catalog starts (same request where the
+     * forced-tour filter is active). This keeps normal page-tour behaviour
+     * unchanged.
+     *
+     * @return void
+     */
+    private static function queue_tour_completion_overlay(): void {
+        global $PAGE;
+
+        if (self::$completionoverlayqueued) {
+            return;
+        }
+        if (!isset($PAGE) || !($PAGE instanceof \moodle_page)) {
+            return;
+        }
+        self::$completionoverlayqueued = true;
+
+        $config = [
+            'overviewUrl' => (new \moodle_url('/local/lernhive_onboarding/tours.php'))->out(false),
+            'title' => get_string('tour_completion_overlay_title', 'local_lernhive_onboarding'),
+            'body' => get_string('tour_completion_overlay_body', 'local_lernhive_onboarding'),
+            'overviewCta' => get_string('tour_completion_overlay_overview', 'local_lernhive_onboarding'),
+            'stayCta' => get_string('tour_completion_overlay_stay', 'local_lernhive_onboarding'),
+        ];
+        $json = json_encode(
+            $config,
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        );
+        if ($json === false) {
+            $json = '{}';
+        }
+
+        $js = <<<JS
+(function(config) {
+    if (!config || window.__lhOnbCompletionOverlayWired) {
+        return;
+    }
+    window.__lhOnbCompletionOverlayWired = true;
+
+    const showOverlay = function() {
+        if (document.getElementById('lh-onb-tour-completion-overlay')) {
+            return;
+        }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'lh-onb-tour-completion-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-labelledby', 'lh-onb-tour-completion-title');
+        overlay.style.cssText = [
+            'position:fixed',
+            'inset:0',
+            'z-index:1090',
+            'display:flex',
+            'align-items:center',
+            'justify-content:center',
+            'padding:16px',
+            'background:rgba(15,23,42,0.48)'
+        ].join(';');
+
+        const panel = document.createElement('div');
+        panel.style.cssText = [
+            'width:min(92vw,520px)',
+            'background:#ffffff',
+            'border-radius:14px',
+            'box-shadow:0 20px 50px rgba(15,23,42,0.35)',
+            'padding:24px'
+        ].join(';');
+
+        const title = document.createElement('h3');
+        title.id = 'lh-onb-tour-completion-title';
+        title.textContent = config.title;
+        title.style.cssText = 'margin:0 0 8px 0;font-size:1.2rem;line-height:1.35;color:#0f172a;';
+
+        const body = document.createElement('p');
+        body.textContent = config.body;
+        body.style.cssText = 'margin:0;color:#334155;';
+
+        const actions = document.createElement('div');
+        actions.style.cssText = 'margin-top:18px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;';
+
+        const stayButton = document.createElement('button');
+        stayButton.type = 'button';
+        stayButton.className = 'btn btn-secondary';
+        stayButton.textContent = config.stayCta;
+
+        const overviewButton = document.createElement('button');
+        overviewButton.type = 'button';
+        overviewButton.className = 'btn btn-primary';
+        overviewButton.textContent = config.overviewCta;
+
+        const closeOverlay = function() {
+            if (overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+            document.removeEventListener('keydown', onEscKey);
+        };
+
+        const onEscKey = function(event) {
+            if (event.key === 'Escape') {
+                closeOverlay();
+            }
+        };
+
+        stayButton.addEventListener('click', closeOverlay);
+        overviewButton.addEventListener('click', function() {
+            window.location.assign(config.overviewUrl);
+        });
+        overlay.addEventListener('click', function(event) {
+            if (event.target === overlay) {
+                closeOverlay();
+            }
+        });
+        document.addEventListener('keydown', onEscKey);
+
+        actions.appendChild(stayButton);
+        actions.appendChild(overviewButton);
+        panel.appendChild(title);
+        panel.appendChild(body);
+        panel.appendChild(actions);
+        overlay.appendChild(panel);
+        document.body.appendChild(overlay);
+        overviewButton.focus();
+    };
+
+    document.addEventListener('tool_usertours/tourEnded', showOverlay, {once: true});
+})({$json});
+JS;
+
+        $PAGE->requires->js_init_code($js);
     }
 }
