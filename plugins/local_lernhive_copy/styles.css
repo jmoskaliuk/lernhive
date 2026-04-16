@@ -24,6 +24,46 @@
     padding: 0 16px;
 }
 
+.lh-copy-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.lh-copy-back {
+    color: #334155;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.lh-copy-back:hover,
+.lh-copy-back:focus {
+    text-decoration: underline;
+}
+
+.lh-copy-mode-toggle {
+    display: inline-flex;
+    gap: 8px;
+}
+
+.lh-copy-mode-pill {
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    text-decoration: none;
+}
+
+.lh-copy-mode-pill--active {
+    background: #0f4c5c;
+    border-color: #0f4c5c;
+    color: #fff;
+}
+
 .lh-copy-intro {
     margin-bottom: 32px;
     text-align: center;
@@ -86,6 +126,26 @@
     font-size: 14px;
 }
 
+.lh-copy-note {
+    border-radius: 12px;
+    font-size: 14px;
+    margin: 0 auto 20px;
+    max-width: 780px;
+    padding: 12px 14px;
+}
+
+.lh-copy-note--template {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    color: #1e3a8a;
+}
+
+.lh-copy-note--warning {
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+}
+
 .lh-copy-container--template .lh-copy-intro h2 {
     /* Subtle visual hint so users notice they entered via the Template card. */
     color: #38478c;
@@ -112,8 +172,102 @@
     max-width: 260px;
 }
 
+.lh-copy-form .lh-copy-callout {
+    border-radius: 10px;
+    margin-top: 8px;
+    padding: 10px 12px;
+}
+
+.lh-copy-form .lh-copy-callout--clean {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+
+.lh-copy-form .lh-copy-callout--info {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+}
+
+.lh-copy-template-list {
+    margin-top: 16px;
+}
+
+.lh-copy-template-title {
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+.lh-copy-template-grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.lh-copy-template-card {
+    background: #fff;
+    border: 1px solid #dbe7ee;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, .05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+}
+
+.lh-copy-template-card--active {
+    border-color: #7dd3fc;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, .15);
+}
+
+.lh-copy-template-card-title {
+    font-size: 18px;
+    margin: 0;
+}
+
+.lh-copy-template-card-desc {
+    color: #475569;
+    font-size: 14px;
+    margin: 0;
+}
+
+.lh-copy-template-meta {
+    display: grid;
+    gap: 4px 8px;
+    grid-template-columns: auto 1fr;
+    margin: 0;
+}
+
+.lh-copy-template-meta dt {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.lh-copy-template-meta dd {
+    color: #1f2937;
+    font-size: 13px;
+    margin: 0;
+}
+
+.lh-copy-template-hint {
+    color: #64748b;
+    font-size: 12px;
+    margin: 0;
+}
+
 @media (max-width: 600px) {
     .lh-copy-container {
         margin: 16px auto;
+    }
+
+    .lh-copy-actions {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }

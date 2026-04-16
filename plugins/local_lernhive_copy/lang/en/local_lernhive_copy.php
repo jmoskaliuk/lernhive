@@ -36,7 +36,7 @@ $string['open_wizard'] = 'Open copy wizard';
 $string['page_title_copy'] = 'Copy a course';
 $string['page_title_template'] = 'Start from a template';
 $string['page_intro_copy'] = 'Pick an existing course to reuse as a starting point. The Simple copy wizard hands the source course to Moodle backup and restore, which run asynchronously in the background.';
-$string['page_intro_template'] = 'Pick a curated template to seed your new course. Templates are maintained by your organisation; changes to the template do not propagate into copies.';
+$string['page_intro_template'] = 'Pick a curated template from the Library catalog. After selecting one, continue in Simple or Expert mode.';
 
 // Modes (stub / template fallback).
 $string['mode_simple'] = 'Simple';
@@ -45,6 +45,8 @@ $string['mode_expert'] = 'Expert';
 $string['mode_expert_desc'] = 'Jump into the Moodle backup/restore screen with all options available.';
 $string['mode_cta_simple'] = 'Start simple copy';
 $string['mode_cta_expert'] = 'Open expert mode';
+$string['expert_intro'] = 'Expert mode opens Moodle core copy options, including advanced user-data and date controls.';
+$string['expert_submit'] = 'Open expert copy options';
 
 // Placeholder / empty states.
 $string['not_implemented'] = 'Template copy is still under construction. The course copy flow on the other card is live — use it to duplicate an existing course.';
@@ -58,8 +60,26 @@ $string['form_target_category'] = 'Target category';
 $string['form_target_visible'] = 'Visible';
 $string['form_include_userdata'] = 'Include participants and progress';
 $string['form_include_userdata_help'] = 'When enabled, enrolments, grades, and attempt data are copied along with the course structure. Keep this off if you want a clean copy to reuse for a new cohort.';
+$string['form_include_userdata_hint'] = 'Default is a clean copy (no participants/progress). Enable this only when you intentionally want to clone learner data.';
 $string['form_submit'] = 'Start copy';
 $string['form_queued'] = 'Copy queued. Moodle will finish the copy in the background; you can follow progress here.';
+$string['return_to_contenthub'] = 'Back to ContentHub';
+$string['active_template'] = 'Selected template:';
+
+// Template catalog.
+$string['template_catalog_heading'] = 'Available templates';
+$string['template_catalog_empty'] = 'No templates are currently available in the Library catalog.';
+$string['template_meta_version'] = 'Version';
+$string['template_meta_updated'] = 'Last updated';
+$string['template_meta_language'] = 'Language';
+$string['template_select'] = 'Use template';
+$string['template_unavailable'] = 'Unavailable';
+$string['template_unavailable_hint'] = 'This template is listed in the catalog but has no source-course mapping yet.';
+$string['template_library_missing'] = 'Template mode requires the LernHive Library backend. Ask your admin to install and configure local_lernhive_library.';
+$string['template_not_found'] = 'The selected template is not available: {$a}';
+$string['template_source_missing'] = 'The selected template currently has no usable source course.';
+$string['template_source_deleted'] = 'The selected template points to a course that no longer exists.';
 
 // Privacy.
-$string['privacy:metadata'] = 'The LernHive Copy plugin does not store any personal data itself — it hands off copy operations to Moodle core backup and restore, which have their own privacy providers.';
+$string['privacy:metadata'] = 'The LernHive Copy plugin stores a per-user preference for the default target category and delegates copy operations to Moodle core backup/restore.';
+$string['privacy:metadata:preference:defaultcategory'] = 'The user preference storing the default target category for new copy operations.';

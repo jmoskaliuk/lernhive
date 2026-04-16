@@ -13,6 +13,7 @@ External managed content import for LernHive customers.
 - catalog entries can be loaded from a configured JSON manifest
 - catalog remains read-only (import action still disabled)
 - parser is strict and skips invalid rows instead of rendering broken cards
+- optional `sourcecourseid` field enables template hand-off in `local_lernhive_copy`
 
 ## Acceptance direction
 - feature behaviour should be explicit and understandable

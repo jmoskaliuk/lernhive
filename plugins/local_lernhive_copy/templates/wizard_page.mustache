@@ -17,15 +17,22 @@
 {{!
     @template local_lernhive_copy/wizard_page
 
-    Copy wizard entry page. Has two rendering modes:
-      - hasform: shows the pre-rendered simple copy form (course mode)
-      - otherwise: shows the two-tile stub (template mode, or fallback)
+    Copy wizard entry page.
 
     Context:
     {
         "istemplate": false,
         "hasform": true,
         "formhtml": "<form>...</form>",
+        "showmodetoggle": true,
+        "simpleurl": "/local/lernhive_copy/index.php",
+        "experturl": "/local/lernhive_copy/index.php?mode=expert",
+        "modeissimple": true,
+        "modeisexpert": false,
+        "hasreturnurl": true,
+        "returnurl": "/local/lernhive_contenthub/index.php",
+        "showtemplatelist": false,
+        "templateentries": [],
         "heading": "Copy a course",
         "intro": "Pick an existing course.",
         "mode_simple": "Simple",
@@ -38,10 +45,41 @@
     }
 }}
 <div class="lh-copy-container{{#istemplate}} lh-copy-container--template{{/istemplate}}">
+    <div class="lh-copy-actions">
+        {{#hasreturnurl}}
+            <a class="lh-copy-back" href="{{returnurl}}">
+                {{returnlabel}}
+            </a>
+        {{/hasreturnurl}}
+
+        {{#showmodetoggle}}
+            <nav class="lh-copy-mode-toggle" aria-label="{{#str}} pluginname, local_lernhive_copy {{/str}}">
+                <a href="{{simpleurl}}" class="lh-copy-mode-pill{{#modeissimple}} lh-copy-mode-pill--active{{/modeissimple}}">
+                    {{mode_simple}}
+                </a>
+                <a href="{{experturl}}" class="lh-copy-mode-pill{{#modeisexpert}} lh-copy-mode-pill--active{{/modeisexpert}}">
+                    {{mode_expert}}
+                </a>
+            </nav>
+        {{/showmodetoggle}}
+    </div>
+
     <div class="lh-copy-intro">
         <h2>{{heading}}</h2>
         <p>{{intro}}</p>
     </div>
+
+    {{#active_template}}
+        <div class="lh-copy-note lh-copy-note--template" role="status">
+            <strong>{{active_template_label}}</strong> {{active_template}}
+        </div>
+    {{/active_template}}
+
+    {{#template_warning}}
+        <div class="lh-copy-note lh-copy-note--warning" role="alert">
+            {{template_warning}}
+        </div>
+    {{/template_warning}}
 
     {{#hasform}}
         <div class="lh-copy-form">
@@ -49,7 +87,51 @@
         </div>
     {{/hasform}}
 
-    {{^hasform}}
+    {{#showtemplatelist}}
+        <section class="lh-copy-template-list" aria-label="{{template_heading}}">
+            <h3 class="lh-copy-template-title">{{template_heading}}</h3>
+
+            {{#templateempty}}
+                <div class="lh-copy-notice" role="status">
+                    {{template_empty}}
+                </div>
+            {{/templateempty}}
+
+            {{^templateempty}}
+                <ul class="lh-copy-template-grid" role="list">
+                    {{#templateentries}}
+                        <li class="lh-copy-template-card{{#isactive}} lh-copy-template-card--active{{/isactive}}" role="listitem" data-template-id="{{id}}">
+                            <h4 class="lh-copy-template-card-title">{{title}}</h4>
+                            <p class="lh-copy-template-card-desc">{{description}}</p>
+
+                            <dl class="lh-copy-template-meta">
+                                <dt>{{template_meta_version}}</dt>
+                                <dd>{{version}}</dd>
+                                <dt>{{template_meta_updated}}</dt>
+                                <dd>{{updated}}</dd>
+                                <dt>{{template_meta_language}}</dt>
+                                <dd>{{language}}</dd>
+                            </dl>
+
+                            {{#hasaction}}
+                                <a href="{{actionurl}}" class="btn btn-primary">
+                                    {{template_select}}
+                                </a>
+                            {{/hasaction}}
+                            {{^hasaction}}
+                                <button type="button" class="btn btn-secondary disabled" disabled aria-disabled="true">
+                                    {{template_unavailable}}
+                                </button>
+                                <p class="lh-copy-template-hint">{{template_unavailable_hint}}</p>
+                            {{/hasaction}}
+                        </li>
+                    {{/templateentries}}
+                </ul>
+            {{/templateempty}}
+        </section>
+    {{/showtemplatelist}}
+
+    {{#showstub}}
         <div class="lh-copy-modes" role="list">
             <div class="lh-copy-mode lh-copy-mode--simple" role="listitem">
                 <h3 class="lh-copy-mode-title">{{mode_simple}}</h3>
@@ -70,5 +152,5 @@
         <div class="lh-copy-notice" role="note">
             {{notice}}
         </div>
-    {{/hasform}}
+    {{/showstub}}
 </div>

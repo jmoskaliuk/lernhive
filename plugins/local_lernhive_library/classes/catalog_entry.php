@@ -40,7 +40,9 @@ final class catalog_entry {
      * @param string $description Short teaser for the catalog view.
      * @param string $version     Semver-like version string of the .mbz.
      * @param int    $updated     Unix timestamp of the last catalog update.
-     * @param string $language    ISO code of the primary course language.
+     * @param string   $language       ISO code of the primary course language.
+     * @param int|null $sourcecourseid Optional Moodle course id used as a
+     *                                 template source for LernHive Copy.
      * @throws \coding_exception If required fields are blank or timestamp is invalid.
      */
     public function __construct(
@@ -50,6 +52,7 @@ final class catalog_entry {
         public readonly string $version,
         public readonly int $updated,
         public readonly string $language,
+        public readonly ?int $sourcecourseid = null,
     ) {
         $this->assert_required_string($this->id, 'id');
         $this->assert_required_string($this->title, 'title');
@@ -58,6 +61,10 @@ final class catalog_entry {
 
         if ($this->updated < 0) {
             throw new \coding_exception('Catalog entry field "updated" must be a non-negative unix timestamp.');
+        }
+
+        if ($this->sourcecourseid !== null && $this->sourcecourseid <= 0) {
+            throw new \coding_exception('Catalog entry field "sourcecourseid" must be a positive integer when provided.');
         }
     }
 
@@ -74,7 +81,17 @@ final class catalog_entry {
             'version'     => $this->version,
             'updated'     => userdate($this->updated, get_string('strftimedate', 'core_langconfig')),
             'language'    => strtoupper(trim($this->language)),
+            'hassourcecourse' => $this->has_source_course(),
         ];
+    }
+
+    /**
+     * Whether this catalog entry can be used as a copy-template source.
+     *
+     * @return bool
+     */
+    public function has_source_course(): bool {
+        return $this->sourcecourseid !== null;
     }
 
     /**
