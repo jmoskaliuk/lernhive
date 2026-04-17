@@ -40,7 +40,12 @@ final class start_url_resolver_test extends advanced_testcase {
 
         $url = start_url_resolver::resolve('/user/editadvanced.php?id={USERID}', 42);
 
-        $this->assertSame('/user/editadvanced.php', $url->get_path());
+        // Compare against an equivalently-constructed moodle_url so the
+        // assertion is wwwroot-subpath agnostic — on a CI runner whose
+        // $CFG->wwwroot has a subpath (e.g. http://host/moodle),
+        // get_path() includes that subpath on both sides of the compare.
+        $expectedpath = (new \moodle_url('/user/editadvanced.php'))->get_path();
+        $this->assertSame($expectedpath, $url->get_path());
         $this->assertSame('42', $url->get_param('id'));
     }
 

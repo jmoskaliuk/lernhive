@@ -58,7 +58,12 @@ final class starttour_flow_test extends advanced_testcase {
 
         $url = starttour_flow::prepare_redirect_url((int) $tour->id, (int) $user->id);
 
-        $this->assertSame('/user/editadvanced.php', $url->get_path());
+        // Compare against an equivalently-constructed moodle_url so the
+        // assertion is wwwroot-subpath agnostic — on a CI runner whose
+        // $CFG->wwwroot has a subpath (e.g. http://host/moodle),
+        // get_path() includes that subpath on both sides of the compare.
+        $expectedpath = (new \moodle_url('/user/editadvanced.php'))->get_path();
+        $this->assertSame($expectedpath, $url->get_path());
         $this->assertSame((string) $user->id, $url->get_param('id'));
 
         $this->assertGreaterThan(
@@ -123,7 +128,12 @@ final class starttour_flow_test extends advanced_testcase {
 
         $url = starttour_flow::prepare_redirect_url((int) $tour->id, (int) $user->id);
 
-        $this->assertSame('/course/view.php', $url->get_path());
+        // Compare against an equivalently-constructed moodle_url so the
+        // assertion is wwwroot-subpath agnostic — on a CI runner whose
+        // $CFG->wwwroot has a subpath (e.g. http://host/moodle),
+        // get_path() includes that subpath on both sides of the compare.
+        $expectedpath = (new \moodle_url('/course/view.php'))->get_path();
+        $this->assertSame($expectedpath, $url->get_path());
         $this->assertSame('42', $url->get_param('id'));
 
         $this->assertGreaterThan(
@@ -163,7 +173,12 @@ final class starttour_flow_test extends advanced_testcase {
         $url = starttour_flow::prepare_redirect_url((int) $tour->id, (int) $user->id);
 
         // Fallback strips the `%` and returns `/course/view.php` literal.
-        $this->assertSame('/course/view.php', $url->get_path());
+        // Compare against an equivalently-constructed moodle_url so the
+        // assertion is wwwroot-subpath agnostic — on a CI runner whose
+        // $CFG->wwwroot has a subpath (e.g. http://host/moodle),
+        // get_path() includes that subpath on both sides of the compare.
+        $expectedpath = (new \moodle_url('/course/view.php'))->get_path();
+        $this->assertSame($expectedpath, $url->get_path());
         // Replay flag is set regardless of which path produced the URL.
         $this->assertGreaterThan(
             0,
@@ -183,7 +198,12 @@ final class starttour_flow_test extends advanced_testcase {
 
         $url = starttour_flow::prepare_redirect_url((int) $tour->id, (int) $user->id);
 
-        $this->assertSame('/user/editadvanced.php', $url->get_path());
+        // Compare against an equivalently-constructed moodle_url so the
+        // assertion is wwwroot-subpath agnostic — on a CI runner whose
+        // $CFG->wwwroot has a subpath (e.g. http://host/moodle),
+        // get_path() includes that subpath on both sides of the compare.
+        $expectedpath = (new \moodle_url('/user/editadvanced.php'))->get_path();
+        $this->assertSame($expectedpath, $url->get_path());
     }
 
     /**
